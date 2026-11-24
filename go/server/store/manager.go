@@ -463,12 +463,12 @@ func scanPartition(p *partition, s *schema, visit func(codec.Record) error) erro
 		if e != nil {
 			return e
 		}
-		pods, e := p.readPodsRun(rows)
+		packs, e := p.readPacksRun(rows)
 		if e != nil {
 			return e
 		}
 		for _, r := range rows {
-			fields, e := codec.Decode(pods[r.Start-rows[0].Start:r.End-rows[0].Start], codec.PIL)
+			fields, e := codec.Decode(packs[r.Start-rows[0].Start:r.End-rows[0].Start], codec.PIL)
 			if e != nil {
 				return e
 			}

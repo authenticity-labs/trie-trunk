@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Script ran on page and returned:\n```json\n{\"ok\":true,\"url\":\"https://snoot.trietrunk.com/\",\"checks\":[\"Rust WASM Sampling\",\"UUIDv7 Detection\",\"Annotation Completion\",\"Field Rename\",\"Min/Max Bounds\",\"Enum Summaries\",\"Rust Definition Review\",\"Excluded Field\",\"No Desktop Routes\"],\"preview\":\"Definition Preview\\n\\ntime · 6 Bytes · @time\\n\\nid · 10 Bytes · @id\\n\\nelapsed · 4 Bytes · #summ(numeric) @unit(ms) #percentile(95) @range(0,30)\\n\\nstatus · 0 Bytes · #summ(categorical)\"}\n```"
+    }
+  ]
+}

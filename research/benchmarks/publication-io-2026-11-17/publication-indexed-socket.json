@@ -1,0 +1,72 @@
+{
+  "packs": {
+    "target": "/demo/lab/indexed/sample/packs?range=1794765600000%2C1794772800000&definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a",
+    "samples": [
+      {
+        "ms": 0.527374999364838,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.1977499996428378,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.16391700046369806,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.1751669988152571,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.12558299931697547,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.1205000007757917,
+        "bytes": 29,
+        "status": 400
+      }
+    ]
+  },
+  "indexes": {
+    "target": "/demo/lab/indexed/sample/indexes?range=1794765600000%2C1794772800000&definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a",
+    "samples": [
+      {
+        "ms": 0.15162499767029658,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.12049999349983409,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.2170410007238388,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.15329199959523976,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.1382080008625053,
+        "bytes": 29,
+        "status": 400
+      },
+      {
+        "ms": 0.1540829980513081,
+        "bytes": 29,
+        "status": 400
+      }
+    ]
+  }
+}

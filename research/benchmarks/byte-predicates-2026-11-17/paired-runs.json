@@ -1,0 +1,122 @@
+[
+  {
+    "build": "before",
+    "round": 0,
+    "input_records": 100000,
+    "mapped_median_ms": 4.998958,
+    "matches": 16664,
+    "physical_median_ms": 4.994334,
+    "query": "level = ERROR",
+    "trials": 40
+  },
+  {
+    "build": "before",
+    "round": 0,
+    "input_records": 100000,
+    "mapped_median_ms": 14.814,
+    "matches": 25000,
+    "physical_median_ms": 14.81075,
+    "query": "severity = 4",
+    "trials": 40
+  },
+  {
+    "build": "after",
+    "round": 0,
+    "input_records": 100000,
+    "mapped_median_ms": 2.860458,
+    "matches": 16664,
+    "physical_median_ms": 2.855042,
+    "query": "level = ERROR",
+    "trials": 40
+  },
+  {
+    "build": "after",
+    "round": 0,
+    "input_records": 100000,
+    "mapped_median_ms": 3.146125,
+    "matches": 25000,
+    "physical_median_ms": 3.138167,
+    "query": "severity = 4",
+    "trials": 40
+  },
+  {
+    "build": "after",
+    "round": 1,
+    "input_records": 100000,
+    "mapped_median_ms": 2.863,
+    "matches": 16664,
+    "physical_median_ms": 2.852417,
+    "query": "level = ERROR",
+    "trials": 40
+  },
+  {
+    "build": "after",
+    "round": 1,
+    "input_records": 100000,
+    "mapped_median_ms": 3.179333,
+    "matches": 25000,
+    "physical_median_ms": 3.183375,
+    "query": "severity = 4",
+    "trials": 40
+  },
+  {
+    "build": "before",
+    "round": 1,
+    "input_records": 100000,
+    "mapped_median_ms": 4.999625,
+    "matches": 16664,
+    "physical_median_ms": 4.991625,
+    "query": "level = ERROR",
+    "trials": 40
+  },
+  {
+    "build": "before",
+    "round": 1,
+    "input_records": 100000,
+    "mapped_median_ms": 14.813167,
+    "matches": 25000,
+    "physical_median_ms": 14.802,
+    "query": "severity = 4",
+    "trials": 40
+  },
+  {
+    "build": "before",
+    "round": 2,
+    "input_records": 100000,
+    "mapped_median_ms": 4.989417,
+    "matches": 16664,
+    "physical_median_ms": 4.975875,
+    "query": "level = ERROR",
+    "trials": 40
+  },
+  {
+    "build": "before",
+    "round": 2,
+    "input_records": 100000,
+    "mapped_median_ms": 14.801,
+    "matches": 25000,
+    "physical_median_ms": 14.809458,
+    "query": "severity = 4",
+    "trials": 40
+  },
+  {
+    "build": "after",
+    "round": 2,
+    "input_records": 100000,
+    "mapped_median_ms": 2.859459,
+    "matches": 16664,
+    "physical_median_ms": 2.855708,
+    "query": "level = ERROR",
+    "trials": 40
+  },
+  {
+    "build": "after",
+    "round": 2,
+    "input_records": 100000,
+    "mapped_median_ms": 3.157542,
+    "matches": 25000,
+    "physical_median_ms": 3.154666,
+    "query": "severity = 4",
+    "trials": 40
+  }
+]

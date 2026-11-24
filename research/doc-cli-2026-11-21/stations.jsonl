@@ -1,0 +1,8 @@
+{"station": "Pier", "delta": -200, "online": true, "alarm": false, "count": 8, "mode": "idle", "channel": 10, "probe": {"serial": "PX-101", "calibration": {"offset": -0.25, "unit": "C"}, "axes": ["x", "y"]}}
+{"station": "Café", "delta": -12, "online": true, "alarm": null, "count": null, "mode": "run", "channel": 20, "probe": {"serial": "PX-102", "calibration": {"offset": 0.5, "unit": "C"}, "axes": ["x", "y"]}}
+{"station": "North", "delta": 0, "online": false, "alarm": true, "count": 320, "mode": "run", "channel": 20, "probe": {"serial": "PX-103", "calibration": {"offset": -0.25, "unit": "C"}, "axes": ["x", "y"]}}
+{"station": "Meadow", "delta": 3, "online": true, "alarm": false, "count": 17, "mode": "hold", "channel": 10, "probe": {"serial": "PX-104", "calibration": {"offset": 0.5, "unit": "C"}, "axes": ["x", "y"]}}
+{"station": "Grove", "delta": 7, "online": false, "alarm": null, "count": 22, "mode": "idle", "channel": 20, "probe": {"serial": "PX-105", "calibration": {"offset": -0.25, "unit": "C"}, "axes": ["x", "y"]}}
+{"station": "Depot", "delta": -9, "online": true, "alarm": true, "count": null, "mode": "run", "channel": 10, "probe": {"serial": "PX-106", "calibration": {"offset": 0.5, "unit": "C"}, "axes": ["x", "y"]}}
+{"station": "Quarry", "delta": 8, "online": false, "alarm": false, "count": 90, "mode": "hold", "channel": 20, "probe": {"serial": "PX-107", "calibration": {"offset": -0.25, "unit": "C"}, "axes": ["x", "y"]}}
+{"station": "Bay", "delta": 15, "online": true, "alarm": false, "mode": "run", "channel": 10, "probe": {"serial": "PX-108", "calibration": {"offset": 0.5, "unit": "C"}, "axes": ["x", "y"]}}

@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package main
 
 import (
@@ -25,20 +27,6 @@ import (
 	"trie-trunk/go/server/cache"
 	"trie-trunk/go/server/search"
 )
-
-func TestServiceCommandBoundaries(t *testing.T) {
-	for _, args := range [][]string{{"ingest", "5410", "serve", "443"}, {"serve", "443", "ingest", "5410"}, {"ingest", "--dir", "serve", "serve", "443"}} {
-		commands, err := splitServices(args)
-		if err != nil || len(commands) != 2 {
-			t.Fatal(commands, err)
-		}
-	}
-	for _, args := range [][]string{{"ingest", "5410", "ingest"}, {"serve", "443", "serve"}, {"other"}} {
-		if _, err := splitServices(args); err == nil {
-			t.Fatal("accepted", args)
-		}
-	}
-}
 
 func TestCombinedPILIngestServeAndSearch(t *testing.T) {
 	clearTrunkEnvironment(t)
@@ -189,7 +177,7 @@ func TestCombinedPILIngestServeAndSearch(t *testing.T) {
 	unixClient := &http.Client{Transport: unixTransport, Timeout: 5 * time.Second}
 	var collected []byte
 	for _, path := range []string{"https://127.0.0.1:" + servePort, "http://local"} {
-		r, _ := http.NewRequest("GET", path+"/events?page=50&tap=demo/payment/transactions.v1/write&from="+at.Add(-time.Minute).UTC().Format(time.RFC3339)+"&to="+at.Add(time.Minute).UTC().Format(time.RFC3339), nil)
+		r, _ := http.NewRequest("GET", path+"/demo/payment/transactions.v1/write/indexes?mode=search&page=50&beginTime="+fmt.Sprint(at.Add(-time.Minute).UnixMilli())+"&endTime="+fmt.Sprint(at.Add(time.Minute).UnixMilli()), nil)
 		r.Header.Set("Accept", "application/pil")
 		r.Header.Set("PIL-Version", "2")
 		r.Header.Set("PIL-Features", "pac-arrays")

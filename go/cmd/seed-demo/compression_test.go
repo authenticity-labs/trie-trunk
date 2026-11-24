@@ -25,7 +25,7 @@ type compressedSize struct{ n int64 }
 
 func (s *compressedSize) Write(p []byte) (int, error) { s.n += int64(len(p)); return len(p), nil }
 
-// Compare complete standalone PACs, not Pods that place event UUIDs in .idx.
+// Compare complete standalone PACs, not Packs that place event UUIDs in .idx.
 // Both formats retain every payload field; PACSource retains routing context,
 // and time is reconstructed from the complete event UUID. Definitions count once.
 func TestStandalonePACCompression(t *testing.T) {

@@ -1,0 +1,221 @@
+{
+  "sources": {
+    "otel-log": "https://opentelemetry.io/docs/specs/otel/logs/data-model/",
+    "otel-http": "https://opentelemetry.io/docs/specs/semconv/http/http-spans/",
+    "otel-db": "https://opentelemetry.io/docs/specs/semconv/db/database-spans/",
+    "otel-messaging": "https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/",
+    "otel-process": "https://opentelemetry.io/docs/specs/semconv/registry/attributes/process/",
+    "otel-cicd": "https://opentelemetry.io/docs/specs/semconv/cicd/cicd-spans/",
+    "iana-status": "https://www.iana.org/assignments/http-status-codes",
+    "iana-method": "https://www.iana.org/assignments/http-methods",
+    "postgres": "https://www.postgresql.org/docs/18/errcodes-appendix.html",
+    "owasp": "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Vocabulary_Cheat_Sheet.html",
+    "datadog": "https://docs.datadoghq.com/standard-attributes/"
+  },
+  "definitions": [
+    {
+      "name": "log_trietrunk",
+      "file": "log_trietrunk.rx",
+      "source": "otel-log",
+      "description": "Generic application log.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log_opentelemetry",
+      "file": "log_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log_datadog",
+      "file": "log_datadog.rx",
+      "provider": "datadog",
+      "target": "log_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-http_trietrunk",
+      "file": "log-http_trietrunk.rx",
+      "source": "otel-http",
+      "description": "HTTP operation log. Method is required; status is conditional on a response. URI and path remain distinct.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-http_opentelemetry",
+      "file": "log-http_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-http_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-http_datadog",
+      "file": "log-http_datadog.rx",
+      "provider": "datadog",
+      "target": "log-http_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-db_trietrunk",
+      "file": "log-db_trietrunk.rx",
+      "source": "otel-db",
+      "description": "Database operation log. Response code names are scoped by database engine.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-db_opentelemetry",
+      "file": "log-db_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-db_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-db_datadog",
+      "file": "log-db_datadog.rx",
+      "provider": "datadog",
+      "target": "log-db_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-messaging_trietrunk",
+      "file": "log-messaging_trietrunk.rx",
+      "source": "otel-messaging",
+      "description": "Messaging operation log. Message identity is not event identity.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-messaging_opentelemetry",
+      "file": "log-messaging_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-messaging_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-messaging_datadog",
+      "file": "log-messaging_datadog.rx",
+      "provider": "datadog",
+      "target": "log-messaging_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-security_trietrunk",
+      "file": "log-security_trietrunk.rx",
+      "source": "owasp",
+      "description": "Security action log advised by OWASP. Not presented as an OTel security schema.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-security_opentelemetry",
+      "file": "log-security_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-security_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-security_datadog",
+      "file": "log-security_datadog.rx",
+      "provider": "datadog",
+      "target": "log-security_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-job_trietrunk",
+      "file": "log-job_trietrunk.rx",
+      "source": "otel-cicd",
+      "description": "Scheduled job execution. Generic scheduler fields are Trie-Trunk conventions, not unconditional CI/CD aliases.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-job_opentelemetry",
+      "file": "log-job_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-job_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-job_datadog",
+      "file": "log-job_datadog.rx",
+      "provider": "datadog",
+      "target": "log-job_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-task_trietrunk",
+      "file": "log-task_trietrunk.rx",
+      "source": "otel-cicd",
+      "description": "A unit of work within a job or workflow. No assumed CI/CD equivalence.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-task_opentelemetry",
+      "file": "log-task_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-task_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-task_datadog",
+      "file": "log-task_datadog.rx",
+      "provider": "datadog",
+      "target": "log-task_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-workflow_trietrunk",
+      "file": "log-workflow_trietrunk.rx",
+      "source": "otel-cicd",
+      "description": "Business process execution. OTel pipeline conventions are advisory, not a universal workflow standard.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-workflow_opentelemetry",
+      "file": "log-workflow_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-workflow_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-workflow_datadog",
+      "file": "log-workflow_datadog.rx",
+      "provider": "datadog",
+      "target": "log-workflow_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-system_trietrunk",
+      "file": "log-system_trietrunk.rx",
+      "source": "otel-process",
+      "description": "Operating-system and application lifecycle log. Not a business process Definition.",
+      "provider": "trietrunk"
+    },
+    {
+      "name": "log-system_opentelemetry",
+      "file": "log-system_opentelemetry.rx",
+      "provider": "opentelemetry",
+      "target": "log-system_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    },
+    {
+      "name": "log-system_datadog",
+      "file": "log-system_datadog.rx",
+      "provider": "datadog",
+      "target": "log-system_trietrunk",
+      "description": "Single log record profile; provider-specific fields and application extensions."
+    }
+  ],
+  "notes": [
+    "Bundle generation only: existing live logger Definitions and stored events are not replaced by this build.",
+    "CDDL groups implement base composition. Each compiled RX is one flattened Definition.",
+    "Only occurrence time is stored. Timestamp unit is milliseconds; duration remains microseconds for this draft, matching existing storage. Neither is converted implicitly in numeric query predicates.",
+    "Absent duration means unknown or not applicable, not zero. Operation start/end conventions require an explicit transform and are not guessed.",
+    "Internal @ fields remain distinct from ordinary user fields named id, time, duration, or fields. Metadata labels never change binding identity.",
+    "Open-map CDDL generates the internal @fields carrier. No separate explicit @fields authoring member is needed.",
+    "Metadata value lists are advisory and incomplete, never encoding dictionaries or validity restrictions.",
+    "Mappings bind exact source and target RX identities. Resource-scoped ingress transforms execute only explicitly configured casts.",
+    "Service and resource taxonomy are supplied by the enclosing resource and are not repeated on every log.",
+    "No ObservedTimestamp, duplicate status label, full event UUID, or trace/span reinterpretation is added.",
+    "request_size, response_size and message_id retain qualifiers because request versus response and message versus event identity are not implied by the category.",
+    "Provider RX files describe single log records, not OTLP export envelopes. Datadog timestamp profile uses epoch milliseconds.",
+    "Application-specific fields in job, task, workflow and security profiles are extensions, not claimed standard OpenTelemetry fields."
+  ]
+}

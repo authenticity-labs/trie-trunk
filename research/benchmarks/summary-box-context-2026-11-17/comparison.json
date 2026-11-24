@@ -1,0 +1,914 @@
+[
+  {
+    "case": "narrow",
+    "timing": {
+      "all_field_objects_us": {
+        "prior_median_us": 780.833,
+        "current_median_us": 780.208,
+        "change_percent": -0.08004272360414566,
+        "prior_min_max_us": [
+          739.6669999999999,
+          793.875
+        ],
+        "current_min_max_us": [
+          760.417,
+          808.584
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 6.625,
+        "current_median_us": 7.208,
+        "change_percent": 8.800000000000008,
+        "prior_min_max_us": [
+          6.0,
+          7.125
+        ],
+        "current_min_max_us": [
+          6.916,
+          8.125
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 2205.75,
+        "current_median_us": 2179.542,
+        "change_percent": -1.1881672900374007,
+        "prior_min_max_us": [
+          2148.291,
+          2316.541
+        ],
+        "current_min_max_us": [
+          2100.083,
+          2262.0840000000003
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 61.25,
+        "current_median_us": 61.958999999999996,
+        "change_percent": 1.157551020408154,
+        "prior_min_max_us": [
+          59.375,
+          62.291000000000004
+        ],
+        "current_min_max_us": [
+          59.583999999999996,
+          70.584
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 223.37599999999998,
+        "current_median_us": 167.999,
+        "change_percent": -24.7909354630757,
+        "prior_min_max_us": [
+          211.5,
+          239.043
+        ],
+        "current_min_max_us": [
+          159.5,
+          182.834
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 1660.6660000000002,
+        "current_median_us": 1675.209,
+        "change_percent": 0.8757329890537902,
+        "prior_min_max_us": [
+          1611.334,
+          1751.375
+        ],
+        "current_min_max_us": [
+          1619.208,
+          1762.0
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 97.459,
+        "current_median_us": 50.875,
+        "change_percent": -47.798561446351805,
+        "prior_min_max_us": [
+          93.75,
+          108.20899999999999
+        ],
+        "current_min_max_us": [
+          48.708,
+          55.292
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 825.792,
+        "current_median_us": 828.7080000000001,
+        "change_percent": 0.3531155545222209,
+        "prior_min_max_us": [
+          800.75,
+          865.958
+        ],
+        "current_min_max_us": [
+          803.208,
+          860.416
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 265.875,
+        "current_median_us": 275.70799999999997,
+        "change_percent": 3.698354489891864,
+        "prior_min_max_us": [
+          255.95799999999997,
+          278.708
+        ],
+        "current_min_max_us": [
+          254.833,
+          316.708
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 125.91699999999999,
+        "current_median_us": 116.583,
+        "change_percent": -7.412819555739092,
+        "prior_min_max_us": [
+          117.75,
+          134.54100000000003
+        ],
+        "current_min_max_us": [
+          110.792,
+          127.54199999999999
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 818.0830000000001,
+        "current_median_us": 770.0,
+        "change_percent": -5.8775209850345345,
+        "prior_min_max_us": [
+          786.875,
+          866.375
+        ],
+        "current_min_max_us": [
+          736.125,
+          816.167
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 566.167,
+        "current_median_us": 563.708,
+        "change_percent": -0.434324148175369,
+        "prior_min_max_us": [
+          548.958,
+          575.541
+        ],
+        "current_min_max_us": [
+          550.7919999999999,
+          592.542
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 46.5666,
+        "current_median_us": 39.2209,
+        "change_percent": -15.77461098727414,
+        "prior_min_max_us": [
+          45.2042,
+          47.1458
+        ],
+        "current_min_max_us": [
+          38.0375,
+          40.9833
+        ]
+      }
+    },
+    "prior_box_bytes": 51422,
+    "current_box_bytes": 37208,
+    "prior_heap": {
+      "all_field_objects": {
+        "allocation_calls": 22776,
+        "allocation_volume_bytes": 1732356,
+        "peak_extra_bytes": 1016705,
+        "retained_delta_bytes": 1016032
+      },
+      "cold_zero_query": {
+        "allocation_calls": 2274,
+        "allocation_volume_bytes": 731882,
+        "peak_extra_bytes": 327282,
+        "retained_delta_bytes": 252417
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 156672,
+        "peak_extra_bytes": 156672,
+        "retained_delta_bytes": 156672
+      },
+      "plan": {
+        "allocation_calls": 1751,
+        "allocation_volume_bytes": 527416,
+        "peak_extra_bytes": 235920,
+        "retained_delta_bytes": 159175
+      }
+    },
+    "current_heap": {
+      "all_field_objects": {
+        "allocation_calls": 22776,
+        "allocation_volume_bytes": 1732356,
+        "peak_extra_bytes": 1016705,
+        "retained_delta_bytes": 1016032
+      },
+      "cold_zero_query": {
+        "allocation_calls": 1733,
+        "allocation_volume_bytes": 571115,
+        "peak_extra_bytes": 272329,
+        "retained_delta_bytes": 185365
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 156672,
+        "peak_extra_bytes": 156672,
+        "retained_delta_bytes": 156672
+      },
+      "plan": {
+        "allocation_calls": 1612,
+        "allocation_volume_bytes": 447501,
+        "peak_extra_bytes": 223605,
+        "retained_delta_bytes": 144745
+      }
+    }
+  },
+  {
+    "case": "typical",
+    "timing": {
+      "all_field_objects_us": {
+        "prior_median_us": 17278.958,
+        "current_median_us": 17273.792,
+        "change_percent": -0.02989763618845842,
+        "prior_min_max_us": [
+          17066.75,
+          17920.917
+        ],
+        "current_min_max_us": [
+          17046.0,
+          18295.583000000002
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 176.375,
+        "current_median_us": 166.958,
+        "change_percent": -5.339192062367115,
+        "prior_min_max_us": [
+          166.667,
+          245.74999999999997
+        ],
+        "current_min_max_us": [
+          154.792,
+          191.625
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 25961.708,
+        "current_median_us": 25732.584,
+        "change_percent": -0.8825459403518421,
+        "prior_min_max_us": [
+          25751.625,
+          26702.291
+        ],
+        "current_min_max_us": [
+          25587.875,
+          27478.167
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 435.79200000000003,
+        "current_median_us": 430.83299999999997,
+        "change_percent": -1.1379281859235757,
+        "prior_min_max_us": [
+          425.459,
+          501.66700000000003
+        ],
+        "current_min_max_us": [
+          427.125,
+          484.41700000000003
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 592.25,
+        "current_median_us": 474.917,
+        "change_percent": -19.81139721401436,
+        "prior_min_max_us": [
+          572.625,
+          726.0829999999999
+        ],
+        "current_min_max_us": [
+          461.04200000000003,
+          586.749
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 10258.875,
+        "current_median_us": 10325.25,
+        "change_percent": 0.6470007676280254,
+        "prior_min_max_us": [
+          10191.875,
+          10857.625
+        ],
+        "current_min_max_us": [
+          10229.667,
+          10906.333
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 427.79200000000003,
+        "current_median_us": 326.667,
+        "change_percent": -23.638824475446018,
+        "prior_min_max_us": [
+          421.45799999999997,
+          537.1669999999999
+        ],
+        "current_min_max_us": [
+          321.0,
+          390.166
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 14819.458,
+        "current_median_us": 14775.25,
+        "change_percent": -0.29831050501307743,
+        "prior_min_max_us": [
+          14706.249999999998,
+          15255.291000000001
+        ],
+        "current_min_max_us": [
+          14664.582000000002,
+          15745.124000000002
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 1828.25,
+        "current_median_us": 1794.5839999999998,
+        "change_percent": -1.8414330644058619,
+        "prior_min_max_us": [
+          1779.917,
+          1903.9160000000002
+        ],
+        "current_min_max_us": [
+          1761.125,
+          1876.875
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 167.208,
+        "current_median_us": 148.25,
+        "change_percent": -11.337974259604799,
+        "prior_min_max_us": [
+          151.167,
+          191.541
+        ],
+        "current_min_max_us": [
+          140.042,
+          196.583
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 831.542,
+        "current_median_us": 774.875,
+        "change_percent": -6.814688855163064,
+        "prior_min_max_us": [
+          821.625,
+          909.0
+        ],
+        "current_min_max_us": [
+          764.667,
+          853.625
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 10172.291,
+        "current_median_us": 10070.582999999999,
+        "change_percent": -0.9998534253493174,
+        "prior_min_max_us": [
+          9988.541,
+          10415.708999999999
+        ],
+        "current_min_max_us": [
+          9984.793,
+          10712.373
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 327.575,
+        "current_median_us": 286.8084,
+        "change_percent": -12.444966801495838,
+        "prior_min_max_us": [
+          324.3875,
+          345.9166
+        ],
+        "current_min_max_us": [
+          285.0583,
+          303.1667
+        ]
+      }
+    },
+    "prior_box_bytes": 1013758,
+    "current_box_bytes": 999237,
+    "prior_heap": {
+      "all_field_objects": {
+        "allocation_calls": 449690,
+        "allocation_volume_bytes": 37499100,
+        "peak_extra_bytes": 16726433,
+        "retained_delta_bytes": 16725760
+      },
+      "cold_zero_query": {
+        "allocation_calls": 3022,
+        "allocation_volume_bytes": 2291319,
+        "peak_extra_bytes": 1356057,
+        "retained_delta_bytes": 1229937
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 446976,
+        "peak_extra_bytes": 446976,
+        "retained_delta_bytes": 446976
+      },
+      "plan": {
+        "allocation_calls": 1954,
+        "allocation_volume_bytes": 545750,
+        "peak_extra_bytes": 238602,
+        "retained_delta_bytes": 160677
+      }
+    },
+    "current_heap": {
+      "all_field_objects": {
+        "allocation_calls": 449690,
+        "allocation_volume_bytes": 37499100,
+        "peak_extra_bytes": 16726433,
+        "retained_delta_bytes": 16725760
+      },
+      "cold_zero_query": {
+        "allocation_calls": 2018,
+        "allocation_volume_bytes": 2091258,
+        "peak_extra_bytes": 1274443,
+        "retained_delta_bytes": 1148323
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 446976,
+        "peak_extra_bytes": 446976,
+        "retained_delta_bytes": 446976
+      },
+      "plan": {
+        "allocation_calls": 1634,
+        "allocation_volume_bytes": 449469,
+        "peak_extra_bytes": 224445,
+        "retained_delta_bytes": 145633
+      }
+    }
+  },
+  {
+    "case": "wide",
+    "timing": {
+      "all_field_objects_us": {
+        "prior_median_us": 57466.583,
+        "current_median_us": 57388.333,
+        "change_percent": -0.1361660915179197,
+        "prior_min_max_us": [
+          57042.625,
+          59183.083
+        ],
+        "current_min_max_us": [
+          56934.333,
+          59024.959
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 643.458,
+        "current_median_us": 656.167,
+        "change_percent": 1.9751094865554597,
+        "prior_min_max_us": [
+          590.25,
+          681.7919999999999
+        ],
+        "current_min_max_us": [
+          584.375,
+          714.542
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 55329.042,
+        "current_median_us": 55342.166,
+        "change_percent": 0.02371991186833622,
+        "prior_min_max_us": [
+          54958.333999999995,
+          56766.333
+        ],
+        "current_min_max_us": [
+          55137.5,
+          56078.541000000005
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 441.125,
+        "current_median_us": 447.708,
+        "change_percent": 1.4923207707565833,
+        "prior_min_max_us": [
+          430.666,
+          493.416
+        ],
+        "current_min_max_us": [
+          438.66700000000003,
+          506.583
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 901.0420000000001,
+        "current_median_us": 699.0830000000001,
+        "change_percent": -22.413938528947597,
+        "prior_min_max_us": [
+          840.3339999999998,
+          1108.833
+        ],
+        "current_min_max_us": [
+          671.167,
+          815.5
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 10574.0,
+        "current_median_us": 10608.416000000001,
+        "change_percent": 0.3254775865330073,
+        "prior_min_max_us": [
+          10538.208,
+          10695.666
+        ],
+        "current_min_max_us": [
+          10562.416,
+          11002.583
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 621.2080000000001,
+        "current_median_us": 436.375,
+        "change_percent": -29.75380226912726,
+        "prior_min_max_us": [
+          590.708,
+          794.625
+        ],
+        "current_min_max_us": [
+          428.709,
+          528.583
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 26063.833000000002,
+        "current_median_us": 26171.249,
+        "change_percent": 0.41212664307661573,
+        "prior_min_max_us": [
+          25936.376,
+          26417.916
+        ],
+        "current_min_max_us": [
+          26111.334000000003,
+          26530.834
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 1781.709,
+        "current_median_us": 1787.292,
+        "change_percent": 0.3133508333852397,
+        "prior_min_max_us": [
+          1740.208,
+          1872.375
+        ],
+        "current_min_max_us": [
+          1756.375,
+          2072.875
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 270.916,
+        "current_median_us": 258.625,
+        "change_percent": -4.536830604320152,
+        "prior_min_max_us": [
+          244.41699999999997,
+          314.208
+        ],
+        "current_min_max_us": [
+          241.0,
+          286.917
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 872.208,
+        "current_median_us": 798.667,
+        "change_percent": -8.431589712545629,
+        "prior_min_max_us": [
+          853.708,
+          895.6669999999999
+        ],
+        "current_min_max_us": [
+          782.875,
+          856.667
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 27667.959,
+        "current_median_us": 27695.749,
+        "change_percent": 0.10044109144444757,
+        "prior_min_max_us": [
+          27532.292,
+          28813.750999999997
+        ],
+        "current_min_max_us": [
+          27565.042,
+          28069.167
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 326.7667,
+        "current_median_us": 288.1834,
+        "change_percent": -11.807598509884887,
+        "prior_min_max_us": [
+          325.8167,
+          342.7083
+        ],
+        "current_min_max_us": [
+          286.725,
+          291.0875
+        ]
+      }
+    },
+    "prior_box_bytes": 3554996,
+    "current_box_bytes": 3539397,
+    "prior_heap": {
+      "all_field_objects": {
+        "allocation_calls": 1433498,
+        "allocation_volume_bytes": 126618396,
+        "peak_extra_bytes": 50784737,
+        "retained_delta_bytes": 50784064
+      },
+      "cold_zero_query": {
+        "allocation_calls": 4628,
+        "allocation_volume_bytes": 4980965,
+        "peak_extra_bytes": 3948031,
+        "retained_delta_bytes": 3821911
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 1442304,
+        "peak_extra_bytes": 1442304,
+        "retained_delta_bytes": 1442304
+      },
+      "plan": {
+        "allocation_calls": 2632,
+        "allocation_volume_bytes": 609994,
+        "peak_extra_bytes": 247972,
+        "retained_delta_bytes": 165735
+      }
+    },
+    "current_heap": {
+      "all_field_objects": {
+        "allocation_calls": 1433498,
+        "allocation_volume_bytes": 126618396,
+        "peak_extra_bytes": 50784737,
+        "retained_delta_bytes": 50784064
+      },
+      "cold_zero_query": {
+        "allocation_calls": 2090,
+        "allocation_volume_bytes": 4637584,
+        "peak_extra_bytes": 3817505,
+        "retained_delta_bytes": 3691385
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 1442304,
+        "peak_extra_bytes": 1442304,
+        "retained_delta_bytes": 1442304
+      },
+      "plan": {
+        "allocation_calls": 1706,
+        "allocation_volume_bytes": 455635,
+        "peak_extra_bytes": 227347,
+        "retained_delta_bytes": 148535
+      }
+    }
+  },
+  {
+    "case": "quiet",
+    "timing": {
+      "all_field_objects_us": {
+        "prior_median_us": 17228.208,
+        "current_median_us": 17449.167,
+        "change_percent": 1.2825419799900484,
+        "prior_min_max_us": [
+          16595.75,
+          17727.334000000003
+        ],
+        "current_min_max_us": [
+          16710.333000000002,
+          17804.125
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 103.625,
+        "current_median_us": 101.459,
+        "change_percent": -2.0902291917973437,
+        "prior_min_max_us": [
+          97.291,
+          187.375
+        ],
+        "current_min_max_us": [
+          93.792,
+          117.54199999999999
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 12153.75,
+        "current_median_us": 11943.167,
+        "change_percent": -1.7326586444513015,
+        "prior_min_max_us": [
+          11805.708999999999,
+          12466.667000000001
+        ],
+        "current_min_max_us": [
+          11694.958999999999,
+          12511.291000000001
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 115.875,
+        "current_median_us": 111.41699999999999,
+        "change_percent": -3.8472491909385176,
+        "prior_min_max_us": [
+          114.5,
+          124.29100000000001
+        ],
+        "current_min_max_us": [
+          110.29199999999999,
+          119.625
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 415.25,
+        "current_median_us": 308.626,
+        "change_percent": -25.67706201083685,
+        "prior_min_max_us": [
+          367.20799999999997,
+          605.251
+        ],
+        "current_min_max_us": [
+          293.249,
+          370.416
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 9724.75,
+        "current_median_us": 9740.792,
+        "change_percent": 0.16496053883132689,
+        "prior_min_max_us": [
+          9446.792000000001,
+          10066.042000000001
+        ],
+        "current_min_max_us": [
+          9434.416,
+          10091.0
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 238.375,
+        "current_median_us": 161.542,
+        "change_percent": -32.231987414787625,
+        "prior_min_max_us": [
+          218.958,
+          274.959
+        ],
+        "current_min_max_us": [
+          157.666,
+          180.792
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 847.4990000000001,
+        "current_median_us": 847.04,
+        "change_percent": -0.05415935594026422,
+        "prior_min_max_us": [
+          820.458,
+          877.083
+        ],
+        "current_min_max_us": [
+          825.499,
+          893.2510000000001
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 1805.667,
+        "current_median_us": 1762.4170000000001,
+        "change_percent": -2.395236774000953,
+        "prior_min_max_us": [
+          1719.375,
+          1853.9579999999999
+        ],
+        "current_min_max_us": [
+          1718.375,
+          1848.0
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 169.333,
+        "current_median_us": 147.084,
+        "change_percent": -13.139199092911602,
+        "prior_min_max_us": [
+          148.25,
+          330.292
+        ],
+        "current_min_max_us": [
+          135.583,
+          190.375
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 873.625,
+        "current_median_us": 792.75,
+        "change_percent": -9.257404492774358,
+        "prior_min_max_us": [
+          821.416,
+          999.0419999999999
+        ],
+        "current_min_max_us": [
+          767.3330000000001,
+          866.792
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 10264.294000000002,
+        "current_median_us": 10214.125999999998,
+        "change_percent": -0.488762305522461,
+        "prior_min_max_us": [
+          10023.833999999999,
+          10486.96
+        ],
+        "current_min_max_us": [
+          9978.873,
+          10652.499
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 107.04580000000001,
+        "current_median_us": 102.7041,
+        "change_percent": -4.055927462824338,
+        "prior_min_max_us": [
+          101.82500000000002,
+          110.8375
+        ],
+        "current_min_max_us": [
+          100.175,
+          107.4292
+        ]
+      }
+    },
+    "prior_box_bytes": 1013758,
+    "current_box_bytes": 999237,
+    "prior_heap": {
+      "all_field_objects": {
+        "allocation_calls": 449690,
+        "allocation_volume_bytes": 37499100,
+        "peak_extra_bytes": 16726433,
+        "retained_delta_bytes": 16725760
+      },
+      "cold_zero_query": {
+        "allocation_calls": 3022,
+        "allocation_volume_bytes": 2291319,
+        "peak_extra_bytes": 1356057,
+        "retained_delta_bytes": 1229937
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 446976,
+        "peak_extra_bytes": 446976,
+        "retained_delta_bytes": 446976
+      },
+      "plan": {
+        "allocation_calls": 1954,
+        "allocation_volume_bytes": 545750,
+        "peak_extra_bytes": 238602,
+        "retained_delta_bytes": 160677
+      }
+    },
+    "current_heap": {
+      "all_field_objects": {
+        "allocation_calls": 449690,
+        "allocation_volume_bytes": 37499100,
+        "peak_extra_bytes": 16726433,
+        "retained_delta_bytes": 16725760
+      },
+      "cold_zero_query": {
+        "allocation_calls": 2018,
+        "allocation_volume_bytes": 2091258,
+        "peak_extra_bytes": 1274443,
+        "retained_delta_bytes": 1148323
+      },
+      "empty_day_accumulator": {
+        "allocation_calls": 577,
+        "allocation_volume_bytes": 446976,
+        "peak_extra_bytes": 446976,
+        "retained_delta_bytes": 446976
+      },
+      "plan": {
+        "allocation_calls": 1634,
+        "allocation_volume_bytes": 449469,
+        "peak_extra_bytes": 224445,
+        "retained_delta_bytes": 145633
+      }
+    }
+  }
+]

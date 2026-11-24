@@ -90,7 +90,7 @@ func TestFormatComparisonFixture(t *testing.T) {
 
 		if hour == 0 {
 			run := b.runs[len(b.runs)-1]
-			stored, e := readBytes(b.pods, run.PodsStart-b.podsRetired, run.PodsEnd-b.podsRetired)
+			stored, e := readBytes(b.packs, run.PacksStart-b.packsRetired, run.PacksEnd-b.packsRetired)
 			if e != nil {
 				t.Fatal(e)
 			}
@@ -183,6 +183,44 @@ func TestFormatComparisonFixture(t *testing.T) {
 	}
 	meta := fmt.Sprintf(`{"tap":"demo/payment/transactions.v1/error","from":%q,"to":%q,"headers":{"Content-Type":"application/pil","PIL-Version":"2","Trunk-Format":"native-pac/0","Trunk-Completion":"body","Definition-Version":%q},"hours":%d,"events":%d,"wireBytes":%d}`, at.Format(time.RFC3339), at.Add(hours*time.Hour).Format(time.RFC3339), w.Header().Get("Definition-Version"), hours, hours*perHour, w.Body.Len())
 	if err = os.WriteFile(out+".json", []byte(meta), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Preserve native resource responses for the same workload so current browser
+	// replication is measured without substituting the former envelope parser.
+	base := "/demo/payment/transactions.v1/error/"
+	http := &HTTP{Store: s}
+	get := func(name, path string) {
+		t.Helper()
+		recorder := httptest.NewRecorder()
+		request := httptest.NewRequest("GET", path, nil)
+		request.Header.Set("Accept", "*/*")
+		http.ServeHTTP(recorder, request)
+		if recorder.Code != 200 {
+			t.Fatalf("%s: %d %s", path, recorder.Code, recorder.Body.String())
+		}
+		if err := os.WriteFile(filepath.Join(filepath.Dir(out), name), recorder.Body.Bytes(), 0644); err != nil {
+			t.Fatal(err)
+		}
+		headers, _ := json.Marshal(recorder.Header())
+		if err := os.WriteFile(filepath.Join(filepath.Dir(out), name+".headers.json"), headers, 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	params := fmt.Sprintf("?definition=%x&beginTime=%d&endTime=%d", l.Digest, at.UnixMilli(), at.Add(hours*time.Hour).UnixMilli())
+	get("seeds.pac", base+"packs"+params)
+	get("timeline.bin", base+"timelines"+params)
+	get("leaf.trie", "/demo/payment/transactions.v1/states?definition="+fmtDigestNative(l.Digest))
+	s.mu.Lock()
+	b, err = s.openBranch(Error)
+	if err != nil {
+		s.mu.Unlock()
+		t.Fatal(err)
+	}
+	generation := fmt.Sprintf("%x", b.generation)
+	end := b.runs[len(b.runs)-1].End
+	s.mu.Unlock()
+	get("indexes.bin", base+fmt.Sprintf("indexes?definition=%x&generation=%s&rows=0,%d", l.Digest, generation, end))
+	if err := os.WriteFile(filepath.Join(filepath.Dir(out), "definition.rx"), l.Bytes, 0644); err != nil {
 		t.Fatal(err)
 	}
 	var manifest map[string]any

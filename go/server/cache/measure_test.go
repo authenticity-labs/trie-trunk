@@ -81,8 +81,8 @@ func measurementWithoutObjectIndex(t *testing.T, s *Store) {
 	if s.config.ObjectIndex || s.objects != nil {
 		t.Fatal("base measurement must not enable the optional object index")
 	}
-	if _, err := os.Stat(filepath.Join(s.collection, "collection.idx")); !os.IsNotExist(err) {
-		t.Fatalf("base measurement must not create collection.idx: %v", err)
+	if _, err := os.Stat(filepath.Join(s.collection, "collection.indx")); !os.IsNotExist(err) {
+		t.Fatalf("base measurement must not create collection.indx: %v", err)
 	}
 }
 

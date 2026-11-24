@@ -1,0 +1,26 @@
+[package]
+name = "trunk-node"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.89"
+publish = false
+
+[features]
+planner-lab = ["data-seeds/planner-lab"]
+
+[dependencies]
+data-seeds = { path = "../seeds", features = ["query-language"] }
+trie-trunk-taxonomy = { path = "../trunk", features = ["registration"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ciborium = "0.2.2"
+pgwire = { version = "0.42.3", default-features = false, features = ["server-api"] }
+tokio = { version = "1", features = ["rt-multi-thread", "net", "sync", "time"] }
+async-trait = "0.1"
+futures = "0.3"
+sqlparser = { version = "=0.64.0", default-features = false, features = ["std", "visitor"] }
+rusqlite = { version = "0.38", features = ["functions", "hooks", "limits", "bundled"] }
+
+[[bin]]
+name = "trunk-node"
+path = "src/main.rs"

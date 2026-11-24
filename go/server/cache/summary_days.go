@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	pilcodec "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"os"
 	"path/filepath"
 	"sort"
@@ -15,10 +15,8 @@ const summaryDayMS int64 = 24 * TimeHourMS
 const maxSummaryDay = 128 << 20
 
 func isSummaryPAC(raw []byte) bool {
-	if len(raw) < pilcodec.PACHeaderSize {
-		return false
-	}
-	return int(order.Uint32(raw[:4])) == len(raw) && order.Uint32(raw[4:8]) <= pilcodec.PACGzip
+	n, err := pilcodec.StoredPACSize(raw)
+	return err == nil && n == len(raw)
 }
 
 type summaryDayLocation struct {
@@ -28,7 +26,19 @@ type summaryDayLocation struct {
 	Rollup         CalendarRollup
 }
 
-func summaryDay(ms int64) int64 { return ms / summaryDayMS * summaryDayMS }
+func summaryDay(ms int64) int64 { return summaryDayOffset(ms, 0) }
+func summaryDayOffset(ms int64, hours int) int64 {
+	offset := int64(hours) * TimeHourMS
+	n := ms + offset
+	q := n / summaryDayMS
+	if n < 0 && n%summaryDayMS != 0 {
+		q--
+	}
+	return q*summaryDayMS - offset
+}
+func (s *Store) summaryDay(branch Branch, ms int64) int64 {
+	return summaryDayOffset(ms, s.policyFor(branch).summaryOffsetHours())
+}
 
 // Daily summary packets are standard PIL PACs. Their members are ordered hourly
 // summaries, independent of physical event-row addresses.
@@ -132,7 +142,7 @@ func (s *Store) loadSummaries(b *branchStore) error {
 	if rollupRaw != nil {
 		from, to := int64(order.Uint64(rollupRaw[8:])), int64(order.Uint64(rollupRaw[16:]))
 		rowsInFile := (len(rollupRaw) - 24) / calendarRollupRowSize
-		if (len(rollupRaw)-24)%calendarRollupRowSize != 0 || rowsInFile == 0 || from < 0 || from%TimeHourMS != 0 || to%summaryDayMS != 0 || from >= to || to-from > int64(rowsInFile)*7*summaryDayMS {
+		if (len(rollupRaw)-24)%calendarRollupRowSize != 0 || rowsInFile == 0 || from < 0 || from%TimeHourMS != 0 || to%TimeHourMS != 0 || from >= to || to-from > int64(rowsInFile)*7*summaryDayMS {
 			return fmt.Errorf("invalid calendar coverage")
 		}
 		for _, d := range b.summaryDays {
@@ -140,7 +150,11 @@ func (s *Store) loadSummaries(b *branchStore) error {
 				return fmt.Errorf("calendar coverage excludes daily summary")
 			}
 		}
-		rows, e := calendarRollups(b.summaryDays, from, to)
+		offset := 0
+		if raw, e := os.ReadFile(filepath.Join(s.dir, s.prefix(b.branch)+".time")); e == nil && len(raw) >= TimeTrieHeader {
+			offset = int(int8(raw[47]))
+		}
+		rows, e := calendarRollups(b.summaryDays, from, to, offset)
 		if e != nil {
 			return e
 		}
@@ -153,7 +167,32 @@ func (s *Store) loadSummaries(b *branchStore) error {
 		return fmt.Errorf("missing calendar rollups")
 	}
 	if next != len(b.runs) {
-		return fmt.Errorf("missing committed summaries")
+		// Only an hour protected by ingress .pack may have an unfinished summary.
+		if err = b.sum.Truncate(int64(trim)); err != nil {
+			return err
+		}
+		for _, run := range b.runs[next:] {
+			f := b.stagingPacks[run.PAC.Placement.From]
+			if f == nil {
+				return fmt.Errorf("missing committed summaries")
+			}
+			sum, e := s.recoverHourSummary(b, run, f)
+			if e != nil {
+				return e
+			}
+			raw, e := encodeSummary(sum)
+			if e != nil {
+				return e
+			}
+			if e = appendRecord(b.sum, raw); e != nil {
+				return e
+			}
+			trim += 8 + uint64(len(raw))
+			b.summaries = append(b.summaries, sum)
+		}
+		if err = b.sum.Sync(); err != nil {
+			return err
+		}
 	}
 	if err = b.sum.Truncate(int64(trim)); err != nil {
 		return err
@@ -165,11 +204,16 @@ func (s *Store) loadSummaries(b *branchStore) error {
 // Daily compaction copies older sealed PACs verbatim. It does not decode events
 // or recompress older days. The atomic replacement copies the retained summary
 // file once per daily rollover; measure that write cost.
-func (s *Store) packSummaryDays(b *branchStore) error {
+func (s *Store) packSummaryDays(b *branchStore) (result error) {
+	defer func() {
+		if result == nil {
+			result = b.openSummaryReader()
+		}
+	}()
 	if b.sum == nil || len(b.summaries) == 0 {
 		return nil
 	}
-	cutoff := summaryDay(utcHour(b.finalizedBefore))
+	cutoff := s.summaryDay(b.branch, utcHour(b.finalizedBefore))
 	if cutoff <= b.summaryPackedThrough {
 		return nil
 	}
@@ -177,9 +221,9 @@ func (s *Store) packSummaryDays(b *branchStore) error {
 	if b.timeAnchor != nil {
 		first = max(first, b.timeAnchor.First)
 	}
-	eligible := len(b.summaryDays) > 0
+	eligible := len(b.summaryDays) > 0 || b.summaryPackedThrough < 0
 	for _, sum := range b.summaries {
-		day := summaryDay(sum.Columns.Period[0])
+		day := s.summaryDay(b.branch, sum.Columns.Period[0])
 		if day < cutoff {
 			if _, ok := b.summaryDays[day]; !ok {
 				eligible = true
@@ -194,7 +238,7 @@ func (s *Store) packSummaryDays(b *branchStore) error {
 	// Match hourly sealing: one scheduled worker, ingestion continues into the
 	// seed while immutable summary chunks are packed. Retention's unpublished
 	// replacement branch is already exclusively owned and needs no second gate.
-	level := s.policyFor(b.branch).Summary.level()
+	policy := s.policyFor(b.branch).Summary
 	background := s.branches[b.branch] == b
 	locked := true
 	var release func()
@@ -206,7 +250,7 @@ func (s *Store) packSummaryDays(b *branchStore) error {
 		s.sealing = done
 		s.mu.Unlock()
 		locked = false
-		release = s.config.Sealer.acquire()
+		release = s.config.CommitScheduler.acquire()
 		defer func() {
 			if !locked {
 				release()
@@ -233,7 +277,7 @@ func (s *Store) packSummaryDays(b *branchStore) error {
 	grouped := map[int64][]Summary{}
 	var days []int64
 	for _, sum := range b.summaries {
-		day := summaryDay(sum.Columns.Period[0])
+		day := s.summaryDay(b.branch, sum.Columns.Period[0])
 		if _, ok := grouped[day]; !ok {
 			days = append(days, day)
 		}
@@ -248,7 +292,7 @@ func (s *Store) packSummaryDays(b *branchStore) error {
 			if old, ok := b.summaryDays[day]; ok {
 				raw, e = readBytes(b.sum, old.Offset, old.Offset+old.Length)
 			} else {
-				raw, e = encodeSummaryDayLevel(day, max(day, first), day+summaryDayMS, grouped[day], true, level)
+				raw, e = encodeSummaryPACCodec(day, max(day, first), day+summaryDayMS, grouped[day], true, policy)
 			}
 			if e != nil {
 				return e
@@ -278,15 +322,18 @@ func (s *Store) packSummaryDays(b *branchStore) error {
 			}
 		}
 	}
-	rollups, e := calendarRollups(locations, first, cutoff)
+	rollups, e := calendarRollups(locations, first, cutoff, s.policyFor(b.branch).summaryOffsetHours())
 	if e != nil {
 		return e
 	}
-	rollupRaw := encodeCalendarRollups(first, cutoff, rollups)
-	if e = appendBoundedRecord(tmp, rollupRaw, maxSummaryDay+32); e != nil {
-		return e
+	if len(rollups) > 0 {
+		rollupRaw := encodeCalendarRollups(first, cutoff, rollups)
+		if e = appendBoundedRecord(tmp, rollupRaw, maxSummaryDay+32); e != nil {
+			return e
+		}
+		position += 8 + uint64(len(rollupRaw))
 	}
-	position += 8 + uint64(len(rollupRaw))
+
 	if e = tmp.Sync(); e != nil {
 		return e
 	}

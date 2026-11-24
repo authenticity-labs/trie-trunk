@@ -1,0 +1,40 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"firstLaunch\":true,\"localInstall\":true,\"reviewedImport\":true,\"nativeSQL\":true,\"filteredResults\":true,\"uuidv7\":true,\"noBrowserDatabase\":true,\"noOrigin\":true}}",
+  "nativeStderr": "2026/11/21 10:13:45 Snoot listening on http://127.0.0.1:60926 using Setup\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": false,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "nativePerformance": false,
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      3.68017578125,
+      3.21875,
+      3.09375
+    ],
+    "runtime": "d6334bfd34bd62b94ca22414a6980d51651bd30427a96a75b516661e3200a6b5",
+    "web": "f22c09bfee35396f527af0262d2bc9d48d23819baed53226b176ee8c255bcd38",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795274025618.5867,
+    "processMs": 4678.304375032894,
+    "loadAfter": [
+      3.54541015625,
+      3.1982421875,
+      3.0869140625
+    ]
+  }
+}

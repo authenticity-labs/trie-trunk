@@ -1,0 +1,310 @@
+{
+  "cache": "new cursor each run, same node; OS file cache not evicted; generation warms file cache; iteration 0 is first cursor, not cold physical disk",
+  "cases": [
+    {
+      "name": "first_page",
+      "runs": [
+        {
+          "fetch_ms": 0.024708,
+          "iteration": 0,
+          "projection_ms": 0.164417,
+          "rows": 100,
+          "selection_ms": 0.382083,
+          "total_ms": 0.573375
+        },
+        {
+          "fetch_ms": 0.014167,
+          "iteration": 1,
+          "projection_ms": 0.120375,
+          "rows": 100,
+          "selection_ms": 0.17075,
+          "total_ms": 0.306375
+        },
+        {
+          "fetch_ms": 0.012,
+          "iteration": 2,
+          "projection_ms": 0.11729200000000001,
+          "rows": 100,
+          "selection_ms": 0.16525,
+          "total_ms": 0.295584
+        },
+        {
+          "fetch_ms": 0.008624999999999999,
+          "iteration": 3,
+          "projection_ms": 0.12300000000000001,
+          "rows": 100,
+          "selection_ms": 0.1555,
+          "total_ms": 0.28816600000000003
+        },
+        {
+          "fetch_ms": 0.008457999999999999,
+          "iteration": 4,
+          "projection_ms": 0.12208299999999998,
+          "rows": 100,
+          "selection_ms": 0.154208,
+          "total_ms": 0.287
+        },
+        {
+          "fetch_ms": 0.008667,
+          "iteration": 5,
+          "projection_ms": 0.120166,
+          "rows": 100,
+          "selection_ms": 0.1575,
+          "total_ms": 0.287167
+        }
+      ]
+    },
+    {
+      "name": "rare",
+      "runs": [
+        {
+          "fetch_ms": 21.708042,
+          "iteration": 0,
+          "projection_ms": 0.12425000000000001,
+          "rows": 12,
+          "selection_ms": 0.156333,
+          "total_ms": 22.000542000000003
+        },
+        {
+          "fetch_ms": 19.776333,
+          "iteration": 1,
+          "projection_ms": 0.118458,
+          "rows": 12,
+          "selection_ms": 0.25416700000000003,
+          "total_ms": 20.160083
+        },
+        {
+          "fetch_ms": 19.644792000000002,
+          "iteration": 2,
+          "projection_ms": 0.11950000000000001,
+          "rows": 12,
+          "selection_ms": 0.232792,
+          "total_ms": 20.008625
+        },
+        {
+          "fetch_ms": 19.759542,
+          "iteration": 3,
+          "projection_ms": 0.114084,
+          "rows": 12,
+          "selection_ms": 0.23800000000000002,
+          "total_ms": 20.122542
+        },
+        {
+          "fetch_ms": 19.659333,
+          "iteration": 4,
+          "projection_ms": 0.113375,
+          "rows": 12,
+          "selection_ms": 0.22824999999999998,
+          "total_ms": 20.011208
+        },
+        {
+          "fetch_ms": 19.596667,
+          "iteration": 5,
+          "projection_ms": 0.11625,
+          "rows": 12,
+          "selection_ms": 0.238667,
+          "total_ms": 19.96125
+        }
+      ]
+    },
+    {
+      "name": "zero",
+      "runs": [
+        {
+          "fetch_ms": 20.040875,
+          "iteration": 0,
+          "projection_ms": 0.000541,
+          "rows": 0,
+          "selection_ms": 0.233083,
+          "total_ms": 20.277791999999998
+        },
+        {
+          "fetch_ms": 19.333708,
+          "iteration": 1,
+          "projection_ms": 0.000417,
+          "rows": 0,
+          "selection_ms": 0.329958,
+          "total_ms": 19.666957999999997
+        },
+        {
+          "fetch_ms": 19.67075,
+          "iteration": 2,
+          "projection_ms": 0.00045900000000000004,
+          "rows": 0,
+          "selection_ms": 0.30112500000000003,
+          "total_ms": 19.975040999999997
+        },
+        {
+          "fetch_ms": 19.776374999999998,
+          "iteration": 3,
+          "projection_ms": 0.000458,
+          "rows": 0,
+          "selection_ms": 0.32475,
+          "total_ms": 20.10425
+        },
+        {
+          "fetch_ms": 19.713792,
+          "iteration": 4,
+          "projection_ms": 0.000458,
+          "rows": 0,
+          "selection_ms": 0.2775,
+          "total_ms": 19.994125
+        },
+        {
+          "fetch_ms": 19.651249999999997,
+          "iteration": 5,
+          "projection_ms": 0.000292,
+          "rows": 0,
+          "selection_ms": 0.251708,
+          "total_ms": 19.905833
+        }
+      ]
+    },
+    {
+      "name": "all_rows",
+      "runs": [
+        {
+          "fetch_ms": 5.874176000000037,
+          "iteration": 0,
+          "projection_ms": 244.39892699999996,
+          "rows": 240000,
+          "selection_ms": 0.257083,
+          "total_ms": 250.79924999999997
+        },
+        {
+          "fetch_ms": 5.418900000000036,
+          "iteration": 1,
+          "projection_ms": 231.6117409999997,
+          "rows": 240000,
+          "selection_ms": 0.257375,
+          "total_ms": 237.54666699999999
+        },
+        {
+          "fetch_ms": 5.378966000000022,
+          "iteration": 2,
+          "projection_ms": 231.49075200000001,
+          "rows": 240000,
+          "selection_ms": 0.24004199999999998,
+          "total_ms": 237.361
+        },
+        {
+          "fetch_ms": 5.490973000000031,
+          "iteration": 3,
+          "projection_ms": 232.6024740000004,
+          "rows": 240000,
+          "selection_ms": 0.258833,
+          "total_ms": 238.605208
+        },
+        {
+          "fetch_ms": 5.405120000000022,
+          "iteration": 4,
+          "projection_ms": 231.60594100000017,
+          "rows": 240000,
+          "selection_ms": 0.265,
+          "total_ms": 237.529666
+        },
+        {
+          "fetch_ms": 5.380062000000022,
+          "iteration": 5,
+          "projection_ms": 231.42325999999986,
+          "rows": 240000,
+          "selection_ms": 0.260375,
+          "total_ms": 237.313625
+        }
+      ]
+    }
+  ],
+  "dataset": {
+    "beds_bytes": 26179368,
+    "branch": 1,
+    "fields": 10,
+    "from": 1794960000000,
+    "generation_in_query_timings": false,
+    "generation_ms": 170.024083,
+    "hours": 24,
+    "identity": "deterministic test entropy, not production random generation",
+    "index_bytes": 1440144,
+    "rare_matches": 12,
+    "records": 240000,
+    "summary_packs": 0,
+    "time_bytes": 140608,
+    "to": 1795046400000
+  },
+  "node_open_ms": 0.77775,
+  "scope": "release native reader; all typed encoding and disk publication occur before these read timers; fetch includes lazy planning, positional reads, decoding and filtering; projection materializes Rust objects; excludes JSON/socket/UI",
+  "summary_audit": {
+    "definitions": 69,
+    "names": [
+      "summary",
+      "numeric-uint1",
+      "numeric-uint2",
+      "numeric-uint3",
+      "numeric-uint4",
+      "numeric-uint5",
+      "numeric-uint6",
+      "numeric-uint7",
+      "numeric-uint8",
+      "numeric-uint9",
+      "numeric-uint10",
+      "numeric-uint11",
+      "numeric-uint12",
+      "numeric-uint13",
+      "numeric-uint14",
+      "numeric-uint15",
+      "numeric-uint16",
+      "numeric-int1",
+      "numeric-int2",
+      "numeric-int3",
+      "numeric-int4",
+      "numeric-int5",
+      "numeric-int6",
+      "numeric-int7",
+      "numeric-int8",
+      "numeric-int9",
+      "numeric-int10",
+      "numeric-int11",
+      "numeric-int12",
+      "numeric-int13",
+      "numeric-int14",
+      "numeric-int15",
+      "numeric-int16",
+      "numeric-float4",
+      "numeric-float8",
+      "temporal-uint1",
+      "temporal-uint2",
+      "temporal-uint3",
+      "temporal-uint4",
+      "temporal-uint5",
+      "temporal-uint6",
+      "temporal-uint7",
+      "temporal-uint8",
+      "temporal-uint9",
+      "temporal-uint10",
+      "temporal-uint11",
+      "temporal-uint12",
+      "temporal-uint13",
+      "temporal-uint14",
+      "temporal-uint15",
+      "temporal-uint16",
+      "temporal-int1",
+      "temporal-int2",
+      "temporal-int3",
+      "temporal-int4",
+      "temporal-int5",
+      "temporal-int6",
+      "temporal-int7",
+      "temporal-int8",
+      "temporal-int9",
+      "temporal-int10",
+      "temporal-int11",
+      "temporal-int12",
+      "temporal-int13",
+      "temporal-int14",
+      "temporal-int15",
+      "temporal-int16",
+      "boolean",
+      "categories"
+    ],
+    "template_matches_bundled_rx": true
+  }
+}

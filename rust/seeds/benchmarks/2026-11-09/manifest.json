@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-09",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "architecture": "arm64",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "node": "v26.5.0",
+  "fixture": {
+    "events": 10000,
+    "fields": 32,
+    "pack_bytes": 9209656,
+    "source": "examples/ingress_fixture.rs",
+    "entry": "SeedDefinition.ingest -> typed setters -> SeedPack.load -> seal",
+    "compression": "none in timed result-delivery benchmark; Zstd separately round-trip tested"
+  },
+  "measurement": {
+    "warmups": 2,
+    "samples": 5,
+    "clock": "performance.now",
+    "included": [
+      "Rust cursor scan and fetch (all rows selected)",
+      "WASM host result creation",
+      "specified field reads"
+    ],
+    "excluded": [
+      "fixture generation and encoding",
+      "Definition registration",
+      "Pack upload/opening",
+      "disk and network IO",
+      "UI rendering"
+    ],
+    "heap": "Incremental JS heap with result kept globally reachable during forced GC. Backing Pack allocation reported separately; WASM linear memory is capacity, not live allocations."
+  },
+  "tests": {
+    "data_seeds_native": 12,
+    "pill_packer_selective_common_variable_batch": 20,
+    "pill_packer_boxes_lifecycle": 8,
+    "wasm": "js/test.mjs passed"
+  },
+  "status": {
+    "sql_parser": false,
+    "parallel_worker_scheduler": false,
+    "storage_publication_replication": false,
+    "active_consumer_integration": false
+  },
+  "files": {
+    "rust/seeds/.gitignore": "39bdf9e87f581eebf565bfda472811a38f58d79b6964ae3406369aca1eb8806c",
+    "rust/seeds/Cargo.lock": "71208047e9ad5089649ac71984582094548f1d921469265a0a0c53748d5b1f87",
+    "rust/seeds/Cargo.toml": "5f61c72630f66e52a7ec397f839a7a75c946ad9fcc4934780505419f246be225",
+    "rust/seeds/examples/ingress_fixture.rs": "8193421ab51bee80444d3c96de562587ef982ca84afb4c8c67b55fe0b92d1d2a",
+    "rust/seeds/js/benchmark.mjs": "6c0eee1f7d0146ba82ede234a006a23831ef50e0b1e4ef8535775a683a7504c2",
+    "rust/seeds/js/build.mjs": "caf245339bd6f44127e4d2121e198668d5bb3764b0679b7a434ec84c894a2bba",
+    "rust/seeds/js/data-seeds.wasm": "f530629dceec92fd2f1406f4c8f18b501681588faa55453065f3753f95459dd8",
+    "rust/seeds/js/package.json": "b9d9cb0c05bcff088305387ff0a2aaff8f5a2b9b12636d41bab261a7be96959e",
+    "rust/seeds/js/seeds.mjs": "3d7ad9494da8dbdda3b1c10740e9569a26e77c56bba3d08213a6a01cf2776820",
+    "rust/seeds/js/test.mjs": "88e29e2918229c482dd06a9102b91ba63c0f885bb82fe46efbd17ca4ed909ae0",
+    "rust/seeds/src/lib.rs": "5aadaebebc3bb5084b1b603aeceae24f5d0cc5421733c40d2a8a0c6661faf924",
+    "rust/seeds/src/query.rs": "16c3383ab083c0c351dcd9a2239bdc898757b2bf5cfdcb6c865ed2b87dd28e8b",
+    "rust/seeds/src/store.rs": "fc07a028483d75730f5f6533a12f35eef37bfa7923bfeffe323c23acf5707490",
+    "rust/seeds/src/value.rs": "b6b0136598f2d2b4c9738ae38d9e1ef08214ab8699a58fa66fcdea30d50f3802",
+    "rust/seeds/tests/query.rs": "d14857b6d96e9c2f17951b488f9697a6766c99c6a3e589f6bf6b87ff8074323e",
+    "rust/seeds/wasm/Cargo.lock": "fc0e01451b7ccf2ab115c435c89ae1fc585f7c7a0b0299dcd6ce84a2f164f952",
+    "rust/seeds/wasm/Cargo.toml": "6d113289bb76a7421ab46d14a9000438c4d2a83f4df7a4ad0ddf428c78c4d8d9",
+    "rust/seeds/wasm/src/lib.rs": "50d330d4c8e9daf2df315d0815cd83ecb43c356f62a9784687ee9222cf049ffe",
+    "/Users/Shared/code/applications/pill-packer/rust/src/api/decoder.rs": "7fcb62da280cebe8da7a8bdff8d04de8cf28e9ddd98d901e1e5d5e694f046fcb"
+  }
+}

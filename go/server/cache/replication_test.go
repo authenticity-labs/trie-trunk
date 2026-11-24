@@ -200,9 +200,9 @@ func TestObjectLookupRequiresIndex(t *testing.T) {
 			}
 			reject()
 			if got := collect(t, s, Write, query.From, query.To); len(got) != 3 {
-				t.Fatal("time-only search must remain available without collection.idx")
+				t.Fatal("time-only search must remain available without collection.indx")
 			}
-			config := filepath.Join(s.root, "registry.cfg")
+			config := configurationPath(s.config.Root, []string{s.config.Cache})
 			if err := os.WriteFile(config, []byte("version=1\n[defaults]\nobject_index=true\n"), 0600); err != nil {
 				t.Fatal(err)
 			}
@@ -259,7 +259,7 @@ func TestConfigOverridesAndInvalidReload(t *testing.T) {
 	}
 	defer s.Close()
 	old := s.policy
-	e = os.WriteFile(filepath.Join(s.root, "registry.cfg"), []byte("version=999\n"), 0600)
+	e = os.WriteFile(configurationPath(s.config.Root, []string{s.config.Cache}), []byte("version=999\n"), 0600)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -382,7 +382,7 @@ func TestRetentionPreservesRowsAndInvalidatesReplay(t *testing.T) {
 		t.Fatal("initial generation sequence")
 	}
 	raw := []byte("version=1\ntimezone='America/New_York'\n[defaults]\nobject_index=true\n[defaults.retention]\nwrite='1d'\nerror='1d'\n")
-	if e = os.WriteFile(filepath.Join(s.root, "registry.cfg"), raw, 0600); e != nil {
+	if e = os.WriteFile(configurationPath(s.config.Root, []string{s.config.Cache}), raw, 0600); e != nil {
 		t.Fatal(e)
 	}
 	if e = s.ReloadPolicy(); e != nil {
@@ -411,7 +411,7 @@ func TestRetentionPreservesRowsAndInvalidatesReplay(t *testing.T) {
 	if token, e := s.Token(id); e != nil || token.Collection <= before.Collection {
 		t.Fatalf("write retention failed to invalidate replay: %+v %v", token, e)
 	}
-	if _, e = os.Stat(filepath.Join(s.dir, "write.idx")); !os.IsNotExist(e) {
+	if _, e = os.Stat(filepath.Join(s.dir, "write.indx")); !os.IsNotExist(e) {
 		t.Fatalf("old generation not removed: %v", e)
 	}
 	if e = s.Close(); e != nil {
@@ -449,7 +449,7 @@ func TestRetentionCleansDisabledObjectIndex(t *testing.T) {
 	if e = s.Close(); e != nil {
 		t.Fatal(e)
 	}
-	config := filepath.Join(c.Root, c.Cache, "registry.cfg")
+	config := configurationPath(c.Root, []string{c.Cache})
 	if e = os.WriteFile(config, []byte("version=1\ntimezone='America/New_York'\n[defaults]\nobject_index=false\n[defaults.retention]\nwrite='1d'\n"), 0600); e != nil {
 		t.Fatal(e)
 	}
@@ -468,7 +468,7 @@ func TestRetentionCleansDisabledObjectIndex(t *testing.T) {
 	if s.objects != nil {
 		t.Fatal("maintenance retained disabled index directory")
 	}
-	f, e := os.Open(filepath.Join(s.collection, "collection.idx"))
+	f, e := os.Open(filepath.Join(s.collection, "collection.indx"))
 	if e != nil {
 		t.Fatal(e)
 	}

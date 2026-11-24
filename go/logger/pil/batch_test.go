@@ -25,7 +25,7 @@ func TestTimedBatchAcknowledgementAndCompression(t *testing.T) {
 	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
 		if r.URL.Path == "/ingest" {
 			requests.Add(1)
-			if r.Header.Get("Content-Encoding") != "gzip" {
+			if r.Header.Get("Content-Encoding") != "zstd" {
 				t.Error("batch did not use HTTP compression")
 			}
 		}
@@ -94,7 +94,7 @@ func TestTimedBatchTimerAndClose(t *testing.T) {
 				rec := httptest.NewRecorder()
 				rec.Header().Set("PIL-Version", "2")
 				rec.Header().Set("Definition-Version", r.Header.Get("Definition-Version"))
-				if r.URL.Path == "/demo/registries" {
+				if r.URL.Path == "/demo/definitions" {
 					rec.WriteHeader(204)
 				} else {
 					_, _ = io.Copy(io.Discard, r.Body)

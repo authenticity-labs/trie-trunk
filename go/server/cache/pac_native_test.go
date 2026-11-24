@@ -56,6 +56,9 @@ func TestPACNativePlacementAndRows(t *testing.T) {
 			t.Fatal(e)
 		}
 	}
+	if p.AddressBytes != 2 {
+		t.Fatal("small native PAC did not select compact directory")
+	}
 	local, err := PACLocalRows(p, decoded, rows)
 	if err != nil {
 		t.Fatal(err)
@@ -80,7 +83,7 @@ func TestPACNativePlacementAndRows(t *testing.T) {
 		t.Fatal("wrong starting page accepted")
 	}
 	if dir := os.Getenv("PIL_PAC_FIXTURE_DIR"); dir != "" {
-		for name, b := range map[string][]byte{"native.pac": p.Bytes, "native.idx": rows, "local.idx": local} {
+		for name, b := range map[string][]byte{"native.pac": p.Bytes, "native.indx": rows, "local.indx": local} {
 			if err = os.WriteFile(filepath.Join(dir, name), b, 0644); err != nil {
 				t.Fatal(err)
 			}

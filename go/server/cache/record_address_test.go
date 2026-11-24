@@ -167,7 +167,7 @@ func TestOptionalSharedReferenceInPIL(t *testing.T) {
 				t.Fatal(e)
 			}
 			b := s.branches[Error]
-			var reader podsReader
+			var reader packsReader
 			stored, e := reader.read(b, b.runs[0].Start, s.row)
 			if e != nil {
 				t.Fatal(e)

@@ -2,28 +2,26 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 
 	"trie-trunk/go/server/cache"
 )
 
-// All listeners share one sealing admission limit. Environment changes take
+// All listeners share one Commit Scheduler admission limit. Environment changes take
 // effect on process restart; resource definitions do not own scheduler limits.
 var nativeRuntime struct {
 	sync.Once
 	memory      uint64
 	liveRecords int
-	sealer      *cache.SealScheduler
+	commits     *cache.CommitScheduler
 	err         error
 }
 
-func configureNativeRuntime() (uint64, *cache.SealScheduler, error) {
+func configureNativeRuntime() (uint64, *cache.CommitScheduler, error) {
 	nativeRuntime.Do(func() {
 		workers := 1
 		if raw, ok := os.LookupEnv("TRUNK_NATIVE_MEMORY_BYTES"); ok {
@@ -47,17 +45,17 @@ func configureNativeRuntime() (uint64, *cache.SealScheduler, error) {
 				return
 			}
 		}
-		nativeRuntime.sealer = cache.NewSealScheduler(workers)
+		nativeRuntime.commits = cache.NewCommitScheduler(workers)
 	})
-	return nativeRuntime.memory, nativeRuntime.sealer, nativeRuntime.err
+	return nativeRuntime.memory, nativeRuntime.commits, nativeRuntime.err
 }
 
 type nativePoolKey struct{}
 type nativeEntry struct {
-	store  *cache.Endpoint
-	digest [32]byte
-	tenant string
-	refs   int
+	store   *cache.Endpoint
+	tenant  string
+	storage string
+	refs    int
 }
 type nativePool struct {
 	sync.Mutex
@@ -66,42 +64,24 @@ type nativePool struct {
 
 // Combined ingest/serve listeners share one writer and staging queue. Separate
 // processes still honor the on-disk writer lease.
-func openNative(ctx context.Context, root, name, tenant, definition string) (*cache.Endpoint, func() error, error) {
+func openNative(ctx context.Context, root, name, tenant, storage string) (*cache.Endpoint, func() error, error) {
 	if name == "" || tenant == "" {
 		return nil, nil, fmt.Errorf("ingress requires --cache and --tenant")
 	}
-	var layout *cache.Layout
-	var e error
-	if definition != "" {
-		var raw []byte
-		raw, e = os.ReadFile(definition)
-		if e != nil {
-			return nil, nil, e
-		}
-		if strings.HasPrefix(strings.TrimSpace(string(raw)), "{") {
-			var d cache.Definition
-			if e = json.Unmarshal(raw, &d); e == nil {
-				layout, e = cache.Compile(d)
-			}
-		} else {
-			layout, e = cache.ParseDefinition(raw)
-		}
-	}
+	memory, commits, e := configureNativeRuntime()
 	if e != nil {
 		return nil, nil, e
 	}
-	var digest [32]byte
-	if layout != nil {
-		digest = layout.Digest
-	}
-	memory, sealer, e := configureNativeRuntime()
-	if e != nil {
-		return nil, nil, e
-	}
-	config := cache.Config{Root: root, Cache: name, Tenant: tenant, Layout: layout, NativeMemoryBytes: memory, LiveIndexRecords: nativeRuntime.liveRecords, Sealer: sealer}
+	config := cache.Config{Root: root, Cache: name, Tenant: tenant, Storage: storage, NativeMemoryBytes: memory, LiveIndexRecords: nativeRuntime.liveRecords, CommitScheduler: commits}
 	pool, _ := ctx.Value(nativePoolKey{}).(*nativePool)
 	if pool == nil {
 		s, e := cache.OpenEndpoint(config)
+		if e == nil {
+			e = s.EnableQueryEvents()
+			if e != nil {
+				s.Close()
+			}
+		}
 		if e != nil {
 			return nil, nil, e
 		}
@@ -115,15 +95,21 @@ func openNative(ctx context.Context, root, name, tenant, definition string) (*ca
 	defer pool.Unlock()
 	entry := pool.entries[absolute]
 	if entry != nil {
-		if entry.digest != digest || entry.tenant != tenant {
-			return nil, nil, fmt.Errorf("listeners sharing a cache require the same tenant and definition")
+		if entry.tenant != tenant || entry.storage != storage {
+			return nil, nil, fmt.Errorf("listeners sharing a cache require the same tenant and storage configuration")
 		}
 	} else {
 		s, e := cache.OpenEndpoint(config)
+		if e == nil {
+			e = s.EnableQueryEvents()
+			if e != nil {
+				s.Close()
+			}
+		}
 		if e != nil {
 			return nil, nil, e
 		}
-		entry = &nativeEntry{store: s, digest: digest, tenant: tenant}
+		entry = &nativeEntry{store: s, tenant: tenant, storage: storage}
 		pool.entries[absolute] = entry
 	}
 	entry.refs++

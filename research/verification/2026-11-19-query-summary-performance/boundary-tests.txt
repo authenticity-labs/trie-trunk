@@ -1,0 +1,12 @@
+(node:51785) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ response wait excludes index publication dependencies (1.067541ms)
+✔ resource phases distinguish dispatch, upstream, and delivery; malformed diagnostics are ignored (10.7035ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.860125

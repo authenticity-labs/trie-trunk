@@ -1,5 +1,5 @@
-import type {LogEvent} from '../../client/services/dictionary';
-import {eventId} from '../../client/services/dictionary';
+import type {LogEvent} from '../../../snoot/client/services/dictionary';
+import {eventId} from '../../../snoot/client/services/dictionary';
 type Notebook={id:string;name:string;createdAt:number;lastUsed:number};
 const books:Notebook[]=[{id:'example',name:'Payment Investigation',createdAt:1793145600000,lastUsed:1793145600000}];
 const saved=new Map<string,Set<string>>();

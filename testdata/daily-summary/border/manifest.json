@@ -1,0 +1,424 @@
+{
+  "result": {
+    "analytics": {
+      "from": 1792454700000,
+      "to": 1792540500000,
+      "days": [
+        {
+          "key": "6ea415c09b09a2af1e525bd0fa65dc2b1cbec5aa9998df9b746c3e376484da12",
+          "source": "demo/payment/transactions.v1/read",
+          "definition": "5147a8849655571b20e127b57f333c13669af33d48fd20d25fdbb2d087e08440",
+          "generation": "4c6be74ad7ae167e905b8626f65a0dd2",
+          "day": 1792454400000,
+          "sealed": true
+        },
+        {
+          "key": "6ea415c09b09a2af1e525bd0fa65dc2b1cbec5aa9998df9b746c3e376484da12",
+          "source": "demo/payment/transactions.v1/write",
+          "definition": "5147a8849655571b20e127b57f333c13669af33d48fd20d25fdbb2d087e08440",
+          "generation": "8c454b6c5aac0133840466e5d370ac9e",
+          "day": 1792454400000,
+          "sealed": true
+        },
+        {
+          "key": "fe48b4f7572ba189832cd703153dbdd227927dee4bc57cbcd2689b795f0f62dc",
+          "source": "demo/payment/transactions.v1/error",
+          "definition": "5147a8849655571b20e127b57f333c13669af33d48fd20d25fdbb2d087e08440",
+          "generation": "8975e0aa1cd2adb7857413b39779edb2",
+          "day": 1792454400000,
+          "sealed": true
+        }
+      ],
+      "border": [
+        {
+          "period": 0,
+          "labels": [
+            "payment",
+            "transactions.v1",
+            "Unspecified",
+            "ERROR"
+          ],
+          "count": 1,
+          "errors": 1,
+          "durations": [
+            [
+              298,
+              1
+            ]
+          ]
+        },
+        {
+          "period": 0,
+          "labels": [
+            "payment",
+            "transactions.v1",
+            "Unspecified",
+            "INFO"
+          ],
+          "count": 2,
+          "errors": 0,
+          "durations": [
+            [
+              298,
+              2
+            ]
+          ]
+        }
+      ]
+    },
+    "cursor": "f0ub_CUo5_VoCYEKvyST50yFpv-eM18Fz3aUl2OcLZV7IlF1ZXJ5IjoiIiwiU2NvcGUiOiJkZW1vL3BheW1lbnQvdHJhbnNhY3Rpb25zLnYxLyoiLCJGcm9tIjoiMjAyNi0xMC0yMFQwMDowMTowMFoiLCJUbyI6IjIwMjYtMTAtMjBUMjM6NTk6MDBaIiwiRXhwaXJlcyI6MTc5MzcyMjA0MiwiU291cmNlcyI6W3siUmV0aXJlZCI6MCwiRGVmaW5pdGlvbiI6IjUxNDdhODg0OTY1NTU3MWIyMGUxMjdiNTdmMzMzYzEzNjY5YWYzM2Q0OGZkMjBkMjVmZGJiMmQwODdlMDg0NDAiLCJHZW5lcmF0aW9uIjoiNGM2YmU3NGFkN2FlMTY3ZTkwNWI4NjI2ZjY1YTBkZDIiLCJCcmFuY2giOjAsIlRhaWwiOjMxMiwiRmluYWxpemVkIjoxNzkyNTQwODAwMDAwfSx7IlJldGlyZWQiOjAsIkRlZmluaXRpb24iOiI1MTQ3YTg4NDk2NTU1NzFiMjBlMTI3YjU3ZjMzM2MxMzY2OWFmMzNkNDhmZDIwZDI1ZmRiYjJkMDg3ZTA4NDQwIiwiR2VuZXJhdGlvbiI6IjhjNDU0YjZjNWFhYzAxMzM4NDA0NjZlNWQzNzBhYzllIiwiQnJhbmNoIjoxLCJUYWlsIjozMTIsIkZpbmFsaXplZCI6MTc5MjU0MDgwMDAwMH0seyJSZXRpcmVkIjowLCJEZWZpbml0aW9uIjoiNTE0N2E4ODQ5NjU1NTcxYjIwZTEyN2I1N2YzMzNjMTM2NjlhZjMzZDQ4ZmQyMGQyNWZkYmIyZDA4N2UwODQ0MCIsIkdlbmVyYXRpb24iOiI4OTc1ZTBhYTFjZDJhZGI3ODU3NDEzYjM5Nzc5ZWRiMiIsIkJyYW5jaCI6MiwiVGFpbCI6MzEyLCJGaW5hbGl6ZWQiOjE3OTI1NDA4MDAwMDB9XSwiTGFzdElEIjoiIiwiTGFzdFNvdXJjZSI6MCwiTGFzdFJvdyI6MH0",
+    "snapshot": "b931b38e829e8080d1cc88cdeefc7f71b7b1d9a15c702f456cb6c773a54b2700",
+    "summaryVersion": "58ea92feaa1a649963819dda848cbd807ba3c3b64c7b1d59fb61de80adce2184",
+    "summary": {
+      "statistics": {
+        "complete": true,
+        "matched": 3,
+        "evaluated": 3,
+        "services": [
+          {
+            "name": "payment",
+            "count": 3
+          }
+        ],
+        "levels": [
+          {
+            "name": "INFO",
+            "count": 2
+          },
+          {
+            "name": "ERROR",
+            "count": 1
+          }
+        ],
+        "duration": {
+          "count": 3,
+          "average": 298,
+          "min": 298,
+          "max": 298
+        },
+        "operations": {
+          "errors": [
+            {
+              "service": "payment",
+              "resource": "transactions.v1",
+              "operation": "Unspecified",
+              "value": 1,
+              "samples": 1
+            }
+          ],
+          "latency": [
+            {
+              "service": "payment",
+              "resource": "transactions.v1",
+              "operation": "Unspecified",
+              "value": 298,
+              "samples": 3
+            }
+          ]
+        }
+      },
+      "from": 1792454400000,
+      "to": 1792540740000,
+      "step": 1500000,
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "count": 3,
+      "status": "committed-snapshot"
+    },
+    "page": [],
+    "committedThrough": 1792540740000,
+    "provisional": false
+  },
+  "baseline": {
+    "statistics": {
+      "complete": false,
+      "matched": 861,
+      "evaluated": 828,
+      "services": [
+        {
+          "name": "payment",
+          "count": 828
+        }
+      ],
+      "levels": [
+        {
+          "name": "INFO",
+          "count": 552
+        },
+        {
+          "name": "ERROR",
+          "count": 276
+        }
+      ],
+      "duration": {
+        "count": 552,
+        "average": 161,
+        "min": 24,
+        "max": 298
+      },
+      "operations": {
+        "errors": [
+          {
+            "service": "payment",
+            "resource": "transactions.v1",
+            "operation": "Unspecified",
+            "value": 276,
+            "samples": 276
+          }
+        ],
+        "latency": [
+          {
+            "service": "payment",
+            "resource": "transactions.v1",
+            "operation": "Unspecified",
+            "value": 285,
+            "samples": 552
+          }
+        ]
+      }
+    },
+    "from": 1792454460000,
+    "to": 1792540740000,
+    "step": 1500000,
+    "counts": [
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      6
+    ],
+    "errors": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      2
+    ],
+    "count": 861,
+    "status": "committed-snapshot"
+  }
+}

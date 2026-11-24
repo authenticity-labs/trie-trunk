@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,10 +14,10 @@ import (
 )
 
 // Quotas are persisted policy only. Deletion is deliberately not connected here.
-// Intermediate limits gate descendant allocations; only leaves reserve space.
+// Each explicit allotment reserves capacity from its nearest allocating ancestor.
 type quotaRecovery struct {
-	Unit  string  `json:"unit"`
-	Value float64 `json:"value"`
+	Unit  string  `json:"unit" toml:"unit"`
+	Value float64 `json:"value" toml:"value"`
 }
 type quotaScope struct {
 	Managed  *bool          `json:"managed,omitempty"`
@@ -26,10 +25,18 @@ type quotaScope struct {
 	Limit    *uint64        `json:"limitBytes,omitempty"`
 	Recovery *quotaRecovery `json:"recovery,omitempty"`
 }
+type quotaGroup struct {
+	Path            []string `json:"path"`
+	ResourceType    string   `json:"resourceType"`
+	Managed         bool     `json:"managed"`
+	Limit           uint64   `json:"limitBytes"`
+	RecoveryPercent float64  `json:"recoveryPercent"`
+}
 type quotaPolicy struct {
 	Managed *bool        `json:"managed,omitempty"`
 	Pool    *uint64      `json:"poolBytes"`
 	Scopes  []quotaScope `json:"scopes"`
+	Groups  []quotaGroup `json:"groups,omitempty"`
 }
 type quotaDisk struct {
 	Total     uint64 `json:"totalBytes"`
@@ -48,17 +55,37 @@ func scopeWithin(path, parent []string) bool {
 	return len(path) >= len(parent) && slices.Equal(path[:len(parent)], parent)
 }
 func quotaManaged(flag *bool, depth int) bool {
-	if flag != nil {
-		return *flag
+	return depth == 0 || flag == nil || *flag
+}
+func resourceQuotaType(branch string) string {
+	switch branch {
+	case "collection":
+		return "Collections"
+	case "job", "task":
+		return "Jobs"
+	case "read", "write", "info", "error", "debug", "trace":
+		return "Logs"
+	default:
+		return "Custom"
 	}
-	return depth == 0 || depth == 4
+}
+func (p quotaPolicy) sharedQuota(path []string) bool {
+	if len(path) != 4 {
+		return false
+	}
+	for _, g := range p.Groups {
+		if g.Managed && scopeWithin(path, g.Path) && resourceQuotaType(path[3]) == g.ResourceType {
+			return true
+		}
+	}
+	return false
 }
 func validateQuotas(p quotaPolicy, maximum uint64) error {
-	if len(p.Scopes) > 10000 {
+	if len(p.Scopes)+len(p.Groups) > 10000 {
 		return fmt.Errorf("too many quota scopes")
 	}
-	rootManaged := quotaManaged(p.Managed, 0)
-	if rootManaged && p.Pool != nil && *p.Pool > maximum {
+	rootManaged := true
+	if p.Pool != nil && (*p.Pool > maximum || *p.Pool > (1<<53)-1) {
 		return fmt.Errorf("Trunk pool exceeds available disk capacity")
 	}
 	seen := map[string]bool{}
@@ -77,7 +104,10 @@ func validateQuotas(p quotaPolicy, maximum uint64) error {
 			return fmt.Errorf("duplicate quota scope")
 		}
 		seen[key] = true
-		if quotaManaged(s.Managed, len(s.Path)) && s.Limit != nil && p.Pool == nil && rootManaged {
+		if s.Limit != nil && *s.Limit > (1<<53)-1 {
+			return fmt.Errorf("invalid allotment")
+		}
+		if quotaManaged(s.Managed, len(s.Path)) && s.Limit != nil && p.Pool == nil {
 			return fmt.Errorf("set the Trunk pool before assigning limits")
 		}
 		if s.Recovery != nil {
@@ -87,41 +117,65 @@ func validateQuotas(p quotaPolicy, maximum uint64) error {
 			}
 		}
 	}
-	pool := p.Pool
-	if !rootManaged || pool == nil {
-		pool = &maximum
-	}
-	gates := []quotaScope{{Path: []string{}, Limit: pool}}
-	for _, scope := range p.Scopes {
-		if quotaManaged(scope.Managed, len(scope.Path)) {
-			gates = append(gates, scope)
+	groups := map[string]bool{}
+	for _, g := range p.Groups {
+		if len(g.Path) != 3 || !slices.Contains([]string{"Logs", "Collections", "Jobs", "Custom"}, g.ResourceType) || math.IsNaN(g.RecoveryPercent) || math.IsInf(g.RecoveryPercent, 0) || g.RecoveryPercent < 0 || g.RecoveryPercent > 100 || g.Limit > (1<<53)-1 {
+			return fmt.Errorf("invalid resource-type quota")
 		}
-	}
-	for _, gate := range gates {
-		if gate.Limit == nil {
-			continue
-		}
-		var assigned uint64
-		for _, s := range p.Scopes {
-			if !quotaManaged(s.Managed, len(s.Path)) || !scopeWithin(s.Path, gate.Path) {
-				continue
-			}
-			if s.Limit != nil {
-				if *s.Limit > *gate.Limit {
-					return fmt.Errorf("scope limit exceeds its ancestor limit")
-				}
-				if len(s.Path) == 4 {
-					if *s.Limit > *gate.Limit-assigned {
-						return fmt.Errorf("leaf allocations exceed their shared pool")
-					}
-					assigned += *s.Limit
-				}
-			}
-			if s.Recovery != nil && s.Recovery.Unit == "bytes" && s.Recovery.Value > float64(*gate.Limit) {
-				return fmt.Errorf("recovery amount exceeds the scope limit")
+		for _, part := range g.Path {
+			if part == "" || len(part) > 256 {
+				return fmt.Errorf("invalid quota group scope")
 			}
 		}
+		key := storageKey(g.Path) + ":" + g.ResourceType
+		if groups[key] {
+			return fmt.Errorf("duplicate resource-type quota")
+		}
+		groups[key] = true
+		if g.Managed && rootManaged && p.Pool == nil {
+			return fmt.Errorf("set the Trunk pool before assigning limits")
+		}
 	}
+	pool := maximum
+	if p.Pool != nil {
+		pool = *p.Pool
+	}
+	type allocation struct {
+		path     []string
+		limit    uint64
+		group    bool
+		recovery *quotaRecovery
+	}
+	entries := []allocation{{limit: pool}}
+	for _, s := range p.Scopes {
+		if s.Limit != nil && quotaManaged(s.Managed, len(s.Path)) && !p.sharedQuota(s.Path) {
+			entries = append(entries, allocation{path: s.Path, limit: *s.Limit, recovery: s.Recovery})
+		}
+	}
+	for _, g := range p.Groups {
+		if g.Managed {
+			entries = append(entries, allocation{path: g.Path, limit: g.Limit, group: true})
+		}
+	}
+	assigned := make([]uint64, len(entries))
+	for i := 1; i < len(entries); i++ {
+		child := entries[i]
+		parent := 0
+		for j := 1; j < len(entries); j++ {
+			candidate := entries[j]
+			if i != j && !candidate.group && scopeWithin(child.path, candidate.path) && (len(candidate.path) < len(child.path) || child.group) && len(candidate.path) > len(entries[parent].path) {
+				parent = j
+			}
+		}
+		if child.limit > entries[parent].limit-assigned[parent] {
+			return fmt.Errorf("child allotments exceed their source pool")
+		}
+		assigned[parent] += child.limit
+		if child.recovery != nil && child.recovery.Unit == "bytes" && child.recovery.Value > float64(child.limit) {
+			return fmt.Errorf("recovery amount exceeds the scope limit")
+		}
+	}
+
 	return nil
 }
 func quotaCapacity(root string) (quotaDisk, error) {
@@ -161,20 +215,6 @@ func quotaCapacity(root string) (quotaDisk, error) {
 	d.Maximum = min(d.Total, d.Available+d.Owned)
 	return d, err
 }
-func readQuotaPolicy(path string) (quotaPolicy, string, error) {
-	raw, err := os.ReadFile(path)
-	if os.IsNotExist(err) {
-		return quotaPolicy{Scopes: []quotaScope{}}, "unset", nil
-	}
-	if err != nil {
-		return quotaPolicy{}, "", err
-	}
-	var p quotaPolicy
-	if err = json.Unmarshal(raw, &p); err != nil {
-		return p, "", err
-	}
-	return p, fmt.Sprintf("%x", sha256.Sum256(raw)), nil
-}
 func (p *Endpoint) quotaHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" && r.Method != "PUT" {
 		w.Header().Set("Allow", "GET, PUT")
@@ -186,7 +226,7 @@ func (p *Endpoint) quotaHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// A file lock serializes publications across endpoints sharing this facility.
-	lock, err := os.OpenFile(filepath.Join(p.config.Root, ".quotas.lock"), os.O_CREATE|os.O_RDWR, 0600)
+	lock, err := os.OpenFile(filepath.Join(p.config.Root, ".configurations.lock"), os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
 		http.Error(w, "could not open quota lock", 500)
 		return
@@ -201,8 +241,7 @@ func (p *Endpoint) quotaHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer syscall.Flock(int(lock.Fd()), syscall.LOCK_UN)
-	path := filepath.Join(p.config.Root, "quotas.cfg")
-	policy, revision, err := readQuotaPolicy(path)
+	policy, revision, err := readQuotaPolicy(p.config.Root)
 	if err != nil {
 		http.Error(w, "could not read quota settings", 500)
 		return
@@ -243,6 +282,23 @@ func (p *Endpoint) quotaHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+		for _, group := range next.Groups {
+			if len(group.Path) != 3 || inventory.nodes[storageKey(group.Path)] == nil {
+				http.Error(w, "quota group is not in the physical storage catalog", 400)
+				return
+			}
+			found := false
+			for _, node := range inventory.nodes {
+				if len(node.Path) == 4 && scopeWithin(node.Path, group.Path) && resourceQuotaType(node.Path[3]) == group.ResourceType {
+					found = true
+					break
+				}
+			}
+			if !found {
+				http.Error(w, "resource type has no physical branches", 400)
+				return
+			}
+		}
 		if err = validateQuotas(next, disk.Maximum); err != nil {
 			http.Error(w, err.Error(), 400)
 			return
@@ -250,14 +306,15 @@ func (p *Endpoint) quotaHTTP(w http.ResponseWriter, r *http.Request) {
 		if next.Scopes == nil {
 			next.Scopes = []quotaScope{}
 		}
-		raw, _ := json.MarshalIndent(next, "", "  ")
-		raw = append(raw, '\n')
-		if err = replace(path, raw); err != nil {
-			http.Error(w, "could not publish quota settings; reload to verify", 500)
+		if err = saveQuotaPolicy(p.config.Root, next); err != nil {
+			http.Error(w, "could not save scoped quota settings; reload to verify", 500)
 			return
 		}
-		policy = next
-		revision = fmt.Sprintf("%x", sha256.Sum256(raw))
+		policy, revision, err = readQuotaPolicy(p.config.Root)
+		if err != nil {
+			http.Error(w, "could not reread scoped quota settings", 500)
+			return
+		}
 	}
 	w.Header().Set("ETag", `"`+revision+`"`)
 	w.Header().Set("Content-Type", "application/json")

@@ -16,10 +16,12 @@ type sharedTrie struct {
 	nodes     []sharedNode
 	edges     map[sharedKey]uint16
 	persisted int
+	fileEnd   int64
+	footer    bool
 }
 
 func newTrie() sharedTrie {
-	return sharedTrie{nodes: []sharedNode{{}}, edges: map[sharedKey]uint16{}, persisted: 1}
+	return sharedTrie{nodes: []sharedNode{{}}, edges: map[sharedKey]uint16{}, persisted: 1, fileEnd: headerSize}
 }
 func (t *sharedTrie) add(n sharedNode, l *Layout) error {
 	if len(t.nodes) >= 65536 || int(n.Parent) >= len(t.nodes) || int(n.Field) >= len(l.Widths) || !l.ValidDirectWidth(int(n.Field), n.Bytes) || len(n.Bytes) == 0 {
@@ -127,7 +129,7 @@ func (t *sharedTrie) lookup(l *Layout, v []Value) uint16 {
 // Nodes and value bytes are immutable once inserted; only the slice and edge
 // directory need private backing while a sealing worker appends new nodes.
 func (t *sharedTrie) clone() sharedTrie {
-	out := sharedTrie{nodes: append([]sharedNode(nil), t.nodes...), edges: make(map[sharedKey]uint16, len(t.edges)), persisted: t.persisted}
+	out := sharedTrie{nodes: append([]sharedNode(nil), t.nodes...), edges: make(map[sharedKey]uint16, len(t.edges)), persisted: t.persisted, fileEnd: t.fileEnd, footer: t.footer}
 	for k, v := range t.edges {
 		out.edges[k] = v
 	}

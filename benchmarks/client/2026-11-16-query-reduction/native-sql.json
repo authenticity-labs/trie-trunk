@@ -1,0 +1,9 @@
+{
+  "native": "{\"ok\":true,\"loaded\":2,\"visible\":0,\"wallMs\":1090,\"submitHandlerMs\":43,\"window\":\"2026-11-15 00:00 \u2192 2026-11-16 00:00\",\"boundary\":{\"totalMs\":320,\"workerMs\":104,\"outsideWorkerMs\":216},\"runs\":[{\"loaded\":2,\"visible\":0,\"wallMs\":1090,\"submitHandlerMs\":43,\"window\":\"2026-11-15 00:00 \u2192 2026-11-16 00:00\",\"boundary\":{\"totalMs\":320,\"workerMs\":104,\"outsideWorkerMs\":216}}]}",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-11-15T00:00:00.000Z",
+  "to": "2026-11-16T00:00:00.000Z",
+  "query": "SELECT bucket, SUM(count) AS total FROM summaries WHERE count > 0 GROUP BY bucket"
+}

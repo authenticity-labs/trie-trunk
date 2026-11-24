@@ -1,0 +1,1146 @@
+{
+  "base": [
+    {
+      "name": "@id",
+      "semantic": "id",
+      "label": "Id",
+      "description": "74 bits of UUIDv7 entropy, with six unused bits zero. Absent or null requests ingress generation. Seed renders the composite UUID.",
+      "format": "uuidv7",
+      "role": "identity"
+    },
+    {
+      "name": "@time",
+      "semantic": "time",
+      "label": "Time",
+      "description": "Event occurrence time. No normal-log receipt timestamp.",
+      "unit": "ms",
+      "role": "time",
+      "format": "datetime"
+    },
+    {
+      "name": "@duration",
+      "semantic": "duration",
+      "label": "Duration",
+      "description": "Elapsed operation time when known. Absence is not zero; no implicit query-unit conversion.",
+      "unit": "us",
+      "role": "duration",
+      "format": "duration"
+    },
+    {
+      "name": "level",
+      "semantic": "level",
+      "label": "Level",
+      "description": "Normalized severity. Its standard name comes from metadata; original vendor text can remain in additional fields.",
+      "values": [
+        {
+          "value": "0",
+          "label": "Unspecified",
+          "description": "No normalized severity was supplied."
+        },
+        {
+          "value": "1",
+          "label": "TRACE",
+          "description": "Trace severity, rank 1 of four.",
+          "group": "trace"
+        },
+        {
+          "value": "2",
+          "label": "TRACE2",
+          "description": "Trace severity, rank 2 of four.",
+          "group": "trace"
+        },
+        {
+          "value": "3",
+          "label": "TRACE3",
+          "description": "Trace severity, rank 3 of four.",
+          "group": "trace"
+        },
+        {
+          "value": "4",
+          "label": "TRACE4",
+          "description": "Trace severity, rank 4 of four.",
+          "group": "trace"
+        },
+        {
+          "value": "5",
+          "label": "DEBUG",
+          "description": "Debug severity, rank 1 of four.",
+          "group": "debug"
+        },
+        {
+          "value": "6",
+          "label": "DEBUG2",
+          "description": "Debug severity, rank 2 of four.",
+          "group": "debug"
+        },
+        {
+          "value": "7",
+          "label": "DEBUG3",
+          "description": "Debug severity, rank 3 of four.",
+          "group": "debug"
+        },
+        {
+          "value": "8",
+          "label": "DEBUG4",
+          "description": "Debug severity, rank 4 of four.",
+          "group": "debug"
+        },
+        {
+          "value": "9",
+          "label": "INFO",
+          "description": "Info severity, rank 1 of four.",
+          "group": "info"
+        },
+        {
+          "value": "10",
+          "label": "INFO2",
+          "description": "Info severity, rank 2 of four.",
+          "group": "info"
+        },
+        {
+          "value": "11",
+          "label": "INFO3",
+          "description": "Info severity, rank 3 of four.",
+          "group": "info"
+        },
+        {
+          "value": "12",
+          "label": "INFO4",
+          "description": "Info severity, rank 4 of four.",
+          "group": "info"
+        },
+        {
+          "value": "13",
+          "label": "WARN",
+          "description": "Warn severity, rank 1 of four.",
+          "group": "warn"
+        },
+        {
+          "value": "14",
+          "label": "WARN2",
+          "description": "Warn severity, rank 2 of four.",
+          "group": "warn"
+        },
+        {
+          "value": "15",
+          "label": "WARN3",
+          "description": "Warn severity, rank 3 of four.",
+          "group": "warn"
+        },
+        {
+          "value": "16",
+          "label": "WARN4",
+          "description": "Warn severity, rank 4 of four.",
+          "group": "warn"
+        },
+        {
+          "value": "17",
+          "label": "ERROR",
+          "description": "Error severity, rank 1 of four.",
+          "group": "error"
+        },
+        {
+          "value": "18",
+          "label": "ERROR2",
+          "description": "Error severity, rank 2 of four.",
+          "group": "error"
+        },
+        {
+          "value": "19",
+          "label": "ERROR3",
+          "description": "Error severity, rank 3 of four.",
+          "group": "error"
+        },
+        {
+          "value": "20",
+          "label": "ERROR4",
+          "description": "Error severity, rank 4 of four.",
+          "group": "error"
+        },
+        {
+          "value": "21",
+          "label": "FATAL",
+          "description": "Fatal severity, rank 1 of four.",
+          "group": "fatal"
+        },
+        {
+          "value": "22",
+          "label": "FATAL2",
+          "description": "Fatal severity, rank 2 of four.",
+          "group": "fatal"
+        },
+        {
+          "value": "23",
+          "label": "FATAL3",
+          "description": "Fatal severity, rank 3 of four.",
+          "group": "fatal"
+        },
+        {
+          "value": "24",
+          "label": "FATAL4",
+          "description": "Fatal severity, rank 4 of four.",
+          "group": "fatal"
+        }
+      ],
+      "source": "otel-log",
+      "groups": {
+        "trace": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "debug": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "info": [
+          9,
+          10,
+          11,
+          12
+        ],
+        "warn": [
+          13,
+          14,
+          15,
+          16
+        ],
+        "error": [
+          17,
+          18,
+          19,
+          20
+        ],
+        "fatal": [
+          21,
+          22,
+          23,
+          24
+        ]
+      }
+    },
+    {
+      "name": "message",
+      "semantic": "message",
+      "label": "Message",
+      "description": "Event body, which may be structured."
+    },
+    {
+      "name": "name",
+      "semantic": "name",
+      "label": "Name",
+      "description": "Event name within this log category."
+    },
+    {
+      "name": "trace",
+      "semantic": "trace",
+      "label": "Trace",
+      "description": "Trace correlation identifier, distinct from this event UUID.",
+      "format": "hex"
+    },
+    {
+      "name": "span",
+      "semantic": "span",
+      "label": "Span",
+      "description": "Span correlation identifier, distinct from this event UUID.",
+      "format": "hex"
+    },
+    {
+      "name": "flags",
+      "semantic": "flags",
+      "label": "Flags",
+      "description": "Trace flags."
+    },
+    {
+      "name": "error",
+      "semantic": "error",
+      "label": "Error",
+      "description": "Error classification."
+    },
+    {
+      "name": "detail",
+      "semantic": "detail",
+      "label": "Detail",
+      "description": "Error explanation."
+    },
+    {
+      "name": "stack",
+      "semantic": "stack",
+      "label": "Stack",
+      "description": "Exception stack trace."
+    }
+  ],
+  "definitions": {
+    "log_trietrunk": [],
+    "log-http_trietrunk": [
+      {
+        "name": "method",
+        "semantic": "method",
+        "label": "Method",
+        "description": "HTTP request method, preserving its original spelling.",
+        "source": "iana-method",
+        "values": [
+          {
+            "value": "GET",
+            "label": "GET",
+            "description": "Retrieve a representation."
+          },
+          {
+            "value": "HEAD",
+            "label": "HEAD",
+            "description": "Retrieve response headers without the representation body."
+          },
+          {
+            "value": "POST",
+            "label": "POST",
+            "description": "Submit content for processing."
+          },
+          {
+            "value": "PUT",
+            "label": "PUT",
+            "description": "Replace the target representation."
+          },
+          {
+            "value": "PATCH",
+            "label": "PATCH",
+            "description": "Apply a partial modification."
+          },
+          {
+            "value": "DELETE",
+            "label": "DELETE",
+            "description": "Remove the target resource."
+          },
+          {
+            "value": "OPTIONS",
+            "label": "OPTIONS",
+            "description": "Describe available communication options."
+          },
+          {
+            "value": "CONNECT",
+            "label": "CONNECT",
+            "description": "Establish a tunnel."
+          },
+          {
+            "value": "TRACE",
+            "label": "TRACE",
+            "description": "Perform a diagnostic request loopback."
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "semantic": "status",
+        "label": "Status",
+        "description": "HTTP response code, absent when no response exists.",
+        "source": "iana-status",
+        "values": [
+          {
+            "value": "100",
+            "label": "Continue",
+            "description": "The request body may follow."
+          },
+          {
+            "value": "101",
+            "label": "Switching Protocols",
+            "description": "The connection is changing protocols."
+          },
+          {
+            "value": "200",
+            "label": "OK",
+            "description": "The request succeeded."
+          },
+          {
+            "value": "201",
+            "label": "Created",
+            "description": "A resource was created."
+          },
+          {
+            "value": "202",
+            "label": "Accepted",
+            "description": "Processing was accepted but may not be complete."
+          },
+          {
+            "value": "204",
+            "label": "No Content",
+            "description": "The request succeeded without a response body."
+          },
+          {
+            "value": "206",
+            "label": "Partial Content",
+            "description": "The response contains the requested portion."
+          },
+          {
+            "value": "301",
+            "label": "Moved Permanently",
+            "description": "The resource has a permanent replacement URI."
+          },
+          {
+            "value": "302",
+            "label": "Found",
+            "description": "Use the supplied temporary location."
+          },
+          {
+            "value": "304",
+            "label": "Not Modified",
+            "description": "The cached representation remains valid."
+          },
+          {
+            "value": "307",
+            "label": "Temporary Redirect",
+            "description": "Repeat the request at the temporary location."
+          },
+          {
+            "value": "308",
+            "label": "Permanent Redirect",
+            "description": "Repeat the request at the permanent location."
+          },
+          {
+            "value": "400",
+            "label": "Bad Request",
+            "description": "The request could not be accepted as sent."
+          },
+          {
+            "value": "401",
+            "label": "Unauthorized",
+            "description": "Authentication is required or was not accepted."
+          },
+          {
+            "value": "403",
+            "label": "Forbidden",
+            "description": "The server refuses the requested access."
+          },
+          {
+            "value": "404",
+            "label": "Not Found",
+            "description": "The requested resource was not found."
+          },
+          {
+            "value": "405",
+            "label": "Method Not Allowed",
+            "description": "The resource does not support this method."
+          },
+          {
+            "value": "408",
+            "label": "Request Timeout",
+            "description": "The request was not received in time."
+          },
+          {
+            "value": "409",
+            "label": "Conflict",
+            "description": "The request conflicts with the current resource state."
+          },
+          {
+            "value": "410",
+            "label": "Gone",
+            "description": "The resource is no longer available."
+          },
+          {
+            "value": "412",
+            "label": "Precondition Failed",
+            "description": "A request condition was not satisfied."
+          },
+          {
+            "value": "413",
+            "label": "Content Too Large",
+            "description": "The request content exceeds the accepted size."
+          },
+          {
+            "value": "415",
+            "label": "Unsupported Media Type",
+            "description": "The request content format is unsupported."
+          },
+          {
+            "value": "422",
+            "label": "Unprocessable Content",
+            "description": "The content could not be processed as instructed."
+          },
+          {
+            "value": "429",
+            "label": "Too Many Requests",
+            "description": "The request rate exceeds an accepted limit."
+          },
+          {
+            "value": "500",
+            "label": "Internal Server Error",
+            "description": "The server could not complete the request."
+          },
+          {
+            "value": "502",
+            "label": "Bad Gateway",
+            "description": "An upstream response was invalid."
+          },
+          {
+            "value": "503",
+            "label": "Service Unavailable",
+            "description": "The service cannot currently handle the request."
+          },
+          {
+            "value": "504",
+            "label": "Gateway Timeout",
+            "description": "An upstream response did not arrive in time."
+          }
+        ]
+      },
+      {
+        "name": "uri",
+        "semantic": "uri",
+        "label": "Uri",
+        "description": "Full request URI when available; not an alias for its path."
+      },
+      {
+        "name": "path",
+        "semantic": "path",
+        "label": "Path",
+        "description": "URI path component."
+      },
+      {
+        "name": "route",
+        "semantic": "route",
+        "label": "Route",
+        "description": "Matched route template, distinct from the actual path."
+      },
+      {
+        "name": "scheme",
+        "semantic": "scheme",
+        "label": "Scheme",
+        "description": "URI scheme."
+      },
+      {
+        "name": "protocol",
+        "semantic": "protocol",
+        "label": "Protocol",
+        "description": "HTTP protocol version."
+      },
+      {
+        "name": "host",
+        "semantic": "host",
+        "label": "Host",
+        "description": "Server hostname or address."
+      },
+      {
+        "name": "port",
+        "semantic": "port",
+        "label": "Port",
+        "description": "Server port."
+      },
+      {
+        "name": "client",
+        "semantic": "client",
+        "label": "Client",
+        "description": "Originating client address."
+      },
+      {
+        "name": "agent",
+        "semantic": "agent",
+        "label": "Agent",
+        "description": "User agent."
+      },
+      {
+        "name": "response_size",
+        "semantic": "response_size",
+        "label": "Response Bytes",
+        "description": "Response body bytes, excluding headers.",
+        "unit": "By"
+      },
+      {
+        "name": "request_size",
+        "semantic": "request_size",
+        "label": "Request Bytes",
+        "description": "Request body bytes, excluding headers.",
+        "unit": "By"
+      }
+    ],
+    "log-db_trietrunk": [
+      {
+        "name": "system",
+        "semantic": "system",
+        "label": "System",
+        "description": "Database engine."
+      },
+      {
+        "name": "namespace",
+        "semantic": "namespace",
+        "label": "Namespace",
+        "description": "Database namespace."
+      },
+      {
+        "name": "collection",
+        "semantic": "collection",
+        "label": "Collection",
+        "description": "Collection or table name."
+      },
+      {
+        "name": "operation",
+        "semantic": "operation",
+        "label": "Operation",
+        "description": "Operation name."
+      },
+      {
+        "name": "summary",
+        "semantic": "summary",
+        "label": "Summary",
+        "description": "Low-cardinality query summary."
+      },
+      {
+        "name": "statement",
+        "semantic": "statement",
+        "label": "Statement",
+        "description": "Query text when explicitly captured."
+      },
+      {
+        "name": "status",
+        "semantic": "status",
+        "label": "Status",
+        "description": "Engine-specific response code. Preserve leading zeroes.",
+        "source": "postgres",
+        "domains": [
+          {
+            "field": "system",
+            "value": "postgresql",
+            "values": [
+              {
+                "value": "00000",
+                "label": "Successful Completion",
+                "description": "The operation completed successfully."
+              },
+              {
+                "value": "23505",
+                "label": "Unique Violation",
+                "description": "A uniqueness constraint was violated."
+              },
+              {
+                "value": "23503",
+                "label": "Foreign Key Violation",
+                "description": "A referenced key is missing or still in use."
+              },
+              {
+                "value": "23502",
+                "label": "Not Null Violation",
+                "description": "A required non-null value is missing."
+              },
+              {
+                "value": "40001",
+                "label": "Serialization Failure",
+                "description": "Concurrent changes prevented serialization."
+              },
+              {
+                "value": "40P01",
+                "label": "Deadlock Detected",
+                "description": "Transactions formed a dependency cycle."
+              },
+              {
+                "value": "42601",
+                "label": "Syntax Error",
+                "description": "The statement syntax is invalid."
+              },
+              {
+                "value": "42P01",
+                "label": "Undefined Table",
+                "description": "The referenced table does not exist."
+              },
+              {
+                "value": "28P01",
+                "label": "Invalid Password",
+                "description": "Password authentication failed."
+              },
+              {
+                "value": "42501",
+                "label": "Insufficient Privilege",
+                "description": "The caller lacks the required privilege."
+              },
+              {
+                "value": "57014",
+                "label": "Query Canceled",
+                "description": "The query was canceled."
+              },
+              {
+                "value": "08006",
+                "label": "Connection Failure",
+                "description": "The database connection failed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "rows",
+        "semantic": "rows",
+        "label": "Rows",
+        "description": "Rows returned by the operation."
+      },
+      {
+        "name": "batch",
+        "semantic": "batch",
+        "label": "Batch",
+        "description": "Number of operations in a batch."
+      },
+      {
+        "name": "host",
+        "semantic": "host",
+        "label": "Host",
+        "description": "Database server address."
+      },
+      {
+        "name": "port",
+        "semantic": "port",
+        "label": "Port",
+        "description": "Database server port."
+      }
+    ],
+    "log-messaging_trietrunk": [
+      {
+        "name": "system",
+        "semantic": "system",
+        "label": "System",
+        "description": "Messaging system."
+      },
+      {
+        "name": "destination",
+        "semantic": "destination",
+        "label": "Destination",
+        "description": "Destination queue or topic."
+      },
+      {
+        "name": "operation",
+        "semantic": "operation",
+        "label": "Operation",
+        "description": "Operation name."
+      },
+      {
+        "name": "kind",
+        "semantic": "kind",
+        "label": "Kind",
+        "description": "Operation category."
+      },
+      {
+        "name": "message_id",
+        "semantic": "message_id",
+        "label": "Message Id",
+        "description": "Broker message identity, distinct from the log event identity."
+      },
+      {
+        "name": "group",
+        "semantic": "group",
+        "label": "Group",
+        "description": "Consumer group."
+      },
+      {
+        "name": "batch",
+        "semantic": "batch",
+        "label": "Batch",
+        "description": "Number of messages in the batch."
+      },
+      {
+        "name": "partition",
+        "semantic": "partition",
+        "label": "Partition",
+        "description": "Destination partition identifier."
+      },
+      {
+        "name": "host",
+        "semantic": "host",
+        "label": "Host",
+        "description": "Broker address."
+      },
+      {
+        "name": "port",
+        "semantic": "port",
+        "label": "Port",
+        "description": "Broker port."
+      }
+    ],
+    "log-security_trietrunk": [
+      {
+        "name": "action",
+        "semantic": "action",
+        "label": "Action",
+        "description": "Security action, such as authentication or authorization."
+      },
+      {
+        "name": "outcome",
+        "semantic": "outcome",
+        "label": "Outcome",
+        "description": "Whether the action succeeded, failed, or has unknown outcome.",
+        "values": [
+          {
+            "value": "success",
+            "label": "Success",
+            "description": "The action completed successfully."
+          },
+          {
+            "value": "failure",
+            "label": "Failure",
+            "description": "The action failed."
+          },
+          {
+            "value": "unknown",
+            "label": "Unknown",
+            "description": "The outcome is not known."
+          }
+        ]
+      },
+      {
+        "name": "decision",
+        "semantic": "decision",
+        "label": "Decision",
+        "description": "Policy decision, separate from whether policy evaluation succeeded.",
+        "values": [
+          {
+            "value": "allow",
+            "label": "Allow",
+            "description": "The policy permits access."
+          },
+          {
+            "value": "deny",
+            "label": "Deny",
+            "description": "The policy refuses access."
+          }
+        ]
+      },
+      {
+        "name": "actor",
+        "semantic": "actor",
+        "label": "Actor",
+        "description": "Acting identity."
+      },
+      {
+        "name": "target",
+        "semantic": "target",
+        "label": "Target",
+        "description": "Affected account, object, or resource."
+      },
+      {
+        "name": "reason",
+        "semantic": "reason",
+        "label": "Reason",
+        "description": "Reason for the outcome or decision."
+      },
+      {
+        "name": "method",
+        "semantic": "method",
+        "label": "Method",
+        "description": "Authentication or authorization mechanism."
+      },
+      {
+        "name": "policy",
+        "semantic": "policy",
+        "label": "Policy",
+        "description": "Policy identifier."
+      },
+      {
+        "name": "session",
+        "semantic": "session",
+        "label": "Session",
+        "description": "Session correlation identifier."
+      },
+      {
+        "name": "client",
+        "semantic": "client",
+        "label": "Client",
+        "description": "Client address."
+      }
+    ],
+    "log-job_trietrunk": [
+      {
+        "name": "job",
+        "semantic": "job",
+        "label": "Job",
+        "description": "Scheduled job name."
+      },
+      {
+        "name": "run",
+        "semantic": "run",
+        "label": "Run",
+        "description": "Execution identity, distinct from the log event UUID."
+      },
+      {
+        "name": "status",
+        "semantic": "status",
+        "label": "Status",
+        "description": "Execution state or outcome.",
+        "values": [
+          {
+            "value": "queued",
+            "label": "Queued",
+            "description": "Execution is queued."
+          },
+          {
+            "value": "running",
+            "label": "Running",
+            "description": "Execution is running."
+          },
+          {
+            "value": "succeeded",
+            "label": "Succeeded",
+            "description": "Execution is succeeded."
+          },
+          {
+            "value": "failed",
+            "label": "Failed",
+            "description": "Execution is failed."
+          },
+          {
+            "value": "canceled",
+            "label": "Canceled",
+            "description": "Execution is canceled."
+          }
+        ]
+      },
+      {
+        "name": "attempt",
+        "semantic": "attempt",
+        "label": "Attempt",
+        "description": "Attempt number supplied by the scheduler."
+      },
+      {
+        "name": "reason",
+        "semantic": "reason",
+        "label": "Reason",
+        "description": "Reason for a transition or failure."
+      },
+      {
+        "name": "schedule",
+        "semantic": "schedule",
+        "label": "Schedule",
+        "description": "Schedule expression or identifier."
+      },
+      {
+        "name": "queue",
+        "semantic": "queue",
+        "label": "Queue",
+        "description": "Execution queue."
+      },
+      {
+        "name": "worker",
+        "semantic": "worker",
+        "label": "Worker",
+        "description": "Assigned worker."
+      },
+      {
+        "name": "task",
+        "semantic": "task",
+        "label": "Task",
+        "description": "Related task identity."
+      },
+      {
+        "name": "workflow",
+        "semantic": "workflow",
+        "label": "Workflow",
+        "description": "Related workflow execution."
+      }
+    ],
+    "log-task_trietrunk": [
+      {
+        "name": "task",
+        "semantic": "task",
+        "label": "Task",
+        "description": "Unit of work within a job or workflow."
+      },
+      {
+        "name": "run",
+        "semantic": "run",
+        "label": "Run",
+        "description": "Execution identity, distinct from the log event UUID."
+      },
+      {
+        "name": "status",
+        "semantic": "status",
+        "label": "Status",
+        "description": "Execution state or outcome.",
+        "values": [
+          {
+            "value": "queued",
+            "label": "Queued",
+            "description": "Execution is queued."
+          },
+          {
+            "value": "running",
+            "label": "Running",
+            "description": "Execution is running."
+          },
+          {
+            "value": "succeeded",
+            "label": "Succeeded",
+            "description": "Execution is succeeded."
+          },
+          {
+            "value": "failed",
+            "label": "Failed",
+            "description": "Execution is failed."
+          },
+          {
+            "value": "canceled",
+            "label": "Canceled",
+            "description": "Execution is canceled."
+          }
+        ]
+      },
+      {
+        "name": "attempt",
+        "semantic": "attempt",
+        "label": "Attempt",
+        "description": "Attempt number supplied by the scheduler."
+      },
+      {
+        "name": "reason",
+        "semantic": "reason",
+        "label": "Reason",
+        "description": "Reason for a transition or failure."
+      },
+      {
+        "name": "job",
+        "semantic": "job",
+        "label": "Job",
+        "description": "Parent job identity."
+      },
+      {
+        "name": "workflow",
+        "semantic": "workflow",
+        "label": "Workflow",
+        "description": "Parent workflow identity."
+      },
+      {
+        "name": "step",
+        "semantic": "step",
+        "label": "Step",
+        "description": "Step name."
+      },
+      {
+        "name": "worker",
+        "semantic": "worker",
+        "label": "Worker",
+        "description": "Executing worker."
+      }
+    ],
+    "log-workflow_trietrunk": [
+      {
+        "name": "workflow",
+        "semantic": "workflow",
+        "label": "Workflow",
+        "description": "Business process or workflow name."
+      },
+      {
+        "name": "run",
+        "semantic": "run",
+        "label": "Run",
+        "description": "Execution identity, distinct from the log event UUID."
+      },
+      {
+        "name": "status",
+        "semantic": "status",
+        "label": "Status",
+        "description": "Execution state or outcome.",
+        "values": [
+          {
+            "value": "queued",
+            "label": "Queued",
+            "description": "Execution is queued."
+          },
+          {
+            "value": "running",
+            "label": "Running",
+            "description": "Execution is running."
+          },
+          {
+            "value": "succeeded",
+            "label": "Succeeded",
+            "description": "Execution is succeeded."
+          },
+          {
+            "value": "failed",
+            "label": "Failed",
+            "description": "Execution is failed."
+          },
+          {
+            "value": "canceled",
+            "label": "Canceled",
+            "description": "Execution is canceled."
+          }
+        ]
+      },
+      {
+        "name": "attempt",
+        "semantic": "attempt",
+        "label": "Attempt",
+        "description": "Attempt number supplied by the scheduler."
+      },
+      {
+        "name": "reason",
+        "semantic": "reason",
+        "label": "Reason",
+        "description": "Reason for a transition or failure."
+      },
+      {
+        "name": "step",
+        "semantic": "step",
+        "label": "Step",
+        "description": "Current step."
+      },
+      {
+        "name": "parent",
+        "semantic": "parent",
+        "label": "Parent",
+        "description": "Parent execution identity."
+      },
+      {
+        "name": "object",
+        "semantic": "object",
+        "label": "Object",
+        "description": "Related business object identity."
+      }
+    ],
+    "log-system_trietrunk": [
+      {
+        "name": "action",
+        "semantic": "action",
+        "label": "Action",
+        "description": "System action or lifecycle transition."
+      },
+      {
+        "name": "pid",
+        "semantic": "pid",
+        "label": "Pid",
+        "description": "Operating-system process identifier."
+      },
+      {
+        "name": "parent",
+        "semantic": "parent",
+        "label": "Parent",
+        "description": "Parent process identifier."
+      },
+      {
+        "name": "executable",
+        "semantic": "executable",
+        "label": "Executable",
+        "description": "Executable name."
+      },
+      {
+        "name": "exit",
+        "semantic": "exit",
+        "label": "Exit",
+        "description": "Process exit code."
+      },
+      {
+        "name": "signal",
+        "semantic": "signal",
+        "label": "Signal",
+        "description": "Signal name."
+      },
+      {
+        "name": "host",
+        "semantic": "host",
+        "label": "Host",
+        "description": "Host name."
+      },
+      {
+        "name": "component",
+        "semantic": "component",
+        "label": "Component",
+        "description": "Subsystem producing the event."
+      }
+    ]
+  }
+}

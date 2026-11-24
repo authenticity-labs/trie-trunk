@@ -1,0 +1,3 @@
+    Checking runits v0.2.0
+    Checking trunk-units-probe v0.0.0 (/tmp/trunk-units-probe)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s

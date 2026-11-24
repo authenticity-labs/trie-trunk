@@ -142,8 +142,8 @@ func BenchmarkSealPhases(b *testing.B) {
 				var work, publish, wait, total time.Duration
 				for run := 0; run < b.N; run++ {
 					now := at.Add(time.Minute)
-					scheduler := NewSealScheduler(1)
-					s, e := Open(Config{Root: b.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: branch == Write, Sealer: scheduler, Now: func() time.Time { return now }})
+					scheduler := NewCommitScheduler(1)
+					s, e := Open(Config{Root: b.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: branch == Write, CommitScheduler: scheduler, Now: func() time.Time { return now }})
 					if e != nil {
 						b.Fatal(e)
 					}

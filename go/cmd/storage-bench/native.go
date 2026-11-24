@@ -112,7 +112,7 @@ func native(root, output, shape string, samples int, aggregates, objects bool, s
 		if entry.IsDir() {
 			return nil
 		}
-		if entry.Name() == "collection.idx" && !objects {
+		if entry.Name() == "collection.indx" && !objects {
 			return fmt.Errorf("benchmark requested object indexing off, but found %s", path)
 		}
 		info, e := entry.Info()
@@ -120,7 +120,7 @@ func native(root, output, shape string, samples int, aggregates, objects bool, s
 			return e
 		}
 		out.Bytes[filepath.Ext(path)] += info.Size()
-		if entry.Name() == "collection.idx" {
+		if entry.Name() == "collection.indx" {
 			out.ObjectIndexBytes += info.Size()
 		}
 		out.Files++
@@ -217,7 +217,7 @@ func native(root, output, shape string, samples int, aggregates, objects bool, s
 			return e
 		}
 		out.NativeLatency[q.Name+"_cached"] = metric
-		if out.NativeBytes[q.Name+"_cached"]["index"] != 0 || out.NativeBytes[q.Name+"_cached"]["sods"] != 0 {
+		if out.NativeBytes[q.Name+"_cached"]["index"] != 0 || out.NativeBytes[q.Name+"_cached"]["beds"] != 0 {
 			return fmt.Errorf("duplicate native transfer")
 		}
 	}

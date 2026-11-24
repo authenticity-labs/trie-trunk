@@ -24,6 +24,7 @@ type Entry struct {
 	Version             string
 	Resource            codec.Symbol
 	Operation           codec.Symbol
+	Time                time.Time
 	Id                  codec.UUIDv7
 	ClientTransactionId string
 	ClientId            string

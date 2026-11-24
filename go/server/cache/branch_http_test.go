@@ -42,7 +42,7 @@ func TestBranchTimeRangeContainsServerLeavesOnly(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	path := "/demo/payment/transactions.v1/0/write.tri?begin=2630100&end=2630103"
+	path := "/demo/payment/transactions.v1/0/write.time?begin=2630100&end=2630103"
 	request := func(method, path string) *httptest.ResponseRecorder {
 		r := httptest.NewRequest(method, path, nil)
 		r.Header.Set("Authorization", "Bearer secret")
@@ -77,10 +77,10 @@ func TestBranchTimeRangeContainsServerLeavesOnly(t *testing.T) {
 			t.Fatal(tc, got.Code, got.Body.String())
 		}
 	}
-	if got := request("GET", "/demo/payment/transactions.v1/0/write.tri?begin=2630110&end=2630111"); got.Code != 204 || got.Body.Len() != 0 {
+	if got := request("GET", "/demo/payment/transactions.v1/0/write.time?begin=2630110&end=2630111"); got.Code != 204 || got.Body.Len() != 0 {
 		t.Fatal("unsealed hours advertised", got.Code)
 	}
-	if got := request("GET", "/other/payment/transactions.v1/0/write.tri?begin=2630100&end=2630103"); got.Code != 404 {
+	if got := request("GET", "/other/payment/transactions.v1/0/write.time?begin=2630100&end=2630103"); got.Code != 404 {
 		t.Fatal("wrong cache selected", got.Code)
 	}
 	next := l.Definition
@@ -99,7 +99,7 @@ func TestBranchTimeRangeContainsServerLeavesOnly(t *testing.T) {
 	if got := request("GET", path); got.Code != 200 {
 		t.Fatal("minor installation changed an existing file path", got.Code)
 	}
-	newPath := strings.Replace(path, "/0/write.tri", "/1/write.tri", 1)
+	newPath := strings.Replace(path, "/0/write.time", "/1/write.time", 1)
 	if got := request("GET", newPath); got.Code != 204 || got.Header().Get("Definition-Version") != fmtDigestNative(newer.Digest) {
 		t.Fatal("wrong minor path", got.Code, got.Header())
 	}
@@ -133,7 +133,7 @@ func TestBranchIndexReplicationDoesNotCollectPayload(t *testing.T) {
 		}
 		return w
 	}
-	first := request("idx", "")
+	first := request("indx", "")
 	manifests, chunks := readNativeTest(t, first.Body.Bytes())
 	var indexes int
 	var coverage Coverage
@@ -158,19 +158,19 @@ func TestBranchIndexReplicationDoesNotCollectPayload(t *testing.T) {
 	}
 	raw, _ := json.Marshal([]Coverage{coverage})
 	have := base64.RawURLEncoding.EncodeToString(raw)
-	warm := request("idx", have)
+	warm := request("indx", have)
 	_, chunks = readNativeTest(t, warm.Body.Bytes())
 	for _, c := range chunks {
 		if c.Kind == "index" || c.Kind == "pac" {
 			t.Fatal("repeated covered index/payload", c.Kind)
 		}
 	}
-	full := request("pods", have)
+	full := request("packs", have)
 	manifests, chunks = readNativeTest(t, full.Body.Bytes())
 	packs := 0
 	for _, m := range manifests {
 		if m.IndexOnly {
-			t.Fatal("pods marked index-only")
+			t.Fatal("packs marked index-only")
 		}
 	}
 	for _, c := range chunks {

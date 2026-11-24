@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"math"
 	"strings"
+
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 )
 
 func searchKind(t string, mapped bool) string {
@@ -91,29 +93,20 @@ func searchDocument(l *Layout, row uint64, raw []byte) (searchDoc, error) {
 		}
 		if strings.HasPrefix(typ, "ARRAY<") {
 			typ = strings.TrimSuffix(strings.TrimPrefix(typ, "ARRAY<"), ">")
-			at := 0
-			n, e := readExtended(v.Bytes, &at)
+			w, e := width(typ)
 			if e != nil {
 				return doc, e
 			}
-			if kind == "s" || kind == "j" {
-				ends := make([]uint64, n)
-				for j := range ends {
-					ends[j], e = readExtended(v.Bytes, &at)
-					if e != nil {
-						return doc, e
-					}
+			array, e := pil.OpenArray(v.Bytes, w)
+			if e != nil {
+				return doc, e
+			}
+			for j := 0; j < array.Len(); j++ {
+				raw, e := array.Get(j)
+				if e != nil {
+					return doc, e
 				}
-				start := uint64(0)
-				for _, end := range ends {
-					add(v.Bytes[at+int(start) : at+int(end)])
-					start = end
-				}
-			} else if n > 0 {
-				width := (len(v.Bytes) - at) / int(n)
-				for j := 0; j < int(n); j++ {
-					add(v.Bytes[at+j*width : at+(j+1)*width])
-				}
+				add(raw)
 			}
 		} else {
 			add(v.Bytes)

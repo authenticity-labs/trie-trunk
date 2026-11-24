@@ -11,9 +11,10 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
-	"trie-trunk/go/internal/resourceapi"
+	"trie-trunk/go/resourceapi"
 
 	"github.com/quic-go/quic-go"
 	"github.com/quic-go/quic-go/http3"
@@ -55,24 +56,31 @@ func Run(ctx context.Context, c Config) error {
 	if c.MaxQueries == 0 {
 		c.MaxQueries = 4
 	}
-	handler, err := New(c.Root, c.Token, c.Headers, c.MaxQueries)
-	if err != nil {
-		return err
+	var handler *Handler
+	api := c.API
+	if api == nil {
+		// Retained for the isolated store prototype. The public Trunk command
+		// always supplies the registered node's transport adapter.
+		var err error
+		handler, err = New(c.Root, c.Token, c.Headers, c.MaxQueries)
+		if err != nil {
+			return err
+		}
+		defer handler.Close()
+		handler.OnError = c.OnError
+		api = handler
 	}
-	defer handler.Close()
-	handler.OnError = c.OnError
 	routes := http.NewServeMux()
-	api := http.Handler(handler)
 	if c.API != nil {
 		api = c.API
 		routes.Handle("/ingest", api)
 		routes.Handle("/definitions", api)
 		routes.Handle("/rejections", api)
-		routes.Handle("/summaries", api)
 		routes.Handle("/objects/history", api)
 		routes.Handle("/objects/state", api)
 		routes.Handle("/collections/", api)
 	}
+	routes.Handle("/diagnostics/searches", api)
 	routes.Handle("/configurations", api)
 	routes.Handle("/storage", api)
 	routes.Handle("/storage/quotas", api)
@@ -92,7 +100,7 @@ func Run(ctx context.Context, c Config) error {
 			api.ServeHTTP(w, r)
 			return
 		}
-		for _, extension := range []string{".rx", ".tri", ".sum", ".idx", ".tvy", ".pods"} {
+		for _, extension := range []string{".rx", ".tri", ".sum", ".idx", ".tvy", ".packs"} {
 			if strings.HasSuffix(r.URL.Path, extension) {
 				api.ServeHTTP(w, r)
 				return
@@ -196,8 +204,30 @@ func listenUnix(name string) (*net.UnixListener, error) {
 	if !info.IsDir() || info.Mode().Perm()&0077 != 0 {
 		return nil, fmt.Errorf("socket directory must be a private directory (0700): %s", dir)
 	}
-	if _, err := os.Lstat(name); err == nil {
-		return nil, fmt.Errorf("socket path already exists: %s; stop its owner or remove a stale socket", name)
+	if previous, err := os.Lstat(name); err == nil {
+		if previous.Mode()&os.ModeSocket == 0 {
+			return nil, fmt.Errorf("socket path is not a socket: %s", name)
+		}
+		connection, probe := net.DialTimeout("unix", name, time.Second)
+		if probe == nil {
+			connection.Close()
+			return nil, fmt.Errorf("socket listener already active: %s", name)
+		}
+		// Only a refused connection establishes a dead listener. Permission
+		// errors and timeouts must never authorize removing another endpoint.
+		if !errors.Is(probe, syscall.ECONNREFUSED) {
+			return nil, fmt.Errorf("cannot establish socket owner: %w", probe)
+		}
+		current, err := os.Lstat(name)
+		if err != nil {
+			return nil, err
+		}
+		if !os.SameFile(previous, current) {
+			return nil, fmt.Errorf("socket owner changed: %s", name)
+		}
+		if err = os.Remove(name); err != nil {
+			return nil, err
+		}
 	} else if !os.IsNotExist(err) {
 		return nil, err
 	}

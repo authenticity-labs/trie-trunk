@@ -1,0 +1,6 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "method": "Single-thread codec operations, 3 fresh processes per case, at least 200ms measured per process, one warmup, no disk/network in timed region. macOS ru_maxrss is total peak resident process bytes."
+}

@@ -163,7 +163,7 @@ func (s *Store) hasRejections() (bool, error) {
 	if err := s.check(); err != nil {
 		return false, err
 	}
-	f, err := os.Open(filepath.Join(s.dir, "lost.log"))
+	f, err := os.Open(filepath.Join(s.dir, "lost.seeds"))
 	if os.IsNotExist(err) {
 		return false, nil
 	}

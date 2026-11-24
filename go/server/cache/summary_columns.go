@@ -123,12 +123,13 @@ func encodeSummaryColumns(s Summary, shared *summaryEncoding) ([]byte, error) {
 	if shared == nil {
 		columnsStart += summaryEncodingSize
 	}
-	size := columnsStart + n*(2+enc[0].Width+enc[1].Width+enc[2].Width+enc[3].Width+enc[4].Width) + m*(13+enc[5].Width+enc[6].Width) + pairs*(enc[7].Width+enc[8].Width) + len(dict)
+	size := columnsStart + n*(2+enc[0].Width+enc[1].Width+enc[2].Width+enc[3].Width+enc[4].Width) + m*(13+enc[5].Width+enc[6].Width) + pairs*(enc[7].Width+enc[8].Width) + len(dict) + len(s.Fields)
 	if size > MaxFrame {
 		return nil, fmt.Errorf("summary too large")
 	}
 	raw := make([]byte, size)
 	copy(raw, "SUMCOL00")
+	order.PutUint32(raw[50:], uint32(len(s.Fields)))
 	order.PutUint64(raw[8:], s.From)
 	order.PutUint64(raw[16:], s.Through)
 	hour := utcHour(s.Columns.Period[0])
@@ -203,11 +204,12 @@ func encodeSummaryColumns(s Summary, shared *summaryEncoding) ([]byte, error) {
 		}
 	}
 	copy(raw[at:], dict)
+	copy(raw[at+len(dict):], s.Fields)
 	return raw, nil
 }
 func decodeSummary(raw []byte, s *Summary) error { return decodeSummaryColumns(raw, s, nil) }
 func decodeSummaryColumns(raw []byte, s *Summary, shared *summaryEncoding) error {
-	if len(raw) < 116 || len(raw) > MaxFrame || string(raw[:8]) != "SUMCOL00" || !bytes.Equal(raw[50:64], make([]byte, 14)) || raw[48] > 1 || (raw[48] == 1) != (shared != nil) {
+	if len(raw) < 116 || len(raw) > MaxFrame || string(raw[:8]) != "SUMCOL00" || !bytes.Equal(raw[54:64], make([]byte, 10)) || raw[48] > 1 || (raw[48] == 1) != (shared != nil) {
 		return fmt.Errorf("invalid columnar summary")
 	}
 	n, m, p, d := uint64(order.Uint32(raw[32:])), uint64(order.Uint32(raw[36:])), uint64(order.Uint32(raw[40:])), uint64(order.Uint32(raw[44:]))
@@ -224,7 +226,7 @@ func decodeSummaryColumns(raw []byte, s *Summary, shared *summaryEncoding) error
 		enc = &e
 		columnsStart += summaryEncodingSize
 	}
-	expected := uint64(columnsStart) + n*uint64(2+enc[0].Width+enc[1].Width+enc[2].Width+enc[3].Width+enc[4].Width) + m*uint64(13+enc[5].Width+enc[6].Width) + p*uint64(enc[7].Width+enc[8].Width) + d
+	expected := uint64(columnsStart) + n*uint64(2+enc[0].Width+enc[1].Width+enc[2].Width+enc[3].Width+enc[4].Width) + m*uint64(13+enc[5].Width+enc[6].Width) + p*uint64(enc[7].Width+enc[8].Width) + d + uint64(order.Uint32(raw[50:]))
 	if n == 0 || expected != uint64(len(raw)) {
 		return fmt.Errorf("invalid column lengths")
 	}
@@ -232,7 +234,12 @@ func decodeSummaryColumns(raw []byte, s *Summary, shared *summaryEncoding) error
 	if hour < 0 || hour%TimeHourMS != 0 {
 		return fmt.Errorf("invalid summary hour")
 	}
+	fieldSize := int(order.Uint32(raw[50:]))
+	fieldStart := len(raw) - fieldSize
 	out := Summary{DurationWidth: raw[49], From: order.Uint64(raw[8:]), Through: order.Uint64(raw[16:])}
+	if fieldSize > 0 {
+		out.Fields = bytes.Clone(raw[fieldStart:])
+	}
 	c := &out.Columns
 	c.Period = make([]int64, n)
 	c.Reference = make([]uint16, n)
@@ -276,7 +283,7 @@ func decodeSummaryColumns(raw []byte, s *Summary, shared *summaryEncoding) error
 		}
 	}
 	var labels [][4]string
-	if e := json.Unmarshal(raw[len(raw)-int(d):], &labels); e != nil {
+	if e := json.Unmarshal(raw[fieldStart-int(d):fieldStart], &labels); e != nil {
 		return e
 	}
 	if m > 0 {

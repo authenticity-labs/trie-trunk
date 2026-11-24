@@ -1,0 +1,121 @@
+{
+  "native": "{\"ok\":true,\"models\":[\"indexed\",\"indexed\",\"log.query\",\"checkpoint\",\"summary\",\"numeric\",\"real\",\"temporal\",\"boolean\",\"categories\"]}",
+  "nativeStderr": "2026/11/20 01:56:41 Snoot listening on http://127.0.0.1:34185 using HTTP\n",
+  "requests": [
+    {
+      "path": "/caches",
+      "target": "/caches",
+      "startedAt": 1795157802526.195,
+      "headersMs": 0.44670799979940057,
+      "upstreamMs": 0.508540979353711,
+      "injectedDelaySeconds": 0,
+      "bytes": 118,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=taxonomy",
+      "startedAt": 1795157802530.3848,
+      "headersMs": 0.25791701045818627,
+      "upstreamMs": 0.35954199847765267,
+      "injectedDelaySeconds": 0,
+      "bytes": 27043,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=summary.rx",
+      "startedAt": 1795157802537.3882,
+      "headersMs": 2.3793750151526183,
+      "upstreamMs": 2.399374992819503,
+      "injectedDelaySeconds": 0,
+      "bytes": 1068,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=indexed.rx",
+      "startedAt": 1795157802537.681,
+      "headersMs": 6.244749994948506,
+      "upstreamMs": 6.260666996240616,
+      "injectedDelaySeconds": 0,
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=log-query.rx",
+      "startedAt": 1795157802537.5627,
+      "headersMs": 6.624333007493988,
+      "upstreamMs": 6.634999997913837,
+      "injectedDelaySeconds": 0,
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=inventory",
+      "startedAt": 1795157802552.578,
+      "headersMs": 2.210790989920497,
+      "upstreamMs": 2.2334159875754267,
+      "injectedDelaySeconds": 0,
+      "bytes": 4168,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "target": "/demo/lab/indexed/leaves",
+      "startedAt": 1795157802559.7388,
+      "headersMs": 0.18529102089814842,
+      "upstreamMs": 0.20300000323913991,
+      "injectedDelaySeconds": 0,
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/trunk-client/queries/leaves",
+      "target": "/demo/trunk-client/queries/leaves",
+      "startedAt": 1795157802559.7761,
+      "headersMs": 0.280875014141202,
+      "upstreamMs": 0.2935000229626894,
+      "injectedDelaySeconds": 0,
+      "bytes": 235,
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": "2026-11-15T00:00:00Z",
+  "to": "2026-11-20T00:00:00Z",
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "nativePerformance": false,
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      2.8427734375,
+      4.8876953125,
+      5.8349609375
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "fdc0075648ce8248db3ce308368400b8b6ca6aa94b04c8c956c9ae41bc9d3361",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795157801453.093,
+    "processMs": 2147.8633749939036,
+    "loadAfter": [
+      2.8427734375,
+      4.8876953125,
+      5.8349609375
+    ]
+  }
+}

@@ -2,10 +2,10 @@ package pil
 
 import (
 	"bytes"
-	"compress/gzip"
 	"context"
 	"fmt"
-	pilcodec "github.com/AuthenticityLabs/pill-packer/go/codec"
+	native "github.com/authenticity-labs/pill-packer/go"
+	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -40,6 +40,9 @@ func TestRegistrationBeforeWriteAndRecovery(t *testing.T) {
 	var bodies [][]byte
 	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
 		calls = append(calls, r.Method+" "+r.URL.Path)
+		if r.URL.Path == "/demo/definitions" && r.Header.Get("Resource-Type") != "web" {
+			t.Fatal("logger omitted explicit resource classification")
+		}
 		if r.Method == "POST" {
 			b, _ := io.ReadAll(r.Body)
 			bodies = append(bodies, b)
@@ -49,12 +52,12 @@ func TestRegistrationBeforeWriteAndRecovery(t *testing.T) {
 		endpoint.Handler("secret").ServeHTTP(w, r)
 		return w.Result(), nil
 	})}
-	config := Config{URL: "https://logger.test", Cache: "demo", Token: "secret", Definition: definition(t), HTTPClient: client}
+	config := Config{URL: "https://logger.test", Cache: "demo", Token: "secret", Definition: definition(t), ResourceType: "web", HTTPClient: client}
 	logger, e := Open(ctx, config)
 	if e != nil {
 		t.Fatal(e)
 	}
-	if fmt.Sprint(calls) != "[HEAD /demo/registries PUT /demo/registries]" {
+	if fmt.Sprint(calls) != "[HEAD /demo/definitions PUT /demo/definitions]" {
 		t.Fatal(calls)
 	}
 	l, _ := cache.ParseDefinition(config.Definition)
@@ -82,7 +85,7 @@ func TestRegistrationBeforeWriteAndRecovery(t *testing.T) {
 	if e = logger.Register(ctx); e != nil {
 		t.Fatal(e)
 	}
-	if fmt.Sprint(calls) != "[HEAD /demo/registries]" {
+	if fmt.Sprint(calls) != "[HEAD /demo/definitions]" {
 		t.Fatal(calls)
 	}
 	if e = logger.WriteFrames(ctx, raw); e != nil {
@@ -186,7 +189,7 @@ func TestPreferredDefinitionReordersAndRemaps(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if fmt.Sprint(calls) != "[HEAD /demo/registries PUT /demo/registries POST /demo/registries]" {
+	if fmt.Sprint(calls) != "[HEAD /demo/definitions PUT /demo/definitions POST /demo/definitions]" {
 		t.Fatal(calls)
 	}
 	if !bytes.Equal(logger.AcceptedDefinition(), target.Bytes) {
@@ -216,7 +219,7 @@ func TestPreferredDefinitionReordersAndRemaps(t *testing.T) {
 	if e = logger.Register(context.Background()); e != nil {
 		t.Fatal(e)
 	}
-	if fmt.Sprint(calls) != "[HEAD /demo/registries POST /demo/registries]" {
+	if fmt.Sprint(calls) != "[HEAD /demo/definitions POST /demo/definitions]" {
 		t.Fatal(calls)
 	}
 	if e = logger.WriteValues(context.Background(), values); e != nil {
@@ -227,7 +230,7 @@ func TestPreferredDefinitionReordersAndRemaps(t *testing.T) {
 	if _, e = Open(context.Background(), Config{URL: "https://logger.test", Cache: "demo", Definition: source.Bytes, HTTPClient: client}); e != nil {
 		t.Fatal(e)
 	}
-	if fmt.Sprint(calls) != "[HEAD /demo/registries GET /demo/registries POST /demo/registries]" {
+	if fmt.Sprint(calls) != "[HEAD /demo/definitions GET /demo/definitions POST /demo/definitions]" {
 		t.Fatal(calls)
 	}
 	// Restart retains both producer recognition and preferred layout.
@@ -243,7 +246,7 @@ func TestPreferredDefinitionReordersAndRemaps(t *testing.T) {
 	if e = logger.Register(context.Background()); e != nil {
 		t.Fatal(e)
 	}
-	if fmt.Sprint(calls) != "[HEAD /demo/registries POST /demo/registries]" {
+	if fmt.Sprint(calls) != "[HEAD /demo/definitions POST /demo/definitions]" {
 		t.Fatal(calls)
 	}
 }
@@ -355,12 +358,12 @@ func TestNegotiatedCompressionAndRawFallback(t *testing.T) {
 		if e = logger.WriteValues(context.Background(), v); e != nil {
 			t.Fatal(e)
 		}
-		if (contentEncoding == "gzip") == disable {
+		if (contentEncoding == "zstd") == disable {
 			t.Fatal("compression negotiation/config ignored")
 		}
 		expanded := received
-		if contentEncoding == "gzip" {
-			z, err := gzip.NewReader(bytes.NewReader(received))
+		if contentEncoding == "zstd" {
+			z, err := native.NewDecoder(bytes.NewReader(received), 514)
 			if err != nil {
 				t.Fatal(err)
 			}

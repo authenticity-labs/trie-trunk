@@ -1,0 +1,64 @@
+{
+  "selective": {
+    "cold": {
+      "n": 3,
+      "medianMs": 104,
+      "minMs": 97,
+      "maxMs": 132
+    },
+    "warm": {
+      "n": 6,
+      "medianMs": 60.5,
+      "minMs": 31,
+      "maxMs": 89
+    }
+  },
+  "events": {
+    "cold": {
+      "n": 3,
+      "medianMs": 102,
+      "minMs": 94,
+      "maxMs": 113
+    },
+    "warm": {
+      "n": 6,
+      "medianMs": 71.0,
+      "minMs": 45,
+      "maxMs": 112
+    }
+  },
+  "counts": {
+    "cold": {
+      "n": 3,
+      "medianMs": 77,
+      "minMs": 77,
+      "maxMs": 78
+    },
+    "warm": {
+      "n": 6,
+      "medianMs": 44.0,
+      "minMs": 10,
+      "maxMs": 68
+    }
+  },
+  "members": {
+    "cold": {
+      "n": 3,
+      "medianMs": 57,
+      "minMs": 37,
+      "maxMs": 73
+    },
+    "warm": {
+      "n": 6,
+      "medianMs": 44.5,
+      "minMs": 13,
+      "maxMs": 75
+    }
+  },
+  "zero": {
+    "passed": 3,
+    "note": "Preview rejection, not an executed zero-result scan."
+  },
+  "datasetUnchanged": true,
+  "failedSessions": []
+}

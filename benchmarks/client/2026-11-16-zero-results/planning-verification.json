@@ -1,0 +1,37 @@
+{
+  "deployed_at": "2026-11-16T19:06:34.613854+00:00",
+  "environment": "Local Trunk HTTP origin; Chromium 157 on macOS",
+  "query": "events | where duration > 1000000000 | page 10",
+  "scope": "*/lab/indexed/*",
+  "from": 1792261614765,
+  "to": 1794853614765,
+  "before_samples": 3,
+  "after_samples": 5,
+  "client_tests": 26,
+  "rust_summary_tests": 13,
+  "http_integration_tests": 4,
+  "typecheck": "passed",
+  "native_build": "passed",
+  "wasm_build": "passed",
+  "ui_build": "passed",
+  "broader_exploratory_client_suites": {
+    "passed": 17,
+    "failed": 19,
+    "files": [
+      "native-files.test.mjs",
+      "pil-worker.test.mjs"
+    ]
+  },
+  "source_sha256": {
+    "client/services/pil/summary-cache.ts": "7903a20851a4c27c7186b29edec27b2a5b9a8eb271c779f46284b94f902a54c0",
+    "client/services/pil/summary-replication.ts": "28c4388b3b976dc3a3a494b6ddc611c4dd1d322173e5dc249d696f9856305ee4",
+    "client/services/search/summaries.ts": "cc3b6ab999a8c53b7844060e12642a9d06d518e30c962b6d23105ab3de65a069",
+    "client/services/search/summary-pruning.ts": "28e73317bd43449f56b8ccd08c918dd45a9939cf5885b6fb8957f3263d18fc93",
+    "client/services/pil/view.ts": "fd3c179f50fa48d4bbf6995f11be06881432a6aec584a70a3f38f03fbcfe163f",
+    "client/services/store/trunk.ts": "6f41bcb8b43047b53a30b42edc3096de7b5ef67aa811eb4eeb0d085841e0907e",
+    "client/services/pil/trunk-cache.ts": "1bd3fca28ec16cb18b8a2b1945bb9f71bc3261fb6f39518caa53463a19cc0f39",
+    "client/services/pil/worker-runtime.ts": "028182542f20d616be62715ee7795a98f4ad26f8a95a498d94f752a3bb38a613",
+    "rust/seeds/src/registration/summaries.rs": "ef8ac2d5db4d394832cf3ccf1f62f6537d4a6b6093a826a46656765f3ce4c960",
+    "go/server/cache/registered_ingress_summaries.go": "76948f64fa9bacbbc89e24b624fd6d5fb3f7588b4957995196699ebaa9abd8aa"
+  }
+}

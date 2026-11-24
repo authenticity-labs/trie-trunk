@@ -1,0 +1,519 @@
+warning: struct `ObjectRow` is never constructed
+   --> src/query.rs:184:19
+    |
+184 | pub(crate) struct ObjectRow<'a> {
+    |                   ^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `get` is never used
+   --> src/query.rs:189:8
+    |
+188 | impl ObjectRow<'_> {
+    | ------------------ method in this implementation
+189 |     fn get(&self, ordinal: usize) -> Option<&Data> {
+    |        ^^^
+
+warning: method `fields` is never used
+   --> src/query.rs:234:19
+    |
+233 | impl Expression {
+    | --------------- method in this implementation
+234 |     pub(crate) fn fields(&self, out: &mut Vec<usize>) {
+    |                   ^^^^^^
+
+warning: associated function `excluding` is never used
+   --> src/query.rs:432:19
+    |
+431 | impl PackScan {
+    | ------------- associated function in this implementation
+432 |     pub(crate) fn excluding(pack: &SeedPackSnapshot, predicate: Arc<Expression>) -> Self {
+    |                   ^^^^^^^^^
+
+warning: associated function `excluding` is never used
+   --> src/query.rs:432:19
+    |
+431 | impl PackScan {
+    | ------------- associated function in this implementation
+432 |     pub(crate) fn excluding(pack: &SeedPackSnapshot, predicate: Arc<Expression>) -> Self {
+    |                   ^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `data-seeds` (lib) generated 4 warnings
+warning: `data-seeds` (lib test) generated 1 warning
+   Compiling data-seeds v0.1.0 (/Users/Shared/code/applications/trie-trunk/rust/seeds)
+warning: variable does not need to be mutable
+   --> tests/summary_arrays.rs:189:13
+    |
+189 |         let mut seed = source
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `data-seeds` (test "summary_arrays") generated 1 warning (run `cargo fix --test "summary_arrays" -p data-seeds` to apply 1 suggestion)
+warning: variable does not need to be mutable
+   --> tests/replication.rs:228:9
+    |
+228 |     let mut old_seed = older
+    |         ----^^^^^^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> tests/replication.rs:236:9
+    |
+236 |     let mut seed = default
+    |         ----^^^^
+    |         |
+    |         help: remove this `mut`
+
+warning: `data-seeds` (test "replication") generated 2 warnings (run `cargo fix --test "replication" -p data-seeds` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.40s
+     Running unittests src/lib.rs (rust/seeds/target/debug/deps/data_seeds-d21bed002e892824)
+
+running 16 tests
+test query::pruning::tests::optional_stage_retains_possible_missing_stale_and_partial_evidence ... ok
+test query::pruning::tests::invalid_proofs_leave_candidates_unchanged ... ok
+test query::pruning::tests::stages_only_remove_candidates_and_do_not_probe_an_empty_plan ... ok
+test stalks::data::state_tests::failed_state_expansion_keeps_existing_values ... ok
+test stalks::data::state_tests::uniform_states_allocate_only_when_the_pattern_changes ... ok
+test summaries::selection::tests::later_stages_only_probe_summary_survivors ... ok
+test summaries::selection::tests::missing_partial_and_candidate_periods_remain_eligible ... ok
+test summaries::selection::tests::only_full_zero_coverage_eliminates_search ... ok
+test summaries::window::tests::arbitrary_windows_select_complete_overlapping_periods ... ok
+test summaries::window::tests::midnight_and_invalid_ranges ... ok
+test value::tests::numeric_comparisons_preserve_128_bit_boundaries ... ok
+test query::byte::tests::compound_predicate_reads_the_field_once ... ok
+test query::byte::tests::other_domains_keep_the_existing_evaluator ... ok
+test query::plan_cache_tests::plans_share_only_immutable_definition_bindings ... ok
+test query::plan_cache_tests::cache_is_bounded_and_large_literals_remain_uncached ... ok
+test query::byte::tests::exhaustive_domain_matches_original_evaluator_with_three_valued_logic ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/annotated_summaries.rs (rust/seeds/target/debug/deps/annotated_summaries-e7998a9adc9fbe37)
+
+running 7 tests
+test empty_nonfinite_and_overflow_have_explicit_unavailable_statistics ... ok
+test compensated_float_sum_survives_storage_and_merge ... ok
+test class_previews_match_ingested_queries_and_stop_before_unsupported_fields ... ok
+test arbitrary_windows_roll_up_and_preview_whole_periods_without_changing_event_bounds ... ok
+test merge_is_weighted_and_lossless_and_does_not_merge_different_plans ... ok
+test persisted_state_merges_and_equal_width_category_versions_remain_distinct ... ok
+test annotated_classes_prepare_actual_fixed_objects_from_ingestion ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/box_versions.rs (rust/seeds/target/debug/deps/box_versions-04e1177e099f60c0)
+
+running 4 tests
+test directory_rejects_transition_into_pack_interior_from_footer_only ... ok
+test individual_compressed_pacs_do_not_change_version_bindings ... ok
+test fixed_box_plans_clean_and_exception_spans_from_footer_alone ... ok
+test box_offsets_select_fixed_variable_mixed_and_rollback_without_external_indexes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/byte_queries.rs (rust/seeds/target/debug/deps/byte_queries-026dbe52bce6f4f4)
+
+running 1 test
+test compound_byte_predicates_work_across_all_four_encoding_paths ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/definition_graph_identity.rs (rust/seeds/target/debug/deps/definition_graph_identity-df8cda89ad145fd0)
+
+running 2 tests
+test changing_referenced_content_changes_all_ancestor_digests ... ok
+test moving_a_complete_graph_preserves_each_member_digest ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/http_definition.rs (rust/seeds/target/debug/deps/http_definition-09d82ca2564be998)
+
+running 1 test
+test independent_http_definition_preserves_widths_and_roundtrips_ingested_values ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/identity.rs (rust/seeds/target/debug/deps/identity-27d8ab61a8fa5397)
+
+running 2 tests
+test missing_or_out_of_range_time_never_fabricates_an_identity ... ok
+test ingress_keeps_compact_bytes_and_views_restore_uuid_for_each_time_unit ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/incremental_versions.rs (rust/seeds/target/debug/deps/incremental_versions-09ed836da075bebf)
+
+running 3 tests
+test alternate_first_and_only_definition_retains_its_reference ... ok
+test batches_fail_without_publishing_and_pop_can_restore_uniform_framing ... ok
+test live_mixed_load_snapshot_resume_seal_and_compression ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ingress.rs (rust/seeds/target/debug/deps/ingress-0ad62b0b5cff7b37)
+
+running 8 tests
+test http_ingress_inputs_are_complete_pils_from_typed_ingestion ... ok
+test full_pils_ingest_as_unsealed_packs_and_seal_in_time_order ... ok
+test rejected_full_pils_do_not_change_the_pack_and_publication_requires_sealing ... ok
+test recovery_replays_only_unpublished_full_pils_and_keeps_time_layout ... ok
+test full_pil_versions_and_rollbacks_survive_the_same_hour ... ok
+test query_telemetry_encodes_millisecond_observations_as_microseconds ... ok
+test query_checkpoints_keep_explicit_positions_and_parent_overlap ... ok
+test query_telemetry_levels_and_ordered_checkpoints_survive_ingress ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/metadata.rs (rust/seeds/target/debug/deps/metadata-fa2fe18d3a574a74)
+
+running 3 tests
+test mapping_follows_annotations_not_field_names_or_namespace ... ok
+test open_mappings_preserve_unknown_values_through_ingestion ... ok
+test explicit_annotations_supply_shared_mappings_without_changing_definitions ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/mixed_queries.rs (rust/seeds/target/debug/deps/mixed_queries-bbc0c3998dd704e3)
+
+running 1 test
+test registered_live_resident_and_paged_queries_resolve_reordered_fields_and_versions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/mixed_summaries.rs (rust/seeds/target/debug/deps/mixed_summaries-0a1dd14094838bcb)
+
+running 5 tests
+test mixed_periods_merge_losslessly_without_adding_period_rows ... ignored, TODO: custom log class changes; retained for the deferred mixed-class design
+test signedness_is_never_reinterpreted_and_overflow_is_not_wrapped ... ignored, TODO: custom log signedness changes; retained for the deferred mixed-class design
+test sparse_normalization_keeps_full_integer_domains_and_rejects_variable_layouts ... ok
+test custom_log_class_changes_fail_explicitly_until_supported ... ok
+test daily_commit_combines_source_accumulators_only_after_all_complete ... ok
+
+test result: ok. 3 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/mixed_summary_versions.rs (rust/seeds/target/debug/deps/mixed_summary_versions-0ebffac2a45e7bd4)
+
+running 1 test
+test stored_definitions_keep_real_names_and_period_winners_after_restart ... ignored, TODO: custom log class changes; these historical assertions describe the deferred per-class winner path
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/native_beds.rs (rust/seeds/target/debug/deps/native_beds-0a1407326d96e763)
+
+running 1 test
+test native_ingress_appends_plain_packs_to_one_beds_and_reopens_them ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/paged_codec.rs (rust/seeds/target/debug/deps/paged_codec-2c92aa79f4349205)
+
+running 2 tests
+test header_only_reader_checks_used_offsets_without_scanning_untouched_members ... ok
+test metadata_member_reads_match_resident_reads_across_modes_and_commons ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/planner_lab.rs (rust/seeds/target/debug/deps/planner_lab-ab0133cd78894fe0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/query.rs (rust/seeds/target/debug/deps/query-c565ad4b1002e876)
+
+running 26 tests
+test declared_wide_unsigned_values_filter_sort_and_materialize_losslessly ... ok
+test capped_and_uncapped_sleeves_keep_the_shared_builder_path ... ok
+test differently_ordered_definitions_bind_by_field_name ... ok
+test absent_null_and_three_valued_not_remain_distinct ... ok
+test box_children_share_bytes_and_views_outlive_store ... ok
+test dynamic_objects_and_annotations_stay_codec_owned ... ok
+test exact_uint64_sort_and_filter ... ok
+test disk_query_pages_hold_only_contributing_packs_and_share_readers ... ok
+test float_and_integer_comparisons_do_not_round_large_integers ... ok
+test projection_limits_cancellation_and_errors ... ok
+test disk_query_zero_limit_and_early_cancellation_perform_no_io ... ok
+test resumable_unordered_offset_limit_and_returned_batch_survive_cursor_release ... ok
+test compressed_pack_inside_box_uses_existing_decompressor ... ok
+test shared_sort_budget_rejects_before_allocation_and_releases_on_abort ... ok
+test sort_key_memory_is_charged_and_cancelled_independently ... ok
+test storage_verifies_crc_before_write_not_when_opening_selected_packs ... ok
+test unordered_limit_stops_globally_and_pack_fetch_resumes ... ok
+test zero_limit_and_empty_packs_do_not_bypass_poll_budget ... ok
+test time_selected_box_addresses_need_no_box_directory_or_chronological_append_order ... ok
+test shared_ranges_read_all_modes_and_factored_common_values ... ok
+test resumable_scan_yields_without_matches_and_can_be_cancelled_between_slices ... ok
+test resumable_ordering_matches_existing_encoder_ingested_query_results ... ok
+test disk_query_top_k_reopens_selected_packs_without_pinning_the_scan ... ok
+test disk_query_reads_only_demanded_packs_and_honors_one_global_limit ... ok
+test disk_query_scan_memory_is_independent_of_pack_count ... ok
+test thousand_packs_one_global_ordered_limit ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/reader.rs (rust/seeds/target/debug/deps/reader-61d3821e5795debf)
+
+running 14 tests
+test collected_pack_retains_commons_and_application_headers_without_disk_reads ... ok
+test published_reader_does_not_repeat_checksum_validation ... ok
+test metadata_admission_failure_keeps_completed_entries_and_no_partial_entry ... ok
+test reader_queries_share_allocations_and_charge_views_until_released ... ok
+test compressed_preparation_keeps_only_expanded_metadata ... ok
+test oversized_member_window_is_admitted_and_failed_reads_are_retryable ... ok
+test reader_faults_release_current_bytes_and_block_results ... ok
+test collected_metadata_follows_commit_publication_and_recovery ... ok
+test combined_readers_keep_global_limits_sorting_and_independent_payloads ... ok
+test reader_sort_releases_scan_allocations_and_reloads_only_results ... ok
+test readers_share_payloads_across_native_query_threads ... ok
+test registered_reader_preserves_sparse_addresses_and_short_reads ... ok
+test prepared_metadata_survives_queries_without_pinning_members ... ok
+test selective_query_fits_a_window_budget_smaller_than_one_pack ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/reader_index.rs (rust/seeds/target/debug/deps/reader_index-3479d1aaf570fa93)
+
+running 7 tests
+test disk_index_rejects_mismatched_time_and_missing_version_root ... ok
+test disk_index_sort_and_independent_cursors_preserve_original_ordinals ... ok
+test mixed_rows_restore_fields_from_their_own_version_root ... ok
+test five_minute_periods_skip_rows_without_copying_packs_or_losing_origins ... ok
+test timestamp_seek_skips_payloads_and_scans_only_the_selected_rows ... ok
+test metadata_preparation_respects_time_selected_pack_ranges ... ok
+test disk_index_restores_version_specific_fields_with_bounded_windows ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/reconstruction.rs (rust/seeds/target/debug/deps/reconstruction-f0e7625039d65a71)
+
+running 9 tests
+test footer_width_transitions_do_not_allocate_the_box_extent ... ok
+test origin_publication_rejects_unknown_extents_and_preserves_failure_state ... ok
+test generic_footer_serializer_preserves_headers_and_sealed_state ... ok
+test source_scalars_reconstruct_footer_and_sparse_fills_keep_origin_addresses ... ok
+test origin_publication_tracks_plain_extents_across_compression_and_footer_resume ... ok
+test received_pack_handles_write_original_allocation_and_share_admission ... ok
+test reject_unsealed_out_of_bounds_overlapping_and_corrupt_packs ... ok
+test collection_uses_time_addresses_and_retries_admission_without_advancing ... ok
+test collection_rejects_snapshot_mismatch_and_distinguishes_missing_from_empty_time ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/registered_summaries.rs (rust/seeds/target/debug/deps/registered_summaries-ed8fc460d82df791)
+
+running 4 tests
+test unused_versions_and_failed_ingestion_do_not_force_sparse_days ... ok
+test deployments_and_rollbacks_share_period_ordinals_and_keep_real_event_bytes ... ok
+test full_pil_observations_match_builder_summaries_without_reencoding ... ok
+test annotation_changes_refresh_an_open_day_without_changing_the_event_version ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running tests/registration.rs (rust/seeds/target/debug/deps/registration-f7c4fd6a8f088be8)
+
+running 6 tests
+test registered_pack_requires_an_exact_trie_reference ... ok
+test branch_packs_share_readers_and_coordinate_one_global_query ... ok
+test leaf_commit_handoff_publishes_only_the_tail_and_accepts_after_write ... ok
+test leaves_scope_separates_types_and_preserves_contiguous_empty_roots ... ok
+test registered_definitions_drive_ingestion_and_queries_across_bundle_reordering ... ok
+test historical_annotations_reuse_the_event_codec_after_restart_and_rollback ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.46s
+
+     Running tests/replication.rs (rust/seeds/target/debug/deps/replication-b052ee0109280080)
+
+running 6 tests
+test limits_truncation_callback_failure_and_trailing_junk_fail_closed ... ok
+test complete_chunks_are_shared_and_fragmented_packs_are_owned ... ok
+test hour_and_lifecycle_survive_shared_reads_and_sealing ... ok
+test ingress_uses_explicit_version_with_original_object_pointer_ordinals ... ok
+test compressed_packs_are_self_framed_and_queryable ... ok
+test adjacent_packs_accept_every_network_split_without_waiting_for_eof ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/semantic_queries.rs (rust/seeds/target/debug/deps/semantic_queries-290c7e6994d88588)
+
+running 6 tests
+test aliases_follow_annotations_and_do_not_shadow_real_fields ... ok
+test group_and_position_views_share_the_original_ordinal ... ok
+test provider_labels_and_groups_bind_without_retyping_the_stored_field ... ok
+test stalks_materialize_the_same_logical_values_without_changing_source_storage ... ok
+test summary_preview_uses_the_same_semantic_binding ... ok
+test numeric_comparisons_match_views_including_unspecified_and_unknown_values ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/stalks.rs (rust/seeds/target/debug/deps/stalks-44f0b5282e47dd34)
+
+running 6 tests
+test enum_columns_preserve_labels_and_signed_numeric_categories ... ok
+test differing_definitions_keep_typed_chunks_without_rounding_wide_values ... ok
+test global_filter_limit_and_order_remain_the_existing_querys_job ... ok
+test growth_respects_other_readers_and_never_truncates_to_the_row_budget ... ok
+test beds_grow_into_owned_columns_and_release_each_consumed_pack ... ok
+test cancellation_and_failed_admission_release_partial_columns_and_packs ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/storage.rs (rust/seeds/target/debug/deps/storage-424bb0d4c05be2e6)
+
+running 8 tests
+test hour_index_checks_boundaries_without_scanning_untouched_rows ... ok
+test index_count_must_match_pack ... ok
+test leaf_bindings_reject_shadowing_and_defer_unused_value_checks ... ok
+test native_hour_index_restores_six_byte_time_without_copying_pack_or_index ... ok
+test indexed_fields_filter_sort_and_render_without_a_stored_record_ordinal ... ok
+test identical_shapes_cannot_bind_a_leaf_root_from_another_version ... ok
+test leaf_fields_use_the_shared_codec_for_filtering_and_views ... ok
+test leaf_replication_batches_preserve_ids_and_roll_back_invalid_appends ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/storage_publication.rs (rust/seeds/target/debug/deps/storage_publication-8bfe7b6ab469c03c)
+
+running 3 tests
+test time_addressed_read_does_not_require_other_children_to_be_resident ... ok
+test replacement_tail_preserves_published_children_through_every_short_write ... ok
+test sparse_replica_fills_origin_addresses_without_republishing_footer ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/summaries.rs (rust/seeds/target/debug/deps/summaries-9eda37b69f2a34fe)
+
+running 8 tests
+test reject_variable_sparse_incomplete_and_register_changed_shapes ... ok
+test annotations_do_not_change_the_fixed_storage_contract ... ok
+test commit_reopen_append_preserves_child_addresses_and_seal_rejects_writes ... ok
+test daily_pack_appends_until_sealed_and_box_rejects_open_snapshots ... ok
+test empty_and_active_days_keep_fixed_rows_with_box_directory_addressing ... ok
+test selected_summary_packs_query_shared_bytes_with_seed_predicates ... ok
+test footer_only_summary_storage_reads_and_appends_without_historical_payloads ... ok
+test version_directory_preserves_offsets_through_size_changes_and_rollbacks ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/summary_accumulator.rs (rust/seeds/target/debug/deps/summary_accumulator-fc7b7fecf845e88c)
+
+running 5 tests
+test calendar_bounds_and_failed_ingestion_do_not_complete_periods ... ok
+test completion_follows_commit_watermark_not_new_hour_arrival ... ok
+test daily_summary_calendar_uses_the_published_fixed_utc_offset ... ok
+test silent_and_active_days_have_identical_pack_extents ... ok
+test snapshot_resumes_open_day_and_daily_seal_releases_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/summary_arrays.rs (rust/seeds/target/debug/deps/summary_arrays-9127a72255782c33)
+
+running 4 tests
+test bound_object_arrays_match_individual_objects_for_wide_scalars ... ok
+test seed_readers_restore_pack_dimensions_and_retain_shared_storage ... ok
+test zero_lengths_and_wrong_dimensions_preserve_the_fixed_contract ... ok
+test sizes_bind_plans_without_new_definitions_and_survive_box_reopen ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/summary_classes.rs (rust/seeds/target/debug/deps/summary_classes-23efb1f89770dce9)
+
+running 4 tests
+test summary_classes_are_resolved_from_annotations_and_preserved_through_doc ... ok
+test malformed_unknown_or_duplicate_summary_classes_fail_explicitly ... ok
+test invalid_summary_types_are_rejected_by_seeds_not_the_codec ... ok
+test percentile_requests_do_not_select_or_resize_accumulators ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/summary_columns.rs (rust/seeds/target/debug/deps/summary_columns-6680bd66d642408f)
+
+running 5 tests
+test table_admission_failure_is_not_a_partial_result ... ok
+test table_only_reduces_timeline_selected_hours ... ok
+test column_admission_failure_releases_partial_columns ... ok
+test column_report_reuses_values_after_reader_release_and_releases_budget ... ok
+test table_reduces_ingested_classes_with_exact_coverage_and_poisoned_failures ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/summary_definitions.rs (rust/seeds/target/debug/deps/summary_definitions-6408cf56bc2a611f)
+
+running 9 tests
+test prescribing_parsed_doc_matches_loading_signed_bundle ... ok
+test generic_library_is_reproducible_and_classes_are_fixed ... ok
+test different_day_dimensions_and_names_survive_restart_and_rollup ... ok
+test prepared_categories_keep_each_sources_vocabulary_and_predicate ... ok
+test categories_use_uint3_counters_and_seed_owned_vocabularies ... ok
+test annotation_only_field_selection_preserves_historical_meaning ... ok
+test field_sizes_names_and_annotations_change_bindings_not_definitions ... ok
+test source_ordinals_and_field_counts_do_not_change_library ... ok
+test registered_packs_bind_fields_from_the_selected_taxonomy ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running tests/summary_preview.rs (rust/seeds/target/debug/deps/summary_preview-faf866483a59fa4f)
+
+running 3 tests
+test summary_preview_resolves_names_in_each_definition_version ... ok
+test ordered_preview_storage_accepts_reordered_arrivals_and_rejects_duplicates ... ok
+test preview_counts_are_proofs_not_estimated_event_matches ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/summary_publication.rs (rust/seeds/target/debug/deps/summary_publication-be63bcc6dce28e76)
+
+running 4 tests
+test dependency_failure_blocks_footer_and_retry_reuses_the_prepared_tail ... ok
+test empty_summary_box_has_no_hour_counts ... ok
+test native_commit_restarts_from_footer_and_keeps_annotation_lineage ... ok
+test resident_summary_snapshots_invalidate_on_ingest_completion_and_annotation_refresh ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+
+     Running tests/summary_series.rs (rust/seeds/target/debug/deps/summary_series-40d77e96fc2c436f)
+
+running 4 tests
+test distribution_samples_are_interval_aggregates_not_events ... ok
+test empty_class_objects_do_not_invent_numeric_samples ... ok
+test span_combines_class_state_before_projecting_each_interval ... ok
+test three_day_spans_cross_pack_boundaries_and_preserve_integer_precision ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/time.rs (rust/seeds/target/debug/deps/time-f86877777fc327a3)
+
+running 2 tests
+test range_clips_to_publication_and_preserves_half_open_boundaries ... ok
+test range_matches_existing_individual_hour_reads ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/versioned_pac.rs (rust/seeds/target/debug/deps/versioned_pac-eb2f54f862cd1e2b)
+
+running 1 test
+test ingestion_rollbacks_use_version_ranges_over_one_member_directory ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/writer.rs (rust/seeds/target/debug/deps/writer-9a6ee60895811724)
+
+running 8 tests
+test trunk_owns_one_optional_commit_lane ... ok
+test interrupts_are_bounded_and_zero_writes_fail ... ok
+test commit_failure_discards_dependent_plans_only_after_owner_recovery ... ok
+test barriers_preserve_dependency_order_and_failure_never_reports_ready ... ok
+test admission_bounds_and_empty_batches ... ok
+test sparse_writes_borrow_one_allocation_and_flush_once_per_file ... ok
+test queue_requires_its_budget_and_blocks_after_publication_failure ... ok
+test commit_queue_holds_next_batch_until_metadata_publication ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

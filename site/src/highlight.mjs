@@ -18,3 +18,25 @@ export function highlight(code) {
  }
  return html + escape(code.slice(end));
 }
+
+export function highlightShell(code) {
+ const tokens = /#[^\n]*|"(?:\\.|[^"\\])*"|'[^']*'|&&|\|\||[|;]|[^\s|;&]+/g;
+ let html = '', end = 0, command = true, rxAction = false;
+ for (const match of code.matchAll(tokens)) {
+  const gap = code.slice(end, match.index), value = match[0];
+  if (gap.includes('\n')) { command = true; rxAction = false; }
+  let kind;
+  if (value.startsWith('#')) kind = 'comment';
+  else if (/^(?:&&|\|\||[|;])$/.test(value)) {
+   kind = 'keyword'; command = true; rxAction = false;
+  } else {
+   kind = command ? 'function' : rxAction || value.startsWith('-') ? 'keyword'
+    : /^["']/.test(value) || /[./]/.test(value) ? 'string' : null;
+   rxAction = command && value === 'rx';
+   command = false;
+  }
+  html += escape(gap) + (kind ? `<span class="code-${kind}">${escape(value)}</span>` : escape(value));
+  end = match.index + value.length;
+ }
+ return html + escape(code.slice(end));
+}

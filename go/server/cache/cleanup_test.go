@@ -37,12 +37,12 @@ func cleanupFixture(t *testing.T) (Config, *Layout, string) {
 func cloneGeneration(t *testing.T, dir, prefix string, generation [16]byte) []string {
 	t.Helper()
 	var result []string
-	for _, ext := range []string{"idx", "pods", "tri", "journal", "sum"} {
+	for _, ext := range []string{"indx", "packs", "time", "summ"} {
 		raw, e := os.ReadFile(filepath.Join(dir, "write."+ext))
 		if e != nil {
 			t.Fatal(e)
 		}
-		if ext == "tri" {
+		if ext == "time" {
 			copy(raw[48:64], generation[:])
 		} else {
 			copy(raw[40:56], generation[:])
@@ -68,19 +68,14 @@ func TestCleanupPreviewApplyAndReplay(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	orphanDir := filepath.Join(filepath.Dir(dir), "1")
-	if e = os.Mkdir(orphanDir, 0700); e != nil {
-		t.Fatal(e)
-	}
-	orphanPath := filepath.Join(orphanDir, "resource.rx")
+	orphanPath := definitionPath(c.Root, orphan.Digest)
 	if e = os.WriteFile(orphanPath, orphan.Bytes, 0600); e != nil {
 		t.Fatal(e)
 	}
-	files = append(files, orphanPath)
-	unknown := filepath.Join(dir, "writes.old.pods")
+	unknown := filepath.Join(dir, "writes.old.packs")
 	os.WriteFile(unknown, []byte("keep"), 0600)
 	before := map[string][]byte{}
-	for _, name := range []string{"resource.rx", "state.tri", "write.idx", "write.pods", "write.tri", "write.journal", "write.sum", "write.seed", "error.seed"} {
+	for _, name := range []string{"leaf.trie", "write.indx", "write.packs", "write.time", "write.summ", "write.seeds", "error.seeds"} {
 		raw, e := os.ReadFile(filepath.Join(dir, name))
 		if e != nil {
 			t.Fatal(e)
@@ -111,6 +106,11 @@ func TestCleanupPreviewApplyAndReplay(t *testing.T) {
 	for _, f := range files {
 		if _, e = os.Stat(f); !os.IsNotExist(e) {
 			t.Fatal("orphan survived", f, e)
+		}
+	}
+	for _, entry := range []*Layout{l, orphan} {
+		if raw, e := os.ReadFile(definitionPath(c.Root, entry.Digest)); e != nil || !bytes.Equal(raw, entry.Bytes) {
+			t.Fatal("shared Definition changed", e)
 		}
 	}
 	for name, raw := range before {
@@ -151,11 +151,11 @@ func TestCleanupPreservesReferencedAndDataBearingUnregisteredMaps(t *testing.T) 
 		}
 		target := filepath.Join(filepath.Dir(dir), fmt.Sprint(minor))
 		os.Mkdir(target, 0700)
-		os.WriteFile(filepath.Join(target, "resource.rx"), orphan.Bytes, 0600)
+		os.WriteFile(definitionPath(c.Root, orphan.Digest), orphan.Bytes, 0600)
 		if minor == 1 {
-			os.WriteFile(filepath.Join(filepath.Dir(dir), fmt.Sprintf("producer-%x.rx", orphan.Digest)), orphan.Bytes, 0600)
+			os.WriteFile(filepath.Join(c.Root, "definitions", fmt.Sprintf("producer-%x.rx", orphan.Digest)), orphan.Bytes, 0600)
 		} else {
-			os.WriteFile(filepath.Join(target, "write.pods"), []byte("unregistered data"), 0600)
+			os.WriteFile(filepath.Join(target, "write.packs"), []byte("unregistered data"), 0600)
 		}
 	}
 	report, e := Cleanup(context.Background(), c, true)
@@ -181,11 +181,11 @@ func TestCleanupRefusesWriterCorruptionAndSymlinks(t *testing.T) {
 			case "orphan-header":
 				os.WriteFile(files[0], []byte("corrupt"), 0600)
 			case "active-data":
-				raw, _ := os.ReadFile(filepath.Join(dir, "write.pods"))
+				raw, _ := os.ReadFile(filepath.Join(dir, "write.packs"))
 				raw[len(raw)-1] ^= 1
-				os.WriteFile(filepath.Join(dir, "write.pods"), raw, 0600)
+				os.WriteFile(filepath.Join(dir, "write.packs"), raw, 0600)
 			case "missing-active":
-				os.Remove(filepath.Join(dir, "write.pods"))
+				os.Remove(filepath.Join(dir, "write.packs"))
 			case "symlink":
 				if e := os.Symlink(files[0], filepath.Join(dir, "link")); e != nil {
 					t.Fatal(e)
@@ -212,7 +212,7 @@ func TestCleanupRetiredDefaultGeneration(t *testing.T) {
 	c, _, dir := cleanupFixture(t)
 	// Preserve old bytes as if deletion after the committed catalog switch failed.
 	old := map[string][]byte{}
-	for _, ext := range []string{"idx", "pods", "tri", "journal", "sum"} {
+	for _, ext := range []string{"indx", "packs", "time", "summ"} {
 		old[ext], _ = os.ReadFile(filepath.Join(dir, "write."+ext))
 	}
 	s, e := Open(c)
@@ -234,7 +234,7 @@ func TestCleanupRetiredDefaultGeneration(t *testing.T) {
 		}
 	}
 	report, e := Cleanup(context.Background(), c, true)
-	if e != nil || len(report.Files) != 5 {
+	if e != nil || len(report.Files) != 4 {
 		t.Fatal(report, e)
 	}
 	for _, f := range report.Files {
@@ -272,7 +272,7 @@ func TestMissingRetainedBranchCannotRecreateRowsOrDeletePriorFiles(t *testing.T)
 	if e = s.Close(); e != nil {
 		t.Fatal(e)
 	}
-	for _, ext := range []string{".idx", ".pods", ".tri", ".journal", ".sum"} {
+	for _, ext := range []string{".indx", ".packs", ".time", ".summ"} {
 		if e = os.Remove(filepath.Join(dir, prefix+ext)); e != nil {
 			t.Fatal(e)
 		}

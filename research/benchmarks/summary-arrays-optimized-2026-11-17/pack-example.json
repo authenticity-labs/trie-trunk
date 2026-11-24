@@ -1,0 +1,90 @@
+{
+  "arrayLengths": {
+    "categories": 1,
+    "counts": 3,
+    "numeric-uint4": 1
+  },
+  "byteLength": 24652,
+  "definition": "summary.rx",
+  "description": "Decoded inspection of a real Pack. First period shown; unused class arrays omitted.",
+  "memberCount": 288,
+  "mode": "Fixed Full",
+  "seedBindings": {
+    "categories": [
+      {
+        "counterStart": 0,
+        "field": "status",
+        "values": [
+          200,
+          404,
+          500
+        ]
+      }
+    ],
+    "numeric-uint4": [
+      "duration"
+    ]
+  },
+  "seedRows": [
+    {
+      "duration": {
+        "absent_count": 0,
+        "count": 4,
+        "max": 40,
+        "mean": 25.0,
+        "min": 10,
+        "nonfinite_count": 0,
+        "null_count": 0,
+        "sum": 100
+      },
+      "status": {
+        "absent_count": 0,
+        "count": 4,
+        "distinct": 3,
+        "mode": 200,
+        "null_count": 0,
+        "values": {
+          "200": {
+            "count": 2,
+            "proportion": 0.5
+          },
+          "404": {
+            "count": 1,
+            "proportion": 0.25
+          },
+          "500": {
+            "count": 1,
+            "proportion": 0.25
+          }
+        }
+      }
+    }
+  ],
+  "storedRows": [
+    {
+      "categories": [
+        {
+          "count": 4,
+          "null_count": 0
+        }
+      ],
+      "count": 4,
+      "counts": [
+        2,
+        1,
+        1
+      ],
+      "numeric-uint4": [
+        {
+          "count": 4,
+          "max": 40,
+          "min": 10,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "overflow": false,
+          "sum": 100
+        }
+      ]
+    }
+  ]
+}

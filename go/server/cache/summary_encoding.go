@@ -2,7 +2,7 @@ package cache
 
 import (
 	"fmt"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"math"
 )
 
@@ -156,7 +156,7 @@ func validateShuffledSummary(raw []byte, enc summaryEncoding) error {
 		return fmt.Errorf("invalid shuffled summary")
 	}
 	n, m, p, d := uint64(order.Uint32(raw[32:])), uint64(order.Uint32(raw[36:])), uint64(order.Uint32(raw[40:])), uint64(order.Uint32(raw[44:]))
-	size := uint64(116) + n*uint64(2+enc[0].Width+enc[1].Width+enc[2].Width+enc[3].Width+enc[4].Width) + m*uint64(13+enc[5].Width+enc[6].Width) + p*uint64(enc[7].Width+enc[8].Width) + d
+	size := uint64(116) + n*uint64(2+enc[0].Width+enc[1].Width+enc[2].Width+enc[3].Width+enc[4].Width) + m*uint64(13+enc[5].Width+enc[6].Width) + p*uint64(enc[7].Width+enc[8].Width) + d + uint64(order.Uint32(raw[50:]))
 	if size != uint64(len(raw)) {
 		return fmt.Errorf("invalid shuffled column lengths")
 	}

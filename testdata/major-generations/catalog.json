@@ -1,0 +1,129 @@
+{
+  "scope": "demo",
+  "directories": [
+    "demo",
+    "demo/trunk-client",
+    "demo/trunk-client/queries"
+  ],
+  "files": [
+    {
+      "path": "definitions/query.rx",
+      "kind": "definition",
+      "digest": "fb00cf071e74dfc30677e0ac44916696e7aad5db03958eb0bca55dcbd5a5d692",
+      "size": 441,
+      "bootstrap": true
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v1.indx",
+      "branchId": 2,
+      "kind": "idx",
+      "definition": "515f71f4a6c2669a3e8e98c7f1b994bc5a2101f77554220f6ac00bca4674ab95",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v1.leaf",
+      "branchId": 2,
+      "kind": "state",
+      "definitions": [
+        "156c9c24cb9609f134c3f3756096682fd1fa89e04a8b16636bb79743e9650815",
+        "515f71f4a6c2669a3e8e98c7f1b994bc5a2101f77554220f6ac00bca4674ab95"
+      ],
+      "size": 0,
+      "bootstrap": true
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v1.packs",
+      "branchId": 2,
+      "kind": "packs",
+      "definition": "515f71f4a6c2669a3e8e98c7f1b994bc5a2101f77554220f6ac00bca4674ab95",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v1.summ",
+      "branchId": 2,
+      "kind": "sum",
+      "definition": "515f71f4a6c2669a3e8e98c7f1b994bc5a2101f77554220f6ac00bca4674ab95",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v1.time",
+      "branchId": 2,
+      "kind": "time",
+      "definition": "515f71f4a6c2669a3e8e98c7f1b994bc5a2101f77554220f6ac00bca4674ab95",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v2.indx",
+      "branchId": 3,
+      "kind": "idx",
+      "definition": "816e07e4849128da59d2828b7b332fb6798886b1feee8fc723495a5403b181f3",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v2.leaf",
+      "branchId": 3,
+      "kind": "state",
+      "definitions": [
+        "816e07e4849128da59d2828b7b332fb6798886b1feee8fc723495a5403b181f3"
+      ],
+      "size": 0,
+      "bootstrap": true
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v2.packs",
+      "branchId": 3,
+      "kind": "packs",
+      "definition": "816e07e4849128da59d2828b7b332fb6798886b1feee8fc723495a5403b181f3",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v2.summ",
+      "branchId": 3,
+      "kind": "sum",
+      "definition": "816e07e4849128da59d2828b7b332fb6798886b1feee8fc723495a5403b181f3",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "demo/trunk-client/queries/query.v2.time",
+      "branchId": 3,
+      "kind": "time",
+      "definition": "816e07e4849128da59d2828b7b332fb6798886b1feee8fc723495a5403b181f3",
+      "size": 0,
+      "bootstrap": false
+    },
+    {
+      "path": "trunk.trie",
+      "kind": "taxonomy",
+      "size": 5639,
+      "bootstrap": true
+    }
+  ],
+  "sources": [
+    "demo/trunk-client/queries/query"
+  ],
+  "collections": [],
+  "bindings": [
+    {
+      "tap": "demo/trunk-client/queries/query",
+      "definition": "156c9c24cb9609f134c3f3756096682fd1fa89e04a8b16636bb79743e9650815",
+      "branchId": 1
+    },
+    {
+      "tap": "demo/trunk-client/queries/query",
+      "definition": "515f71f4a6c2669a3e8e98c7f1b994bc5a2101f77554220f6ac00bca4674ab95",
+      "branchId": 2
+    },
+    {
+      "tap": "demo/trunk-client/queries/query",
+      "definition": "816e07e4849128da59d2828b7b332fb6798886b1feee8fc723495a5403b181f3",
+      "branchId": 3
+    }
+  ]
+}

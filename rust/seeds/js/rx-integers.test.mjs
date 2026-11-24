@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createRxRuntime} from '../../../../pill-packer/npm/rx.js';
+const [wasm,directory]=process.argv.slice(2);
+const runtime=await createRxRuntime(await readFile(wasm));
+const rx=runtime.prescribe(await readFile(`${directory}/wide.rx`));
+const source={time:1700000000001,wide:(1n<<120n)+1n,signed:-(1n<<127n)+1n,array:[(1n<<100n)+1n],map:{key:(1n<<120n)+1n}};
+const p=rx.dispense().load(source);p.cap();
+assert.deepEqual(p.object(),source);assert.deepEqual({...p.view()},source);
+const read=rx.open(await readFile(`${directory}/wide.pac`));
+assert.deepEqual(read.get(1).object(),source);
+assert.throws(()=>rx.dispense().load({...source,wide:1n<<128n}),/overflow|range/i);
+assert.throws(()=>rx.dispense().load({...source,time:2**48}),/range|overflow/i);
+assert.throws(()=>rx.dispense().load({...source,signed:-(1n<<127n)-1n}),/overflow|range/i);
+console.log('RX WASM: BigInt input, typed arrays/maps, exact object/view output and overflow passed');

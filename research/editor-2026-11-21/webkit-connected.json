@@ -1,0 +1,40 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"nativeCandidate\":true,\"uuidv7First\":true,\"wideIntegers\":true,\"timestampRequired\":true,\"observedRanges\":true,\"floatPrecision\":true,\"utf8Sizing\":true,\"potentialEnums\":true,\"workflow\":true,\"measurementDomain\":true,\"backPreservesChoices\":true,\"replacementInvalidatesChoices\":true,\"manualMappingExplicit\":true},\"candidate\":\"Quick Branch Setup\\n1. Choose Source\\n2. Describe Data\\n3. Resolve Time\\n4. Review Fields\\n5. Review Setup\\nReview Fields\\n\\nReview the proposed field types. Text capacity uses the largest sampled UTF-8 byte length; float narrowing preserves every sampled value. Potential enums are suggestions, not enforced choices.\\n\\nAnnotations beginning with @ describe field semantics; # selects summary analytics. Changing a field invalidates its review. Unsupported annotations or incompatible types are rejected before import.\\n\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\ntstr(20)\\n\\nObserved: 20 \u2192 20 bytes \u00b7 Present: 1 \u00b7 Null: 0\\n\\nEnum Values\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nuint(16)\\n\\nObserved: 340282366920938463463374607431768211455 \u2192 340282366920938463463374607431768211455 \u00b7 Present: 1 \u00b7 Null: 0\\n\\nEnum Values\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nuint(3)\\n\\nObserved: 65536 \u2192 65536 \u00b7 Present: 1 \u00b7 Null: 0\\n\\nEnum Values\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\n\\nEvent time and UUIDv7 identity are supplied by your timestamp mapping.\\n\\nObserved: 36 \u2192 36 bytes \u00b7 Present: 1 \u00b7 Null: 0\\n\\nTypes and widths describe the sample only; validate every record during import.\\n\\n I Have Reviewed The Sample\\nBack\\nContinue\",\"ranges\":\"Quick Branch Setup\\n1. Choose Source\\n2. Describe Data\\n3. Resolve Time\\n4. Review Fields\\n5. Review Setup\\nReview Fields\\n\\nReview the proposed field types. Text capacity uses the largest sampled UTF-8 byte length; float narrowing preserves every sampled value. Potential enums are suggestions, not enforced choices.\\n\\nAnnotations beginning with @ describe field semantics; # selects summary analytics. Changing a field invalidates its review. Unsupported annotations or incompatible types are rejected before import.\\n\\nSource Field\\nField Name\\n Include Field\\n\\nEvent time and UUIDv7 identity are supplied by your timestamp mapping.\\n\\nObserved: 1763500000 \u2192 1763500003 \u00b7 Present: 4 \u00b7 Null: 0\\n\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\ntstr(2)\\n\\nObserved: 2 \u2192 2 bytes \u00b7 Present: 4 \u00b7 Null: 0\\n\\n2 Observed Values\\nEnum Values\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nfloat(4)\\n\\nObserved: 1.5 \u2192 2.25 \u00b7 Present: 4 \u00b7 Null: 0\\n\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nuint(2)\\n\\nObserved: 200 \u2192 404 \u00b7 Present: 4 \u00b7 Null: 0\\n\\n2 Observed Values\\nEnum Values\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\n\\nTypes and widths describe the sample only; validate every record during import.\\n\\nMap an event timestamp before import; import time is not a substitute.\\n\\n I Have Reviewed The Sample\\nBack\\nContinue\"}",
+  "nativeStderr": "2026/11/21 11:15:19 Snoot listening on http://127.0.0.1:64020 using HTTP\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": false,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "nativePerformance": false,
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      3.50146484375,
+      3.8623046875,
+      3.90283203125
+    ],
+    "runtime": "d6334bfd34bd62b94ca22414a6980d51651bd30427a96a75b516661e3200a6b5",
+    "web": "76dbfbe07fff9976a256b928310f2a4da1025686e4a2975000e53d862099e245",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795277719578.465,
+    "processMs": 930.0235830014572,
+    "loadAfter": [
+      3.50146484375,
+      3.8623046875,
+      3.90283203125
+    ]
+  }
+}

@@ -12,7 +12,7 @@ import (
 
 func testCollectionIndex(t testing.TB) *objectIndex {
 	t.Helper()
-	f, err := os.OpenFile(filepath.Join(t.TempDir(), "collection.idx"), os.O_CREATE|os.O_RDWR, 0600)
+	f, err := os.OpenFile(filepath.Join(t.TempDir(), "collection.indx"), os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
 		t.Fatal(err)
 	}

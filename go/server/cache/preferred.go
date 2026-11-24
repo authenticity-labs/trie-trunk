@@ -46,8 +46,7 @@ func (p *Endpoint) validatePreferred(target *Layout) error {
 			}
 		}
 	}
-	n := target.Definition.Resource
-	pattern := filepath.Join(p.config.Root, p.config.Cache, n.Service, fmt.Sprintf("%s.v%d", n.Resource, n.Major), "producer-*.rx")
+	pattern := filepath.Join(p.config.Root, "definitions", "producer-*.rx")
 	paths, err := filepath.Glob(pattern)
 	if err != nil {
 		return err
@@ -62,7 +61,10 @@ func (p *Endpoint) validatePreferred(target *Layout) error {
 			return err
 		}
 		digest := strings.TrimSuffix(strings.TrimPrefix(filepath.Base(path), "producer-"), ".rx")
-		if digest != fmt.Sprintf("%x", source.Digest) || collectionKey(source) != key {
+		if collectionKey(source) != key {
+			continue
+		}
+		if digest != fmt.Sprintf("%x", source.Digest) {
 			return fmt.Errorf("invalid registered producer binding")
 		}
 		if err := check(source); err != nil {
@@ -110,13 +112,10 @@ func (p *Endpoint) persistPreferences() error {
 		return nil
 	}
 	catalog.Preferred = selected
-	raw, err := encoder.Marshal(catalog)
-	if err != nil {
+	if err := saveCatalog(p.config.Root, catalog); err != nil {
 		return err
 	}
-	if err = replace(filepath.Join(p.config.Root, p.config.Cache, "registry.map"), raw); err != nil {
-		return err
-	}
+
 	p.group.catalog(catalog)
 	return nil
 }

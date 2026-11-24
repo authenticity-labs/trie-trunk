@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"strings"
 	"syscall"
@@ -14,6 +15,18 @@ import (
 
 func main() {
 	if e := run(os.Args[1:]); e != nil {
+		var child *exec.ExitError
+		if errors.As(e, &child) {
+			// The native command already wrote its diagnostic to stderr.
+			code := child.ExitCode()
+			if code < 1 {
+				code = 1
+			}
+			os.Exit(code)
+		}
+		if errors.Is(e, context.Canceled) {
+			os.Exit(130)
+		}
 		log.Print(e)
 		os.Exit(1)
 	}
@@ -27,12 +40,12 @@ func run(args []string) error {
 	}
 	var err error
 	switch args[0] {
-	case "cache":
-		err = runCache(ctx, args[1:], os.Stdin, os.Stdout)
-	case "tap":
-		err = runTap(args[1:])
-	case "search":
-		err = runSearch(ctx, args[1:], os.Stdout)
+	case "prototype":
+		return runPrototype(ctx, args[1:])
+	case "--node-command":
+		return nodeCommand(args[1:])
+	case "install", "inspect", "candidate", "ports", "beds", "time", "search", "definitions", "seeds":
+		return runNode(ctx, args)
 	case "ingest", "serve":
 		err = runServices(ctx, args)
 	case "--help", "-h":
@@ -102,53 +115,39 @@ func runServices(ctx context.Context, args []string) error {
 }
 
 const usage = `usage:
-  trunk cache init|ingest|search|verify|prune|prefer --cache name --tenant owner --definition resource.rx
-  trunk cache definitions --cache name --tenant owner [--dir ./caches]
-  trunk cache cleanup --cache name --tenant owner [--dir ./caches] [--apply]
-    Preview unreferenced generations/unpublished maps; --apply removes verified candidates.
-  trunk tap create <tap> [--dir ./taps] [--definition definition.json]
-    Register a named object definition; versions are object major / definition minor.
-  trunk ingest 5410 serve 443
-  trunk serve [443] [--dir ./taps] [--socket path] [--queries 4]
-    Serve HTTP/2 (TCP) and HTTP/3 (UDP), plus a private local Unix socket.
-    Requires --cert, --key and TRUNK_TOKEN or --client-ca.
+  trunk install <directory> <name> [--storage pack|browse]
+  trunk inspect <directory>
+  trunk definitions register --dir PATH|--socket PATH --cache NAME --service NAME --resource NAME --type NAME --file RX|-
+    Raw RX PIL input; placement and the RX lineage select the registration.
+  trunk definitions draft|promote --help
+  trunk seeds test --help
+  trunk seeds load --dir PATH|--socket PATH --branch ID --file PIL|-
+    Load one complete PIL; acknowledgement follows durable recovery storage.
+  trunk beds|time query --dir PATH|--socket PATH --scope SOURCE --from TIME --to TIME
+    Shared Rust queries. Tables on stdout; --json selects JSONL. --sql accepts SQL.
+    --stats writes execution diagnostics to stderr. 'search' invokes beds query.
+  trunk candidate <source-byte-length>
+    Read sample input from stdin and emit a Definition candidate for review.
+  trunk ports inspect <file|-> [--profile file.json]
+    Detect or apply a source format and emit sampling/review JSON.
+  trunk ports review <mapping.json|-> [--rx]
+    Validate through DOC; --rx emits the authored RX bytes without registration.
+  trunk serve --dir <directory> --control-socket <path> [--stdio]
+    Socket-only configuration; --stdio accepts status/close and exits on EOF.
+  trunk serve --dir PATH --postgres 127.0.0.1:55432
+    Read-only PostgreSQL clients connect as trunk with TRUNK_PG_PASSWORD.
+  trunk serve [443] --dir PATH --cache NAME --tenant OWNER
+    HTTP/2 (TCP), HTTP/3 (UDP), and a private Unix socket share one Rust node.
+    --cert and --key configure TLS; TRUNK_TOKEN or --client-ca authenticates access.
     --http-address 127.0.0.1:3020 adds an HTTP origin for a trusted local proxy.
-    Each command's flags follow its own name and port.
-    --cache name --tenant owner --definition resource.rx selects the collection-native
-    backend under --dir ./caches, using optimized PIL storage and stream assembly.
-  trunk search [--endpoint https://host[:port] | --socket path | --local]
-    Default: <dir>/.trunk/search.sock. --local reads files without a server.
-    Remote TLS: --ca file [--client-cert file --client-key file].
-  trunk ingest [5140] --dir ./caches --cache name --tenant owner [--definition resource.rx]
-    Local HTTP PIL: POST /ingest?tap=<cache>/<service>/<resources>.v<major>/<branch>.
-    Requires Content-Type: application/pil, PIL-Version: 2 and Definition-Version.
-    Acknowledgements follow durable staging; finalization waits three 5-minute cycles.
-    Add --cert cert.pem --key key.pem [--transport http|http3] for remote ingestion.
-    Set TRUNK_TOKEN or use --client-ca ca.pem. Without --definition, register through
-    HEAD/PUT /definitions before PIL writes, or send blind CBOR to /ingest.
-    Blind JSON/JSONL, CBOR, and plain-text/syslog HTTP input is converted to PIL.
-    Loads .env, then .env.<ENVIRONMENT> when selected; --env path selects one file.
-    Precedence: explicit arguments > process environment > profile > .env > defaults.
-  trunk search [--tail [N] | --head [N]] [--pretty] [-f]
-  trunk search start [end] [--dir ./taps] [--tap name] [--pretty] [-f]
-  trunk search --from start [--tail [N] | --to end] [-f]
-  trunk search --head [N] --to end [-f]
-  trunk search -w start[,end] [--dir ./taps] [--tap name] [--pretty] [-f]
-  trunk search 14:00,15:00 --where 'service=="vault" http_status==401' --head 25
-    Default: today's UTC window through now, latest 100 matches as JSONL.
-    --pretty indents JSON objects. --all explicitly searches all stored history.
-    --head selects earliest matches; --tail selects latest; omitted N means 100.
-    Both work within a window; head and tail cannot combine.
-    -w, --win and --window are equivalent; exclude --from and --to.
-    Bare timestamps also specify a window; separate bounds with a space or comma.
-    Flags may appear before or after timestamps. Other bare arguments are invalid.
-    An explicit start and end have no default count limit; --head/--tail override.
-    --where supports ==, !=, is null, is !null on top-level fields.
-    Whitespace joins predicates within a group; repeated --where groups are alternatives.
-    Use JSON scalar values. Explicit AND, OR and parentheses are not accepted.
-    Times: 14:30[:15], 2026-09-25, 20260925T14:30, RFC3339, now-15m, today, yesterday.
-    Default timezone UTC; explicit offsets are honored. Start inclusive, end exclusive.
-    Omitted window end means now, or remains open with --follow.
-    -f or --follow streams new matches after the initial selection; Ctrl-C stops.
-    --entry-headers name,name or TRUNK_ENTRY_HEADERS orders top-level JSON fields.
-    Set ENVIRONMENT=sand in .env to automatically load .env.sand.`
+    --web PATH serves the independent UI; --web '' disables it.
+    --storage pack|browse selects .packs or .beds, defaulting to node configuration.
+    Changing storage configuration does not convert existing files.
+  trunk ingest [5140] --dir PATH --cache NAME --tenant OWNER
+    POST /definitions registers raw RX PIL with Resource-Service, Resource-Name,
+    and Resource-Type headers. POST /CACHE/SERVICE/RESOURCE/TYPE/seeds ingests PIL.
+    GET /packs collects sealed Packs. There is no old /ingest or JSON/CBOR fallback.
+    Loopback HTTP is supported; remote listeners require TLS and authentication.
+    'ingest PORT serve PORT' shares the same owner and commit scheduler.
+    Loads .env and .env.<ENVIRONMENT>; --env PATH selects one file, --env '' disables.
+    Explicit arguments override process environment, profile, and .env defaults.`

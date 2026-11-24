@@ -1,0 +1,8 @@
+; Application collection identity, not an OpenTelemetry log record.
+; Include this group directly in the resource's map alongside its business
+; fields. Compile that complete map once into the seed's single .rx Definition.
+collection = { collection-identity, * tstr => any }
+collection-identity = (
+  id: tstr / bstr / uint,
+  revision_id: tstr / bstr / uint
+)

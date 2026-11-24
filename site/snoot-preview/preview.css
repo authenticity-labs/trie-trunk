@@ -5,8 +5,7 @@
 /* The host clips this normal-size workspace. No scaling or replacement UI. */
 body{padding:0;background:transparent}
 .workspace{margin:0;max-width:none;height:100%;box-shadow:none}
-.sidebar nav .nav-item[title="Collections"],.sidebar nav .nav-item[title="Configs"]{display:none}
-.sidebar-note{display:none}
+.sidebar nav .nav-item[title="Collections"],.sidebar nav .nav-item[title="Trunks"]{display:none}
 .preview-page-badge{font-size:11px;color:var(--text-muted);white-space:nowrap}
 .preview-query-card .query-composer{max-width:100%}
 

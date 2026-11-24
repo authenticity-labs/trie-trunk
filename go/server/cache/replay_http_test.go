@@ -237,7 +237,7 @@ func TestReplayRequiresObjectIndexAndIdentityTextIsLossless(t *testing.T) {
 	defer s.Close()
 	w := replayRequest(s, "/objects/history?collection=payment%2Ftransactions.v1&id=00000000-0000-7000-8000-00000000002a&from=2026-10-16T00:00:00Z&to=2026-10-17T00:00:00Z")
 	if w.Code != 409 {
-		t.Fatal("disabled collection.idx did not reject", w.Code)
+		t.Fatal("disabled collection.indx did not reject", w.Code)
 	}
 	v, e := objectText(l, "ffffffff-ffff-4fff-bfff-ffffffffffff")
 	if e != nil || len(v.Bytes) != 16 || v.Bytes[15] != 255 {

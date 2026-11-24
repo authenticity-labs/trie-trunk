@@ -1,0 +1,75 @@
+[
+  {
+    "actual_definitions": 69,
+    "case": "definition_count",
+    "reported_len": 1,
+    "root_fields": 70
+  },
+  {
+    "case": "millisecond_source_duration_literal",
+    "equivalent_numeric_literal": {
+      "Ok": {
+        "columns": [
+          "duration"
+        ],
+        "rows": [
+          [
+            2
+          ]
+        ]
+      }
+    },
+    "source_annotation": "@unit(ms)",
+    "stored_value": 2,
+    "unit_literal": {
+      "Ok": {
+        "columns": [
+          "duration"
+        ],
+        "rows": []
+      }
+    }
+  },
+  {
+    "case": "sql_null_negation_control",
+    "result": {
+      "Ok": {
+        "columns": [
+          "duration"
+        ],
+        "rows": []
+      }
+    }
+  },
+  {
+    "case": "unsigned_16_byte_min",
+    "result": {
+      "Err": "Aggregate integer exceeds signed 128-bit range"
+    },
+    "value": "340282366920938463463374607431768211455"
+  },
+  {
+    "case": "summary_table_ms_unit",
+    "result": {
+      "columns": [
+        "min"
+      ],
+      "rows": []
+    }
+  },
+  {
+    "case": "summary_table_ms_numeric",
+    "result": {
+      "columns": [
+        "min"
+      ],
+      "rows": [
+        [
+          {
+            "$integer": "2"
+          }
+        ]
+      ]
+    }
+  }
+]

@@ -1,0 +1,85 @@
+; OpenTelemetry Logs Data Model, expressed using RFC 8610 groups.
+; Source: https://opentelemetry.io/docs/specs/otel/logs/data-model/
+; Timestamp and ObservedTimestamp are UNIX epoch nanoseconds, not milliseconds.
+; This describes the log record. Storage identity and branch routing are Seed
+; bindings and are not additional OpenTelemetry fields.
+log = {
+  log-seed,
+  log-record,
+  ? Attributes: { * tstr => any },
+  * tstr => any
+}
+
+; Seed bindings use ordinary CDDL fields. The logger supplies @time (epoch ms)
+; leaving @id absent for ingress generation. Duration is an ordinary numeric field.
+; @record and @leaf are storage-owned and absent in producer output.
+log-seed = (
+  ? "@id": bstr .size (1..10) / null,
+  ? "@time": uint .size 8,
+  ? "@record": uint .size 3,
+  ? "@leaf": uint .size 2
+)
+
+log-record = (
+  ? duration: uint .size 8,
+  ? Timestamp: uint,
+  ? ObservedTimestamp: uint,
+  ? TraceId: bstr .size 16,
+  ? SpanId: bstr .size 8,
+  ? TraceFlags: 0..255,
+  ? SeverityText: tstr,
+  ? SeverityNumber: 0..24,
+  ? Body: any,
+  ? Resource: { * tstr => any },
+  ? InstrumentationScope: {
+    ? name: tstr,
+    ? version: tstr,
+    ? attributes: { * tstr => any }
+  },
+  ? EventName: tstr
+)
+
+; Semantic-convention attributes remain attributes. These are authoring groups,
+; not a new event classification, inheritance keyword, or runtime dispatch type.
+http-log = { log-seed, log-record, ? Attributes: { http-attributes, * tstr => any }, * tstr => any }
+http-attributes = (
+  ? "http.request.method": tstr,
+  ? "http.request.method_original": tstr,
+  ? "http.route": tstr,
+  ? "http.response.status_code": 100..599,
+  ? "http.request.body.size": uint,
+  ? "http.response.body.size": uint,
+  ? "url.scheme": tstr,
+  ? "url.path": tstr,
+  ? "server.address": tstr,
+  ? "server.port": 0..65535,
+  ? "client.address": tstr,
+  ? "error.type": tstr
+)
+
+database-log = { log-seed, log-record, ? Attributes: { database-attributes, * tstr => any }, * tstr => any }
+database-attributes = (
+  ? "db.system.name": tstr,
+  ? "db.namespace": tstr,
+  ? "db.collection.name": tstr,
+  ? "db.operation.name": tstr,
+  ? "db.query.summary": tstr,
+  ? "db.response.status_code": tstr,
+  ? "server.address": tstr,
+  ? "server.port": 0..65535,
+  ? "error.type": tstr
+)
+
+messaging-log = { log-seed, log-record, ? Attributes: { messaging-attributes, * tstr => any }, * tstr => any }
+messaging-attributes = (
+  ? "messaging.system": tstr,
+  ? "messaging.destination.name": tstr,
+  ? "messaging.operation.name": tstr,
+  ? "messaging.operation.type": tstr,
+  ? "messaging.message.id": tstr,
+  ? "messaging.batch.message_count": uint,
+  ? "messaging.consumer.group.name": tstr,
+  ? "server.address": tstr,
+  ? "server.port": 0..65535,
+  ? "error.type": tstr
+)

@@ -1,0 +1,2438 @@
+[
+  {
+    "source": "log_opentelemetry",
+    "target": "log_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log_datadog",
+    "target": "log_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-http_opentelemetry",
+    "target": "log-http_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "http.request.method"
+        ],
+        "to": "method",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "http.request.method_original"
+        ],
+        "to": "method",
+        "cast": "identity",
+        "priority": 2
+      },
+      {
+        "from": [
+          "Attributes",
+          "http.response.status_code"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "url.full"
+        ],
+        "to": "uri",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "url.path"
+        ],
+        "to": "path",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "http.route"
+        ],
+        "to": "route",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "url.scheme"
+        ],
+        "to": "scheme",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "network.protocol.version"
+        ],
+        "to": "protocol",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "server.address"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "server.port"
+        ],
+        "to": "port",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "client.address"
+        ],
+        "to": "client",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "user_agent.original"
+        ],
+        "to": "agent",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "http.response.body.size"
+        ],
+        "to": "response_size",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "http.request.body.size"
+        ],
+        "to": "request_size",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-http_datadog",
+    "target": "log-http_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "http.method"
+        ],
+        "to": "method",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "http.status_code"
+        ],
+        "to": "status",
+        "cast": "decimal_to_integer"
+      },
+      {
+        "from": [
+          "http.url"
+        ],
+        "to": "uri",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "http.url_details.path"
+        ],
+        "to": "path",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "route"
+        ],
+        "to": "route",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "http.url_details.scheme"
+        ],
+        "to": "scheme",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "http.version"
+        ],
+        "to": "protocol",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "host"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "port"
+        ],
+        "to": "port",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "client"
+        ],
+        "to": "client",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "http.useragent"
+        ],
+        "to": "agent",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "response_size"
+        ],
+        "to": "response_size",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "request_size"
+        ],
+        "to": "request_size",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-db_opentelemetry",
+    "target": "log-db_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.system.name"
+        ],
+        "to": "system",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.namespace"
+        ],
+        "to": "namespace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.collection.name"
+        ],
+        "to": "collection",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.operation.name"
+        ],
+        "to": "operation",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.query.summary"
+        ],
+        "to": "summary",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.query.text"
+        ],
+        "to": "statement",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.response.status_code"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.response.returned_rows"
+        ],
+        "to": "rows",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "db.operation.batch.size"
+        ],
+        "to": "batch",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "server.address"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "server.port"
+        ],
+        "to": "port",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-db_datadog",
+    "target": "log-db_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "db.system"
+        ],
+        "to": "system",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "namespace"
+        ],
+        "to": "namespace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "collection"
+        ],
+        "to": "collection",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "operation"
+        ],
+        "to": "operation",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "summary"
+        ],
+        "to": "summary",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "db.statement"
+        ],
+        "to": "statement",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "status"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "rows"
+        ],
+        "to": "rows",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "batch"
+        ],
+        "to": "batch",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "host"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "port"
+        ],
+        "to": "port",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-messaging_opentelemetry",
+    "target": "log-messaging_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.system"
+        ],
+        "to": "system",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.destination.name"
+        ],
+        "to": "destination",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.operation.name"
+        ],
+        "to": "operation",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.operation.type"
+        ],
+        "to": "kind",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.message.id"
+        ],
+        "to": "message_id",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.consumer.group.name"
+        ],
+        "to": "group",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.batch.message_count"
+        ],
+        "to": "batch",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "messaging.destination.partition.id"
+        ],
+        "to": "partition",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "server.address"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "server.port"
+        ],
+        "to": "port",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-messaging_datadog",
+    "target": "log-messaging_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "system"
+        ],
+        "to": "system",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "destination"
+        ],
+        "to": "destination",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "operation"
+        ],
+        "to": "operation",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "kind"
+        ],
+        "to": "kind",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "message_id"
+        ],
+        "to": "message_id",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "group"
+        ],
+        "to": "group",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "batch"
+        ],
+        "to": "batch",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "partition"
+        ],
+        "to": "partition",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "host"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "port"
+        ],
+        "to": "port",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-security_opentelemetry",
+    "target": "log-security_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "action"
+        ],
+        "to": "action",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "outcome"
+        ],
+        "to": "outcome",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "decision"
+        ],
+        "to": "decision",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "actor"
+        ],
+        "to": "actor",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "target"
+        ],
+        "to": "target",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "method"
+        ],
+        "to": "method",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "policy"
+        ],
+        "to": "policy",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "session"
+        ],
+        "to": "session",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "client.address"
+        ],
+        "to": "client",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-security_datadog",
+    "target": "log-security_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "action"
+        ],
+        "to": "action",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "outcome"
+        ],
+        "to": "outcome",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "decision"
+        ],
+        "to": "decision",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "actor"
+        ],
+        "to": "actor",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "target"
+        ],
+        "to": "target",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "method"
+        ],
+        "to": "method",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "policy"
+        ],
+        "to": "policy",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "session"
+        ],
+        "to": "session",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "client"
+        ],
+        "to": "client",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-job_opentelemetry",
+    "target": "log-job_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "job"
+        ],
+        "to": "job",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "run"
+        ],
+        "to": "run",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "status"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "attempt"
+        ],
+        "to": "attempt",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "schedule"
+        ],
+        "to": "schedule",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "queue"
+        ],
+        "to": "queue",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "worker"
+        ],
+        "to": "worker",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "task"
+        ],
+        "to": "task",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "workflow"
+        ],
+        "to": "workflow",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-job_datadog",
+    "target": "log-job_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "job"
+        ],
+        "to": "job",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "run"
+        ],
+        "to": "run",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "status"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "attempt"
+        ],
+        "to": "attempt",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "schedule"
+        ],
+        "to": "schedule",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "queue"
+        ],
+        "to": "queue",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "worker"
+        ],
+        "to": "worker",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "task"
+        ],
+        "to": "task",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "workflow"
+        ],
+        "to": "workflow",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-task_opentelemetry",
+    "target": "log-task_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "task"
+        ],
+        "to": "task",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "run"
+        ],
+        "to": "run",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "status"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "attempt"
+        ],
+        "to": "attempt",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "job"
+        ],
+        "to": "job",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "workflow"
+        ],
+        "to": "workflow",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "step"
+        ],
+        "to": "step",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "worker"
+        ],
+        "to": "worker",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-task_datadog",
+    "target": "log-task_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "task"
+        ],
+        "to": "task",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "run"
+        ],
+        "to": "run",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "status"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "attempt"
+        ],
+        "to": "attempt",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "job"
+        ],
+        "to": "job",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "workflow"
+        ],
+        "to": "workflow",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "step"
+        ],
+        "to": "step",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "worker"
+        ],
+        "to": "worker",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-workflow_opentelemetry",
+    "target": "log-workflow_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "workflow"
+        ],
+        "to": "workflow",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "run"
+        ],
+        "to": "run",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "status"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "attempt"
+        ],
+        "to": "attempt",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "step"
+        ],
+        "to": "step",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "parent"
+        ],
+        "to": "parent",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "object"
+        ],
+        "to": "object",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-workflow_datadog",
+    "target": "log-workflow_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "workflow"
+        ],
+        "to": "workflow",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "run"
+        ],
+        "to": "run",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "status"
+        ],
+        "to": "status",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "attempt"
+        ],
+        "to": "attempt",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "reason"
+        ],
+        "to": "reason",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "step"
+        ],
+        "to": "step",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "parent"
+        ],
+        "to": "parent",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "object"
+        ],
+        "to": "object",
+        "cast": "identity"
+      }
+    ]
+  },
+  {
+    "source": "log-system_opentelemetry",
+    "target": "log-system_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "Timestamp"
+        ],
+        "to": "@time",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000000
+      },
+      {
+        "from": [
+          "SeverityNumber"
+        ],
+        "to": "level",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Body"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "EventName"
+        ],
+        "to": "name",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceId"
+        ],
+        "to": "trace",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SpanId"
+        ],
+        "to": "span",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "TraceFlags"
+        ],
+        "to": "flags",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "error.type"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "exception.stacktrace"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "action"
+        ],
+        "to": "action",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "process.pid"
+        ],
+        "to": "pid",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "process.parent_pid"
+        ],
+        "to": "parent",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "process.executable.name"
+        ],
+        "to": "executable",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "process.exit.code"
+        ],
+        "to": "exit",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "signal"
+        ],
+        "to": "signal",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "host.name"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "Attributes",
+          "component"
+        ],
+        "to": "component",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "SeverityText"
+        ],
+        "to": "level",
+        "cast": "metadata_label"
+      }
+    ]
+  },
+  {
+    "source": "log-system_datadog",
+    "target": "log-system_trietrunk",
+    "fields": [
+      {
+        "from": [
+          "timestamp"
+        ],
+        "to": "@time",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "duration"
+        ],
+        "to": "@duration",
+        "cast": "scale_exact",
+        "numerator": 1,
+        "denominator": 1000
+      },
+      {
+        "from": [
+          "message"
+        ],
+        "to": "message",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.kind"
+        ],
+        "to": "error",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.message"
+        ],
+        "to": "detail",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "error.stack"
+        ],
+        "to": "stack",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "action"
+        ],
+        "to": "action",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "pid"
+        ],
+        "to": "pid",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "parent"
+        ],
+        "to": "parent",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "executable"
+        ],
+        "to": "executable",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "exit"
+        ],
+        "to": "exit",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "signal"
+        ],
+        "to": "signal",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "host"
+        ],
+        "to": "host",
+        "cast": "identity"
+      },
+      {
+        "from": [
+          "component"
+        ],
+        "to": "component",
+        "cast": "identity"
+      }
+    ]
+  }
+]

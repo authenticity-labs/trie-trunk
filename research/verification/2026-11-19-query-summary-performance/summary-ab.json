@@ -1,0 +1,890 @@
+[
+  {
+    "round": 0,
+    "case": "narrow",
+    "before": {
+      "bytes": 36011,
+      "case": "narrow",
+      "days": 1,
+      "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+      "events": 2304,
+      "pac_sha256": "d9b0f6d2fbdd8597418f8dcabc2dc737be8339ecd37415c8e695b39701160055",
+      "result_sha256": "98f3d0515fe091e871b1af17d537f5e7b68d783dd6e8cacf26ea6e68a158db46",
+      "timings": [
+        {
+          "max_us": 326.70799999999997,
+          "median_us": 269.0,
+          "min_us": 266.83399999999995,
+          "query": "counts"
+        },
+        {
+          "max_us": 2218.167,
+          "median_us": 2146.25,
+          "min_us": 2137.583,
+          "query": "members"
+        },
+        {
+          "max_us": 1278.709,
+          "median_us": 1208.75,
+          "min_us": 1172.584,
+          "query": "events"
+        },
+        {
+          "max_us": 11291.75,
+          "median_us": 10231.125,
+          "min_us": 10169.791,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 36011,
+      "case": "narrow",
+      "days": 1,
+      "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+      "events": 2304,
+      "pac_sha256": "d9b0f6d2fbdd8597418f8dcabc2dc737be8339ecd37415c8e695b39701160055",
+      "result_sha256": "98f3d0515fe091e871b1af17d537f5e7b68d783dd6e8cacf26ea6e68a158db46",
+      "timings": [
+        {
+          "max_us": 117.583,
+          "median_us": 55.375,
+          "min_us": 53.541000000000004,
+          "query": "counts"
+        },
+        {
+          "max_us": 153.583,
+          "median_us": 148.041,
+          "min_us": 146.833,
+          "query": "members"
+        },
+        {
+          "max_us": 168.375,
+          "median_us": 165.209,
+          "min_us": 164.084,
+          "query": "events"
+        },
+        {
+          "max_us": 4439.417,
+          "median_us": 3505.959,
+          "min_us": 3483.458,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 0,
+    "case": "typical",
+    "before": {
+      "bytes": 998018,
+      "case": "typical",
+      "days": 7,
+      "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+      "events": 16128,
+      "pac_sha256": "cc0237ef1d1de65e45b8966260dd33d0c12afc608bbb9cc8a7cbee4da9360d76",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 1989.7500000000002,
+          "median_us": 1944.042,
+          "min_us": 1888.083,
+          "query": "counts"
+        },
+        {
+          "max_us": 16162.416999999998,
+          "median_us": 15664.332999999999,
+          "min_us": 15326.582999999999,
+          "query": "members"
+        },
+        {
+          "max_us": 9059.542,
+          "median_us": 8423.833,
+          "min_us": 8128.125,
+          "query": "events"
+        },
+        {
+          "max_us": 79800.791,
+          "median_us": 75792.958,
+          "min_us": 75521.042,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 998018,
+      "case": "typical",
+      "days": 7,
+      "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+      "events": 16128,
+      "pac_sha256": "cc0237ef1d1de65e45b8966260dd33d0c12afc608bbb9cc8a7cbee4da9360d76",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 400.41700000000003,
+          "median_us": 377.125,
+          "min_us": 373.125,
+          "query": "counts"
+        },
+        {
+          "max_us": 1061.917,
+          "median_us": 1019.9580000000001,
+          "min_us": 1013.5409999999999,
+          "query": "members"
+        },
+        {
+          "max_us": 1235.708,
+          "median_us": 1140.333,
+          "min_us": 1120.875,
+          "query": "events"
+        },
+        {
+          "max_us": 35099.583,
+          "median_us": 31610.625000000004,
+          "min_us": 31215.75,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 0,
+    "case": "wide",
+    "before": {
+      "bytes": 3538178,
+      "case": "wide",
+      "days": 7,
+      "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+      "events": 16128,
+      "pac_sha256": "8e59295d4cc4327ed0d7ad60e504aac18b7cd7e9ce3cea8d9ad80c6febddd2c1",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 1996.3749999999998,
+          "median_us": 1963.917,
+          "min_us": 1956.7500000000002,
+          "query": "counts"
+        },
+        {
+          "max_us": 15842.541000000001,
+          "median_us": 15196.875,
+          "min_us": 15120.625,
+          "query": "members"
+        },
+        {
+          "max_us": 9223.542,
+          "median_us": 8464.167,
+          "min_us": 8424.834,
+          "query": "events"
+        },
+        {
+          "max_us": 80211.75,
+          "median_us": 75810.875,
+          "min_us": 75387.791,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 3538178,
+      "case": "wide",
+      "days": 7,
+      "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+      "events": 16128,
+      "pac_sha256": "8e59295d4cc4327ed0d7ad60e504aac18b7cd7e9ce3cea8d9ad80c6febddd2c1",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 403.334,
+          "median_us": 377.5,
+          "min_us": 375.084,
+          "query": "counts"
+        },
+        {
+          "max_us": 1062.417,
+          "median_us": 1030.167,
+          "min_us": 1016.7500000000001,
+          "query": "members"
+        },
+        {
+          "max_us": 1146.3339999999998,
+          "median_us": 1133.709,
+          "min_us": 1122.292,
+          "query": "events"
+        },
+        {
+          "max_us": 37428.875,
+          "median_us": 32309.584000000003,
+          "min_us": 31866.0,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 0,
+    "case": "quiet",
+    "before": {
+      "bytes": 998018,
+      "case": "quiet",
+      "days": 7,
+      "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+      "events": 672,
+      "pac_sha256": "8b7c36efb38832d49008620319e87cea2c1e775c71bf140e227d39370f6ba44c",
+      "result_sha256": "5050a2e0766e3f00593b29ee51dd59a4a3e39bd5cf9281fa902634caa4867c81",
+      "timings": [
+        {
+          "max_us": 2221.75,
+          "median_us": 2005.041,
+          "min_us": 1997.6249999999998,
+          "query": "counts"
+        },
+        {
+          "max_us": 12267.958,
+          "median_us": 11559.0,
+          "min_us": 11518.5,
+          "query": "members"
+        },
+        {
+          "max_us": 6574.084,
+          "median_us": 6389.167,
+          "min_us": 6347.958,
+          "query": "events"
+        },
+        {
+          "max_us": 76755.625,
+          "median_us": 70505.625,
+          "min_us": 70084.5,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 998018,
+      "case": "quiet",
+      "days": 7,
+      "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+      "events": 672,
+      "pac_sha256": "8b7c36efb38832d49008620319e87cea2c1e775c71bf140e227d39370f6ba44c",
+      "result_sha256": "5050a2e0766e3f00593b29ee51dd59a4a3e39bd5cf9281fa902634caa4867c81",
+      "timings": [
+        {
+          "max_us": 405.5,
+          "median_us": 381.416,
+          "min_us": 375.167,
+          "query": "counts"
+        },
+        {
+          "max_us": 898.417,
+          "median_us": 855.333,
+          "min_us": 850.666,
+          "query": "members"
+        },
+        {
+          "max_us": 284.416,
+          "median_us": 272.5,
+          "min_us": 272.0,
+          "query": "events"
+        },
+        {
+          "max_us": 33893.583,
+          "median_us": 29750.125,
+          "min_us": 28893.125,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 1,
+    "case": "narrow",
+    "final": {
+      "bytes": 36011,
+      "case": "narrow",
+      "days": 1,
+      "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+      "events": 2304,
+      "pac_sha256": "d9b0f6d2fbdd8597418f8dcabc2dc737be8339ecd37415c8e695b39701160055",
+      "result_sha256": "98f3d0515fe091e871b1af17d537f5e7b68d783dd6e8cacf26ea6e68a158db46",
+      "timings": [
+        {
+          "max_us": 71.792,
+          "median_us": 53.334,
+          "min_us": 52.375,
+          "query": "counts"
+        },
+        {
+          "max_us": 158.125,
+          "median_us": 145.125,
+          "min_us": 143.416,
+          "query": "members"
+        },
+        {
+          "max_us": 163.875,
+          "median_us": 160.459,
+          "min_us": 158.834,
+          "query": "events"
+        },
+        {
+          "max_us": 4334.5,
+          "median_us": 3314.1659999999997,
+          "min_us": 3279.542,
+          "query": "project"
+        }
+      ]
+    },
+    "before": {
+      "bytes": 36011,
+      "case": "narrow",
+      "days": 1,
+      "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+      "events": 2304,
+      "pac_sha256": "d9b0f6d2fbdd8597418f8dcabc2dc737be8339ecd37415c8e695b39701160055",
+      "result_sha256": "98f3d0515fe091e871b1af17d537f5e7b68d783dd6e8cacf26ea6e68a158db46",
+      "timings": [
+        {
+          "max_us": 296.666,
+          "median_us": 269.125,
+          "min_us": 266.459,
+          "query": "counts"
+        },
+        {
+          "max_us": 2220.4579999999996,
+          "median_us": 2149.458,
+          "min_us": 2139.375,
+          "query": "members"
+        },
+        {
+          "max_us": 1209.458,
+          "median_us": 1159.583,
+          "min_us": 1156.25,
+          "query": "events"
+        },
+        {
+          "max_us": 11119.0,
+          "median_us": 10094.917,
+          "min_us": 10052.25,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 1,
+    "case": "typical",
+    "final": {
+      "bytes": 998018,
+      "case": "typical",
+      "days": 7,
+      "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+      "events": 16128,
+      "pac_sha256": "cc0237ef1d1de65e45b8966260dd33d0c12afc608bbb9cc8a7cbee4da9360d76",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 420.75,
+          "median_us": 379.0,
+          "min_us": 372.541,
+          "query": "counts"
+        },
+        {
+          "max_us": 1052.166,
+          "median_us": 1018.833,
+          "min_us": 1012.2919999999999,
+          "query": "members"
+        },
+        {
+          "max_us": 1170.667,
+          "median_us": 1125.166,
+          "min_us": 1116.9170000000001,
+          "query": "events"
+        },
+        {
+          "max_us": 36516.875,
+          "median_us": 33189.333,
+          "min_us": 32606.166999999998,
+          "query": "project"
+        }
+      ]
+    },
+    "before": {
+      "bytes": 998018,
+      "case": "typical",
+      "days": 7,
+      "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+      "events": 16128,
+      "pac_sha256": "cc0237ef1d1de65e45b8966260dd33d0c12afc608bbb9cc8a7cbee4da9360d76",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 2038.542,
+          "median_us": 1905.708,
+          "min_us": 1882.625,
+          "query": "counts"
+        },
+        {
+          "max_us": 15551.75,
+          "median_us": 15044.292000000001,
+          "min_us": 14959.417,
+          "query": "members"
+        },
+        {
+          "max_us": 8703.166,
+          "median_us": 8443.292,
+          "min_us": 8404.291,
+          "query": "events"
+        },
+        {
+          "max_us": 84028.542,
+          "median_us": 79974.958,
+          "min_us": 79475.958,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 1,
+    "case": "wide",
+    "final": {
+      "bytes": 3538178,
+      "case": "wide",
+      "days": 7,
+      "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+      "events": 16128,
+      "pac_sha256": "8e59295d4cc4327ed0d7ad60e504aac18b7cd7e9ce3cea8d9ad80c6febddd2c1",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 427.875,
+          "median_us": 389.375,
+          "min_us": 383.54200000000003,
+          "query": "counts"
+        },
+        {
+          "max_us": 1103.9170000000001,
+          "median_us": 1050.666,
+          "min_us": 1044.25,
+          "query": "members"
+        },
+        {
+          "max_us": 1169.125,
+          "median_us": 1161.75,
+          "min_us": 1156.583,
+          "query": "events"
+        },
+        {
+          "max_us": 38691.084,
+          "median_us": 31249.875,
+          "min_us": 30208.0,
+          "query": "project"
+        }
+      ]
+    },
+    "before": {
+      "bytes": 3538178,
+      "case": "wide",
+      "days": 7,
+      "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+      "events": 16128,
+      "pac_sha256": "8e59295d4cc4327ed0d7ad60e504aac18b7cd7e9ce3cea8d9ad80c6febddd2c1",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 2003.8339999999998,
+          "median_us": 1958.084,
+          "min_us": 1946.625,
+          "query": "counts"
+        },
+        {
+          "max_us": 15272.209,
+          "median_us": 14771.667000000001,
+          "min_us": 14714.791,
+          "query": "members"
+        },
+        {
+          "max_us": 8417.667,
+          "median_us": 8167.4169999999995,
+          "min_us": 8142.5830000000005,
+          "query": "events"
+        },
+        {
+          "max_us": 83557.20899999999,
+          "median_us": 79322.625,
+          "min_us": 78670.0,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 1,
+    "case": "quiet",
+    "final": {
+      "bytes": 998018,
+      "case": "quiet",
+      "days": 7,
+      "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+      "events": 672,
+      "pac_sha256": "8b7c36efb38832d49008620319e87cea2c1e775c71bf140e227d39370f6ba44c",
+      "result_sha256": "5050a2e0766e3f00593b29ee51dd59a4a3e39bd5cf9281fa902634caa4867c81",
+      "timings": [
+        {
+          "max_us": 421.334,
+          "median_us": 381.25,
+          "min_us": 376.208,
+          "query": "counts"
+        },
+        {
+          "max_us": 886.917,
+          "median_us": 859.458,
+          "min_us": 855.25,
+          "query": "members"
+        },
+        {
+          "max_us": 280.333,
+          "median_us": 272.33299999999997,
+          "min_us": 271.29200000000003,
+          "query": "events"
+        },
+        {
+          "max_us": 31689.166999999998,
+          "median_us": 26120.458,
+          "min_us": 25842.25,
+          "query": "project"
+        }
+      ]
+    },
+    "before": {
+      "bytes": 998018,
+      "case": "quiet",
+      "days": 7,
+      "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+      "events": 672,
+      "pac_sha256": "8b7c36efb38832d49008620319e87cea2c1e775c71bf140e227d39370f6ba44c",
+      "result_sha256": "5050a2e0766e3f00593b29ee51dd59a4a3e39bd5cf9281fa902634caa4867c81",
+      "timings": [
+        {
+          "max_us": 2028.5839999999998,
+          "median_us": 1957.8329999999999,
+          "min_us": 1939.25,
+          "query": "counts"
+        },
+        {
+          "max_us": 12109.791,
+          "median_us": 11928.875,
+          "min_us": 11813.25,
+          "query": "members"
+        },
+        {
+          "max_us": 6518.958,
+          "median_us": 6360.667,
+          "min_us": 6212.125,
+          "query": "events"
+        },
+        {
+          "max_us": 75870.125,
+          "median_us": 69435.917,
+          "min_us": 69031.208,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 2,
+    "case": "narrow",
+    "before": {
+      "bytes": 36011,
+      "case": "narrow",
+      "days": 1,
+      "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+      "events": 2304,
+      "pac_sha256": "d9b0f6d2fbdd8597418f8dcabc2dc737be8339ecd37415c8e695b39701160055",
+      "result_sha256": "98f3d0515fe091e871b1af17d537f5e7b68d783dd6e8cacf26ea6e68a158db46",
+      "timings": [
+        {
+          "max_us": 288.5,
+          "median_us": 268.833,
+          "min_us": 266.04200000000003,
+          "query": "counts"
+        },
+        {
+          "max_us": 2205.167,
+          "median_us": 2147.25,
+          "min_us": 2136.542,
+          "query": "members"
+        },
+        {
+          "max_us": 1238.667,
+          "median_us": 1186.625,
+          "min_us": 1184.5,
+          "query": "events"
+        },
+        {
+          "max_us": 11428.083,
+          "median_us": 10243.957999999999,
+          "min_us": 10134.333,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 36011,
+      "case": "narrow",
+      "days": 1,
+      "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+      "events": 2304,
+      "pac_sha256": "d9b0f6d2fbdd8597418f8dcabc2dc737be8339ecd37415c8e695b39701160055",
+      "result_sha256": "98f3d0515fe091e871b1af17d537f5e7b68d783dd6e8cacf26ea6e68a158db46",
+      "timings": [
+        {
+          "max_us": 69.875,
+          "median_us": 53.875,
+          "min_us": 52.417,
+          "query": "counts"
+        },
+        {
+          "max_us": 148.875,
+          "median_us": 144.125,
+          "min_us": 142.625,
+          "query": "members"
+        },
+        {
+          "max_us": 165.625,
+          "median_us": 160.833,
+          "min_us": 159.334,
+          "query": "events"
+        },
+        {
+          "max_us": 4330.084,
+          "median_us": 3363.0829999999996,
+          "min_us": 3324.5,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 2,
+    "case": "typical",
+    "before": {
+      "bytes": 998018,
+      "case": "typical",
+      "days": 7,
+      "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+      "events": 16128,
+      "pac_sha256": "cc0237ef1d1de65e45b8966260dd33d0c12afc608bbb9cc8a7cbee4da9360d76",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 1969.7500000000002,
+          "median_us": 1887.667,
+          "min_us": 1880.1670000000001,
+          "query": "counts"
+        },
+        {
+          "max_us": 15632.457999999999,
+          "median_us": 15127.708999999999,
+          "min_us": 15047.792000000001,
+          "query": "members"
+        },
+        {
+          "max_us": 8624.082999999999,
+          "median_us": 8185.166000000001,
+          "min_us": 8147.417,
+          "query": "events"
+        },
+        {
+          "max_us": 83668.25,
+          "median_us": 78989.708,
+          "min_us": 78669.042,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 998018,
+      "case": "typical",
+      "days": 7,
+      "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+      "events": 16128,
+      "pac_sha256": "cc0237ef1d1de65e45b8966260dd33d0c12afc608bbb9cc8a7cbee4da9360d76",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 412.333,
+          "median_us": 378.25,
+          "min_us": 373.542,
+          "query": "counts"
+        },
+        {
+          "max_us": 1044.2089999999998,
+          "median_us": 1023.5419999999999,
+          "min_us": 1016.9580000000001,
+          "query": "members"
+        },
+        {
+          "max_us": 1159.7910000000002,
+          "median_us": 1137.458,
+          "min_us": 1129.084,
+          "query": "events"
+        },
+        {
+          "max_us": 35095.459,
+          "median_us": 31445.209000000003,
+          "min_us": 30902.083,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 2,
+    "case": "wide",
+    "before": {
+      "bytes": 3538178,
+      "case": "wide",
+      "days": 7,
+      "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+      "events": 16128,
+      "pac_sha256": "8e59295d4cc4327ed0d7ad60e504aac18b7cd7e9ce3cea8d9ad80c6febddd2c1",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 1994.833,
+          "median_us": 1902.833,
+          "min_us": 1883.584,
+          "query": "counts"
+        },
+        {
+          "max_us": 16833.333,
+          "median_us": 15468.042,
+          "min_us": 15004.042000000001,
+          "query": "members"
+        },
+        {
+          "max_us": 8847.875,
+          "median_us": 8625.875,
+          "min_us": 8540.0,
+          "query": "events"
+        },
+        {
+          "max_us": 86887.25,
+          "median_us": 79909.625,
+          "min_us": 79560.625,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 3538178,
+      "case": "wide",
+      "days": 7,
+      "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+      "events": 16128,
+      "pac_sha256": "8e59295d4cc4327ed0d7ad60e504aac18b7cd7e9ce3cea8d9ad80c6febddd2c1",
+      "result_sha256": "6b06f2f0534175739e68cd01abab6cb57b4e97e38fca33410877d57b3dbed45b",
+      "timings": [
+        {
+          "max_us": 403.625,
+          "median_us": 378.58299999999997,
+          "min_us": 374.709,
+          "query": "counts"
+        },
+        {
+          "max_us": 1080.5,
+          "median_us": 1027.166,
+          "min_us": 1014.8749999999999,
+          "query": "members"
+        },
+        {
+          "max_us": 1169.792,
+          "median_us": 1129.084,
+          "min_us": 1122.25,
+          "query": "events"
+        },
+        {
+          "max_us": 33599.125,
+          "median_us": 29389.915999999997,
+          "min_us": 29008.417,
+          "query": "project"
+        }
+      ]
+    }
+  },
+  {
+    "round": 2,
+    "case": "quiet",
+    "before": {
+      "bytes": 998018,
+      "case": "quiet",
+      "days": 7,
+      "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+      "events": 672,
+      "pac_sha256": "8b7c36efb38832d49008620319e87cea2c1e775c71bf140e227d39370f6ba44c",
+      "result_sha256": "5050a2e0766e3f00593b29ee51dd59a4a3e39bd5cf9281fa902634caa4867c81",
+      "timings": [
+        {
+          "max_us": 2089.1659999999997,
+          "median_us": 1971.458,
+          "min_us": 1961.1670000000001,
+          "query": "counts"
+        },
+        {
+          "max_us": 12039.042,
+          "median_us": 11802.75,
+          "min_us": 11753.833999999999,
+          "query": "members"
+        },
+        {
+          "max_us": 6517.417,
+          "median_us": 6417.875,
+          "min_us": 6386.083,
+          "query": "events"
+        },
+        {
+          "max_us": 71899.25,
+          "median_us": 67401.75,
+          "min_us": 66943.833,
+          "query": "project"
+        }
+      ]
+    },
+    "final": {
+      "bytes": 998018,
+      "case": "quiet",
+      "days": 7,
+      "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+      "events": 672,
+      "pac_sha256": "8b7c36efb38832d49008620319e87cea2c1e775c71bf140e227d39370f6ba44c",
+      "result_sha256": "5050a2e0766e3f00593b29ee51dd59a4a3e39bd5cf9281fa902634caa4867c81",
+      "timings": [
+        {
+          "max_us": 413.0,
+          "median_us": 381.959,
+          "min_us": 377.91700000000003,
+          "query": "counts"
+        },
+        {
+          "max_us": 902.042,
+          "median_us": 857.375,
+          "min_us": 852.709,
+          "query": "members"
+        },
+        {
+          "max_us": 280.375,
+          "median_us": 272.04200000000003,
+          "min_us": 271.167,
+          "query": "events"
+        },
+        {
+          "max_us": 30554.666,
+          "median_us": 26518.625,
+          "min_us": 26242.333,
+          "query": "project"
+        }
+      ]
+    }
+  }
+]

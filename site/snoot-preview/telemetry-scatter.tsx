@@ -1,8 +1,8 @@
 import {createSignal,onCleanup} from 'solid-js';
 import {use,type EChartsCoreOption} from 'echarts/core';
 import {EffectScatterChart} from 'echarts/charts';
-import {FastChart} from '../../client/components/fast-dashboard';
-import type {FastResult} from '../../client/services/fast-dashboard';
+import {FastChart} from '../../../snoot/client/components/fast-dashboard';
+import type {FastResult} from '../../../snoot/client/services/fast-dashboard';
 
 use([EffectScatterChart]);
 

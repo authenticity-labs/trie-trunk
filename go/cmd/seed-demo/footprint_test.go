@@ -238,12 +238,12 @@ func TestDemoFootprint(t *testing.T) {
 		if e != nil {
 			return e
 		}
-		if filepath.Ext(path) == ".sum" || filepath.Ext(path) == ".pods" {
+		if filepath.Ext(path) == ".summ" || filepath.Ext(path) == ".packs" {
 			// Preserve measured packets for validation and paired codec controls,
 			// outside the measured cache directory.
 			folder := "summaries"
-			if filepath.Ext(path) == ".pods" {
-				folder = "pods"
+			if filepath.Ext(path) == ".packs" {
+				folder = "packs"
 			}
 			target := filepath.Join(out, folder, name)
 			if e = os.MkdirAll(filepath.Dir(target), 0755); e != nil {
@@ -286,7 +286,7 @@ func TestDemoFootprint(t *testing.T) {
 		"All regular datastore files counted after close and synchronous Tantivy catch-up. Logical and allocated bytes are separate.",
 		fmt.Sprintf("Collection indexing enabled: %t. All branches use default gzip-1 unless collection replay requires uncompressed writes. Incompressible packs remain plain.", objectIndex),
 		"Seeding duration includes generation, ingress, sealing, indexing and read-back; not a pure ingestion benchmark.",
-		"JSONL is ordered by resource, branch, then time. Exact Pods and summaries retained for paired measurements.",
+		"JSONL is ordered by resource, branch, then time. Exact Packs and summaries retained for paired measurements.",
 	}
 	raw, e := json.MarshalIndent(result, "", "  ")
 	if e != nil {

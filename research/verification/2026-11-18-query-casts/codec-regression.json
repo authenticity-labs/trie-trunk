@@ -1,0 +1,26 @@
+[
+  {
+    "build": "before",
+    "output": "typed: median 3.601 ms; 100000 scanned, 50000 matches; 30 alternating trials\nnumeric text: median 3.601 ms; 100000 scanned, 50000 matches; 30 alternating trials\nunit text: median 3.605 ms; 100000 scanned, 50000 matches; 30 alternating trials\n"
+  },
+  {
+    "build": "after",
+    "output": "typed: median 3.378 ms; 100000 scanned, 50000 matches; 30 alternating trials\nnumeric text: median 3.377 ms; 100000 scanned, 50000 matches; 30 alternating trials\nunit text: median 3.377 ms; 100000 scanned, 50000 matches; 30 alternating trials\n"
+  },
+  {
+    "build": "before",
+    "output": "typed: median 3.383 ms; 100000 scanned, 50000 matches; 30 alternating trials\nnumeric text: median 3.387 ms; 100000 scanned, 50000 matches; 30 alternating trials\nunit text: median 3.380 ms; 100000 scanned, 50000 matches; 30 alternating trials\n"
+  },
+  {
+    "build": "after",
+    "output": "typed: median 3.380 ms; 100000 scanned, 50000 matches; 30 alternating trials\nnumeric text: median 3.384 ms; 100000 scanned, 50000 matches; 30 alternating trials\nunit text: median 3.380 ms; 100000 scanned, 50000 matches; 30 alternating trials\n"
+  },
+  {
+    "build": "before",
+    "output": "typed: median 3.378 ms; 100000 scanned, 50000 matches; 30 alternating trials\nnumeric text: median 3.378 ms; 100000 scanned, 50000 matches; 30 alternating trials\nunit text: median 3.378 ms; 100000 scanned, 50000 matches; 30 alternating trials\n"
+  },
+  {
+    "build": "after",
+    "output": "typed: median 3.384 ms; 100000 scanned, 50000 matches; 30 alternating trials\nnumeric text: median 3.386 ms; 100000 scanned, 50000 matches; 30 alternating trials\nunit text: median 3.386 ms; 100000 scanned, 50000 matches; 30 alternating trials\n"
+  }
+]

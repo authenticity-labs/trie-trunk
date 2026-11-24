@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path/filepath"
 	"reflect"
 	"sort"
 	"testing"
@@ -127,7 +126,7 @@ func TestSemanticCollectionRestartAndPolicy(t *testing.T) {
 	setPolicy := func(period string) {
 		t.Helper()
 		raw := fmt.Sprintf("version=1\ntimezone='America/New_York'\n[defaults.replication]\nindex_period=%q\nprovisional_tail='30m'\n", period)
-		if err := os.WriteFile(filepath.Join(s.root, "registry.cfg"), []byte(raw), 0600); err != nil {
+		if err := os.WriteFile(configurationPath(s.config.Root, []string{s.config.Cache}), []byte(raw), 0600); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -303,7 +302,7 @@ func TestSemanticRepeatedMidnight(t *testing.T) {
 func setTestPackagePeriod(t *testing.T, s *Store, period string) {
 	t.Helper()
 	raw := fmt.Sprintf("version=1\ntimezone=%q\n[defaults.replication]\nindex_period=%q\n", s.location.String(), period)
-	if err := os.WriteFile(filepath.Join(s.root, "registry.cfg"), []byte(raw), 0600); err != nil {
+	if err := os.WriteFile(configurationPath(s.config.Root, []string{s.config.Cache}), []byte(raw), 0600); err != nil {
 		t.Fatal(err)
 	}
 	if err := s.ReloadPolicy(); err != nil {

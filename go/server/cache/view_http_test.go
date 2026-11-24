@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"net/http/httptest"
 	"net/url"
@@ -65,7 +65,7 @@ func decodeView(t *testing.T, l *Layout, raw []byte) (d viewDecoded) {
 			if _, err := io.ReadFull(r, header[:]); err != nil {
 				t.Fatal(err)
 			}
-			size := order.Uint64(header[8:16])
+			size := uint64(order.Uint32(header[:4]))
 			if size < PACHeaderSize || size > PACMaximum {
 				t.Fatal("PAC size")
 			}
@@ -246,9 +246,15 @@ func TestPagedViewNegotiationSnapshotAndCache(t *testing.T) {
 	if unauthorized.Code != 401 {
 		t.Fatal("authorization", unauthorized.Code)
 	}
-	// Summary-only requests don't read .pods values (damage a frame after commit).
+	if dir := os.Getenv("PIL_VIEW_FIXTURE_DIR"); dir != "" {
+		if e = os.MkdirAll(dir, 0755); e != nil {
+			t.Fatal(e)
+		}
+		exportViewNative(t, dir, h, time.Date(2026, 9, 1, 12, 0, 0, 0, time.UTC), time.Date(2026, 9, 1, 14, 0, 0, 0, time.UTC))
+	}
+	// Summary-only requests don't read .packs values (damage a frame after commit).
 	b := s.branches[Write]
-	if _, e = b.pods.WriteAt([]byte{255, 255, 255, 255}, headerSize); e != nil {
+	if _, e = b.packs.WriteAt([]byte{255, 255, 255, 255}, headerSize); e != nil {
 		t.Fatal(e)
 	}
 	summary := get(path+"&include=summary", nil)

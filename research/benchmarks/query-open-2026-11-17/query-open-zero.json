@@ -1,0 +1,118 @@
+{
+  "native": "{\"ok\":true,\"summaryPruned\":true,\"previewWaitMs\":999,\"query\":\"events | where duration > 20000\",\"screen\":\"Local Trunk\\nSearch\\nDashboards\\nAlerts\\nCollections\\nTrunks\\nSearch Guide\\nDemo User\\nLog Out\\n\u2014 Search\\nQuick Guide\\nLight\\nDark\\nAuto\\ndemo\\n/\\nlab\\n/\\nindexed\\nPipeline\\nBuilder\\nSQL\\nDrag tabs to reorder, or use Alt and Left or Right Arrow. The first tab is the default for new queries.\\nDeep\\nLive\\nSearch Query\\nAdd a clause, or press Enter to search.\\n+ Filter\\n+ Text\\n+ Sort\\n+ Page Size\\nText Mode\\n2026-11-15 18:00 \u2192 20:00\\nSearch\\nNo Matches In This Time Window\\nEvents\\nCharts\\nEvent Activity\\nQuery Preview\\n0 Events\\nEvents\\n0\"}",
+  "requests": [
+    {
+      "path": "/caches",
+      "target": "/caches",
+      "startedAt": 1794964231310.177,
+      "headersMs": 1.7264580019400455,
+      "upstreamMs": 1.7397910050931387,
+      "bytes": 116,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=taxonomy",
+      "startedAt": 1794964231316.163,
+      "headersMs": 0.5420419984147884,
+      "upstreamMs": 0.8864999981597066,
+      "bytes": 146117,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=log-query.rx",
+      "startedAt": 1794964231327.807,
+      "headersMs": 15.106708000530489,
+      "upstreamMs": 15.120374999241903,
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=summary.rx",
+      "startedAt": 1794964231327.856,
+      "headersMs": 15.18966699950397,
+      "upstreamMs": 15.2116669996758,
+      "bytes": 13976,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=indexed.rx",
+      "startedAt": 1794964231328.013,
+      "headersMs": 15.63404199987417,
+      "upstreamMs": 15.648833999875933,
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=inventory",
+      "startedAt": 1794964231357.9941,
+      "headersMs": 5.5423330049961805,
+      "upstreamMs": 5.558832999668084,
+      "bytes": 3912,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "target": "/demo/lab/indexed/leaves",
+      "startedAt": 1794964231367.562,
+      "headersMs": 0.5762090004282072,
+      "upstreamMs": 0.5884590063942596,
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/leaves",
+      "target": "/demo/trie-trunk/queries/leaves",
+      "startedAt": 1794964231367.521,
+      "headersMs": 0.7045829988783225,
+      "upstreamMs": 0.7107909987098537,
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/timelines",
+      "target": "/demo/lab/indexed/sample/timelines?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1794765600000%2C1794772800000",
+      "startedAt": 1794964231397.122,
+      "headersMs": 0.5548749977606349,
+      "upstreamMs": 0.5671249964507297,
+      "bytes": 96,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/summaries",
+      "target": "/demo/lab/indexed/sample/summaries?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1794700800000%2C1794787200000",
+      "startedAt": 1794964231418.0042,
+      "headersMs": 4.076207995240111,
+      "upstreamMs": 15.105374994163867,
+      "bytes": 36707,
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "query": "events | where duration > 20000",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      12.90283203125,
+      11.17431640625,
+      7.5322265625
+    ],
+    "runtime": "9439b1dd9cc759a4a4118be98dcb598c8d15840cfd3ffd03af7b7ae2311727b0",
+    "web": "c1451965300f27e39f9b28d367cf8272eda7f31185b7c91e282501593159624d",
+    "diagnosticLibrary": "/tmp/snoot-scheduling.dylib",
+    "diagnosticActivity": false,
+    "loadAfter": [
+      12.75,
+      11.17138671875,
+      7.55224609375
+    ]
+  }
+}

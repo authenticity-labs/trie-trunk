@@ -1,15 +1,11 @@
-.PHONY: build test rust web wasm site schema desktop
+.PHONY: build test rust site schema
 
-build: rust web
+build: rust definition-tools
 	cp rust/target/release/trunk-search trunk-search
 	cd go && CGO_ENABLED=1 go build -o ../trunk ./cmd/trunk
 
 rust:
 	cargo build --release --locked --manifest-path rust/Cargo.toml --target-dir rust/target
-
-web:
-	npm --prefix client ci
-	npm --prefix client run build
 
 test: rust
 	cd ../pill-packer/go && go test ./codec
@@ -19,14 +15,14 @@ test: rust
 	cargo test --locked --manifest-path rust/uuid-index/Cargo.toml
 	cd go && PATH="$(CURDIR)/rust/target/release:$$PATH" go test -count=1 ./...
 
-wasm:
-	npm --prefix client run wasm
-
 site:
 	node site/build.mjs
 
 schema:
 	node scripts/check-definition-schema.mjs
 
-desktop:
-	python3 desktop/build.py
+# Copy the already-built shared codec tools alongside the server for datastore setup.
+.PHONY: definition-tools
+definition-tools:
+	cp ../pill-packer/rust/target/release/doc doc
+	cp ../pill-packer/rust/target/release/rx rx

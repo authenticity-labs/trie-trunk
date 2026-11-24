@@ -138,8 +138,8 @@ func PACLocalRows(p *PAC, place PACPlacement, rows []byte) ([]byte, error) {
 	if expected.Rows != place.Rows || expected.MemberBytes != place.MemberBytes || uint64(len(rows)) != place.Rows*IndexRowSize {
 		return nil, fmt.Errorf("PAC index/placement mismatch")
 	}
-	if p.AddressBytes != 4 {
-		return nil, fmt.Errorf("native PAC requires U32 directory")
+	if p.AddressBytes < 2 || p.AddressBytes > 4 {
+		return nil, fmt.Errorf("native PAC requires an embedded directory")
 	}
 	for i := range p.Members {
 		ms := indexTime(rows[i*IndexRowSize:], place.From)

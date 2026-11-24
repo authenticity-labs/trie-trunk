@@ -3,6 +3,8 @@ package cache
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"math"
 	"os"
 	"sort"
 	"time"
@@ -16,7 +18,7 @@ func (l *Layout) RowLayout() RowLayout { return RowLayout{Width: IndexRowSize, E
 
 // The fixed row selects a directory entry without decoding the PAC. The returned
 // extent is the complete encoded block, not an address inside compressed bytes.
-func (b *branchStore) podsRange(number uint64, r RowLayout) (uint64, uint64, error) {
+func (b *branchStore) packsRange(number uint64, r RowLayout) (uint64, uint64, error) {
 	if number < b.baseRows || number >= b.tail() {
 		return 0, 0, fmt.Errorf("payload row outside committed index")
 	}
@@ -26,24 +28,34 @@ func (b *branchStore) podsRange(number uint64, r RowLayout) (uint64, uint64, err
 	}
 	run := b.runs[i]
 	leaf, ok := b.time.leaf(run.PAC.Placement.From)
-	if !ok { // The commit journal is authoritative while a new hour is being sealed.
-		return run.PodsStart, run.PodsEnd, nil
+	if !ok { // The resident PAC directory precedes derived timeline publication.
+		return run.PacksStart, run.PacksEnd, nil
 	}
-	return storedSegmentRange(b.pods, b.podsRetired, leaf.Pods)
+	return storedSegmentRange(b.packs, b.packsRetired, leaf.Packs)
 
 }
 
 // The readable PAC length eliminates a second physical address in the directory.
 func storedSegmentRange(f *os.File, retired, start uint64) (uint64, uint64, error) {
-	if start < retired+headerSize {
+	if start < retired {
 		return 0, 0, fmt.Errorf("retired PAC address")
 	}
-	var raw [4]byte
-	if _, err := f.ReadAt(raw[:], int64(start-retired)); err != nil {
+	if start-retired > math.MaxInt64 {
+		return 0, 0, fmt.Errorf("PAC address exceeds file range")
+	}
+	// The largest PAC control prefix is 27 bytes (three uint(8) values,
+	// two content flag bytes and the leading container control byte). Rust
+	// selects the actual width. A small final Pack may end before this buffer.
+	var raw [27]byte
+	n, err := f.ReadAt(raw[:], int64(start-retired))
+	if err != nil && err != io.EOF {
 		return 0, 0, err
 	}
-	length := uint64(order.Uint32(raw[:]))
-	if length < PACCompressedHeaderSize || start+length < start {
+	length, err := seedNativeLength(raw[:n])
+	if err != nil {
+		return 0, 0, err
+	}
+	if start+length < start {
 		return 0, 0, fmt.Errorf("invalid PAC stored length")
 	}
 	return start, start + length, nil
@@ -78,12 +90,12 @@ type Period struct {
 type Run struct {
 	Start      uint64            `pil:"0"`
 	End        uint64            `pil:"1"`
-	PodsStart  uint64            `pil:"2"`
-	PodsEnd    uint64            `pil:"3"`
+	PacksStart  uint64            `pil:"2"`
+	PacksEnd    uint64            `pil:"3"`
 	MinMS      int64             `pil:"4"`
 	MaxMS      int64             `pil:"5"`
 	IndexCRC   uint32            `pil:"6"`
-	PodsCRC    uint32            `pil:"7"`
+	PacksCRC    uint32            `pil:"7"`
 	TrieSize   int               `pil:"8"`
 	References map[uint16]uint64 `pil:"10,omitempty"`
 	PAC        *StoredPAC        `pil:"9"`
@@ -170,7 +182,7 @@ func (b *branchStore) rowTime(n uint64) int64 {
 func (b *branchStore) rowID(n uint64) ([]byte, error) { var c recordContext; return c.identity(b, n) }
 func (b *branchStore) assemblyRow(n uint64) []byte    { return timeKey(b.rowTime(n)) }
 func (b *branchStore) memberLength(n uint64) (uint32, error) {
-	var r podsReader
+	var r packsReader
 	if _, err := r.read(b, n, b.layout.RowLayout()); err != nil {
 		return 0, err
 	}

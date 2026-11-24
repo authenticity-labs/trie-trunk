@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"nativeSocket\":true,\"storedBeds\":true,\"timeIndex\":true,\"filteredRows\":true,\"uuidv7\":true,\"zeroResults\":true,\"noBrowserDatabase\":true},\"rows\":[[\"018bcfd9-3ad0-7202-8202-020202020202\",\"1699999202000\",\"2\"],[\"018bcfd9-3eb8-7303-8303-030303030303\",\"1699999203000\",\"3\"],[\"018bcfd9-42a0-7404-8404-040404040404\",\"1699999204000\",\"4\"]]}",
+  "nativeStderr": "2026/11/19 23:51:11 Snoot listening on http://127.0.0.1:64753 using Setup\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": false,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      2.6025390625,
+      4.134765625,
+      3.62451171875
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "dde275b3dd64332af85f2c17e647812cec93ffe68a4e8499f64f8834bcecc41f",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795150270595.846,
+    "processMs": 1322.994457994355,
+    "loadAfter": [
+      2.6025390625,
+      4.134765625,
+      3.62451171875
+    ]
+  }
+}

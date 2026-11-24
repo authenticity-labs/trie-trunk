@@ -1,0 +1,14 @@
+{
+  "taxonomyHistory": true,
+  "rollback": true,
+  "fields": [
+    "duration",
+    "size",
+    "duration"
+  ],
+  "sums": [
+    10,
+    200,
+    10
+  ]
+}

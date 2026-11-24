@@ -1,0 +1,203 @@
+{
+  "scope": "Local Go codec microbenchmarks; not network, browser rendering, or end-to-end Snoot searches.",
+  "machine": "Apple M1 Max, darwin/arm64",
+  "date": "2026-10-31",
+  "nested_workload": {
+    "children": 30,
+    "stored_child_bytes": 65536,
+    "total_child_bytes": 1966080,
+    "outer_header_bytes": 109,
+    "sink": "io.Discard; streaming numbers measure framing/writer dispatch, not transport throughput"
+  },
+  "ordinary_workload": {
+    "records": 1000,
+    "fields": [
+      "U16",
+      "STRING"
+    ],
+    "before": "Exact Go source snapshot immediately before nested-PAC implementation; already uses compact PAC headers and mixed directories. Same native PIL codec dependency.",
+    "after": "Nested-PAC implementation with shared header writer."
+  },
+  "nested": {
+    "NestedPack/Get": {
+      "runs": [
+        {
+          "ns": 2.243,
+          "allocated_bytes": 0,
+          "allocations": 0
+        },
+        {
+          "ns": 2.244,
+          "allocated_bytes": 0,
+          "allocations": 0
+        },
+        {
+          "ns": 2.239,
+          "allocated_bytes": 0,
+          "allocations": 0
+        }
+      ],
+      "median_ns": 2.243,
+      "allocated_bytes": 0,
+      "allocations": 0
+    },
+    "NestedPack/Open": {
+      "runs": [
+        {
+          "ns": 928.6,
+          "allocated_bytes": 1576,
+          "allocations": 10
+        },
+        {
+          "ns": 909.7,
+          "allocated_bytes": 1576,
+          "allocations": 10
+        },
+        {
+          "ns": 913.8,
+          "allocated_bytes": 1576,
+          "allocations": 10
+        }
+      ],
+      "median_ns": 913.8,
+      "allocated_bytes": 1576,
+      "allocations": 10
+    },
+    "NestedPack/Stream30Packs": {
+      "runs": [
+        {
+          "ns": 439.7,
+          "allocated_bytes": 232,
+          "allocations": 4
+        },
+        {
+          "ns": 434.6,
+          "allocated_bytes": 232,
+          "allocations": 4
+        },
+        {
+          "ns": 437.6,
+          "allocated_bytes": 232,
+          "allocations": 4
+        }
+      ],
+      "median_ns": 437.6,
+      "allocated_bytes": 232,
+      "allocations": 4
+    },
+    "NestedPack/Assemble30Packs": {
+      "runs": [
+        {
+          "ns": 107507.0,
+          "allocated_bytes": 1974513,
+          "allocations": 5
+        },
+        {
+          "ns": 110149.0,
+          "allocated_bytes": 1974510,
+          "allocations": 5
+        },
+        {
+          "ns": 111307.0,
+          "allocated_bytes": 1974510,
+          "allocations": 5
+        }
+      ],
+      "median_ns": 110149.0,
+      "allocated_bytes": 1974513,
+      "allocations": 5
+    }
+  },
+  "ordinary_before": {
+    "PILPACBuild/Direct": {
+      "runs": [
+        {
+          "ns": 40702.0,
+          "allocated_bytes": 69904,
+          "allocations": 6
+        },
+        {
+          "ns": 41515.0,
+          "allocated_bytes": 69904,
+          "allocations": 6
+        },
+        {
+          "ns": 42970.0,
+          "allocated_bytes": 69904,
+          "allocations": 6
+        }
+      ],
+      "median_ns": 41515.0,
+      "allocated_bytes": 69904,
+      "allocations": 6
+    },
+    "PILPACBuild/Common": {
+      "runs": [
+        {
+          "ns": 89659.0,
+          "allocated_bytes": 90016,
+          "allocations": 15
+        },
+        {
+          "ns": 88609.0,
+          "allocated_bytes": 90016,
+          "allocations": 15
+        },
+        {
+          "ns": 88793.0,
+          "allocated_bytes": 90016,
+          "allocations": 15
+        }
+      ],
+      "median_ns": 88793.0,
+      "allocated_bytes": 90016,
+      "allocations": 15
+    }
+  },
+  "ordinary_after": {
+    "PILPACBuild/Direct": {
+      "runs": [
+        {
+          "ns": 39495.0,
+          "allocated_bytes": 69904,
+          "allocations": 6
+        },
+        {
+          "ns": 39509.0,
+          "allocated_bytes": 69904,
+          "allocations": 6
+        },
+        {
+          "ns": 39670.0,
+          "allocated_bytes": 69904,
+          "allocations": 6
+        }
+      ],
+      "median_ns": 39509.0,
+      "allocated_bytes": 69904,
+      "allocations": 6
+    },
+    "PILPACBuild/Common": {
+      "runs": [
+        {
+          "ns": 88109.0,
+          "allocated_bytes": 90016,
+          "allocations": 15
+        },
+        {
+          "ns": 88180.0,
+          "allocated_bytes": 90016,
+          "allocations": 15
+        },
+        {
+          "ns": 89337.0,
+          "allocated_bytes": 90016,
+          "allocations": 15
+        }
+      ],
+      "median_ns": 88180.0,
+      "allocated_bytes": 90016,
+      "allocations": 15
+    }
+  }
+}

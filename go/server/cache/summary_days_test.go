@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	"fmt"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"net/http/httptest"
 	"net/url"
 	"os"
@@ -37,15 +38,6 @@ func TestDailySummaryCodec(t *testing.T) {
 		for _, at := range []int{0, 8, 12, 16, 20, 24, 32, len(raw) - 1} {
 			bad := bytes.Clone(raw)
 			bad[at] ^= 255
-			// The compressed PAC wrapper is 16 bytes. Gzip MTIME and XFL
-			// metadata are outside its payload CRC and may change harmlessly.
-			if compressed && (at == 20 || at == 24) {
-				d, f, z, decoded, err := decodeSummaryDay(bad)
-				if err != nil || d != day || f != from || z != to || !reflect.DeepEqual(decoded, got) {
-					t.Fatalf("gzip metadata changed decoded summary at %d: %v", at, err)
-				}
-				continue
-			}
 			if _, _, _, _, e = decodeSummaryDay(bad); e == nil {
 				t.Fatalf("corruption %d", at)
 			}
@@ -116,8 +108,8 @@ func TestDailySummaryRolloverRecoveryAndConcurrentIngress(t *testing.T) {
 		t.Fatal(e)
 	}
 	b := s.branches[Write]
-	if len(b.summaryDays) != 1 || len(b.summaries) != 24 || len(b.accumulators) != 1 {
-		t.Fatalf("state days=%d chunks=%d accumulators=%d", len(b.summaryDays), len(b.summaries), len(b.accumulators))
+	if len(b.summaryDays) != 1 || len(b.summaries) != 24 || b.accumulators.len() != 1 {
+		t.Fatalf("state days=%d chunks=%d accumulators=%d", len(b.summaryDays), len(b.summaries), b.accumulators.len())
 	}
 	loc := b.summaryDays[start.UnixMilli()]
 	raw, e := readBytes(b.sum, loc.Offset, loc.Offset+loc.Length)
@@ -141,13 +133,13 @@ func TestDailySummaryRolloverRecoveryAndConcurrentIngress(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if len(b.summaries) != 24 || len(b.accumulators) != 1 || len(b.summaryDays) != 1 {
+	if len(b.summaries) != 24 || b.accumulators.len() != 1 || len(b.summaryDays) != 1 {
 		t.Fatal("recovery lost accumulators or packed day")
 	}
 	if dup, e := s.Append(Write, testFrame(t, l, now, 100, false)); e != nil || dup {
 		t.Fatal("new receipt reused a discarded UUID identity", e)
 	}
-	for _, a := range b.accumulators {
+	for _, a := range b.accumulators.all {
 		if a.columns.Count[0] != 2 {
 			t.Fatal("new receipt missing from accumulator")
 		}
@@ -260,7 +252,7 @@ func TestDailySummaryHTTPFixture(t *testing.T) {
 		count := result.Summary.Count
 		refs := make([]summaryPackQuery, len(result.Analytics.Days))
 		for i, ref := range result.Analytics.Days {
-			refs[i] = summaryPackQuery{Source: ref.Source, Definition: ref.Definition, Key: ref.Key}
+			refs[i] = summaryPackQuery{Source: ref.Source, Definition: ref.Definition, Key: ref.Key, Day: ref.Day}
 		}
 		response := requestSummaryPacks(t, h, refs)
 		if response.Code != 200 {
@@ -377,53 +369,66 @@ func TestDailySummaryRetentionAndDirectDelivery(t *testing.T) {
 		t.Fatal("retained day recovery", e)
 	}
 	h := &HTTP{Store: s}
-	get := func(key string) *httptest.ResponseRecorder {
-		return requestSummaryPacks(t, h, []summaryPackQuery{{Key: key, Source: h.tap(Read), Definition: fmtDigestNative(l.Digest)}})
+	get := func(day int64) *httptest.ResponseRecorder {
+		return requestSummaryPacks(t, h, []summaryPackQuery{{Source: h.tap(Read), Definition: fmtDigestNative(l.Digest), Day: day}})
 	}
-	if w := get(later.Key); w.Code != 200 {
-		t.Fatal("direct disk delivery after restart", w.Code)
+	if w := get(start.Add(24 * time.Hour).UnixMilli()); w.Code != 200 {
+		t.Fatal(w.Code, w.Body.String())
 	} else {
 		var packs [][]byte
 		if err := decodeSummaryTest(w.Body.Bytes(), &packs); err != nil || len(packs) != 1 || !bytes.Equal(packs[0], oldPacket) {
 			t.Fatal("changed sealed pack", err)
 		}
 	}
-	if w := get(old.Key); w.Code != 409 {
-		t.Fatal("retired packet remained accessible", w.Code)
+	if w := get(start.UnixMilli()); w.Code != 200 {
+		t.Fatal(w.Code)
+	} else {
+		var packs [][]byte
+		if err := decodeSummaryTest(w.Body.Bytes(), &packs); err != nil || len(packs) != 1 || summaryDigest(packs[0]) == old.Key {
+			t.Fatal("retained day did not replace old packet", err)
+		}
 	}
+}
+
+// Tests may aggregate separate branch requests for comparison with a view.
+// Each actual HTTP stream always contains one branch only.
+type summaryPackQuery struct {
+	Source, Definition, Key string
+	Day                     int64
 }
 
 func requestSummaryPacks(t *testing.T, h *HTTP, refs []summaryPackQuery) *httptest.ResponseRecorder {
 	t.Helper()
-	raw, err := json.Marshal(struct {
-		Packs []summaryPackQuery `json:"packs"`
-	}{refs})
-	if err != nil {
-		t.Fatal(err)
+	outer, _ := pil.NewNestedPack(nil, pil.PackOptions{AddressBytes: 2})
+	for _, ref := range refs {
+		q := url.Values{"definition": {ref.Definition}, "range": {fmt.Sprintf("%d,%d", ref.Day, ref.Day+summaryDayMS)}}
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, httptest.NewRequest("GET", "/"+ref.Source+"/summaries?"+q.Encode(), nil))
+		if w.Code != 200 {
+			return w
+		}
+		child, e := pil.OpenNestedPack(w.Body.Bytes())
+		if e != nil {
+			t.Fatal(e)
+		}
+		for _, b := range child.Unpack() {
+			if e = outer.Push(b); e != nil {
+				t.Fatal(e)
+			}
+		}
 	}
-	r := httptest.NewRequest("POST", "/summaries", bytes.NewReader(raw))
-	r.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
-	h.serveHTTP(w, r)
+	w.Header().Set("Content-Type", "application/pil")
+	if _, e := outer.WriteTo(w); e != nil {
+		t.Fatal(e)
+	}
 	return w
 }
-
 func decodeSummaryTest(raw []byte, out *[][]byte) error {
-	l, err := pil.Compile(pil.Definition{Fields: []pil.Field{{Name: "packs", Type: "ARRAY<BYTES>"}}})
-	if err != nil {
-		return err
+	p, e := pil.OpenNestedPack(raw)
+	if e != nil {
+		return e
 	}
-	var f pil.Frame
-	if err = l.Scan(raw, &f); err != nil {
-		return err
-	}
-	items, err := pil.FieldValue(l.Definition.Fields[0], f.Values[0])
-	if err != nil {
-		return err
-	}
-	*out = make([][]byte, len(items.([]any)))
-	for i, v := range items.([]any) {
-		(*out)[i] = v.([]byte)
-	}
+	*out = p.Unpack()
 	return nil
 }

@@ -1,0 +1,115 @@
+   Compiling trie-trunk-taxonomy v0.1.0 (/Users/Shared/code/applications/trie-trunk/rust/trunk)
+   Compiling data-seeds v0.1.0 (/Users/Shared/code/applications/trie-trunk/rust/seeds)
+warning: variable does not need to be mutable
+   --> tests/summary_arrays.rs:189:13
+    |
+189 |         let mut seed = source
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `data-seeds` (test "summary_arrays") generated 1 warning (run `cargo fix --test "summary_arrays" -p data-seeds` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.41s
+     Running tests/annotated_summaries.rs (rust/seeds/target/debug/deps/annotated_summaries-e7998a9adc9fbe37)
+
+running 7 tests
+test empty_nonfinite_and_overflow_have_explicit_unavailable_statistics ... ok
+test compensated_float_sum_survives_storage_and_merge ... ok
+test class_previews_match_ingested_queries_and_stop_before_unsupported_fields ... ok
+test arbitrary_windows_roll_up_and_preview_whole_periods_without_changing_event_bounds ... ok
+test merge_is_weighted_and_lossless_and_does_not_merge_different_plans ... ok
+test persisted_state_merges_and_equal_width_category_versions_remain_distinct ... ok
+test annotated_classes_prepare_actual_fixed_objects_from_ingestion ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/registration.rs (rust/seeds/target/debug/deps/registration-f7c4fd6a8f088be8)
+
+running 6 tests
+test registered_pack_requires_an_exact_trie_reference ... ok
+test branch_packs_share_readers_and_coordinate_one_global_query ... ok
+test leaf_commit_handoff_publishes_only_the_tail_and_accepts_after_write ... ok
+test leaves_scope_separates_types_and_preserves_contiguous_empty_roots ... ok
+test registered_definitions_drive_ingestion_and_queries_across_bundle_reordering ... ok
+test historical_annotations_reuse_the_event_codec_after_restart_and_rollback ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests/summary_accumulator.rs (rust/seeds/target/debug/deps/summary_accumulator-fc7b7fecf845e88c)
+
+running 5 tests
+test calendar_bounds_and_failed_ingestion_do_not_complete_periods ... ok
+test completion_follows_commit_watermark_not_new_hour_arrival ... ok
+test daily_summary_calendar_uses_the_published_fixed_utc_offset ... ok
+test silent_and_active_days_have_identical_pack_extents ... ok
+test snapshot_resumes_open_day_and_daily_seal_releases_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/summary_arrays.rs (rust/seeds/target/debug/deps/summary_arrays-9127a72255782c33)
+
+running 4 tests
+test bound_object_arrays_match_individual_objects_for_wide_scalars ... ok
+test seed_readers_restore_pack_dimensions_and_retain_shared_storage ... ok
+test zero_lengths_and_wrong_dimensions_preserve_the_fixed_contract ... ok
+test sizes_bind_plans_without_new_definitions_and_survive_box_reopen ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/summary_classes.rs (rust/seeds/target/debug/deps/summary_classes-23efb1f89770dce9)
+
+running 4 tests
+test summary_classes_are_resolved_from_annotations_and_preserved_through_doc ... ok
+test malformed_unknown_or_duplicate_summary_classes_fail_explicitly ... ok
+test invalid_summary_types_are_rejected_by_seeds_not_the_codec ... ok
+test percentile_requests_do_not_select_or_resize_accumulators ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/summary_columns.rs (rust/seeds/target/debug/deps/summary_columns-6680bd66d642408f)
+
+running 5 tests
+test table_admission_failure_is_not_a_partial_result ... ok
+test column_admission_failure_releases_partial_columns ... ok
+test table_only_reduces_timeline_selected_hours ... ok
+test column_report_reuses_values_after_reader_release_and_releases_budget ... ok
+test table_reduces_ingested_classes_with_exact_coverage_and_poisoned_failures ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/summary_definitions.rs (rust/seeds/target/debug/deps/summary_definitions-6408cf56bc2a611f)
+
+running 9 tests
+test prescribing_parsed_doc_matches_loading_signed_bundle ... ok
+test prepared_categories_keep_each_sources_vocabulary_and_predicate ... ok
+test generic_library_is_reproducible_and_classes_are_fixed ... ok
+test field_sizes_names_and_annotations_change_bindings_not_definitions ... ok
+test categories_use_uint3_counters_and_seed_owned_vocabularies ... ok
+test annotation_only_field_selection_preserves_historical_meaning ... ok
+test different_day_dimensions_and_names_survive_restart_and_rollup ... ok
+test source_ordinals_and_field_counts_do_not_change_library ... ok
+test registered_packs_bind_fields_from_the_selected_taxonomy ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+     Running tests/summary_preview.rs (rust/seeds/target/debug/deps/summary_preview-faf866483a59fa4f)
+
+running 3 tests
+test summary_preview_resolves_names_in_each_definition_version ... ok
+test preview_counts_are_proofs_not_estimated_event_matches ... ok
+test ordered_preview_storage_accepts_reordered_arrivals_and_rejects_duplicates ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/summary_series.rs (rust/seeds/target/debug/deps/summary_series-40d77e96fc2c436f)
+
+running 4 tests
+test empty_class_objects_do_not_invent_numeric_samples ... ok
+test span_combines_class_state_before_projecting_each_interval ... ok
+test distribution_samples_are_interval_aggregates_not_events ... ok
+test three_day_spans_cross_pack_boundaries_and_preserve_integer_precision ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+

@@ -34,9 +34,9 @@ type partition struct {
 	compact        bool
 	dir            string
 	schema         *schema
-	idx, pods, sum *os.File
+	idx, packs, sum *os.File
 	trie           *trie
-	podsEnd        int64
+	packsEnd        int64
 	runs           []run
 	pending        []row
 	committedMax   codec.UUIDv7
@@ -57,7 +57,7 @@ func openScopedPartition(root string, s *schema, sc scope, c Config) (p *partiti
 	if err = mkdirDurable(dir); err != nil {
 		return nil, err
 	}
-	p = &partition{scope: sc, dir: dir, day: day, schema: s, config: c, podsEnd: fileHeaderSize, acc: make(map[group]Aggregate), indexEnd: fileHeaderSize}
+	p = &partition{scope: sc, dir: dir, day: day, schema: s, config: c, packsEnd: fileHeaderSize, acc: make(map[group]Aggregate), indexEnd: fileHeaderSize}
 	defer func(opened *partition) {
 		if err != nil {
 			opened.closeFiles()
@@ -69,7 +69,7 @@ func openScopedPartition(root string, s *schema, sc scope, c Config) (p *partiti
 	if p.idx, err = p.openIndex(); err != nil {
 		return nil, err
 	}
-	if p.pods, err = s.openLog(filepath.Join(dir, s.filename("pods")), "TPOD"); err != nil {
+	if p.packs, err = s.openLog(filepath.Join(dir, s.filename("packs")), "TPOD"); err != nil {
 		return nil, err
 	}
 	if p.sum, err = s.openLog(filepath.Join(dir, s.filename("sum")), "TSUM"); err != nil {
@@ -107,10 +107,10 @@ func openScopedPartition(root string, s *schema, sc scope, c Config) (p *partiti
 		if len(p.runs) >= c.MaxRuns {
 			return ErrLimit
 		}
-		if rows[0].Start != uint64(p.podsEnd+8) {
+		if rows[0].Start != uint64(p.packsEnd+8) {
 			return fmt.Errorf("noncontiguous payload block")
 		}
-		pods, e := p.readPodsRun(rows)
+		packs, e := p.readPacksRun(rows)
 		if e != nil {
 			return e
 		}
@@ -118,7 +118,7 @@ func openScopedPartition(root string, s *schema, sc scope, c Config) (p *partiti
 			if int(r.Leaf) >= len(p.trie.nodes) || !p.accepts(r) {
 				return fmt.Errorf("invalid index reference/day")
 			}
-			fields, e := codec.Decode(pods[r.Start-rows[0].Start:r.End-rows[0].Start], codec.PIL)
+			fields, e := codec.Decode(packs[r.Start-rows[0].Start:r.End-rows[0].Start], codec.PIL)
 			if e != nil {
 				return fmt.Errorf("invalid payload PIL: %w", e)
 			}
@@ -146,7 +146,7 @@ func openScopedPartition(root string, s *schema, sc scope, c Config) (p *partiti
 			p.committedMax = last
 		}
 		p.indexEnd = end
-		p.podsEnd = int64(rows[len(rows)-1].End)
+		p.packsEnd = int64(rows[len(rows)-1].End)
 		return nil
 	}); err != nil {
 		return nil, err
@@ -157,10 +157,10 @@ func openScopedPartition(root string, s *schema, sc scope, c Config) (p *partiti
 		}
 	}
 
-	if err = p.pods.Truncate(p.podsEnd); err != nil {
+	if err = p.packs.Truncate(p.packsEnd); err != nil {
 		return nil, err
 	}
-	if err = errors.Join(p.pods.Sync(), p.idx.Sync(), p.sum.Sync()); err != nil {
+	if err = errors.Join(p.packs.Sync(), p.idx.Sync(), p.sum.Sync()); err != nil {
 		return nil, err
 	}
 	return p, nil
@@ -168,7 +168,7 @@ func openScopedPartition(root string, s *schema, sc scope, c Config) (p *partiti
 
 func (p *partition) closeFiles() error {
 	var errs []error
-	for _, f := range []*os.File{p.idx, p.pods, p.sum} {
+	for _, f := range []*os.File{p.idx, p.packs, p.sum} {
 		if f != nil {
 			errs = append(errs, f.Close())
 		}
@@ -334,21 +334,21 @@ func (p *partition) commitPending() (int64, error) {
 	payload := make([]byte, 0, p.pendingBytes)
 	for i := range p.pending {
 		r := &p.pending[i]
-		r.Start = uint64(p.podsEnd + 8 + int64(len(payload)))
+		r.Start = uint64(p.packsEnd + 8 + int64(len(payload)))
 		payload = append(payload, r.Dynamic...)
-		r.End = uint64(p.podsEnd + 8 + int64(len(payload)))
+		r.End = uint64(p.packsEnd + 8 + int64(len(payload)))
 	}
 	if err := p.trie.file.Sync(); err != nil {
 		return 0, err
 	}
-	end, err := appendBlock(p.pods, payload)
+	end, err := appendBlock(p.packs, payload)
 	if err != nil {
 		return 0, err
 	}
-	if err = p.pods.Sync(); err != nil {
+	if err = p.packs.Sync(); err != nil {
 		return 0, err
 	}
-	p.podsEnd = end
+	p.packsEnd = end
 	encoded, err := p.encodeRun(p.pending)
 	if err != nil {
 		return 0, err
@@ -411,20 +411,20 @@ func decodeRow(b []byte) (row, error) {
 	return r, nil
 }
 
-func (p *partition) readPodsRun(rows []row) ([]byte, error) {
+func (p *partition) readPacksRun(rows []row) ([]byte, error) {
 	start, end := rows[0].Start, rows[len(rows)-1].End
 	if end-start > maxBlockSize {
 		return nil, fmt.Errorf("oversized payload block")
 	}
 	var header [8]byte
-	if _, err := p.pods.ReadAt(header[:], int64(start)-8); err != nil {
+	if _, err := p.packs.ReadAt(header[:], int64(start)-8); err != nil {
 		return nil, err
 	}
 	if uint64(order.Uint32(header[:4])) != end-start {
 		return nil, fmt.Errorf("payload length mismatch")
 	}
 	data := make([]byte, int(end-start))
-	if _, err := p.pods.ReadAt(data, int64(start)); err != nil {
+	if _, err := p.packs.ReadAt(data, int64(start)); err != nil {
 		return nil, err
 	}
 	if crc32.Checksum(data, crcTable) != order.Uint32(header[4:]) {

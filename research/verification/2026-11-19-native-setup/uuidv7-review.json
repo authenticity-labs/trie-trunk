@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"nativeCandidate\":true,\"uuidv7First\":true,\"wideIntegers\":true,\"timestampRequired\":true},\"candidate\":\"Definition Candidate\\n\\nChoose a log file to inspect a sample. Your file is inspected on this Mac; nothing is registered or imported yet.\\n\\nLog File\\n\\n1 record inspected from sample.jsonl. The sample reached the end of the file.\\n\\nEvent Time\\n\\nid \u00b7 UUIDv7 Timestamp \u00b7 1 match\\n\\nat \u00b7 Timestamp \u00b7 1 match\\n\\nField\\tProposed Type\\tPresent\\tNull\\nat\\ttstr\\t1\\t0\\ncount\\tuint(16)\\t1\\t0\\nduration\\tuint(3)\\t1\\t0\\nid\\ttstr\\t1\\t0\\n\\nTypes and widths describe the sample only; validate every record during import.\"}",
+  "nativeStderr": "2026/11/19 04:44:32 Snoot listening on http://127.0.0.1:62294 using Unix Socket\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      11.912109375,
+      11.2685546875,
+      8.06787109375
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "95081b0bdf60d34a7ede1b045fb258e42248df26708a5a06ec01983c944d5f4a",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795081472012.158,
+    "processMs": 785.5049580102786,
+    "loadAfter": [
+      11.912109375,
+      11.2685546875,
+      8.06787109375
+    ]
+  }
+}

@@ -86,7 +86,7 @@ func TestObjectLookupComparison(t *testing.T) {
 	for _, name := range []string{"dense50k", "dense250k"} {
 		t.Run(name, func(t *testing.T) {
 			dir, f, objects := objectLookupFixture(t, name)
-			file, e := os.Open(filepath.Join(dir, "collection0.idx"))
+			file, e := os.Open(filepath.Join(dir, "collection0.indx"))
 			mustAddress(t, e)
 			defer file.Close()
 			idx, e := loadObjectIndex(file)
@@ -130,7 +130,7 @@ func BenchmarkObjectLookupComparison(b *testing.B) {
 	for _, name := range []string{"dense50k", "dense250k"} {
 		b.Run(name, func(b *testing.B) {
 			dir, f, objects := objectLookupFixture(b, name)
-			file, e := os.Open(filepath.Join(dir, "collection0.idx"))
+			file, e := os.Open(filepath.Join(dir, "collection0.indx"))
 			mustAddress(b, e)
 			defer file.Close()
 			idx, e := loadObjectIndex(file)

@@ -14,6 +14,7 @@ type accumulatorKey struct {
 	labels [4]string
 }
 type summaryAccumulator struct {
+	live      liveSummaryHour
 	keys      []accumulatorKey
 	index     map[accumulatorKey]int
 	columns   AggregateColumns
@@ -22,17 +23,15 @@ type summaryAccumulator struct {
 }
 
 func (s *Store) accumulate(b *branchStore, id [16]byte, values []Value) error {
+	hour := utcHour(eventTime(id[:]))
+	a := b.accumulators.acquire(hour)
+	record := int((eventTime(id[:]) - hour) / sumBucketMS)
+	a.live.Fields.add(s.layout.aggregates, record, values)
+	if err := s.accumulateLiveSummary(&a.live, b.branch, id, values); err != nil {
+		return err
+	}
 	if b.sum == nil {
 		return nil
-	}
-	hour := utcHour(eventTime(id[:]))
-	if b.accumulators == nil {
-		b.accumulators = map[int64]*summaryAccumulator{}
-	}
-	a := b.accumulators[hour]
-	if a == nil {
-		a = &summaryAccumulator{index: map[accumulatorKey]int{}}
-		b.accumulators[hour] = a
 	}
 	var pathBuffer [256]byte
 	path := pathBuffer[:0]
@@ -131,6 +130,11 @@ func (a *summaryAccumulator) snapshot(run Run, l *Layout, trie *sharedTrie) (Sum
 		}
 	}
 	out := makeSummary(run, groups)
+	var err error
+	out.Fields, err = l.aggregates.pack(a.live.Fields, 0, 12)
+	if err != nil {
+		return Summary{}, err
+	}
 	if l.Duration >= 0 {
 		out.DurationWidth = byte(l.Widths[l.Duration])
 	}
@@ -162,7 +166,7 @@ func (s *Store) rememberPendingValues(b *branchStore, p pending, values []Value)
 		b.provisionalRecords = map[int64]uint32{}
 	}
 	b.provisionalRecords[hour.UnixMilli()] = max(b.provisionalRecords[hour.UnixMilli()], uint32(unsigned(values[s.layout.Record].Bytes))+1)
-	if e := s.rememberLive(b, p, ProvisionalRow, true); e != nil {
+	if e := s.rememberLiveValues(b, p, ProvisionalRow, true, values); e != nil {
 		return e
 	}
 	return s.accumulate(b, p.id, values)

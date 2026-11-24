@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"summaryPruned\":true,\"previewWaitMs\":975,\"query\":\"events | where duration > \\\"20000\\\"\",\"screen\":\"Local Trunk\\nSearch\\nDashboards\\nAlerts\\nCollections\\nModels\\nTrunks\\nSearch Guide\\nDemo User\\nLog Out\\n\u2014 Search\\nQuick Guide\\nLight\\nDark\\nAuto\\ndemo\\n/\\nlab\\n/\\nindexed\\nPipeline\\nBuilder\\nSQL\\nDrag tabs to reorder, or use Alt and Left or Right Arrow. The first tab is the default for new queries.\\nDeep\\nLive\\nSearch Query\\nAdd a clause, or press Enter to search.\\n+ Filter\\n+ Text\\n+ Sort\\n+ Page Size\\nText Mode\\n2026-11-15 18:00 \u2192 20:00\\nSearch\\nNo Matches In This Time Window\\nEvents\\nCharts\\nEvent Activity\\nQuery Preview\\n0 Events\\nEvents\\n0\"}",
+  "nativeStderr": "2026/11/19 04:11:58 Snoot listening on http://127.0.0.1:60572 using Unix Socket\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "query": "events | where duration > \"20000\"",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      4.65380859375,
+      3.70166015625,
+      3.64453125
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "96bc5e609ac2211f964db5b70a3f74df18e18416dcb93e6356ae37057b1f912d",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": true,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795079518120.094,
+    "processMs": 3609.1642919927835,
+    "loadAfter": [
+      4.36083984375,
+      3.65673828125,
+      3.62890625
+    ]
+  }
+}

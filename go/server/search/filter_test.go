@@ -171,7 +171,7 @@ func TestWhereDoesNotReadExcludedPayload(t *testing.T) {
 	if err := m.Close(); err != nil {
 		t.Fatal(err)
 	}
-	path := filepath.Join(c.Root, "0", fmt.Sprint(rev.Version), now.Format("2006/002"), "log.pods")
+	path := filepath.Join(c.Root, "0", fmt.Sprint(rev.Version), now.Format("2006/002"), "log.packs")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
@@ -202,11 +202,11 @@ func TestWhereExplicitNull(t *testing.T) {
 	// The older log-ingress profile rejects null fields. Construct a native
 	// PIL fixture at rest to exercise the search evaluator's null semantics.
 	dir := filepath.Join(c.Root, "0", fmt.Sprint(rev.Version), now.Format("2006/002"))
-	pods, err := os.ReadFile(filepath.Join(dir, "log.pods"))
+	packs, err := os.ReadFile(filepath.Join(dir, "log.packs"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	fields, err := codec.Decode(pods[16:], codec.PIL)
+	fields, err := codec.Decode(packs[16:], codec.PIL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -219,8 +219,8 @@ func TestWhereExplicitNull(t *testing.T) {
 	binary.BigEndian.PutUint32(block, uint32(len(payload)))
 	binary.BigEndian.PutUint32(block[4:], crc32.Checksum(payload, crc32.MakeTable(crc32.Castagnoli)))
 	copy(block[8:], payload)
-	pods = append(pods[:8:8], block...)
-	if err = os.WriteFile(filepath.Join(dir, "log.pods"), pods, 0600); err != nil {
+	packs = append(packs[:8:8], block...)
+	if err = os.WriteFile(filepath.Join(dir, "log.packs"), packs, 0600); err != nil {
 		t.Fatal(err)
 	}
 	index, err := os.ReadFile(filepath.Join(dir, "log.idx"))
@@ -230,7 +230,7 @@ func TestWhereExplicitNull(t *testing.T) {
 	if len(index) != 56 || binary.BigEndian.Uint32(index[16:20]) != 1 {
 		t.Fatal("expected one native index record")
 	}
-	binary.BigEndian.PutUint64(index[len(index)-8:], uint64(len(pods)))
+	binary.BigEndian.PutUint64(index[len(index)-8:], uint64(len(packs)))
 	binary.BigEndian.PutUint32(index[12:16], crc32.Checksum(index[16:], crc32.MakeTable(crc32.Castagnoli)))
 	if err = os.WriteFile(filepath.Join(dir, "log.idx"), index, 0600); err != nil {
 		t.Fatal(err)

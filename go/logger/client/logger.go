@@ -90,8 +90,12 @@ type contextKey struct{}
 
 func (l *Logger) Begin(ctx context.Context) (context.Context, *Builder) {
 	start := time.Now()
-	id, err := codec.NewUUIDv7(start)
-	b := &Builder{state: &state{logger: l, started: start, initErr: err, entry: Entry{Id: id, Category: SUMMARY, Level: INFO, Service: l.config.Service, Version: l.config.Version}}}
+	var id codec.UUIDv7
+	var err error
+	if l.pilPlan == nil || l.pilPlan.layout.Definition.Resource.Strategy != "log" {
+		id, err = codec.NewUUIDv7(start)
+	}
+	b := &Builder{state: &state{logger: l, started: start, initErr: err, entry: Entry{Time: start, Id: id, Category: SUMMARY, Level: INFO, Service: l.config.Service, Version: l.config.Version}}}
 	return context.WithValue(ctx, contextKey{}, b), b
 }
 
@@ -278,6 +282,13 @@ func (b *Builder) Snapshot() Entry {
 	return e
 }
 func (b *Builder) Finish() error {
+	return b.FinishAt(time.Now())
+}
+
+// FinishAt records the operation's completion time when delivery is performed
+// later. Scheduling and transport acknowledgement do not extend its duration.
+// Like Finish, the first call finalizes and submits the transaction exactly once.
+func (b *Builder) FinishAt(completed time.Time) error {
 	if !b.enabled() {
 		return nil
 	}
@@ -285,7 +296,10 @@ func (b *Builder) Finish() error {
 	s.finishOnce.Do(func() {
 		s.mu.Lock()
 		s.finished = true
-		s.entry.Duration = time.Since(s.started)
+		s.entry.Duration = completed.Sub(s.started)
+		if s.entry.Duration < 0 {
+			s.entry.Duration = 0
+		}
 		if s.entry.Message.IsZero() {
 			message := SuccessfulTransaction
 			if s.entry.Error != nil || s.entry.HttpStatus >= 400 {

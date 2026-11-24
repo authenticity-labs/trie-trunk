@@ -17,7 +17,7 @@ func clearTrunkEnvironment(t *testing.T) {
 	if err := os.Unsetenv("ENVIRONMENT"); err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"DIR", "WEB", "PORT", "HOST", "TRANSPORT", "NETWORK", "FLUSH", "CERT", "KEY", "CLIENT_CA", "TOKEN", "ENTRY_HEADERS", "ENDPOINT", "SOCKET", "CA", "CLIENT_CERT", "CLIENT_KEY", "SERVE_PORT", "QUERIES", "HTTP_ADDRESS"} {
+	for _, name := range []string{"DIR", "STORAGE", "WEB", "PORT", "HOST", "TRANSPORT", "NETWORK", "FLUSH", "CERT", "KEY", "CLIENT_CA", "TOKEN", "ENTRY_HEADERS", "ENDPOINT", "SOCKET", "CA", "CLIENT_CERT", "CLIENT_KEY", "SERVE_PORT", "QUERIES", "HTTP_ADDRESS"} {
 		key := "TRUNK_" + name
 		t.Setenv(key, "")
 		if err := os.Unsetenv(key); err != nil {

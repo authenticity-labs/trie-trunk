@@ -1,0 +1,1030 @@
+[
+  {
+    "case": "narrow",
+    "medians": {
+      "open_us": {
+        "before": 131.417,
+        "after": 24.791
+      },
+      "cold_query_us": {
+        "before": 42.458,
+        "after": 46.0
+      },
+      "cold_total_us": {
+        "before": 173.542,
+        "after": 71.292
+      },
+      "warm_query_us": {
+        "before": 36.76209,
+        "after": 35.101659999999995
+      }
+    },
+    "pairs": [
+      {
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 43.25,
+          "cold_total_us": 176.083,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 132.833,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 37.39875
+        },
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 46.0,
+          "cold_total_us": 71.791,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 25.791,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 36.083330000000004
+        }
+      },
+      {
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 44.375,
+          "cold_total_us": 69.166,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 24.791,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 35.89
+        },
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 44.125,
+          "cold_total_us": 178.375,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 134.25,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 37.51875
+        }
+      },
+      {
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.458,
+          "cold_total_us": 170.125,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 127.66700000000002,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 37.47333
+        },
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 46.041999999999994,
+          "cold_total_us": 71.292,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 25.25,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 35.90875
+        }
+      },
+      {
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 43.666,
+          "cold_total_us": 67.625,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 23.959,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 36.47292
+        },
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 45.042,
+          "cold_total_us": 188.583,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 143.541,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 38.13084
+        }
+      },
+      {
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 54.167,
+          "cold_total_us": 210.792,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 156.625,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.76209
+        },
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 47.166000000000004,
+          "cold_total_us": 73.791,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 26.625,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 34.96959
+        }
+      },
+      {
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 44.542,
+          "cold_total_us": 68.542,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 24.0,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 34.91209
+        },
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.125,
+          "cold_total_us": 169.833,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 127.708,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.38208
+        }
+      },
+      {
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 41.584,
+          "cold_total_us": 167.62600000000003,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 126.04200000000002,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.41125
+        },
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 48.083,
+          "cold_total_us": 72.458,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 24.375,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 34.78083
+        }
+      },
+      {
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 45.958000000000006,
+          "cold_total_us": 69.166,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 23.208,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 34.77917
+        },
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.125,
+          "cold_total_us": 173.542,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 131.417,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.32459
+        }
+      },
+      {
+        "before": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 40.875,
+          "cold_total_us": 169.125,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 128.25,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.322919999999996
+        },
+        "after": {
+          "bytes": 35848,
+          "case": "narrow",
+          "cold_query_us": 46.75,
+          "cold_total_us": 72.667,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 25.916999999999998,
+          "pac_sha256": "ce6b96b04b0f935ee1c45ea65639a1ba3f7bf1c6787370c1436b2c2bdc5011fa",
+          "warm_query_us": 35.101659999999995
+        }
+      }
+    ]
+  },
+  {
+    "case": "typical",
+    "medians": {
+      "open_us": {
+        "before": 910.292,
+        "after": 190.667
+      },
+      "cold_query_us": {
+        "before": 276.209,
+        "after": 272.666
+      },
+      "cold_total_us": {
+        "before": 1186.75,
+        "after": 455.41700000000003
+      },
+      "warm_query_us": {
+        "before": 263.82165999999995,
+        "after": 249.26834
+      }
+    },
+    "pairs": [
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.709,
+          "cold_total_us": 1146.334,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 872.625,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 264.13125
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 261.584,
+          "cold_total_us": 442.251,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 180.667,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 248.10042
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 279.70799999999997,
+          "cold_total_us": 450.83299999999997,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 171.125,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 249.51125
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 276.709,
+          "cold_total_us": 1223.793,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 947.084,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 266.08166
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 276.45799999999997,
+          "cold_total_us": 1186.75,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 910.292,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.75333
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 287.917,
+          "cold_total_us": 510.5,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 222.583,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 270.61917
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 283.208,
+          "cold_total_us": 483.41600000000005,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 200.208,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 258.98875
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 279.541,
+          "cold_total_us": 1212.749,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 933.2080000000001,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.74584
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 292.541,
+          "cold_total_us": 1250.125,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 957.5840000000001,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 271.90208
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 284.0,
+          "cold_total_us": 504.0,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 220.0,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 255.64459000000002
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 272.666,
+          "cold_total_us": 469.374,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 196.708,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 249.26834
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.209,
+          "cold_total_us": 1143.376,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 870.167,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 264.51959
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 274.5,
+          "cold_total_us": 1166.958,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 892.4580000000001,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.82165999999995
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 269.5,
+          "cold_total_us": 444.875,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 175.375,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 247.60792
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 264.75,
+          "cold_total_us": 455.41700000000003,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 190.667,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 247.66541999999998
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 275.042,
+          "cold_total_us": 1162.542,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 887.5,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.37458000000004
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 276.209,
+          "cold_total_us": 1217.875,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 941.6659999999999,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.72125
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "typical",
+          "cold_query_us": 266.333,
+          "cold_total_us": 435.04100000000005,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 168.708,
+          "pac_sha256": "c7dbda98f326a4e8e7ed3ee214cd52982fa070b1a3ca8f09a02bffe1c7c5bcb6",
+          "warm_query_us": 248.78332999999998
+        }
+      }
+    ]
+  },
+  {
+    "case": "wide",
+    "medians": {
+      "open_us": {
+        "before": 1248.875,
+        "after": 420.25
+      },
+      "cold_query_us": {
+        "before": 381.25,
+        "after": 375.20799999999997
+      },
+      "cold_total_us": {
+        "before": 1629.083,
+        "after": 795.167
+      },
+      "warm_query_us": {
+        "before": 265.24375,
+        "after": 247.80625
+      }
+    },
+    "pairs": [
+      {
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 376.625,
+          "cold_total_us": 1587.9589999999998,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1211.3339999999998,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 263.395
+        },
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 382.083,
+          "cold_total_us": 781.5,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 399.417,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 247.80625
+        }
+      },
+      {
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 396.625,
+          "cold_total_us": 823.833,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 427.20799999999997,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 258.6875
+        },
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 380.20799999999997,
+          "cold_total_us": 1629.083,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1248.875,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 265.25291999999996
+        }
+      },
+      {
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 392.25,
+          "cold_total_us": 1571.6670000000001,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1179.4170000000001,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 265.24375
+        },
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 372.25,
+          "cold_total_us": 787.208,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 414.95799999999997,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 249.06207999999998
+        }
+      },
+      {
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 374.91700000000003,
+          "cold_total_us": 795.167,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 420.25,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 252.11625
+        },
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 381.25,
+          "cold_total_us": 1641.5420000000001,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1260.2920000000001,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 264.87333
+        }
+      },
+      {
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 391.75,
+          "cold_total_us": 1703.7089999999998,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1311.9589999999998,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 275.25625
+        },
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 375.20799999999997,
+          "cold_total_us": 818.625,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 443.417,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 248.24458
+        }
+      },
+      {
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 375.584,
+          "cold_total_us": 940.251,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 564.667,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 247.655
+        },
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 382.79200000000003,
+          "cold_total_us": 1683.1260000000002,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1300.334,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 266.88
+        }
+      },
+      {
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 379.25,
+          "cold_total_us": 1589.375,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1210.125,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 264.4975
+        },
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 371.875,
+          "cold_total_us": 776.7090000000001,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 404.834,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 247.68625
+        }
+      },
+      {
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 369.167,
+          "cold_total_us": 796.0840000000001,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 426.91700000000003,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 246.93916000000002
+        },
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 378.042,
+          "cold_total_us": 1544.876,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1166.834,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 264.81042
+        }
+      },
+      {
+        "before": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 396.625,
+          "cold_total_us": 1678.0,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1281.375,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 274.22459
+        },
+        "after": {
+          "bytes": 3550057,
+          "case": "wide",
+          "cold_query_us": 375.91700000000003,
+          "cold_total_us": 794.417,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 418.5,
+          "pac_sha256": "9175e092204e2e8e6101e6b12a3d71b065d5e02d7a01c27369365d89c9076ef0",
+          "warm_query_us": 247.61292
+        }
+      }
+    ]
+  },
+  {
+    "case": "quiet",
+    "medians": {
+      "open_us": {
+        "before": 873.1659999999999,
+        "after": 172.625
+      },
+      "cold_query_us": {
+        "before": 123.66699999999999,
+        "after": 127.74999999999999
+      },
+      "cold_total_us": {
+        "before": 997.25,
+        "after": 300.375
+      },
+      "warm_query_us": {
+        "before": 79.52000000000001,
+        "after": 78.63834
+      }
+    },
+    "pairs": [
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 124.29100000000001,
+          "cold_total_us": 984.083,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 859.7919999999999,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.51791999999999
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 127.95800000000001,
+          "cold_total_us": 296.375,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 168.417,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 79.2
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 125.291,
+          "cold_total_us": 291.08299999999997,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 165.792,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.55125
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 126.74999999999999,
+          "cold_total_us": 1013.583,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 886.833,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.63959
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 124.45899999999999,
+          "cold_total_us": 1006.459,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 882.0,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.22291
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 127.74999999999999,
+          "cold_total_us": 300.375,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 172.625,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.76625
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 124.45899999999999,
+          "cold_total_us": 296.668,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 172.209,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.57084
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 122.166,
+          "cold_total_us": 982.4580000000001,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 860.292,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.52000000000001
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 124.084,
+          "cold_total_us": 997.25,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 873.1659999999999,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.29084
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 131.334,
+          "cold_total_us": 305.376,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 174.042,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.63834
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 130.25,
+          "cold_total_us": 304.41700000000003,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 174.167,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.54083
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 123.208,
+          "cold_total_us": 1109.4579999999999,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 986.2499999999999,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.6475
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 123.66699999999999,
+          "cold_total_us": 991.792,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 868.125,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.73792
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 127.042,
+          "cold_total_us": 298.875,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 171.833,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.43416
+        }
+      },
+      {
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 125.041,
+          "cold_total_us": 304.957,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 179.916,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.90957999999999
+        },
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 121.08399999999999,
+          "cold_total_us": 1019.918,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 898.8340000000001,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.21583
+        }
+      },
+      {
+        "before": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 122.958,
+          "cold_total_us": 989.916,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 866.9580000000001,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 80.11625
+        },
+        "after": {
+          "bytes": 999817,
+          "case": "quiet",
+          "cold_query_us": 128.0,
+          "cold_total_us": 308.959,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 180.959,
+          "pac_sha256": "8ef8b9f0dc04fa9be30c3ddf3d5daadc4683a4a9117d77069a72242feca7537a",
+          "warm_query_us": 78.84709
+        }
+      }
+    ]
+  }
+]

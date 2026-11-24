@@ -6,26 +6,39 @@ import (
 	"fmt"
 	"mime"
 	"net/http"
-	"os"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
+	"trie-trunk/go/internal/node"
 )
 
-// Endpoint coordinates immutable collection minors under one cache writer lease.
-// An empty cache waits for a supplied definition or the first standard CBOR write.
+// Endpoint prepares registered RX prescriptions under one cache lease.
+// Definition identity and resource bindings are supplied by trunk.trie.
+type routingSnapshot struct{ sources []*HTTP }
+
 type Endpoint struct {
-	registrationSlots chan struct{}
-	mu                sync.Mutex
-	config            Config
-	api               *HTTP
-	group             *storeGroup
-	apis              map[string]*HTTP
-	preferred         map[string]*HTTP
-	closed            bool
+	routing               atomic.Pointer[routingSnapshot]
+	registrationSlots     chan struct{}
+	mu                    sync.Mutex
+	config                Config
+	storage               seedStorage
+	api                   *HTTP
+	group                 *storeGroup
+	apis                  map[string]*HTTP
+	preferred             map[string]*HTTP
+	closed                bool
+	registeredReads       map[string]*registeredReadSnapshot
+	node                  *node.Node
+	registeredLeaves      map[string]*registeredLeafSnapshot
+	registeredLeafWriters map[string]*registeredLeafWriter
+	publishingLeaves      map[string]bool
+	commitWork            sync.WaitGroup
+	closeDone             chan struct{}
+	readMemory            *nativeMemory
 }
 
 func collectionKey(l *Layout) string {
@@ -35,11 +48,37 @@ func OpenEndpoint(c Config) (p *Endpoint, err error) {
 	if !name(c.Cache) || c.Tenant == "" || c.Root == "" {
 		return nil, fmt.Errorf("cache, tenant and root required")
 	}
+	if c.Layout != nil {
+		return nil, fmt.Errorf("register a DOC-authored RX Definition in trunk.trie before opening the endpoint")
+	}
 	p = &Endpoint{config: c, registrationSlots: make(chan struct{}, 4), apis: map[string]*HTTP{}, preferred: map[string]*HTTP{}}
+	if p.config.Storage == "" {
+		p.config.Storage = "pack"
+	}
+	p.storage, err = storagePolicy(p.config.Storage)
+	if err != nil {
+		return nil, err
+	}
+	if p.config.Now == nil {
+		p.config.Now = time.Now
+	}
+	p.registeredReads = make(map[string]*registeredReadSnapshot)
+	p.registeredLeaves = make(map[string]*registeredLeafSnapshot)
+	p.registeredLeafWriters = make(map[string]*registeredLeafWriter)
+	p.publishingLeaves = make(map[string]bool)
+	if p.config.CommitScheduler == nil {
+		p.config.CommitScheduler = defaultCommitScheduler
+	}
+	budget := c.NativeMemoryBytes
+	if budget == 0 {
+		budget = 1 << 30
+	}
+	p.readMemory = newNativeMemory(budget)
 	// Take the writer lease before reading preferences/catalogs. Otherwise a
 	// second administrator could publish a new choice between read and open.
 	p.group, err = newStoreGroup(c)
 	if err != nil {
+		p.readMemory.close()
 		return nil, err
 	}
 	opened := p
@@ -48,97 +87,37 @@ func OpenEndpoint(c Config) (p *Endpoint, err error) {
 			opened.Close()
 		}
 	}()
-	var layouts []*Layout
-	var selected map[string][32]byte
-	raw, e := os.ReadFile(filepath.Join(c.Root, c.Cache, "registry.map"))
-	if e == nil {
-		var catalog Catalog
-		if e = decoder.Unmarshal(raw, &catalog); e != nil {
-			return nil, e
-		}
-		if catalog.Cache != c.Cache || catalog.Tenant != c.Tenant || catalog.Format != Format {
-			return nil, fmt.Errorf("catalog ownership mismatch")
-		}
-		selected = catalog.Preferred
-		for binding, digest := range catalog.Definitions {
-			path := splitBinding(binding)
-			if path == nil {
-				return nil, fmt.Errorf("invalid catalog binding")
-			}
-			data, e := os.ReadFile(filepath.Join(c.Root, c.Cache, binding, "resource.rx"))
-			if e != nil {
-				return nil, e
-			}
-			l, e := ParseDefinition(data)
-			if e != nil {
-				return nil, e
-			}
-			n := l.Definition.Resource
-			if l.Digest != digest || n.Service != path.domain || n.Resource != path.collection || n.Major != path.major || n.Minor != path.minor {
-				return nil, fmt.Errorf("catalog definition mismatch")
-			}
-			layouts = append(layouts, l)
-		}
-	} else if !os.IsNotExist(e) {
-		return nil, e
+	if err = initializeTrunkConfig(c.Root); err != nil {
+		return nil, err
 	}
-	for key, digest := range selected {
-		found := false
-		for _, l := range layouts {
-			if collectionKey(l) == key && l.Digest == digest {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return nil, fmt.Errorf("invalid preferred definition for %s", key)
-		}
+	p.node, err = node.Open(c.Root, node.Config{Storage: p.config.Storage}, budget, uint64(p.config.Now().UnixMilli()))
+	if err != nil {
+		return nil, err
 	}
-	sort.Slice(layouts, func(i, j int) bool { return layouts[i].Definition.Version < layouts[j].Definition.Version })
-	for _, l := range layouts {
-		if e = p.install(l); e != nil {
-			p.Close()
-			return nil, e
-		}
-		// Upgrade old catalogs without a persisted choice using their former
-		// newest-minor default, then freeze that choice before serving traffic.
-		if _, explicit := selected[collectionKey(l)]; !explicit {
-			p.preferred[collectionKey(l)] = p.apis[fmt.Sprintf("%x", l.Digest)]
-		}
-	}
-	if c.Layout != nil {
-		if e = p.install(c.Layout); e != nil {
-			p.Close()
-			return nil, e
-		}
-		if _, explicit := selected[collectionKey(c.Layout)]; !explicit {
-			p.preferred[collectionKey(c.Layout)] = p.apis[fmt.Sprintf("%x", c.Layout.Digest)]
-		}
-	}
-	for key, digest := range selected {
-		api := p.apis[fmt.Sprintf("%x", digest)]
-		if api == nil || collectionKey(api.Store.layout) != key {
-			p.Close()
-			return nil, fmt.Errorf("invalid preferred definition for %s", key)
-		}
-		p.preferred[key] = api
-	}
-	p.selectDefault()
-	if e = p.persistPreferences(); e != nil {
-		p.Close()
-		return nil, e
-	}
+	p.readMemory.close()
+	p.readMemory = &nativeMemory{ptr: p.node.Memory(), limit: budget}
+	p.publishRouting()
 	return p, nil
 }
 
 // Caller holds mu, or endpoint is not published yet. All minors stay open so
 // recovery drains old staging and object history never silently skips old maps.
 func (p *Endpoint) install(l *Layout) error {
+	return p.installType(l, p.config.ResourceType)
+}
+
+func (p *Endpoint) installType(l *Layout, resourceType string) error {
 	if p.closed {
 		return fmt.Errorf("endpoint closed")
 	}
+	if p.node != nil {
+		return fmt.Errorf("registered nodes require RX registration; retired Store layouts cannot be installed")
+	}
 	digest := fmt.Sprintf("%x", l.Digest)
-	if p.apis[digest] != nil {
+	if existing := p.apis[digest]; existing != nil {
+		if resourceType != "" && resourceType != existing.Store.config.ResourceType {
+			return fmt.Errorf("immutable resource type conflict")
+		}
 		return nil
 	}
 	if p.group == nil {
@@ -150,6 +129,7 @@ func (p *Endpoint) install(l *Layout) error {
 	}
 	c := p.config
 	c.Layout = l
+	c.ResourceType = resourceType
 	// A cache may mix replay-enabled and observation-only definitions. Policy
 	// still decides per collection; an absent identity cannot enable postings.
 	if l.Object < 0 {
@@ -168,6 +148,7 @@ func (p *Endpoint) install(l *Layout) error {
 	if p.api == nil || collectionKey(p.api.Store.layout) == key {
 		p.api = p.preferred[key]
 	}
+	p.publishRouting()
 	return nil
 }
 
@@ -221,6 +202,8 @@ func (p *Endpoint) registrationAPI(r *http.Request, proposed *Layout) (*HTTP, er
 	}
 	return p.api, nil
 }
+func (p *Endpoint) publishRouting() { p.routing.Store(&routingSnapshot{sources: p.sources()}) }
+
 func (p *Endpoint) sources() []*HTTP {
 	sources := make([]*HTTP, 0, len(p.apis))
 	for _, api := range p.apis {
@@ -241,6 +224,10 @@ func (p *Endpoint) Handler(token string) http.Handler {
 func (p *Endpoint) serveHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
+	if r.URL.Path == "/ingest" && p.node != nil {
+		http.NotFound(w, r)
+		return
+	}
 	if r.URL.Path == "/definitions" {
 		p.registration(w, r)
 		return
@@ -249,7 +236,9 @@ func (p *Endpoint) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		p.replayHTTP(w, r)
 		return
 	}
+
 	p.mu.Lock()
+
 	if p.closed {
 		p.mu.Unlock()
 		http.Error(w, "endpoint closed", 503)
@@ -258,7 +247,7 @@ func (p *Endpoint) serveHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/ingest" {
 		kind, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
 		// Standard CBOR is independent of PIL logger registration.
-		if r.Method == "POST" && blindContentType(kind) && r.Header.Get("Trunk-Version") == "" && r.Header.Get("Trunk-Digest") == "" && r.Header.Get("Upgrade") == "" {
+		if r.Method == "POST" && r.Header.Get("Definition-Version") == "" && blindContentType(kind) && r.Header.Get("Trunk-Version") == "" && r.Header.Get("Trunk-Digest") == "" && r.Header.Get("Upgrade") == "" {
 			l, e := GenericDefinition()
 			if e == nil {
 				e = p.install(l)
@@ -274,13 +263,30 @@ func (p *Endpoint) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	api := p.api
-	if r.URL.Path == "/ingest" && blindContentType(strings.Split(r.Header.Get("Content-Type"), ";")[0]) {
+	if r.URL.Path == "/ingest" && r.Header.Get("Definition-Version") == "" && blindContentType(strings.Split(r.Header.Get("Content-Type"), ";")[0]) {
 		l, _ := GenericDefinition()
 		api = p.apis[fmt.Sprintf("%x", l.Digest)]
 	}
 	sources := p.sources()
-	if r.URL.Path == "/ingest" && strings.EqualFold(strings.Split(r.Header.Get("Content-Type"), ";")[0], "application/pil") {
+	if r.URL.Path == "/ingest" && (r.Header.Get("Definition-Version") != "" || strings.EqualFold(strings.Split(r.Header.Get("Content-Type"), ";")[0], "application/pil")) {
 		api = p.apis[r.Header.Get("Definition-Version")]
+		if api == nil {
+			for _, candidate := range sources {
+				if candidate.Store.providers[r.Header.Get("Definition-Version")] == nil {
+					continue
+				}
+				branches, err := candidate.branch(r.URL.Query().Get("tap"))
+				if err != nil || len(branches) != 1 {
+					continue
+				}
+				if api != nil {
+					p.mu.Unlock()
+					http.Error(w, "ambiguous provider destination", 412)
+					return
+				}
+				api = candidate
+			}
+		}
 	}
 	p.mu.Unlock()
 	if trunkRequest(r) {
@@ -330,7 +336,7 @@ func (p *Endpoint) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		(&HTTP{sources: sources}).branchFileHTTP(w, r, file)
 		return
 	}
-	if api != nil && (r.URL.Path == "/summaries" || r.URL.Path == "/events" || r.URL.Path == "/collect" || r.URL.Path == "/schemas" || r.URL.Path == "/rejections") {
+	if api != nil && (r.URL.Path == "/events" || r.URL.Path == "/collect" || r.URL.Path == "/seed-packs" || r.URL.Path == "/schemas" || r.URL.Path == "/rejections") {
 		handler := &HTTP{Store: api.Store, sources: sources}
 		handler.serveHTTP(w, r)
 		return
@@ -364,6 +370,9 @@ func (p *Endpoint) Run(ctx context.Context, interval time.Duration) error {
 			if closed {
 				return nil
 			}
+			if e := p.flushRegistered(uint64(p.config.Now().UnixMilli())); e != nil {
+				return e
+			}
 			for _, api := range sources {
 				if e := api.Store.Flush(); e != nil {
 					return e
@@ -374,11 +383,33 @@ func (p *Endpoint) Run(ctx context.Context, interval time.Duration) error {
 }
 func (p *Endpoint) Close() error {
 	p.mu.Lock()
-	defer p.mu.Unlock()
 	if p.closed {
+		done := p.closeDone
+		p.mu.Unlock()
+		if done != nil {
+			<-done
+		}
 		return nil
 	}
 	p.closed = true
+	p.closeDone = make(chan struct{})
+	defer close(p.closeDone)
+	p.mu.Unlock()
+	p.commitWork.Wait()
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	for _, writer := range p.registeredLeafWriters {
+		writer.close()
+	}
+	clear(p.registeredLeafWriters)
+	p.routing.Store(nil)
+	clear(p.registeredLeaves)
+	for key, snapshot := range p.registeredReads {
+		snapshot.release()
+		delete(p.registeredReads, key)
+	}
+	p.readMemory.close()
+	p.node.Close()
 	if p.group != nil {
 		return p.group.close()
 	}

@@ -1,0 +1,26 @@
+   Compiling trie-trunk-taxonomy v0.1.0 (/Users/Shared/code/applications/trie-trunk/rust/trunk)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.07s
+     Running tests/registration.rs (rust/trunk/target/debug/deps/registration-f472f3cd18e764cd)
+
+running 18 tests
+test old_taxonomy_nodes_labels_sections_survive_and_failed_registration_is_atomic ... ok
+test authored_examples_reopen_with_the_inferred_dag ... ok
+test inline_records_and_any_are_supported_without_interpreting_application_fields ... ok
+test explicit_partition_lists_and_wildcard_have_deterministic_precedence ... ok
+test object_reference_ordinals_are_resolved_through_the_rx_bundle ... ok
+test discovery_and_version_scopes_come_from_registered_resource_identity ... ok
+test arbitrary_shapes_discover_multiple_roots_and_late_bases ... ok
+test annotations_do_not_change_structural_shapes_or_registration_identity ... ok
+test reorder_shares_shape_but_keeps_separate_definition_ordinal_maps ... ok
+test rebalancing_field_ordinals_preserves_dag_edges_and_refreshes_access_mapping ... ok
+test optional_namespaces_and_version_selection_bind_exact_taxonomy_branches ... ok
+test storage_paths_share_versions_but_reject_ambiguous_type_branch_pairs ... ok
+test summary_contexts_belong_to_the_branch_and_preserve_sealed_history ... ok
+test resource_bindings_live_in_trie_without_changing_definition_or_addresses ... ok
+test splits_require_explicit_disjoint_partition_configuration ... ok
+test numeric_severity_uses_metadata_groups_without_changing_its_definition ... ok
+test nested_field_order_does_not_change_inline_or_referenced_shape_relationships ... ok
+test types_widths_header_roles_and_enum_dictionaries_are_not_conflated ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+

@@ -1,0 +1,63 @@
+{
+  "fixed_strings": {},
+  "identity": "synonym",
+  "root": "synonym",
+  "types": {
+    "path-part": {
+      "type": "text"
+    },
+    "synonym": {
+      "fields": [
+        {
+          "name": "from",
+          "optional": false,
+          "value": {
+            "items": {
+              "name": "path-part",
+              "type": "reference"
+            },
+            "max": null,
+            "min": 1,
+            "type": "array"
+          }
+        },
+        {
+          "name": "ordinal",
+          "optional": false,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "cast",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "priority",
+          "optional": false,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "numerator",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "denominator",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        }
+      ],
+      "type": "record"
+    }
+  }
+}

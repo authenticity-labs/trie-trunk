@@ -53,21 +53,30 @@ func (l *nativeLive) revision(key collectionRevision) bool {
 	return l != nil && bool(C.trunk_live_revision(l.ptr, (*C.uint8_t)(unsafe.Pointer(&key.Object[0])), C.uint64_t(key.Revision)))
 }
 func (s *Store) rememberLive(b *branchStore, p pending, row uint64, staged bool) error {
-	var object *collectionRevision
-	var revision collectionRevision
+	var f Frame
 	if b.branch == Write && s.config.ObjectIndex && s.layout.Object >= 0 {
-		var f Frame
 		if e := s.layout.Scan(p.frame, &f); e != nil {
 			return e
 		}
-		if f.Values[s.layout.Revision].State != Absent {
+	}
+	return s.rememberLiveValues(b, p, row, staged, f.Values)
+}
+
+func (s *Store) rememberLiveValues(b *branchStore, p pending, row uint64, staged bool, values []Value) error {
+	var object *collectionRevision
+	var revision collectionRevision
+	if b.branch == Write && s.config.ObjectIndex && s.layout.Object >= 0 {
+		if values[s.layout.Revision].State != Absent {
 			var e error
-			revision, e = s.collectionRevision(f.Values)
+			revision, e = s.collectionRevision(values)
 			if e != nil {
 				return e
 			}
 			object = &revision
 		}
+	}
+	if !staged {
+		p.frame = nil
 	}
 	if !b.live.insert(p, object, row, staged, s.config.Now().Add(-HotWindow).UnixMilli()) {
 		return fmt.Errorf("%w: native live index record limit", ErrStagingFull)
@@ -75,6 +84,7 @@ func (s *Store) rememberLive(b *branchStore, p pending, row uint64, staged bool)
 	if staged {
 		b.pendingVersion++
 		b.pendingBytes += len(p.frame)
+		b.ingressTail = append(b.ingressTail, p)
 	}
 	return nil
 }
@@ -123,7 +133,7 @@ func (l *nativeLive) visit(object []byte, kind byte, from, to time.Time, visit f
 	}
 }
 func (b *branchStore) residentHistory(object []byte, from, to, now time.Time, source *historySource, binding string, h *historySnapshot) bool {
-	if from.Before(now.Add(-HotWindow)) {
+	if from.Before(now.Add(-HotWindow)) || len(b.runs) > 0 {
 		return false
 	}
 	r := b.live.snapshotAt(object, 2, from, to, now.Add(-HotWindow).UnixMilli())
@@ -190,7 +200,9 @@ func (s *Store) LiveIndexes() map[Branch]LiveIndexStats {
 func (l *nativeLive) insert(p pending, key *collectionRevision, row uint64, staged bool, cutoff int64) bool {
 	var r C.TrunkLiveRecord
 	copy(unsafe.Slice((*byte)(unsafe.Pointer(&r.id[0])), 16), p.id[:])
-	r.address = unsafe.Pointer(&p.frame[0])
+	if len(p.frame) > 0 {
+		r.address = unsafe.Pointer(&p.frame[0])
+	}
 	r.length = C.size_t(len(p.frame))
 	r.row = C.uint64_t(row)
 	var object *C.uint8_t

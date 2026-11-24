@@ -1,6 +1,21 @@
 import {quotaRings} from './quota-rings.mjs';
 import {stages} from './lifecycle-data.js';
 
+function sectionFromHash() {
+ if (!location.hash) return null;
+ try {
+  return document.getElementById(decodeURIComponent(location.hash.slice(1)));
+ } catch {
+  return null;
+ }
+}
+
+function clearSectionHash() {
+ if (location.href.includes('#')) {
+  history.replaceState(history.state, '', location.pathname + location.search);
+ }
+}
+
 // Show one brand at a time: the main lockup hands off to the sticky masthead.
 const mainBrand = document.querySelector('.main-brand');
 if(mainBrand && 'IntersectionObserver' in window) {
@@ -206,8 +221,56 @@ for (const button of document.querySelectorAll('[data-copy-code]')) {
    button.disabled = false;
    reset = setTimeout(() => {
     delete button.dataset.copied;
-    feedback.textContent = 'Copy';
+    feedback.textContent = '';
    }, 3000);
+  }
+ });
+}
+
+const sectionShares = {
+ PIL: [
+  ['.pil-hero h1', ''],
+  ['#libraries > h2', 'libraries', 'section'],
+  ['#definition > h2', 'definition', 'section'],
+  ['#bench > h2', 'bench', 'section'],
+ ],
+ trunk: [
+  ['#snoot-title', 'snoot'],
+  ['#lifecycle .section-heading > h2', 'seeds'],
+  ['#bench-title', 'bench', 'section'],
+ ],
+};
+
+for (const [selector, sectionId, tabScope] of sectionShares[document.body.dataset.page] ?? []) {
+ const heading = document.querySelector(selector);
+ if (!heading) continue;
+ const name = heading.innerText.replace(/\s+/g, ' ').trim();
+ const label = `Share ${name}`;
+ const button = document.createElement('button');
+ button.type = 'button';
+ button.className = 'section-share';
+ button.title = label;
+ button.setAttribute('aria-label', label);
+ heading.setAttribute('aria-label', name);
+ button.innerHTML = `<svg class="section-share-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4m-6.8 7 6.8 4"/></svg><svg class="section-share-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span class="copy-feedback" role="status"></span>`;
+ heading.append(button);
+ const status = button.querySelector('[role=status]');
+ let reset;
+ button.addEventListener('click', async () => {
+  const activeTab = tabScope && heading.closest(tabScope)?.querySelector('[role=tab][aria-selected=true]');
+  const url = new URL(location.pathname, location.origin);
+  url.hash = activeTab?.getAttribute('aria-controls') || sectionId;
+  try {
+   await navigator.clipboard.writeText(url.href);
+   clearTimeout(reset);
+   button.dataset.copied = 'true';
+   status.textContent = 'Link Copied';
+   reset = setTimeout(() => {
+    delete button.dataset.copied;
+    status.textContent = '';
+   }, 2000);
+  } catch {
+   window.prompt('Copy Section Link', url.href);
   }
  });
 }
@@ -217,16 +280,14 @@ for(const group of document.querySelectorAll('[data-pil-tabs]')){
  const list=group.querySelector('[role=tablist]');
  const tabs=[...list.querySelectorAll('[role=tab]')];
  const panels=tabs.map(tab=>document.getElementById(tab.getAttribute('aria-controls')));
- const select=(index,focus=false,link=false)=>{
+ const select=(index,focus=false,align=false)=>{
   tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;panels[i].hidden=i!==index;});
-  const copy=group.querySelector('.pil-code-footer [data-copy-code]');
-  if(copy){copy.dataset.copyCode=panels[index].querySelector('code').id;copy.setAttribute('aria-label',`Copy ${tabs[index].textContent} Example`);delete copy.dataset.copied;copy.querySelector('[data-copy-feedback]').textContent='Copy';}
   if(focus)tabs[index].focus();
-  if(link&&group.hasAttribute('data-pil-deep-links')){
-   history.replaceState(null,'',`#${panels[index].id}`);
+  if(align&&group.hasAttribute('data-pil-deep-links')){
    const headerBottom=document.querySelector('.site-header')?.getBoundingClientRect().bottom??0;
    if(panels[index].getBoundingClientRect().top<headerBottom)panels[index].scrollIntoView({block:'start'});
   }
+  group.dispatchEvent(new CustomEvent('pil-tab-change',{bubbles:true}));
  };
  tabs.forEach((tab,index)=>{
   tab.addEventListener('click',()=>select(index,false,true));
@@ -241,12 +302,12 @@ for(const group of document.querySelectorAll('[data-pil-tabs]')){
   });
  });
  const reveal=()=>{
-  let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
-  const target=document.getElementById(id);
+  const target=sectionFromHash();
+  if(!target)return;
   const index=panels.findIndex(panel=>panel===target||panel.contains(target));
   if(index<0)return;
   select(index);
-  requestAnimationFrame(()=>target.scrollIntoView({block:'start'}));
+  for(let ancestor=target;ancestor&&ancestor!==group;ancestor=ancestor.parentElement){if(ancestor.tagName==='DETAILS')ancestor.open=true;}
  };
  reveal();window.addEventListener('hashchange',reveal);
 }
@@ -255,8 +316,78 @@ for(const group of document.querySelectorAll('[data-pil-tabs]')){
 if(document.body.dataset.page==='PIL'){
  const root=document.documentElement;
  const header=document.querySelector('.site-header');
- const updateClearance=()=>root.style.setProperty('--pil-header-clearance',`${Math.ceil(header?.getBoundingClientRect().height??0)+16}px`);
+ const updateClearance=()=>{
+  root.style.setProperty('--pil-header-clearance',`${Math.ceil(header?.getBoundingClientRect().height??0)+16}px`);
+  for(const section of document.querySelectorAll('#main>section[id]')){
+   const heading=section.querySelector('h2');
+   if(heading)section.style.setProperty('--pil-heading-inset',`${heading.getBoundingClientRect().top-section.getBoundingClientRect().top}px`);
+  }
+ };
  updateClearance();
  root.classList.add('pil-section-snap');
+ const links=[...header.querySelectorAll('[data-pil-section]')];
+ const sections=links.map(link=>document.getElementById(link.dataset.pilSection)?.closest('section'));
+ // Direct navigation should reach its target, not stop at an intermediate snap in WebKit.
+ links.forEach((link,index)=>link.addEventListener('click',event=>{
+  if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+  event.preventDefault();
+  history.pushState(history.state,'',location.pathname+location.search);
+  sections[index].scrollIntoView({block:'start',behavior:'instant'});
+  updateSection();
+ }));
+ let pending=false;
+ const updateSection=()=>{
+  pending=false;
+  const threshold=header.getBoundingClientRect().bottom+window.innerHeight*.25;
+  let current=0;
+  sections.forEach((section,index)=>{if(section.getBoundingClientRect().top<=threshold)current=index;});
+  links.forEach((link,index)=>{if(index===current)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});
+ };
+ const scheduleSection=()=>{if(!pending){pending=true;requestAnimationFrame(updateSection);}};
+ // Arrow navigation follows the two axes of the guide. Scrolling remains native.
+ document.addEventListener('keydown',event=>{
+  if(event.defaultPrevented||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
+  const target=event.target;
+  if(target.closest('input,textarea,select,[contenteditable="true"],summary'))return;
+  if(target.closest('button')&&!target.closest('[role=tab]'))return;
+  if(window.getSelection()?.toString())return;
+  const focusedLink=links.indexOf(target.closest('[data-pil-section]'));
+  const focusedSection=sections.indexOf(target.closest('#main>section[id]'));
+  const current=focusedLink>=0?focusedLink:focusedSection>=0?focusedSection:Math.max(0,links.findIndex(link=>link.getAttribute('aria-current')==='location'));
+  if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
+   event.preventDefault();
+   const next=(current+(event.key==='ArrowRight'?1:-1)+links.length)%links.length;
+   links[next].click();
+   links[next].focus({preventScroll:true});
+  }else{
+   const tabs=[...sections[current].querySelectorAll('[role=tab]')];
+   if(!tabs.length)return;
+   event.preventDefault();
+   const selected=Math.max(0,tabs.findIndex(tab=>tab.getAttribute('aria-selected')==='true'));
+   const next=(selected+(event.key==='ArrowDown'?1:-1)+tabs.length)%tabs.length;
+   tabs[next].click();
+   tabs[next].focus({preventScroll:true});
+  }
+ });
+ window.addEventListener('scroll',scheduleSection,{passive:true});
+ window.addEventListener('resize',scheduleSection);
+ document.addEventListener('pil-tab-change',updateSection);
+ // Notebook listeners reveal hidden targets before this handler scrolls to them.
+ const followFragment=()=>{
+  const hash=location.hash;
+  if(!location.href.includes('#'))return;
+  requestAnimationFrame(()=>{
+   if(location.hash!==hash)return;
+   sectionFromHash()?.scrollIntoView({block:'start',behavior:'instant'});
+   clearSectionHash();
+   updateSection();
+  });
+ };
+ window.addEventListener('hashchange',followFragment);
+ followFragment();
+ updateSection();
+ document.fonts.ready.then(updateClearance);
+ window.addEventListener('resize',updateClearance);
  if(header)new ResizeObserver(updateClearance).observe(header);
 }

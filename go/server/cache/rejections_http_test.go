@@ -174,7 +174,7 @@ func TestRejectionAvailabilityWithoutPayloadExpansion(t *testing.T) {
 	if w.Code != 200 || strings.TrimSpace(w.Body.String()) != `{"available":false}` {
 		t.Fatal(w.Code, w.Body.String())
 	}
-	if _, err := os.Stat(filepath.Join(empty.dir, "lost.log")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(empty.dir, "lost.seeds")); !os.IsNotExist(err) {
 		t.Fatal("presence check created audit", err)
 	}
 	// A file header created by an inspection is not a lost event.

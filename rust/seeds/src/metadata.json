@@ -1,0 +1,683 @@
+[
+  {
+    "name": "log.level",
+    "provider": "opentelemetry",
+    "field": "SeverityNumber",
+    "kind": "integer",
+    "open": true,
+    "sources": [
+      "https://opentelemetry.io/docs/specs/otel/logs/data-model/"
+    ],
+    "values": [
+      {
+        "value": 0,
+        "label": "Unspecified"
+      },
+      {
+        "value": 1,
+        "label": "TRACE"
+      },
+      {
+        "value": 2,
+        "label": "TRACE2"
+      },
+      {
+        "value": 3,
+        "label": "TRACE3"
+      },
+      {
+        "value": 4,
+        "label": "TRACE4"
+      },
+      {
+        "value": 5,
+        "label": "DEBUG"
+      },
+      {
+        "value": 6,
+        "label": "DEBUG2"
+      },
+      {
+        "value": 7,
+        "label": "DEBUG3"
+      },
+      {
+        "value": 8,
+        "label": "DEBUG4"
+      },
+      {
+        "value": 9,
+        "label": "INFO"
+      },
+      {
+        "value": 10,
+        "label": "INFO2"
+      },
+      {
+        "value": 11,
+        "label": "INFO3"
+      },
+      {
+        "value": 12,
+        "label": "INFO4"
+      },
+      {
+        "value": 13,
+        "label": "WARN"
+      },
+      {
+        "value": 14,
+        "label": "WARN2"
+      },
+      {
+        "value": 15,
+        "label": "WARN3"
+      },
+      {
+        "value": 16,
+        "label": "WARN4"
+      },
+      {
+        "value": 17,
+        "label": "ERROR"
+      },
+      {
+        "value": 18,
+        "label": "ERROR2"
+      },
+      {
+        "value": 19,
+        "label": "ERROR3"
+      },
+      {
+        "value": 20,
+        "label": "ERROR4"
+      },
+      {
+        "value": 21,
+        "label": "FATAL"
+      },
+      {
+        "value": 22,
+        "label": "FATAL2"
+      },
+      {
+        "value": 23,
+        "label": "FATAL3"
+      },
+      {
+        "value": 24,
+        "label": "FATAL4"
+      }
+    ],
+    "groups": [
+      {
+        "min": 1,
+        "max": 4,
+        "label": "TRACE"
+      },
+      {
+        "min": 5,
+        "max": 8,
+        "label": "DEBUG"
+      },
+      {
+        "min": 9,
+        "max": 12,
+        "label": "INFO"
+      },
+      {
+        "min": 13,
+        "max": 16,
+        "label": "WARN"
+      },
+      {
+        "min": 17,
+        "max": 20,
+        "label": "ERROR"
+      },
+      {
+        "min": 21,
+        "max": 24,
+        "label": "FATAL"
+      }
+    ],
+    "views": [
+      {
+        "kind": "group"
+      },
+      {
+        "name": "severity",
+        "kind": "position"
+      }
+    ]
+  },
+  {
+    "name": "log.http.status",
+    "provider": "opentelemetry",
+    "field": "http.response.status_code",
+    "kind": "integer",
+    "open": true,
+    "sources": [
+      "https://www.iana.org/assignments/http-status-codes/"
+    ],
+    "values": [
+      {
+        "value": 100,
+        "label": "Continue"
+      },
+      {
+        "value": 101,
+        "label": "Switching Protocols"
+      },
+      {
+        "value": 102,
+        "label": "Processing"
+      },
+      {
+        "value": 103,
+        "label": "Early Hints"
+      },
+      {
+        "value": 200,
+        "label": "OK"
+      },
+      {
+        "value": 201,
+        "label": "Created"
+      },
+      {
+        "value": 202,
+        "label": "Accepted"
+      },
+      {
+        "value": 203,
+        "label": "Non-Authoritative Information"
+      },
+      {
+        "value": 204,
+        "label": "No Content"
+      },
+      {
+        "value": 205,
+        "label": "Reset Content"
+      },
+      {
+        "value": 206,
+        "label": "Partial Content"
+      },
+      {
+        "value": 207,
+        "label": "Multi-Status"
+      },
+      {
+        "value": 208,
+        "label": "Already Reported"
+      },
+      {
+        "value": 226,
+        "label": "IM Used"
+      },
+      {
+        "value": 300,
+        "label": "Multiple Choices"
+      },
+      {
+        "value": 301,
+        "label": "Moved Permanently"
+      },
+      {
+        "value": 302,
+        "label": "Found"
+      },
+      {
+        "value": 303,
+        "label": "See Other"
+      },
+      {
+        "value": 304,
+        "label": "Not Modified"
+      },
+      {
+        "value": 305,
+        "label": "Use Proxy"
+      },
+      {
+        "value": 308,
+        "label": "Permanent Redirect"
+      },
+      {
+        "value": 400,
+        "label": "Bad Request"
+      },
+      {
+        "value": 401,
+        "label": "Unauthorized"
+      },
+      {
+        "value": 402,
+        "label": "Payment Required"
+      },
+      {
+        "value": 403,
+        "label": "Forbidden"
+      },
+      {
+        "value": 404,
+        "label": "Not Found"
+      },
+      {
+        "value": 405,
+        "label": "Method Not Allowed"
+      },
+      {
+        "value": 406,
+        "label": "Not Acceptable"
+      },
+      {
+        "value": 407,
+        "label": "Proxy Authentication Required"
+      },
+      {
+        "value": 408,
+        "label": "Request Timeout"
+      },
+      {
+        "value": 409,
+        "label": "Conflict"
+      },
+      {
+        "value": 410,
+        "label": "Gone"
+      },
+      {
+        "value": 411,
+        "label": "Length Required"
+      },
+      {
+        "value": 412,
+        "label": "Precondition Failed"
+      },
+      {
+        "value": 413,
+        "label": "Content Too Large"
+      },
+      {
+        "value": 414,
+        "label": "URI Too Long"
+      },
+      {
+        "value": 415,
+        "label": "Unsupported Media Type"
+      },
+      {
+        "value": 416,
+        "label": "Range Not Satisfiable"
+      },
+      {
+        "value": 417,
+        "label": "Expectation Failed"
+      },
+      {
+        "value": 421,
+        "label": "Misdirected Request"
+      },
+      {
+        "value": 422,
+        "label": "Unprocessable Content"
+      },
+      {
+        "value": 423,
+        "label": "Locked"
+      },
+      {
+        "value": 424,
+        "label": "Failed Dependency"
+      },
+      {
+        "value": 425,
+        "label": "Too Early"
+      },
+      {
+        "value": 426,
+        "label": "Upgrade Required"
+      },
+      {
+        "value": 428,
+        "label": "Precondition Required"
+      },
+      {
+        "value": 429,
+        "label": "Too Many Requests"
+      },
+      {
+        "value": 431,
+        "label": "Request Header Fields Too Large"
+      },
+      {
+        "value": 451,
+        "label": "Unavailable For Legal Reasons"
+      },
+      {
+        "value": 500,
+        "label": "Internal Server Error"
+      },
+      {
+        "value": 501,
+        "label": "Not Implemented"
+      },
+      {
+        "value": 502,
+        "label": "Bad Gateway"
+      },
+      {
+        "value": 503,
+        "label": "Service Unavailable"
+      },
+      {
+        "value": 504,
+        "label": "Gateway Timeout"
+      },
+      {
+        "value": 505,
+        "label": "HTTP Version Not Supported"
+      },
+      {
+        "value": 506,
+        "label": "Variant Also Negotiates"
+      },
+      {
+        "value": 507,
+        "label": "Insufficient Storage"
+      },
+      {
+        "value": 508,
+        "label": "Loop Detected"
+      },
+      {
+        "value": 511,
+        "label": "Network Authentication Required"
+      }
+    ],
+    "groups": [
+      {
+        "min": 100,
+        "max": 199,
+        "label": "Informational"
+      },
+      {
+        "min": 200,
+        "max": 299,
+        "label": "Success"
+      },
+      {
+        "min": 300,
+        "max": 399,
+        "label": "Redirection"
+      },
+      {
+        "min": 400,
+        "max": 499,
+        "label": "Client Error"
+      },
+      {
+        "min": 500,
+        "max": 599,
+        "label": "Server Error"
+      }
+    ]
+  },
+  {
+    "name": "log.http.method",
+    "provider": "opentelemetry",
+    "field": "http.request.method",
+    "kind": "string",
+    "open": true,
+    "sources": [
+      "https://www.iana.org/assignments/http-methods/"
+    ],
+    "values": [
+      {
+        "value": "GET",
+        "label": "GET",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "HEAD",
+        "label": "HEAD",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "POST",
+        "label": "POST",
+        "safe": false,
+        "idempotent": false
+      },
+      {
+        "value": "PUT",
+        "label": "PUT",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "DELETE",
+        "label": "DELETE",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "CONNECT",
+        "label": "CONNECT",
+        "safe": false,
+        "idempotent": false
+      },
+      {
+        "value": "OPTIONS",
+        "label": "OPTIONS",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "TRACE",
+        "label": "TRACE",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "PATCH",
+        "label": "PATCH",
+        "safe": false,
+        "idempotent": false
+      },
+      {
+        "value": "QUERY",
+        "label": "QUERY",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "ACL",
+        "label": "ACL",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "BASELINE-CONTROL",
+        "label": "BASELINE-CONTROL",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "BIND",
+        "label": "BIND",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "CHECKIN",
+        "label": "CHECKIN",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "CHECKOUT",
+        "label": "CHECKOUT",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "COPY",
+        "label": "COPY",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "LABEL",
+        "label": "LABEL",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "LINK",
+        "label": "LINK",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "LOCK",
+        "label": "LOCK",
+        "safe": false,
+        "idempotent": false
+      },
+      {
+        "value": "MERGE",
+        "label": "MERGE",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "MKACTIVITY",
+        "label": "MKACTIVITY",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "MKCALENDAR",
+        "label": "MKCALENDAR",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "MKCOL",
+        "label": "MKCOL",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "MKREDIRECTREF",
+        "label": "MKREDIRECTREF",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "MKWORKSPACE",
+        "label": "MKWORKSPACE",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "MOVE",
+        "label": "MOVE",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "ORDERPATCH",
+        "label": "ORDERPATCH",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "PRI",
+        "label": "PRI",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "PROPFIND",
+        "label": "PROPFIND",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "PROPPATCH",
+        "label": "PROPPATCH",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "REBIND",
+        "label": "REBIND",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "REPORT",
+        "label": "REPORT",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "SEARCH",
+        "label": "SEARCH",
+        "safe": true,
+        "idempotent": true
+      },
+      {
+        "value": "UNBIND",
+        "label": "UNBIND",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "UNCHECKOUT",
+        "label": "UNCHECKOUT",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "UNLINK",
+        "label": "UNLINK",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "UNLOCK",
+        "label": "UNLOCK",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "UPDATE",
+        "label": "UPDATE",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "UPDATEREDIRECTREF",
+        "label": "UPDATEREDIRECTREF",
+        "safe": false,
+        "idempotent": true
+      },
+      {
+        "value": "VERSION-CONTROL",
+        "label": "VERSION-CONTROL",
+        "safe": false,
+        "idempotent": true
+      }
+    ],
+    "groups": []
+  }
+]

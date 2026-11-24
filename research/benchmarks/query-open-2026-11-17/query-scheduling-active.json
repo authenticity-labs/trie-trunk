@@ -1,0 +1,10 @@
+{
+  "native": "{\"ok\":false,\"stage\":\"watchdog\",\"url\":\"http://127.0.0.1:54141/\",\"ready\":\"complete\",\"screen\":\"Local Trunk\\nSearch\\nDashboards\\nAlerts\\nCollections\\nTrunks\\nSearch Guide\\nDemo User\\nLog Out\\n\u2014 Search\\nQuick Guide\\nLight\\nDark\\nAuto\\ndemo\\n/\\nlab\\n/\\nindexed\\nPipeline\\nBuilder\\nSQL\\nDrag tabs to reorder, or use Alt and Left or Right Arrow. The first tab is the default for new queries.\\nDeep\\nLive\\nevents | where duration >= 10000\\n2026-11-15 18:00 \u2192 20:00\\nSearch Query\\nEvents\\nCharts\\nSearching\u2026\\nEvents 0\\nLoading\u2026\\nRefresh\\nOverview\\n20,000\\nevents in timeframe\\nErrors\\n\u2014\\nServices\\n1\\nAverage Duration\\n\u2014\\nMinimum Duration\\n\u2014\\nMaximum Duration\\n\u2014\\nDuration Samples\\n0\\n*Independent of search filters.\\nServices\\n1\\ndemo/lab\\n20,000 100%\",\"scripts\":[\"\",\"\",\"\",\"\",\"http://127.0.0.1:54141/assets/index-DATf5D7E.js\",\"http://127.0.0.1:54141/search-test.js\"]}",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "query": "events | where duration >= 10000",
+  "dispatch": "port"
+}

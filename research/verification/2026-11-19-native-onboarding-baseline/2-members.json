@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"loaded\":24,\"visible\":0,\"wallMs\":801,\"domReadyMs\":73,\"submitHandlerMs\":12,\"startedAt\":1795079515050,\"observedAt\":1795079515851,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":71,\"workerMs\":4,\"outsideWorkerMs\":67},\"startup\":{\"navigationStartAt\":1795079512974,\"driverMs\":17,\"controlsReadyMs\":559,\"submitMs\":2076,\"replicaReset\":{\"removed\":false,\"ms\":1}},\"runs\":[{\"loaded\":24,\"visible\":0,\"wallMs\":801,\"domReadyMs\":73,\"submitHandlerMs\":12,\"startedAt\":1795079515050,\"observedAt\":1795079515851,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":71,\"workerMs\":4,\"outsideWorkerMs\":67}},{\"loaded\":24,\"visible\":0,\"wallMs\":996,\"domReadyMs\":13,\"submitHandlerMs\":4,\"startedAt\":1795079515860,\"observedAt\":1795079516856,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":13,\"workerMs\":1,\"outsideWorkerMs\":12}},{\"loaded\":24,\"visible\":0,\"wallMs\":980,\"domReadyMs\":68,\"submitHandlerMs\":8,\"startedAt\":1795079516871,\"observedAt\":1795079517851,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":65,\"workerMs\":7,\"outsideWorkerMs\":58}}],\"nativeActivityState\":{\"pending\":0,\"peak\":2,\"starts\":7,\"errors\":0,\"active\":0,\"ends\":7,\"mode\":\"native\"},\"warnings\":[],\"activity\":{\"starts\":7,\"pending\":0,\"mode\":\"native\",\"peak\":2,\"ends\":7,\"active\":0,\"errors\":0}}",
+  "nativeStderr": "2026/11/19 04:11:52 Snoot listening on http://127.0.0.1:60557 using Unix Socket\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "query": "SELECT MIN(\"duration.min\") AS minimum, MAX(\"duration.max\") AS maximum FROM summaries GROUP BY bucket",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      4.88525390625,
+      3.73046875,
+      3.654296875
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "96bc5e609ac2211f964db5b70a3f74df18e18416dcb93e6356ae37057b1f912d",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": true,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795079512438.4429,
+    "processMs": 5478.400124993641,
+    "loadAfter": [
+      4.65380859375,
+      3.70166015625,
+      3.64453125
+    ]
+  }
+}

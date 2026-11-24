@@ -18,6 +18,6 @@ require (
 	golang.org/x/text v0.28.0 // indirect
 )
 
-require github.com/AuthenticityLabs/pill-packer/go v0.0.0
+require github.com/authenticity-labs/pill-packer/go v0.0.0
 
-replace github.com/AuthenticityLabs/pill-packer/go => ../../pill-packer/go
+replace github.com/authenticity-labs/pill-packer/go => ../../pill-packer/go

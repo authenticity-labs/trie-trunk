@@ -20,7 +20,10 @@ func TestStoredHourlyPACRecoveryAndDelivery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(s.collection, "error.cfg"), []byte("version=1\n[policy.pac]\ngzip_level=9\n"), 0600); err != nil {
+	if err := os.MkdirAll(filepath.Join(s.collection, "error"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(s.collection, "error", "error.conf"), []byte("version=1\n[policy.pac]\nlevel=9\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
 	if err := s.ReloadPolicy(); err != nil {
@@ -41,7 +44,7 @@ func TestStoredHourlyPACRecoveryAndDelivery(t *testing.T) {
 	}
 	var cursor uint64
 	for n, run := range b.runs {
-		if run.PAC == nil || !run.PAC.Gzip || run.PAC.Placement.MemberStart != cursor+4+4*(run.End-run.Start) ||
+		if run.PAC == nil || !run.PAC.Compressed || run.PAC.Placement.MemberStart != cursor+4+4*(run.End-run.Start) ||
 			run.PAC.Placement.Block != uint32(n) {
 			t.Fatal("invalid block directory")
 		}
@@ -66,7 +69,7 @@ func TestStoredHourlyPACRecoveryAndDelivery(t *testing.T) {
 		func(c NativeChunk) error {
 			if c.Kind == "pac" {
 				run := s.branches[Error].runs[c.PAC.Placement.Block]
-				disk, e := readBytes(s.branches[Error].pods, run.PodsStart, run.PodsEnd)
+				disk, e := readBytes(s.branches[Error].packs, run.PacksStart, run.PacksEnd)
 				if e != nil {
 					return e
 				}
@@ -112,7 +115,7 @@ func TestStoredHourlyPACRecoveryAndDelivery(t *testing.T) {
 	var e error
 
 	if os.Getenv("UPDATE_PAC_STORAGE_FIXTURE") == "1" {
-		dir := "../../../client/services/fixtures/pac-storage"
+		dir := "../../../testdata/pac-storage"
 		if e = os.MkdirAll(dir, 0755); e != nil {
 			t.Fatal(e)
 		}
@@ -167,7 +170,7 @@ func TestHourlyPACWaitsForClosingGrace(t *testing.T) {
 			if mode == "live" {
 				benchmarkStandaloneCollect(w, req, &HTTP{Store: s})
 			} else {
-				(&HTTP{Store: s}).ServeHTTP(w, req)
+				(&HTTP{Store: s}).serveHTTP(w, req)
 			}
 			if w.Code != 200 {
 				t.Fatal(w.Code, w.Body.String())
@@ -176,7 +179,7 @@ func TestHourlyPACWaitsForClosingGrace(t *testing.T) {
 			if w.Header().Get("Content-Encoding") == "gzip" {
 				raw = ungzipTest(t, raw)
 			}
-			if e := os.WriteFile("../../../client/services/fixtures/pac-storage/"+mode+"-open.pil", raw, 0644); e != nil {
+			if e := os.WriteFile("../../../testdata/pac-storage/"+mode+"-open.pil", raw, 0644); e != nil {
 				t.Fatal(e)
 			}
 		}
@@ -188,7 +191,7 @@ func TestHourlyPACWaitsForClosingGrace(t *testing.T) {
 	if len(s.branches[Write].rows) != 3*IndexRowSize {
 		t.Fatal("sealed hour missing late event")
 	}
-	if s.branches[Write].runs[0].PAC.Gzip {
+	if s.branches[Write].runs[0].PAC.Compressed {
 		t.Fatal("write packs must remain uncompressed")
 	}
 }
@@ -214,7 +217,7 @@ func TestPACRetirementPreservesReferencesAndCompressedBytes(t *testing.T) {
 	b := s.branches[Error]
 	source := b.generation
 	run := b.runs[2]
-	before, e := readBytes(b.pods, run.PodsStart, run.PodsEnd)
+	before, e := readBytes(b.packs, run.PacksStart, run.PacksEnd)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -228,7 +231,7 @@ func TestPACRetirementPreservesReferencesAndCompressedBytes(t *testing.T) {
 	if b.generation != source || b.baseRows != 4 || b.blockBase != 2 || b.tail() != 6 {
 		t.Fatal("retirement changed reference identity")
 	}
-	after, e := readBytes(b.pods, run.PodsStart-b.podsRetired, run.PodsEnd-b.podsRetired)
+	after, e := readBytes(b.packs, run.PacksStart-b.packsRetired, run.PacksEnd-b.packsRetired)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -315,7 +318,7 @@ func TestPACCrossPageGapFixtures(t *testing.T) {
 		}
 		readNativeTest(t, w.Body.Bytes())
 		if os.Getenv("UPDATE_PAC_STORAGE_FIXTURE") == "1" {
-			if e := os.WriteFile("../../../client/services/fixtures/pac-storage/"+name+".pil", w.Body.Bytes(), 0644); e != nil {
+			if e := os.WriteFile("../../../testdata/pac-storage/"+name+".pil", w.Body.Bytes(), 0644); e != nil {
 				t.Fatal(e)
 			}
 		}

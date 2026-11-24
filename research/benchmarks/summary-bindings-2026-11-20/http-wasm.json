@@ -1,0 +1,52 @@
+{
+  "httpPILIngress": true,
+  "summaryQueries": [
+    {
+      "stage": "live",
+      "count": 2,
+      "sum": 30,
+      "sealed": false
+    },
+    {
+      "stage": "recovered",
+      "count": 2,
+      "sum": 30,
+      "sealed": false
+    },
+    {
+      "stage": "hour-committed",
+      "count": 3,
+      "sum": 60,
+      "sealed": false
+    },
+    {
+      "stage": "hour-recovered",
+      "count": 3,
+      "sum": 60,
+      "sealed": false
+    },
+    {
+      "stage": "sealed",
+      "count": 3,
+      "sum": 60,
+      "sealed": true
+    },
+    {
+      "stage": "sealed-recovered",
+      "count": 3,
+      "sum": 60,
+      "sealed": true
+    },
+    {
+      "stage": "checkpoint-recovered",
+      "count": 3,
+      "sum": 60,
+      "sealed": true
+    }
+  ],
+  "eventQuery": [
+    10,
+    20,
+    30
+  ]
+}

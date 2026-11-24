@@ -23,12 +23,13 @@ import (
 	"sync"
 	"time"
 
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"github.com/quic-go/quic-go/http3"
 )
 
 type binding struct{ Source, Definition string }
 type day struct {
+	Day        int64  `json:"day"`
 	Key        string `json:"key"`
 	Source     string `json:"source"`
 	Definition string `json:"definition"`
@@ -140,9 +141,12 @@ func (r runner) get(ctx context.Context, q request) ([]byte, measurement, error)
 			}
 		}
 	}
-	if strings.HasSuffix(m.Path, "/seeds") && (!bytes.HasPrefix(raw, []byte{'T', 'P', 'I', 'L', 2}) || !bytes.HasSuffix(raw, []byte{255, 254})) {
-		return nil, m, fmt.Errorf("incomplete native seed-pack response")
+	if strings.HasSuffix(m.Path, "/packs") {
+		if _, err := pil.OpenNestedPack(raw); err != nil {
+			return nil, m, err
+		}
 	}
+
 	return raw, m, nil
 }
 
@@ -301,14 +305,11 @@ func (r runner) batch(ctx context.Context, qs []request) ([]measurement, error) 
 
 // resourcePath keeps benchmark requests on the same public API as Snoot.
 func resourcePath(kind, source string, q url.Values) (string, error) {
-	parts := strings.SplitN(source, "/", 2)
-	if parts[0] == "" || parts[0] == "*" {
-		return "", fmt.Errorf("benchmark scope requires a cache")
+	parts := strings.Split(source, "/")
+	if len(parts) != 4 || strings.Contains(source, "*") {
+		return "", fmt.Errorf("benchmark scope requires one exact branch")
 	}
 	q.Del("tap")
-	if len(parts) == 2 {
-		q.Set("branch", parts[1])
-	}
 	for _, pair := range [][2]string{{"from", "beginTime"}, {"to", "endTime"}} {
 		if value := q.Get(pair[0]); value != "" {
 			t, err := time.Parse(time.RFC3339Nano, value)
@@ -319,7 +320,7 @@ func resourcePath(kind, source string, q url.Values) (string, error) {
 			q.Set(pair[1], fmt.Sprint(t.UnixMilli()))
 		}
 	}
-	return "/" + parts[0] + "/" + kind + "?" + q.Encode(), nil
+	return "/" + strings.Join(parts, "/") + "/" + kind + "?" + q.Encode(), nil
 }
 
 func (r runner) run(ctx context.Context, s scenario, trial int) (sample, error) {
@@ -364,20 +365,28 @@ func (r runner) run(ctx context.Context, s scenario, trial int) (sample, error) 
 	var summaries, packs []request
 	if v.Analytics != nil {
 		result.SummaryPackets = len(v.Analytics.Days)
-		for start := 0; start < len(v.Analytics.Days); start += 1024 {
-			days := v.Analytics.Days[start:min(start+1024, len(v.Analytics.Days))]
-			body, err := json.Marshal(struct {
-				Packs []day `json:"packs"`
-			}{days})
-			if err != nil {
-				return result, err
-			}
-			digests := make([]string, len(days))
-			for i, d := range days {
-				digests[i] = d.Key
-			}
-			summaries = append(summaries, request{Path: "/" + strings.SplitN(s.Tap, "/", 2)[0] + "/summaries", Stage: "summary", Headers: http.Header{"Content-Type": {"application/json"}, "Accept": {"application/pil"}}, Body: body, Digests: digests})
+		groups := map[string][]day{}
+		for _, d := range v.Analytics.Days {
+			groups[d.Source+":"+d.Definition] = append(groups[d.Source+":"+d.Definition], d)
 		}
+		for _, days := range groups {
+			sort.Slice(days, func(i, j int) bool { return days[i].Day < days[j].Day })
+			for start := 0; start < len(days); start += 128 {
+				batch := days[start:min(start+128, len(days))]
+				q := url.Values{"definition": {batch[0].Definition}}
+				digests := make([]string, len(batch))
+				for i, d := range batch {
+					q.Add("range", fmt.Sprintf("%d,%d", d.Day, d.Day+86400000))
+					digests[i] = d.Key
+				}
+				path, err := resourcePath("summaries", batch[0].Source, q)
+				if err != nil {
+					return result, err
+				}
+				summaries = append(summaries, request{Path: path, Stage: "summary", Headers: http.Header{"Accept": {"application/pil"}}, Digests: digests})
+			}
+		}
+
 	}
 	seen := map[string]bool{}
 	for _, ref := range v.Page {
@@ -392,7 +401,7 @@ func (r runner) run(ctx context.Context, s scenario, trial int) (sample, error) 
 			return result, fmt.Errorf("unknown page binding")
 		}
 		n := ref.Native
-		path, err := resourcePath("seeds", b.Source, url.Values{"tap": {b.Source}, "from": {time.UnixMilli(n.From).UTC().Format(time.RFC3339Nano)}, "to": {time.UnixMilli(n.To).UTC().Format(time.RFC3339Nano)}, "definition": {b.Definition}, "format": {"native"}})
+		path, err := resourcePath("packs", b.Source, url.Values{"tap": {b.Source}, "from": {time.UnixMilli(n.From).UTC().Format(time.RFC3339Nano)}, "to": {time.UnixMilli(n.To).UTC().Format(time.RFC3339Nano)}, "definition": {b.Definition}})
 		if err != nil {
 			return result, err
 		}
@@ -504,15 +513,11 @@ func mainErr() error {
 	}
 	numeric := `{"filters":[{"field":"duration","op":">","value":{"kind":"number","value":"600"}}],"order":"desc"}`
 	text := `{"filters":[],"search":{"text":"authorized","mode":"terms"},"order":"desc"}`
-	add("all-full", "", "", "", 100)
-	add("all-page", "", "page", "", 100)
-	add("all-summary", "", "summary", "", 100)
+	add("branch-page", "demo/payment/transactions.v1/write", "page", "", 100)
+	add("branch-summary", "demo/payment/transactions.v1/write", "summary", "", 100)
 	add("branch-full", "demo/payment/transactions.v1/write", "", "", 100)
-	add("all-numeric", "", "page", numeric, 100)
 	add("branch-numeric", "demo/payment/transactions.v1/write", "page", numeric, 100)
-	add("all-text", "", "page", text, 100)
 	add("branch-text", "demo/payment/transactions.v1/write", "page", text, 100)
-	add("all-1000", "", "", "", 1000)
 	samples := []sample{}
 	for _, s := range scenarios {
 		if *only != "" && s.Name != *only {
@@ -548,21 +553,16 @@ func mainErr() error {
 }
 
 func decodeSummaryPacks(raw []byte, out *[][]byte) error {
-	l, e := pil.Compile(pil.Definition{Fields: []pil.Field{{Name: "packs", Type: "ARRAY<BYTES>"}}})
-	if e != nil {
-		return e
+	p, err := pil.OpenNestedPack(raw)
+	if err != nil {
+		return err
 	}
-	var f pil.Frame
-	if e = l.Scan(raw, &f); e != nil {
-		return e
-	}
-	items, e := pil.FieldValue(l.Definition.Fields[0], f.Values[0])
-	if e != nil {
-		return e
-	}
-	*out = make([][]byte, len(items.([]any)))
-	for i, v := range items.([]any) {
-		(*out)[i] = v.([]byte)
+	*out = make([][]byte, p.Count())
+	for i := range *out {
+		(*out)[i], err = p.Get(i)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

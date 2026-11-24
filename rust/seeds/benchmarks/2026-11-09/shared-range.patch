@@ -1,0 +1,110 @@
+--- /tmp/seed-range-review/decoder.before.rs	2026-11-09 21:19:31
++++ /Users/Shared/code/applications/pill-packer/rust/src/api/decoder.rs	2026-11-09 21:35:57
+@@ -529,8 +529,18 @@
+ /// Immutable PAC bytes and its checked opening index, shared between readers.
+ pub struct OwnedPack {
+     rx: std::sync::Arc<Prescription>,
+-    base: super::Base<'static>,
++    bytes: PackBytes,
++    index: crate::pac::PacIndex,
+ }
++enum PackBytes {
++    Owned(Vec<u8>),
++    Shared { owner: std::sync::Arc<Vec<u8>>, range: std::ops::Range<usize> },
++}
++impl PackBytes {
++    fn as_slice(&self) -> &[u8] {
++        match self { Self::Owned(bytes) => bytes, Self::Shared { owner, range } => &owner[range.clone()] }
++    }
++}
+ /// A reader owns its traversal cursor and shares the immutable PAC opening plan.
+ pub struct OwnedPackReader {
+     pack: std::sync::Arc<OwnedPack>,
+@@ -545,12 +555,15 @@
+ }
+ impl PackCursor {
+     fn read<'a>(&'a mut self, rx: &'a Prescription, base: &'a super::Base<'_>, ordinal: usize) -> Result<PillView<'a>, Error> {
+-        let [s,e] = base.index.member(ordinal).ok_or(invalid("PAC ordinal outside pack"))?;
+-        let shared = base.index.is_common_only();
+-        let [s,e] = if shared { base.index.common() } else { [s,e] };
+-        let raw = &base.bytes[s as usize..e as usize];
++        self.read_parts(rx, &base.bytes, &base.index, ordinal)
++    }
++    fn read_parts<'a>(&'a mut self, rx: &'a Prescription, bytes: &'a [u8], index: &'a crate::pac::PacIndex, ordinal: usize) -> Result<PillView<'a>, Error> {
++        let [s,e] = index.member(ordinal).ok_or(invalid("PAC ordinal outside pack"))?;
++        let shared = index.is_common_only();
++        let [s,e] = if shared { index.common() } else { [s,e] };
++        let raw = &bytes[s as usize..e as usize];
+         let cache_ordinal = if shared { 0 } else { ordinal };
+-        let expected = base.index.member_mode();
++        let expected = index.member_mode();
+         let mode = match expected {
+             0 => EncodingMode::VariableFast,
+             1 => EncodingMode::VariableConcise,
+@@ -562,7 +575,7 @@
+             self.ordinal = None;
+             let (actual, mask, prefix) = if expected == 3 && !shared {
+                 (EncodingMode::FixedFull, &[0xc0][..], 0)
+-            } else if let Some(presence) = base.index.presence() {
++            } else if let Some(presence) = index.presence() {
+                 let prefix = presence.mask_into(raw, &mut self.mask)?;
+                 (EncodingMode::read(&self.mask)?, self.mask.as_slice(), prefix)
+             } else {
+@@ -576,7 +589,7 @@
+             self.ordinal = Some(cache_ordinal);
+         }
+         let mask = if expected == 3 && !shared { &[0xc0][..] }
+-            else if base.index.presence().is_some() { &self.mask }
++            else if index.presence().is_some() { &self.mask }
+             else { &raw[..self.prefix] };
+         let access = match mode {
+             EncodingMode::FixedFull => Access::FixedFull { payload: &raw[self.prefix..] },
+@@ -584,8 +597,8 @@
+             EncodingMode::VariableFast => Access::VariableFast { raw, cursor: &self.index, mask },
+             EncodingMode::VariableConcise => Access::VariableConcise { raw, cursor: &self.index, mask },
+         };
+-        let [s,e] = base.index.common();
+-        let common = (s != e && !shared).then(|| (&base.bytes[s as usize..e as usize], base.index.common_spans()));
++        let [s,e] = index.common();
++        let common = (s != e && !shared).then(|| (&bytes[s as usize..e as usize], index.common_spans()));
+         Ok(PillView { rx, access, common })
+     }
+ }
+@@ -593,11 +606,24 @@
+     pub fn new(rx: std::sync::Arc<Prescription>, bytes: Vec<u8>) -> Result<Self, Error> {
+         let pack = rx.read_pack(std::borrow::Cow::Owned(bytes))?;
+         let base = pack.base;
+-        let base = super::Base { bytes: std::borrow::Cow::Owned(base.bytes.into_owned()), index: base.index };
+-
+-        Ok(Self { rx, base })
++        let bytes = PackBytes::Owned(base.bytes.into_owned());
++        let index = base.index;
++        Ok(Self { rx, bytes, index })
+     }
+-    pub fn len(&self) -> usize { self.base.index.member_count() }
++    /// Share an immutable bounded Pack inside a larger allocation. Opening
++    /// prepares addressing metadata; it neither copies members nor validates
++    /// unaccessed field values. The owner outlives every derived reader/view.
++    pub fn shared_range(rx: std::sync::Arc<Prescription>, owner: std::sync::Arc<Vec<u8>>, range: std::ops::Range<usize>) -> Result<Self, Error> {
++        let bytes = owner.get(range.clone()).ok_or(invalid("Pack range outside owner"))?;
++        let index = rx.read_pack(std::borrow::Cow::Borrowed(bytes))?.base.index;
++        Ok(Self { rx, bytes: PackBytes::Shared { owner, range }, index })
++    }
++    pub fn stored_bytes(&self) -> &[u8] { self.bytes.as_slice() }
++    /// Includes the entire shared allocation retained by a range view.
++    pub fn retained_bytes(&self) -> usize {
++        match &self.bytes { PackBytes::Owned(bytes) => bytes.capacity(), PackBytes::Shared { owner, .. } => owner.capacity() }
++    }
++    pub fn len(&self) -> usize { self.index.member_count() }
+     pub fn is_empty(&self) -> bool { self.len() == 0 }
+     pub fn reader(self: &std::sync::Arc<Self>) -> OwnedPackReader {
+         OwnedPackReader { pack: self.clone(), cursor: PackCursor::default() }
+@@ -609,7 +635,7 @@
+         Ok(std::sync::Arc::new(OwnedPack::new(rx, bytes)?).reader())
+     }
+     pub fn get(&mut self, ordinal: usize) -> Result<PillView<'_>, Error> {
+-        self.cursor.read(&self.pack.rx, &self.pack.base, ordinal)
++        self.cursor.read_parts(&self.pack.rx, self.pack.bytes.as_slice(), &self.pack.index, ordinal)
+     }
+     pub fn len(&self) -> usize { self.pack.len() }
+     pub fn is_empty(&self) -> bool { self.pack.is_empty() }

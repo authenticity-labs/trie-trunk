@@ -7,6 +7,7 @@ import {render,stages,pages} from './src/pages.mjs';
 import {pagePath,redirects} from './src/routes.mjs';
 import {benchmark,measurementReport} from './src/measurements.mjs';
 import {layoutDefinition,layoutHex,librarySpecification} from './src/pil.mjs';
+import {specificationText,nativeDefinitionExample,nativeDefinitionCDDL} from './src/definition-reference.mjs';
 import {createCodec} from '../../pill-packer/npm/index.js';
 import {define,fill,pack,compress} from '../../pill-packer/npm/portable/pack.js';
 import {buildSnootPreview} from './snoot-preview/build.mjs';
@@ -21,11 +22,11 @@ const asset=async(name,raw)=>{
  const filename=name.replace('.',`-${hash}.`);
  await writeFile(join(out,'assets',filename),raw);return filename;
 };
-const css=await asset('site.css',(await readFile(join(here,'src/site.css'),'utf8'))+'\n'+await readFile(join(here,'src/landing.css'),'utf8')+'\n'+await readFile(join(here,'src/bench.css'),'utf8')+'\n'+await readFile(join(here,'src/archived-homepage-charts.css'),'utf8')+'\n'+await readFile(join(here,'../shared/select-controls.css'),'utf8'));
+const css=await asset('site.css',(await readFile(join(here,'src/site.css'),'utf8'))+'\n'+await readFile(join(here,'src/landing.css'),'utf8')+'\n'+await readFile(join(here,'src/bench.css'),'utf8')+'\n'+await readFile(join(here,'src/archived-homepage-charts.css'),'utf8')+'\n'+await readFile(join(here,'../../snoot/shared/select-controls.css'),'utf8'));
 // Keep the browser module tiny: do not ship page HTML or build-time templates.
 const data=`export const stages=${JSON.stringify(stages)};`;
 const dataName=await asset('lifecycle.js',data);
-const ringsName=await asset('quota-rings.js',await readFile(join(here,'../shared/quota-rings.mjs')));
+const ringsName=await asset('quota-rings.js',await readFile(join(here,'../../snoot/shared/quota-rings.mjs')));
 const chartModelName=await asset('archived-homepage-chart-model.js',await readFile(join(here,'src/archived-homepage-charts-model.mjs')));
 const chartName=await asset('archived-homepage-charts.js',(await readFile(join(here,'src/archived-homepage-charts.js'),'utf8')).replace('./archived-homepage-charts-model.mjs',`./${chartModelName}`));
 const js=await asset('site.js',(await readFile(join(here,'src/site.js'),'utf8')).replace('./lifecycle-data.js',`./${dataName}`).replace('./quota-rings.mjs',`./${ringsName}`)+'\n'+(await readFile(join(here,'src/landing.js'),'utf8')).replace('./archived-homepage-charts.js',`./${chartName}`));
@@ -36,29 +37,35 @@ for(const name of Object.keys(pages)){
 }
 await writeFile(join(out,'index.html'),render('trunk',css,js));
 await cp(join(here,'bench/proposed-run.json'),join(out,'bench-proposed-run.json'));
+await cp(join(here,'bench/pil'),join(out,'pill-bench'),{recursive:true});
 await writeFile(join(out,'_redirects'),redirects.map(({from,to,status})=>`${from} ${to} ${status}`).join('\n')+'\n');
 await cp(join(here,'assets'),join(out,'assets'),{recursive:true});
 for(const name of ['snoot-forward.png','snoot-wordmark.png'])
- await cp(join(here,'../client/assets',name),join(out,'assets/brand',name));
+ await cp(join(here,'../../snoot/client/assets',name),join(out,'assets/brand',name));
 await cp(join(here,'../../pill-packer/schemas/definition.cddl'),join(out,'definition.cddl'));
 await cp(join(here,'../../pill-packer/rust/examples/nested_objects.cddl'),join(out,'purchase.cddl'));
-const pillRevision=execFileSync('git',['rev-parse','HEAD'],{cwd:join(here,'../../pill-packer'),encoding:'utf8'}).trim();
+// Publish the installer independently of uncommitted/local library development.
+const {revision:pillRevision}=JSON.parse(await readFile(join(here,'pill-packer-release.json'),'utf8'));
 if(!/^[0-9a-f]{40}$/.test(pillRevision))throw new Error('Invalid Pill Packer source revision');
-const installer=await readFile(join(here,'../../pill-packer/scripts/install-rx.sh'),'utf8');
+const installer=execFileSync('git',['show',`${pillRevision}:scripts/install-rx.sh`],{cwd:join(here,'../../pill-packer'),encoding:'utf8'});
 await writeFile(join(out,'install-rx.sh'),installer.replace('RX_DEFAULT_REVISION=main',`RX_DEFAULT_REVISION=${pillRevision}`));
 
 const pillReadme=await readFile(join(here,'../../pill-packer/README.md'),'utf8');
 const formatReference=pillReadme.split('## PIL Specification\n')[1]?.split(/\n## /)[0];
 if(!formatReference)throw new Error('Pill Packer README is missing its PIL Specification');
-await writeFile(join(out,'pill-packer.txt'),'# PIL Specification\n'+formatReference.replaceAll('](schemas/definition.cddl)','](https://trietrunk.com/definition.cddl)')+'\n'+librarySpecification);
+await writeFile(join(out,'pill-packer.txt'),specificationText(formatReference,librarySpecification));
+await writeFile(join(out,'example-definition.json'),JSON.stringify(nativeDefinitionExample,null,2)+'\n');
+await writeFile(join(out,'example.cddl'),nativeDefinitionCDDL);
 // Generate the documented bytes through Pill Packer, and fail the build if
 // its output no longer matches the annotated layout example.
 const codec=await createCodec(await readFile(join(here,'../../pill-packer/npm/codec.wasm')));
-const example=await define(codec.definitionFromJSON(JSON.stringify(layoutDefinition)),codec);
+const exampleDefinitionBytes=codec.definitionFromJSON(JSON.stringify(layoutDefinition));
+const example=await define(exampleDefinitionBytes,codec);
 const record=fill(example,[Uint8Array.of(42,0),Uint8Array.of(220,5,0,0),Uint8Array.of(1),new TextEncoder().encode('OK')]);
 if(Buffer.from(record).toString('hex')!==layoutHex.replaceAll(' ','').toLowerCase())throw new Error('PIL layout example disagrees with codec');
 const examplePack=pack(example,[record],{packing:{commonValues:false}});
 await writeFile(join(out,'pil-example.json'),JSON.stringify(layoutDefinition,null,2)+'\n');
+await writeFile(join(out,'pil-example.rx'),exampleDefinitionBytes);
 await writeFile(join(out,'pil-example.pil'),record);
 await writeFile(join(out,'pil-example.pac'),examplePack.bytes);
 await writeFile(join(out,'pil-example.compressed.pac'),compress(examplePack,{algorithm:'gzip',level:6}).bytes);

@@ -68,7 +68,7 @@ func buildViewAnalytics(sources []*viewSource, from, to int64, resolution Resolu
 		s := v.api.Store
 		grouped := map[int64][]Summary{}
 		for _, sum := range append(append([]Summary(nil), v.summaries...), v.liveSummaries...) {
-			day := summaryDay(sum.Columns.Period[0])
+			day := s.summaryDay(v.branch, sum.Columns.Period[0])
 			if day+summaryDayMS > a.From && day < a.To {
 				grouped[day] = append(grouped[day], sum)
 			}

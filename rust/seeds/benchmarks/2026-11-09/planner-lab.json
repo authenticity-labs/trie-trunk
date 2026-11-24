@@ -1,0 +1,2283 @@
+[
+  {
+    "experiment": "uniform",
+    "dataset": {
+      "fingerprint": "c09f258538a6cb726bc29ab85468708850c63d242fd5320f17ca3961a500aab6",
+      "packs": 128,
+      "rows": 32768,
+      "encoded_pack_bytes": 1569912,
+      "retained_backing_bytes": 1569912,
+      "registered_definitions": 1
+    },
+    "baseline": {
+      "model": {
+        "name": "full-sort-reference",
+        "selection": "FullSortReference",
+        "batch_rows": 256,
+        "max_candidates": 32768
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "score",
+          "Descending"
+        ],
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 995
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator collects all matches within candidate budget, sorts, then applies global offset/limit",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "candidate": {
+      "model": {
+        "name": "bounded-top-k",
+        "selection": "BoundedTopK",
+        "batch_rows": 256,
+        "max_candidates": 30
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "score",
+          "Descending"
+        ],
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 995
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator retains global top (offset + limit), then orders survivors",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "provenance": {
+      "build": "cargo run --offline --release --features planner-lab --example planner_lab",
+      "coverage": "Synthetic development fixture, not a held-out or production workload",
+      "generator": "planner_lab example; deterministic affine sequence; schema and fixture bytes fingerprinted",
+      "query_source_sha256": "3932731aa2be9424bebd193545dcdcb36144cb039085fc706d4f5559a899218e",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_scope": "Seed query/example sources and Cargo manifest/lock; path dependency codec source must be recorded separately before promotion",
+      "target": "aarch64-macos"
+    },
+    "warmup_pairs": 2,
+    "seed": 20261109,
+    "correctness": "Both plans matched independent expected values and one another on every run",
+    "timing_boundary": "Prepared immutable Packs -> fresh query binding -> scan/filter/global selection -> complete projected native objects; temporary batch disposal included; verification, final output/cursor destruction, ingestion, upload, decompression, and rendering excluded",
+    "cache_state": "Prepared Pack indexes; warmups recorded; fresh cursor/output each execution; CPU/OS cache state uncontrolled",
+    "memory_measurement": "Candidate counts and unique input backing capacity only. Allocation peaks, RSS and output heap are not measured",
+    "inference_scope": "Paired bootstrap median speedup interval conditional on this fixture/process; not a workload-wide guarantee or automatic promotion",
+    "bootstrap_replicates": 2000,
+    "median_speedup": 1.0004003838244657,
+    "paired_bootstrap_95": [
+      0.9973894986211614,
+      1.0018113558125366
+    ],
+    "samples": [
+      {
+        "pair": 0,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2125,
+          "fetch_ns": 1503916,
+          "materialize_ns": 5958,
+          "other_ns": 251,
+          "total_ns": 1512250,
+          "first_output_ns": 1512000,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 3708,
+          "fetch_ns": 1497958,
+          "materialize_ns": 7000,
+          "other_ns": 292,
+          "total_ns": 1508958,
+          "first_output_ns": 1508708,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 1,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1916,
+          "fetch_ns": 1505458,
+          "materialize_ns": 5875,
+          "other_ns": 292,
+          "total_ns": 1513541,
+          "first_output_ns": 1513333,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 2084,
+          "fetch_ns": 1506000,
+          "materialize_ns": 5875,
+          "other_ns": 291,
+          "total_ns": 1514250,
+          "first_output_ns": 1514042,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 2,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 1521958,
+          "materialize_ns": 6042,
+          "other_ns": 250,
+          "total_ns": 1530167,
+          "first_output_ns": 1529959,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1959,
+          "fetch_ns": 1522750,
+          "materialize_ns": 7458,
+          "other_ns": 250,
+          "total_ns": 1532417,
+          "first_output_ns": 1532209,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 3,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1958,
+          "fetch_ns": 1515041,
+          "materialize_ns": 7334,
+          "other_ns": 333,
+          "total_ns": 1524666,
+          "first_output_ns": 1524416,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1917,
+          "fetch_ns": 1511584,
+          "materialize_ns": 6125,
+          "other_ns": 291,
+          "total_ns": 1519917,
+          "first_output_ns": 1519667,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 4,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 1505750,
+          "materialize_ns": 5792,
+          "other_ns": 250,
+          "total_ns": 1513709,
+          "first_output_ns": 1513500,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1917,
+          "fetch_ns": 1504750,
+          "materialize_ns": 5959,
+          "other_ns": 333,
+          "total_ns": 1512959,
+          "first_output_ns": 1512709,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 5,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1959,
+          "fetch_ns": 1503917,
+          "materialize_ns": 5958,
+          "other_ns": 208,
+          "total_ns": 1512042,
+          "first_output_ns": 1511834,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1916,
+          "fetch_ns": 1525917,
+          "materialize_ns": 5750,
+          "other_ns": 333,
+          "total_ns": 1533916,
+          "first_output_ns": 1533666,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 6,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2041,
+          "fetch_ns": 1511958,
+          "materialize_ns": 5917,
+          "other_ns": 334,
+          "total_ns": 1520250,
+          "first_output_ns": 1520000,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1917,
+          "fetch_ns": 1504000,
+          "materialize_ns": 5958,
+          "other_ns": 292,
+          "total_ns": 1512167,
+          "first_output_ns": 1511917,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 7,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1916,
+          "fetch_ns": 1497083,
+          "materialize_ns": 5791,
+          "other_ns": 251,
+          "total_ns": 1505041,
+          "first_output_ns": 1504833,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1917,
+          "fetch_ns": 1505041,
+          "materialize_ns": 5917,
+          "other_ns": 292,
+          "total_ns": 1513167,
+          "first_output_ns": 1512917,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 8,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1959,
+          "fetch_ns": 1497001,
+          "materialize_ns": 5834,
+          "other_ns": 290,
+          "total_ns": 1505084,
+          "first_output_ns": 1504875,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 1496458,
+          "materialize_ns": 5833,
+          "other_ns": 334,
+          "total_ns": 1504625,
+          "first_output_ns": 1504375,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 9,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1916,
+          "fetch_ns": 1496917,
+          "materialize_ns": 5833,
+          "other_ns": 292,
+          "total_ns": 1504958,
+          "first_output_ns": 1504708,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1916,
+          "fetch_ns": 1502584,
+          "materialize_ns": 5875,
+          "other_ns": 250,
+          "total_ns": 1510625,
+          "first_output_ns": 1510375,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 10,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 1497750,
+          "materialize_ns": 5750,
+          "other_ns": 208,
+          "total_ns": 1505625,
+          "first_output_ns": 1505417,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1875,
+          "fetch_ns": 1496458,
+          "materialize_ns": 5792,
+          "other_ns": 250,
+          "total_ns": 1504375,
+          "first_output_ns": 1504125,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 11,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 1498333,
+          "materialize_ns": 5875,
+          "other_ns": 334,
+          "total_ns": 1506459,
+          "first_output_ns": 1506209,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 157
+        },
+        "candidate": {
+          "plan_ns": 1916,
+          "fetch_ns": 1496209,
+          "materialize_ns": 5875,
+          "other_ns": 291,
+          "total_ns": 1504291,
+          "first_output_ns": 1504041,
+          "scanned_rows": 32768,
+          "matched_rows": 157,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      }
+    ]
+  },
+  {
+    "experiment": "hot-key",
+    "dataset": {
+      "fingerprint": "c0f5fd0f0d412e3200070a2b9091c68a50db3875b86fb964fa15faa0de847ee2",
+      "packs": 128,
+      "rows": 32768,
+      "encoded_pack_bytes": 1569912,
+      "retained_backing_bytes": 1569912,
+      "registered_definitions": 1
+    },
+    "baseline": {
+      "model": {
+        "name": "full-sort-reference",
+        "selection": "FullSortReference",
+        "batch_rows": 256,
+        "max_candidates": 32768
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "score",
+          "Descending"
+        ],
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 900
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator collects all matches within candidate budget, sorts, then applies global offset/limit",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "candidate": {
+      "model": {
+        "name": "bounded-top-k",
+        "selection": "BoundedTopK",
+        "batch_rows": 256,
+        "max_candidates": 30
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "score",
+          "Descending"
+        ],
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 900
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator retains global top (offset + limit), then orders survivors",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "provenance": {
+      "build": "cargo run --offline --release --features planner-lab --example planner_lab",
+      "coverage": "Synthetic development fixture, not a held-out or production workload",
+      "generator": "planner_lab example; deterministic affine sequence; schema and fixture bytes fingerprinted",
+      "query_source_sha256": "3932731aa2be9424bebd193545dcdcb36144cb039085fc706d4f5559a899218e",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_scope": "Seed query/example sources and Cargo manifest/lock; path dependency codec source must be recorded separately before promotion",
+      "target": "aarch64-macos"
+    },
+    "warmup_pairs": 2,
+    "seed": 20261109,
+    "correctness": "Both plans matched independent expected values and one another on every run",
+    "timing_boundary": "Prepared immutable Packs -> fresh query binding -> scan/filter/global selection -> complete projected native objects; temporary batch disposal included; verification, final output/cursor destruction, ingestion, upload, decompression, and rendering excluded",
+    "cache_state": "Prepared Pack indexes; warmups recorded; fresh cursor/output each execution; CPU/OS cache state uncontrolled",
+    "memory_measurement": "Candidate counts and unique input backing capacity only. Allocation peaks, RSS and output heap are not measured",
+    "inference_scope": "Paired bootstrap median speedup interval conditional on this fixture/process; not a workload-wide guarantee or automatic promotion",
+    "bootstrap_replicates": 2000,
+    "median_speedup": 1.7313413129230424,
+    "paired_bootstrap_95": [
+      1.7251511896139877,
+      1.7370897941754353
+    ],
+    "samples": [
+      {
+        "pair": 0,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2000,
+          "fetch_ns": 4242917,
+          "materialize_ns": 5167,
+          "other_ns": 125,
+          "total_ns": 4250209,
+          "first_output_ns": 4250084,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1917,
+          "fetch_ns": 2443958,
+          "materialize_ns": 5042,
+          "other_ns": 125,
+          "total_ns": 2451042,
+          "first_output_ns": 2450959,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 1,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 8583,
+          "fetch_ns": 4240625,
+          "materialize_ns": 5042,
+          "other_ns": 125,
+          "total_ns": 4254375,
+          "first_output_ns": 4254292,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1958,
+          "fetch_ns": 2443250,
+          "materialize_ns": 5000,
+          "other_ns": 125,
+          "total_ns": 2450333,
+          "first_output_ns": 2450250,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 2,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2000,
+          "fetch_ns": 4275750,
+          "materialize_ns": 5083,
+          "other_ns": 167,
+          "total_ns": 4283000,
+          "first_output_ns": 4282875,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1958,
+          "fetch_ns": 2457208,
+          "materialize_ns": 5042,
+          "other_ns": 209,
+          "total_ns": 2464417,
+          "first_output_ns": 2464292,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 3,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1959,
+          "fetch_ns": 4239875,
+          "materialize_ns": 5042,
+          "other_ns": 208,
+          "total_ns": 4247084,
+          "first_output_ns": 4246959,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1917,
+          "fetch_ns": 2451667,
+          "materialize_ns": 5042,
+          "other_ns": 166,
+          "total_ns": 2458792,
+          "first_output_ns": 2458667,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 4,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 4380958,
+          "materialize_ns": 8166,
+          "other_ns": 418,
+          "total_ns": 4391459,
+          "first_output_ns": 4391167,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1916,
+          "fetch_ns": 2449833,
+          "materialize_ns": 5084,
+          "other_ns": 167,
+          "total_ns": 2457000,
+          "first_output_ns": 2456875,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 5,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 3541,
+          "fetch_ns": 4491583,
+          "materialize_ns": 5333,
+          "other_ns": 209,
+          "total_ns": 4500666,
+          "first_output_ns": 4500541,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 2292,
+          "fetch_ns": 2638251,
+          "materialize_ns": 7083,
+          "other_ns": 291,
+          "total_ns": 2647917,
+          "first_output_ns": 2647750,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 6,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2916,
+          "fetch_ns": 4276000,
+          "materialize_ns": 5583,
+          "other_ns": 167,
+          "total_ns": 4284666,
+          "first_output_ns": 4284541,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 2466167,
+          "materialize_ns": 5042,
+          "other_ns": 208,
+          "total_ns": 2473417,
+          "first_output_ns": 2473292,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 7,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 4239041,
+          "materialize_ns": 5041,
+          "other_ns": 168,
+          "total_ns": 4246167,
+          "first_output_ns": 4246042,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1916,
+          "fetch_ns": 2472042,
+          "materialize_ns": 5042,
+          "other_ns": 166,
+          "total_ns": 2479166,
+          "first_output_ns": 2479041,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 8,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 4271833,
+          "materialize_ns": 5083,
+          "other_ns": 125,
+          "total_ns": 4278958,
+          "first_output_ns": 4278875,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1958,
+          "fetch_ns": 2452666,
+          "materialize_ns": 5000,
+          "other_ns": 167,
+          "total_ns": 2459791,
+          "first_output_ns": 2459708,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 9,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1958,
+          "fetch_ns": 4254459,
+          "materialize_ns": 5084,
+          "other_ns": 124,
+          "total_ns": 4261625,
+          "first_output_ns": 4261500,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 2466250,
+          "materialize_ns": 5000,
+          "other_ns": 125,
+          "total_ns": 2473375,
+          "first_output_ns": 2473292,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 10,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 4236625,
+          "materialize_ns": 5042,
+          "other_ns": 125,
+          "total_ns": 4243709,
+          "first_output_ns": 4243584,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1917,
+          "fetch_ns": 2448250,
+          "materialize_ns": 5000,
+          "other_ns": 208,
+          "total_ns": 2455375,
+          "first_output_ns": 2455250,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 11,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1916,
+          "fetch_ns": 4255667,
+          "materialize_ns": 5083,
+          "other_ns": 167,
+          "total_ns": 4262833,
+          "first_output_ns": 4262708,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 28857
+        },
+        "candidate": {
+          "plan_ns": 1916,
+          "fetch_ns": 2456375,
+          "materialize_ns": 5042,
+          "other_ns": 167,
+          "total_ns": 2463500,
+          "first_output_ns": 2463375,
+          "scanned_rows": 32768,
+          "matched_rows": 28857,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      }
+    ]
+  },
+  {
+    "experiment": "correlated",
+    "dataset": {
+      "fingerprint": "d7471bd323a5c06ff67e9ea12a170a2576e2759c06f3543b4598ca7230b44966",
+      "packs": 128,
+      "rows": 32768,
+      "encoded_pack_bytes": 1569912,
+      "retained_backing_bytes": 1569912,
+      "registered_definitions": 1
+    },
+    "baseline": {
+      "model": {
+        "name": "full-sort-reference",
+        "selection": "FullSortReference",
+        "batch_rows": 256,
+        "max_candidates": 32768
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "score",
+          "Descending"
+        ],
+        "predicate": {
+          "And": [
+            {
+              "Compare": {
+                "field": "score",
+                "op": "Ge",
+                "value": 900
+              }
+            },
+            {
+              "Compare": {
+                "field": "group",
+                "op": "Eq",
+                "value": 0
+              }
+            }
+          ]
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator collects all matches within candidate budget, sorts, then applies global offset/limit",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "candidate": {
+      "model": {
+        "name": "bounded-top-k",
+        "selection": "BoundedTopK",
+        "batch_rows": 256,
+        "max_candidates": 30
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "score",
+          "Descending"
+        ],
+        "predicate": {
+          "And": [
+            {
+              "Compare": {
+                "field": "score",
+                "op": "Ge",
+                "value": 900
+              }
+            },
+            {
+              "Compare": {
+                "field": "group",
+                "op": "Eq",
+                "value": 0
+              }
+            }
+          ]
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator retains global top (offset + limit), then orders survivors",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "provenance": {
+      "build": "cargo run --offline --release --features planner-lab --example planner_lab",
+      "coverage": "Synthetic development fixture, not a held-out or production workload",
+      "generator": "planner_lab example; deterministic affine sequence; schema and fixture bytes fingerprinted",
+      "query_source_sha256": "3932731aa2be9424bebd193545dcdcb36144cb039085fc706d4f5559a899218e",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_scope": "Seed query/example sources and Cargo manifest/lock; path dependency codec source must be recorded separately before promotion",
+      "target": "aarch64-macos"
+    },
+    "warmup_pairs": 2,
+    "seed": 20261109,
+    "correctness": "Both plans matched independent expected values and one another on every run",
+    "timing_boundary": "Prepared immutable Packs -> fresh query binding -> scan/filter/global selection -> complete projected native objects; temporary batch disposal included; verification, final output/cursor destruction, ingestion, upload, decompression, and rendering excluded",
+    "cache_state": "Prepared Pack indexes; warmups recorded; fresh cursor/output each execution; CPU/OS cache state uncontrolled",
+    "memory_measurement": "Candidate counts and unique input backing capacity only. Allocation peaks, RSS and output heap are not measured",
+    "inference_scope": "Paired bootstrap median speedup interval conditional on this fixture/process; not a workload-wide guarantee or automatic promotion",
+    "bootstrap_replicates": 2000,
+    "median_speedup": 1.1177822106720077,
+    "paired_bootstrap_95": [
+      1.106753963374475,
+      1.122858205874497
+    ],
+    "samples": [
+      {
+        "pair": 0,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2000,
+          "fetch_ns": 2115874,
+          "materialize_ns": 5375,
+          "other_ns": 251,
+          "total_ns": 2123500,
+          "first_output_ns": 2123333,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2042,
+          "fetch_ns": 1897625,
+          "materialize_ns": 5291,
+          "other_ns": 209,
+          "total_ns": 1905167,
+          "first_output_ns": 1905000,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 1,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1959,
+          "fetch_ns": 2111791,
+          "materialize_ns": 5167,
+          "other_ns": 250,
+          "total_ns": 2119167,
+          "first_output_ns": 2119000,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2041,
+          "fetch_ns": 1901542,
+          "materialize_ns": 5250,
+          "other_ns": 167,
+          "total_ns": 1909000,
+          "first_output_ns": 1908833,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 2,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2000,
+          "fetch_ns": 2112457,
+          "materialize_ns": 5292,
+          "other_ns": 209,
+          "total_ns": 2119958,
+          "first_output_ns": 2119833,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 1883000,
+          "materialize_ns": 5208,
+          "other_ns": 125,
+          "total_ns": 1890333,
+          "first_output_ns": 1890166,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 3,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2042,
+          "fetch_ns": 2112667,
+          "materialize_ns": 5250,
+          "other_ns": 249,
+          "total_ns": 2120208,
+          "first_output_ns": 2120042,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 1958,
+          "fetch_ns": 1895334,
+          "materialize_ns": 5208,
+          "other_ns": 208,
+          "total_ns": 1902708,
+          "first_output_ns": 1902542,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 4,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 2000,
+          "fetch_ns": 2120958,
+          "materialize_ns": 5333,
+          "other_ns": 209,
+          "total_ns": 2128500,
+          "first_output_ns": 2128333,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 1885583,
+          "materialize_ns": 5209,
+          "other_ns": 166,
+          "total_ns": 1892958,
+          "first_output_ns": 1892792,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 5,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2042,
+          "fetch_ns": 2111749,
+          "materialize_ns": 5292,
+          "other_ns": 125,
+          "total_ns": 2119208,
+          "first_output_ns": 2119083,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 1877334,
+          "materialize_ns": 5166,
+          "other_ns": 250,
+          "total_ns": 1884750,
+          "first_output_ns": 1884583,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 6,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2000,
+          "fetch_ns": 2112250,
+          "materialize_ns": 5250,
+          "other_ns": 167,
+          "total_ns": 2119667,
+          "first_output_ns": 2119500,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 1958,
+          "fetch_ns": 1883584,
+          "materialize_ns": 5208,
+          "other_ns": 167,
+          "total_ns": 1890917,
+          "first_output_ns": 1890792,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 7,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1916,
+          "fetch_ns": 2113292,
+          "materialize_ns": 5542,
+          "other_ns": 250,
+          "total_ns": 2121000,
+          "first_output_ns": 2120833,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 1883667,
+          "materialize_ns": 5250,
+          "other_ns": 250,
+          "total_ns": 1891167,
+          "first_output_ns": 1891000,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 8,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 2750,
+          "fetch_ns": 2161459,
+          "materialize_ns": 7208,
+          "other_ns": 167,
+          "total_ns": 2171584,
+          "first_output_ns": 2171417,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2084,
+          "fetch_ns": 2025459,
+          "materialize_ns": 7792,
+          "other_ns": 415,
+          "total_ns": 2035750,
+          "first_output_ns": 2035459,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 9,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 2041,
+          "fetch_ns": 2121292,
+          "materialize_ns": 5250,
+          "other_ns": 208,
+          "total_ns": 2128791,
+          "first_output_ns": 2128625,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2125,
+          "fetch_ns": 1886083,
+          "materialize_ns": 5209,
+          "other_ns": 208,
+          "total_ns": 1893625,
+          "first_output_ns": 1893500,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 10,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2083,
+          "fetch_ns": 2132334,
+          "materialize_ns": 5375,
+          "other_ns": 125,
+          "total_ns": 2139917,
+          "first_output_ns": 2139750,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2083,
+          "fetch_ns": 2190916,
+          "materialize_ns": 7792,
+          "other_ns": 292,
+          "total_ns": 2201083,
+          "first_output_ns": 2200833,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 11,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 2250,
+          "fetch_ns": 2160292,
+          "materialize_ns": 5291,
+          "other_ns": 167,
+          "total_ns": 2168000,
+          "first_output_ns": 2167875,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 3963
+        },
+        "candidate": {
+          "plan_ns": 2416,
+          "fetch_ns": 1956917,
+          "materialize_ns": 5292,
+          "other_ns": 166,
+          "total_ns": 1964791,
+          "first_output_ns": 1964625,
+          "scanned_rows": 32768,
+          "matched_rows": 3963,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      }
+    ]
+  },
+  {
+    "experiment": "wide-sort",
+    "dataset": {
+      "fingerprint": "4ccd5b4c8de738ca4977502b4572773329568cbf635e8bba07d3beaec0130ffa",
+      "packs": 128,
+      "rows": 32768,
+      "encoded_pack_bytes": 6135928,
+      "retained_backing_bytes": 6135928,
+      "registered_definitions": 1
+    },
+    "baseline": {
+      "model": {
+        "name": "full-sort-reference",
+        "selection": "FullSortReference",
+        "batch_rows": 256,
+        "max_candidates": 32768
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "note",
+          "Descending"
+        ],
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 900
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator collects all matches within candidate budget, sorts, then applies global offset/limit",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "candidate": {
+      "model": {
+        "name": "bounded-top-k",
+        "selection": "BoundedTopK",
+        "batch_rows": 256,
+        "max_candidates": 30
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": [
+          "note",
+          "Descending"
+        ],
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 900
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator retains global top (offset + limit), then orders survivors",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "provenance": {
+      "build": "cargo run --offline --release --features planner-lab --example planner_lab",
+      "coverage": "Synthetic development fixture, not a held-out or production workload",
+      "generator": "planner_lab example; deterministic affine sequence; schema and fixture bytes fingerprinted",
+      "query_source_sha256": "3932731aa2be9424bebd193545dcdcb36144cb039085fc706d4f5559a899218e",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_scope": "Seed query/example sources and Cargo manifest/lock; path dependency codec source must be recorded separately before promotion",
+      "target": "aarch64-macos"
+    },
+    "warmup_pairs": 2,
+    "seed": 20261109,
+    "correctness": "Both plans matched independent expected values and one another on every run",
+    "timing_boundary": "Prepared immutable Packs -> fresh query binding -> scan/filter/global selection -> complete projected native objects; temporary batch disposal included; verification, final output/cursor destruction, ingestion, upload, decompression, and rendering excluded",
+    "cache_state": "Prepared Pack indexes; warmups recorded; fresh cursor/output each execution; CPU/OS cache state uncontrolled",
+    "memory_measurement": "Candidate counts and unique input backing capacity only. Allocation peaks, RSS and output heap are not measured",
+    "inference_scope": "Paired bootstrap median speedup interval conditional on this fixture/process; not a workload-wide guarantee or automatic promotion",
+    "bootstrap_replicates": 2000,
+    "median_speedup": 1.2077485861148318,
+    "paired_bootstrap_95": [
+      1.1992745867694483,
+      1.216558626690976
+    ],
+    "samples": [
+      {
+        "pair": 0,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2042,
+          "fetch_ns": 2285957,
+          "materialize_ns": 7709,
+          "other_ns": 292,
+          "total_ns": 2296000,
+          "first_output_ns": 2295667,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2125,
+          "fetch_ns": 1881042,
+          "materialize_ns": 7042,
+          "other_ns": 291,
+          "total_ns": 1890500,
+          "first_output_ns": 1890209,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 1,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 2000,
+          "fetch_ns": 2299834,
+          "materialize_ns": 7916,
+          "other_ns": 333,
+          "total_ns": 2310083,
+          "first_output_ns": 2309833,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 1959,
+          "fetch_ns": 1909126,
+          "materialize_ns": 7625,
+          "other_ns": 332,
+          "total_ns": 1919042,
+          "first_output_ns": 1918792,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 2,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2209,
+          "fetch_ns": 2301209,
+          "materialize_ns": 7958,
+          "other_ns": 333,
+          "total_ns": 2311709,
+          "first_output_ns": 2311417,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 1958,
+          "fetch_ns": 1906875,
+          "materialize_ns": 7250,
+          "other_ns": 292,
+          "total_ns": 1916375,
+          "first_output_ns": 1916083,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 3,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2042,
+          "fetch_ns": 2278499,
+          "materialize_ns": 7542,
+          "other_ns": 292,
+          "total_ns": 2288375,
+          "first_output_ns": 2288125,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2083,
+          "fetch_ns": 1877832,
+          "materialize_ns": 6958,
+          "other_ns": 335,
+          "total_ns": 1887208,
+          "first_output_ns": 1886916,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 4,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 2666,
+          "fetch_ns": 2328333,
+          "materialize_ns": 7834,
+          "other_ns": 333,
+          "total_ns": 2339166,
+          "first_output_ns": 2338916,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2000,
+          "fetch_ns": 2026834,
+          "materialize_ns": 27958,
+          "other_ns": 375,
+          "total_ns": 2057167,
+          "first_output_ns": 2056792,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 5,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2167,
+          "fetch_ns": 2273625,
+          "materialize_ns": 10334,
+          "other_ns": 332,
+          "total_ns": 2286458,
+          "first_output_ns": 2286167,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2083,
+          "fetch_ns": 1881292,
+          "materialize_ns": 7208,
+          "other_ns": 292,
+          "total_ns": 1890875,
+          "first_output_ns": 1890583,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 6,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2041,
+          "fetch_ns": 2420876,
+          "materialize_ns": 14125,
+          "other_ns": 416,
+          "total_ns": 2437458,
+          "first_output_ns": 2437083,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 3542,
+          "fetch_ns": 1988792,
+          "materialize_ns": 7459,
+          "other_ns": 374,
+          "total_ns": 2000167,
+          "first_output_ns": 1999834,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 7,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 2318166,
+          "materialize_ns": 7625,
+          "other_ns": 376,
+          "total_ns": 2328084,
+          "first_output_ns": 2327792,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2084,
+          "fetch_ns": 1941250,
+          "materialize_ns": 7291,
+          "other_ns": 334,
+          "total_ns": 1950959,
+          "first_output_ns": 1950625,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 8,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1958,
+          "fetch_ns": 2277541,
+          "materialize_ns": 7542,
+          "other_ns": 334,
+          "total_ns": 2287375,
+          "first_output_ns": 2287042,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2250,
+          "fetch_ns": 1903041,
+          "materialize_ns": 7292,
+          "other_ns": 292,
+          "total_ns": 1912875,
+          "first_output_ns": 1912625,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 9,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1958,
+          "fetch_ns": 2325542,
+          "materialize_ns": 7709,
+          "other_ns": 332,
+          "total_ns": 2335541,
+          "first_output_ns": 2335250,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2167,
+          "fetch_ns": 1885250,
+          "materialize_ns": 7333,
+          "other_ns": 292,
+          "total_ns": 1895042,
+          "first_output_ns": 1894792,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 10,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 2208,
+          "fetch_ns": 2285542,
+          "materialize_ns": 7625,
+          "other_ns": 333,
+          "total_ns": 2295708,
+          "first_output_ns": 2295416,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 2167,
+          "fetch_ns": 1899208,
+          "materialize_ns": 7000,
+          "other_ns": 292,
+          "total_ns": 1908667,
+          "first_output_ns": 1908375,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      },
+      {
+        "pair": 11,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1917,
+          "fetch_ns": 2296250,
+          "materialize_ns": 7375,
+          "other_ns": 292,
+          "total_ns": 2305834,
+          "first_output_ns": 2305584,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 3190
+        },
+        "candidate": {
+          "plan_ns": 1959,
+          "fetch_ns": 1881542,
+          "materialize_ns": 7334,
+          "other_ns": 290,
+          "total_ns": 1891125,
+          "first_output_ns": 1890834,
+          "scanned_rows": 32768,
+          "matched_rows": 3190,
+          "output_rows": 25,
+          "peak_sort_candidates": 30
+        }
+      }
+    ]
+  },
+  {
+    "experiment": "streaming",
+    "dataset": {
+      "fingerprint": "c09f258538a6cb726bc29ab85468708850c63d242fd5320f17ca3961a500aab6",
+      "packs": 128,
+      "rows": 32768,
+      "encoded_pack_bytes": 1569912,
+      "retained_backing_bytes": 1569912,
+      "registered_definitions": 1
+    },
+    "baseline": {
+      "model": {
+        "name": "stream-16",
+        "selection": "Streaming",
+        "batch_rows": 16,
+        "max_candidates": 100000
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": null,
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 900
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator applies one global offset/limit; early stop",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "candidate": {
+      "model": {
+        "name": "stream-256",
+        "selection": "Streaming",
+        "batch_rows": 256,
+        "max_candidates": 100000
+      },
+      "logical_query": {
+        "limit": 25,
+        "offset": 5,
+        "order": null,
+        "predicate": {
+          "Compare": {
+            "field": "score",
+            "op": "Ge",
+            "value": 900
+          }
+        },
+        "projection": [
+          "sequence",
+          "score",
+          "note"
+        ]
+      },
+      "steps": [
+        "Bind field ordinals once per registered Seed Definition",
+        "Seed Pack scan and residual filter",
+        "Coordinator applies one global offset/limit; early stop",
+        "Project and materialize every returned field in Rust"
+      ],
+      "required_properties": [
+        "Immutable input snapshot and fixed source order",
+        "Same comparison, null/absent and tie rules",
+        "No assumed Pack ordering or statistical pruning"
+      ],
+      "ordering_ties": "Source ordinal, then member ordinal within this snapshot; not persistent event identity",
+      "status": "Executable development model; not an automatic optimizer"
+    },
+    "provenance": {
+      "build": "cargo run --offline --release --features planner-lab --example planner_lab",
+      "coverage": "Synthetic development fixture, not a held-out or production workload",
+      "generator": "planner_lab example; deterministic affine sequence; schema and fixture bytes fingerprinted",
+      "query_source_sha256": "3932731aa2be9424bebd193545dcdcb36144cb039085fc706d4f5559a899218e",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_scope": "Seed query/example sources and Cargo manifest/lock; path dependency codec source must be recorded separately before promotion",
+      "target": "aarch64-macos"
+    },
+    "warmup_pairs": 2,
+    "seed": 20261109,
+    "correctness": "Both plans matched independent expected values and one another on every run",
+    "timing_boundary": "Prepared immutable Packs -> fresh query binding -> scan/filter/global selection -> complete projected native objects; temporary batch disposal included; verification, final output/cursor destruction, ingestion, upload, decompression, and rendering excluded",
+    "cache_state": "Prepared Pack indexes; warmups recorded; fresh cursor/output each execution; CPU/OS cache state uncontrolled",
+    "memory_measurement": "Candidate counts and unique input backing capacity only. Allocation peaks, RSS and output heap are not measured",
+    "inference_scope": "Paired bootstrap median speedup interval conditional on this fixture/process; not a workload-wide guarantee or automatic promotion",
+    "bootstrap_replicates": 2000,
+    "median_speedup": 1.0345311801876556,
+    "paired_bootstrap_95": [
+      1.0317884720920627,
+      1.0386721502615504
+    ],
+    "samples": [
+      {
+        "pair": 0,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1791,
+          "fetch_ns": 9166,
+          "materialize_ns": 5291,
+          "other_ns": 293,
+          "total_ns": 16541,
+          "first_output_ns": 11916,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1708,
+          "fetch_ns": 8917,
+          "materialize_ns": 4792,
+          "other_ns": 208,
+          "total_ns": 15625,
+          "first_output_ns": 15500,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 1,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1708,
+          "fetch_ns": 9083,
+          "materialize_ns": 5041,
+          "other_ns": 334,
+          "total_ns": 16166,
+          "first_output_ns": 11583,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1708,
+          "fetch_ns": 9042,
+          "materialize_ns": 4833,
+          "other_ns": 209,
+          "total_ns": 15792,
+          "first_output_ns": 15667,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 2,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1792,
+          "fetch_ns": 9167,
+          "materialize_ns": 4958,
+          "other_ns": 333,
+          "total_ns": 16250,
+          "first_output_ns": 11709,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1709,
+          "fetch_ns": 8958,
+          "materialize_ns": 4833,
+          "other_ns": 125,
+          "total_ns": 15625,
+          "first_output_ns": 15542,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 3,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1709,
+          "fetch_ns": 9209,
+          "materialize_ns": 5083,
+          "other_ns": 208,
+          "total_ns": 16209,
+          "first_output_ns": 11625,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1750,
+          "fetch_ns": 9000,
+          "materialize_ns": 4833,
+          "other_ns": 125,
+          "total_ns": 15708,
+          "first_output_ns": 15583,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 4,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1750,
+          "fetch_ns": 9167,
+          "materialize_ns": 5083,
+          "other_ns": 209,
+          "total_ns": 16209,
+          "first_output_ns": 11625,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1792,
+          "fetch_ns": 9000,
+          "materialize_ns": 4833,
+          "other_ns": 167,
+          "total_ns": 15792,
+          "first_output_ns": 15667,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 5,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1708,
+          "fetch_ns": 9208,
+          "materialize_ns": 5124,
+          "other_ns": 168,
+          "total_ns": 16208,
+          "first_output_ns": 11625,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1750,
+          "fetch_ns": 8916,
+          "materialize_ns": 4875,
+          "other_ns": 167,
+          "total_ns": 15708,
+          "first_output_ns": 15625,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 6,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1750,
+          "fetch_ns": 9084,
+          "materialize_ns": 5084,
+          "other_ns": 290,
+          "total_ns": 16208,
+          "first_output_ns": 11666,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1708,
+          "fetch_ns": 8959,
+          "materialize_ns": 4875,
+          "other_ns": 125,
+          "total_ns": 15667,
+          "first_output_ns": 15542,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 7,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1709,
+          "fetch_ns": 9124,
+          "materialize_ns": 5083,
+          "other_ns": 293,
+          "total_ns": 16209,
+          "first_output_ns": 11667,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1708,
+          "fetch_ns": 9000,
+          "materialize_ns": 4792,
+          "other_ns": 167,
+          "total_ns": 15667,
+          "first_output_ns": 15583,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 8,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1750,
+          "fetch_ns": 9082,
+          "materialize_ns": 5209,
+          "other_ns": 209,
+          "total_ns": 16250,
+          "first_output_ns": 11708,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1750,
+          "fetch_ns": 9042,
+          "materialize_ns": 4792,
+          "other_ns": 166,
+          "total_ns": 15750,
+          "first_output_ns": 15667,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 9,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1708,
+          "fetch_ns": 9250,
+          "materialize_ns": 5083,
+          "other_ns": 167,
+          "total_ns": 16208,
+          "first_output_ns": 11625,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1709,
+          "fetch_ns": 9042,
+          "materialize_ns": 4792,
+          "other_ns": 124,
+          "total_ns": 15667,
+          "first_output_ns": 15584,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 10,
+        "baseline_first": true,
+        "baseline": {
+          "plan_ns": 1750,
+          "fetch_ns": 9166,
+          "materialize_ns": 5124,
+          "other_ns": 210,
+          "total_ns": 16250,
+          "first_output_ns": 11667,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1708,
+          "fetch_ns": 8875,
+          "materialize_ns": 4791,
+          "other_ns": 209,
+          "total_ns": 15583,
+          "first_output_ns": 15458,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      },
+      {
+        "pair": 11,
+        "baseline_first": false,
+        "baseline": {
+          "plan_ns": 1708,
+          "fetch_ns": 9167,
+          "materialize_ns": 5083,
+          "other_ns": 208,
+          "total_ns": 16166,
+          "first_output_ns": 11583,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        },
+        "candidate": {
+          "plan_ns": 1709,
+          "fetch_ns": 8875,
+          "materialize_ns": 4792,
+          "other_ns": 208,
+          "total_ns": 15584,
+          "first_output_ns": 15459,
+          "scanned_rows": 172,
+          "matched_rows": 30,
+          "output_rows": 25,
+          "peak_sort_candidates": 0
+        }
+      }
+    ]
+  }
+]

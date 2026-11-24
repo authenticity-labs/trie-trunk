@@ -52,6 +52,13 @@ func (s *Store) stagingCapacity(incoming int) error {
 					return e
 				}
 				disk += info.Size()
+				for _, f := range b.stagingPacks {
+					info, e := f.Stat()
+					if e != nil {
+						return e
+					}
+					disk += info.Size()
+				}
 			}
 		}
 	}

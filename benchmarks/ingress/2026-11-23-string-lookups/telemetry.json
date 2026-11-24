@@ -1,0 +1,118 @@
+[
+  [
+    "execute",
+    639
+  ],
+  [
+    "complete",
+    633
+  ],
+  [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+    626
+  ],
+  [
+    "demo/lab/indexed/*",
+    595
+  ],
+  [
+    "events | where duration >= 10000",
+    471
+  ],
+  [
+    "SELECT CAST(duration AS BIGINT) AS time FROM events WHERE sequence = 1",
+    76
+  ],
+  [
+    "events | where level = INFO and severity = 1",
+    32
+  ],
+  [
+    "demo/trie-trunk/queries/*",
+    32
+  ],
+  [
+    "events | where duration >= \"10000\"",
+    21
+  ],
+  [
+    "SELECT bucket, SUM(count) AS total FROM summaries GROUP BY bucket",
+    17
+  ],
+  [
+    "SELECT MIN(\"duration.min\") AS minimum, MAX(\"duration.max\") AS maximum FROM summaries GROUP BY bucket",
+    10
+  ],
+  [
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+    7
+  ],
+  [
+    "error",
+    5
+  ],
+  [
+    "events",
+    4
+  ],
+  [
+    "*/trunk-client/*/*",
+    3
+  ],
+  [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0.1 Safari/605.1.15",
+    3
+  ],
+  [
+    "events | where duration > 10000",
+    2
+  ],
+  [
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1",
+    2
+  ],
+  [
+    "Error: Select one branch for the Tantivy comparison. Local Search supports all branches.",
+    2
+  ],
+  [
+    "Error: Benchmark mode unavailable",
+    1
+  ],
+  [
+    "Error: Select an exact registered branch",
+    1
+  ],
+  [
+    "SELECT CAST(duration AS BIGINT) AS measured FROM events WHERE sequence = 1",
+    1
+  ],
+  [
+    "AbortError: The operation was aborted.",
+    1
+  ],
+  [
+    "cancelled",
+    1
+  ],
+  [
+    "Error: Search snapshot changed; restart search",
+    1
+  ],
+  [
+    "summaries | sum count",
+    1
+  ],
+  [
+    "events | where duration >= 10000 ms",
+    1
+  ],
+  [
+    "events | where duration >= 10000ms",
+    1
+  ],
+  [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    1
+  ]
+]

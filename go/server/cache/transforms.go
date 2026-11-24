@@ -9,15 +9,16 @@ import (
 	"strings"
 	"time"
 
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"github.com/pelletier/go-toml/v2"
 )
 
 // TransformConfig is explicit and resource-scoped. No name inference or implicit
 // coercion occurs. An input Definition remains immutable; output uses the target.
 type TransformConfig struct {
-	Target string          `toml:"target"`
-	Steps  []TransformStep `toml:"steps"`
+	Target   string          `toml:"target"`
+	Provider *ProviderConfig `toml:"provider"`
+	Steps    []TransformStep `toml:"steps"`
 }
 type TransformStep struct {
 	Op        string            `toml:"op"`
@@ -67,7 +68,7 @@ func (s *Store) loadTransforms() error {
 				return fmt.Errorf("transform source field required")
 			}
 		}
-		if step.To == s.layout.Definition.Resource.Roles.Event || step.From == s.layout.Definition.Resource.Roles.Event {
+		if !s.layout.logStrategy() && (step.To == s.layout.Definition.Resource.Roles.Event || step.From == s.layout.Definition.Resource.Roles.Event) {
 			return fmt.Errorf("event_id cannot be transformed")
 		}
 		if step.Op != "drop" && fieldIndex(s.layout, step.To) < 0 && fieldIndex(s.layout, "@fields") < 0 {
@@ -77,10 +78,13 @@ func (s *Store) loadTransforms() error {
 			return fmt.Errorf("unsupported explicit conversion")
 		}
 	}
+	if err := s.loadProviders(c.Provider); err != nil {
+		return err
+	}
 	s.transforms = &c
 	return nil
 }
-func (s *Store) transform(values []Value) ([]byte, error) {
+func (s *Store) transformValues(values []Value) ([]Value, error) {
 	fields := map[string]pil.RawObject{}
 	for i, v := range values {
 		if v.State == Absent {
@@ -233,5 +237,5 @@ func (s *Store) transform(values []Value) ([]byte, error) {
 		}
 		out[i] = Value{Offset, raw}
 	}
-	return s.layout.Encode(nil, out)
+	return out, nil
 }

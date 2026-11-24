@@ -1,0 +1,257 @@
+{
+  "results": [
+    {
+      "files": [
+        {
+          "bytes": 235,
+          "name": "sample.v0.leaf"
+        },
+        {
+          "bytes": 17029,
+          "name": "sample.v0.summ"
+        },
+        {
+          "bytes": 140608,
+          "name": "sample.v0.time"
+        },
+        {
+          "bytes": 12006,
+          "name": "sample.v0.indx"
+        },
+        {
+          "bytes": 192774,
+          "name": "sample.v0.beds"
+        }
+      ],
+      "publication_ms": 81.992459,
+      "queries": [
+        {
+          "name": "all",
+          "runs": [
+            {
+              "ms": 2.972792,
+              "rows": 2000
+            },
+            {
+              "ms": 3.4404589999999997,
+              "rows": 2000
+            },
+            {
+              "ms": 3.226292,
+              "rows": 2000
+            },
+            {
+              "ms": 2.592792,
+              "rows": 2000
+            },
+            {
+              "ms": 1.6124170000000002,
+              "rows": 2000
+            },
+            {
+              "ms": 1.621333,
+              "rows": 2000
+            }
+          ]
+        },
+        {
+          "name": "selective",
+          "runs": [
+            {
+              "ms": 0.49125,
+              "rows": 20
+            },
+            {
+              "ms": 0.386583,
+              "rows": 20
+            },
+            {
+              "ms": 0.388125,
+              "rows": 20
+            },
+            {
+              "ms": 0.374959,
+              "rows": 20
+            },
+            {
+              "ms": 0.403833,
+              "rows": 20
+            },
+            {
+              "ms": 0.380583,
+              "rows": 20
+            }
+          ]
+        },
+        {
+          "name": "zero",
+          "runs": [
+            {
+              "ms": 0.36162500000000003,
+              "rows": 0
+            },
+            {
+              "ms": 0.358583,
+              "rows": 0
+            },
+            {
+              "ms": 0.35724999999999996,
+              "rows": 0
+            },
+            {
+              "ms": 0.354708,
+              "rows": 0
+            },
+            {
+              "ms": 0.357334,
+              "rows": 0
+            },
+            {
+              "ms": 0.381125,
+              "rows": 0
+            }
+          ]
+        }
+      ],
+      "records": 2000,
+      "reopen_ms": 3.680709,
+      "storage": "browse",
+      "summary_ms": [
+        0.498375,
+        0.3395,
+        0.32316700000000004,
+        0.317458,
+        0.315583,
+        0.31333300000000003
+      ],
+      "typed_encoding_and_durable_ingestion_ms": 8391.872167000001
+    },
+    {
+      "files": [
+        {
+          "bytes": 235,
+          "name": "sample.v0.leaf"
+        },
+        {
+          "bytes": 17029,
+          "name": "sample.v0.summ"
+        },
+        {
+          "bytes": 23968,
+          "name": "sample.v0.packs"
+        },
+        {
+          "bytes": 140608,
+          "name": "sample.v0.time"
+        },
+        {
+          "bytes": 12006,
+          "name": "sample.v0.indx"
+        }
+      ],
+      "publication_ms": 80.24974999999999,
+      "queries": [
+        {
+          "name": "all",
+          "runs": [
+            {
+              "ms": 4.758125000000001,
+              "rows": 2000
+            },
+            {
+              "ms": 3.385917,
+              "rows": 2000
+            },
+            {
+              "ms": 3.175791,
+              "rows": 2000
+            },
+            {
+              "ms": 2.716291,
+              "rows": 2000
+            },
+            {
+              "ms": 2.7727910000000002,
+              "rows": 2000
+            },
+            {
+              "ms": 2.538708,
+              "rows": 2000
+            }
+          ]
+        },
+        {
+          "name": "selective",
+          "runs": [
+            {
+              "ms": 0.741291,
+              "rows": 20
+            },
+            {
+              "ms": 0.733375,
+              "rows": 20
+            },
+            {
+              "ms": 0.737167,
+              "rows": 20
+            },
+            {
+              "ms": 0.834833,
+              "rows": 20
+            },
+            {
+              "ms": 0.986208,
+              "rows": 20
+            },
+            {
+              "ms": 0.7787080000000001,
+              "rows": 20
+            }
+          ]
+        },
+        {
+          "name": "zero",
+          "runs": [
+            {
+              "ms": 0.661792,
+              "rows": 0
+            },
+            {
+              "ms": 0.663042,
+              "rows": 0
+            },
+            {
+              "ms": 0.646041,
+              "rows": 0
+            },
+            {
+              "ms": 0.632542,
+              "rows": 0
+            },
+            {
+              "ms": 0.647,
+              "rows": 0
+            },
+            {
+              "ms": 0.629167,
+              "rows": 0
+            }
+          ]
+        }
+      ],
+      "records": 2000,
+      "reopen_ms": 4.843708,
+      "storage": "pack",
+      "summary_ms": [
+        0.364833,
+        0.309666,
+        0.285416,
+        0.283875,
+        0.28237500000000004,
+        0.27754199999999996
+      ],
+      "typed_encoding_and_durable_ingestion_ms": 8506.89025
+    }
+  ],
+  "scope": "Rust node; 2,000 identical typed events per mode. Ingestion timer includes builder setters, cap, and each durable append. Publication timed separately. Queries include planning, disk reads, filtering, and Rust object materialization; exclude JSON, IPC and UI. OS cache is not evicted. No before/after claim."
+}

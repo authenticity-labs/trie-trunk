@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"testing"
 	"time"
 )
@@ -13,7 +14,7 @@ func TestCompactRowsAndEncodedAssembly(t *testing.T) {
 		l := testLayout(t, variable)
 		d := l.Definition
 		// Event identity need not be the first definition field. Exercise offset
-		// tables, arrays, CBOR, literal dictionary escapes and all presence states.
+		// tables, arrays, nested objects, literal dictionary escapes and all presence states.
 		d.Fields[0], d.Fields[5] = d.Fields[5], d.Fields[0]
 		d.Fields = append(d.Fields, Field{Name: "tags", Type: "ARRAY<STRING>"}, Field{Name: "details", Type: "OBJECT"})
 		var err error
@@ -38,10 +39,10 @@ func TestCompactRowsAndEncodedAssembly(t *testing.T) {
 				t.Fatal(err)
 			}
 			f.Values[0], f.Values[5] = f.Values[5], f.Values[0]
-			tags := extended(nil, 2)
-			tags = extended(tags, 0)
-			tags = extended(tags, 3)
-			tags = append(tags, []byte("abc")...)
+			tags, err := pil.EncodeArray([][]byte{[]byte(""), []byte("abc")}, 0)
+			if err != nil {
+				t.Fatal(err)
+			}
 			f.Values = append(f.Values, Value{Offset, tags}, Value{Offset, mustObject(t, map[uint16]any{1: nil})})
 			switch i {
 			case 0:
@@ -76,10 +77,10 @@ func TestCompactRowsAndEncodedAssembly(t *testing.T) {
 		}
 		b := s.branches[Write]
 		assembler := frameAssembler{layout: l, trie: &s.trie}
-		var reader podsReader
+		var reader packsReader
 		last := uint64(headerSize)
 		for n := b.nextRecord(0); n < b.tail(); n = b.nextRecord(n + 1) {
-			start, end, e := b.podsRange(n, s.row)
+			start, end, e := b.packsRange(n, s.row)
 			if e != nil || (n == b.runs[b.runIndex(n)].Start && start != last) {
 				t.Fatalf("physical bounds %d %d %v", start, last, e)
 			}
@@ -183,7 +184,7 @@ func TestNativeCompactSliceBoundaries(t *testing.T) {
 				received += len(c.Data) / IndexRowSize
 			case "pac":
 				run := b.runs[c.PAC.Placement.Block]
-				raw, e := readBytes(b.pods, run.PodsStart, run.PodsEnd)
+				raw, e := readBytes(b.packs, run.PacksStart, run.PacksEnd)
 				if e != nil || !bytes.Equal(raw, c.Data) {
 					t.Fatal("native payload changed")
 				}

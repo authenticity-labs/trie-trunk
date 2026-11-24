@@ -1,0 +1,33 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "timestamp": "2026-11-17T11:04:58-0500",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+  "binaries": {
+    "prior": "f62f703cd2c46c3042dd50f44197bd2a525215be05d5dafa178e33431147c450",
+    "current": "5477489a0b5ea890fe586348a187419c905bb8398770e64ad7b76169d2609e57"
+  },
+  "scope": "Native release Rust summary APIs on resident byte buffers. No disk/network/UI, SQL parsing or cross-worker transfer. Mixed-definition exception behavior excluded.",
+  "heap": "Separate untimed allocation pass. Incremental live requested heap, not RSS; existing input/Definition allocations excluded. Cold reader includes copying Box input.",
+  "prior": "Saved pre-generic-array summaries modules restored in an isolated crate, with unchanged current shared codec and registry dependencies.",
+  "pairs": 9,
+  "warmups_per_case_per_binary": 1,
+  "methodology": {
+    "input": "Deterministic varied values generated inside the timed Rust SummaryAccumulator::ingest closure. Typed setters, cap/observation, event Pack load, and event Pack seal are timed. Encoded event Packs are retained, not immediately overwritten.",
+    "common_setup": "DOC authoring and event Definition prescription are outside timing in both versions. Summary prescription is timed independently and included in total build.",
+    "cases": "narrow: 1 numeric + category + bool, 1 day; typical: 8 numeric + category + bool, 7 days; wide: 32 numeric + category + bool, 7 days; quiet: typical shape, 1/24 periods active. Eight events per active period; every day retains all 288 summary rows.",
+    "validation": "Each paired run has identical encoded-event SHA-256 and identical CBOR-serialized decoded-summary SHA-256, including every field in every period. Counts and category proofs asserted. Hashes also identical across repetitions.",
+    "zero_query": "duration > 10000; generated duration values range 0\u20139000. All periods proven empty after sealing.",
+    "cold": "Fresh SummaryReader over resident Box bytes, including owned input clone and first preview. Not OS disk-cache cold; template initialization occurred during ingestion.",
+    "warm": "Ten actual preview evaluations on the same prepared reader, divided by ten. No cached result returned by the harness.",
+    "dashboard": "One SummaryReport column collection plus ten finish() reductions; only duration metric. Not ten independent arbitrary SQL queries.",
+    "memory": "Instrumentation disabled during timing; allocation metrics gathered in a separate pass. Requested allocation sizes, not allocator reserved memory or process RSS. Signed retained delta and peak additional live bytes exclude already-live input/source Definitions.",
+    "storage": "Box byte count includes its catalog/footer and stored Packs. Current class library is larger; category counters shrink from 8 bytes to 3 and stored mode is removed. These numbers compare the entire current refactor, not array layout alone.",
+    "limits": "No network, filesystem I/O, UI rendering, worker transfer or full query-planner dispatch measured. Ordinary single-shape days only; unresolved mixed-summary semantics are not exercised."
+  },
+  "source_archives": {
+    "prior-source.tar.gz": "cf5909d0f891138a145c1e399044c609a847d13fb7b439e25f96e4287a8c53f9",
+    "current-source.tar.gz": "7b5a3ec9036bd10aa806043a193a4b3cc7ef91eb60b6054152271447b38f082d"
+  },
+  "harness_sha256": "3d7cf2b55e45d6d878ecb02f1a14cb23c4b6ef7d8ed3ea6756043ffbd17b03ac"
+}

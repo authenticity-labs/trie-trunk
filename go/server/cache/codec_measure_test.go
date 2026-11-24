@@ -80,7 +80,7 @@ func scanFixtureCBOR(l *Layout, raw []byte, f *Frame) error {
 	return nil
 }
 func (s *Store) fixtureCBORReader() func(*branchStore, uint64, []byte) ([]byte, error) {
-	var reader podsReader
+	var reader packsReader
 	return func(b *branchStore, number uint64, dst []byte) ([]byte, error) {
 		raw, e := reader.read(b, number, s.row)
 		if e != nil {
@@ -126,12 +126,12 @@ func TestMeasurePayloadCodecs(t *testing.T) {
 	original := s.branches[Write]
 	alt := *original
 	alt.rows = append([]byte(nil), original.rows...)
-	alt.pods, e = os.CreateTemp(t.TempDir(), "cbor-pods-")
+	alt.packs, e = os.CreateTemp(t.TempDir(), "cbor-packs-")
 	if e != nil {
 		t.Fatal(e)
 	}
-	defer alt.pods.Close()
-	writer := bufio.NewWriterSize(alt.pods, 1<<20)
+	defer alt.packs.Close()
+	writer := bufio.NewWriterSize(alt.packs, 1<<20)
 	if _, e = writer.Write(make([]byte, headerSize)); e != nil {
 		t.Fatal(e)
 	}
@@ -145,11 +145,11 @@ func TestMeasurePayloadCodecs(t *testing.T) {
 	batchSize := min(n, 1024)
 	for offset := 0; offset < len(alt.rows); offset += s.row.Width {
 		row := alt.rows[offset : offset+s.row.Width]
-		start, end, e := original.podsRange(uint64(offset/s.row.Width), s.row)
+		start, end, e := original.packsRange(uint64(offset/s.row.Width), s.row)
 		if e != nil {
 			t.Fatal(e)
 		}
-		raw, e := readBytes(original.pods, start, end)
+		raw, e := readBytes(original.packs, start, end)
 		if e != nil {
 			t.Fatal(e)
 		}
@@ -182,11 +182,11 @@ func TestMeasurePayloadCodecs(t *testing.T) {
 	if e = writer.Flush(); e != nil {
 		t.Fatal(e)
 	}
-	if e = alt.pods.Sync(); e != nil {
+	if e = alt.packs.Sync(); e != nil {
 		t.Fatal(e)
 	}
-	alt.podsEnd = at
-	podsStat, e := original.pods.Stat()
+	alt.packsEnd = at
+	packsStat, e := original.packs.Stat()
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -363,7 +363,7 @@ func TestMeasurePayloadCodecs(t *testing.T) {
 	measurementWithoutObjectIndex(t, s)
 	saveMeasurement(t, map[string]any{"events": n, "sparse": sparse, "format": Format, "aggregates": false, "object_index": false, "object_index_bytes": 0, "row_width": s.row.Width, "fixture_sha256": hash, "go": runtime.Version(), "platform": runtime.GOOS + "/" + runtime.GOARCH,
 		"integer_profile": profile, "definition": l.Definition, "codec_batch_rows": batchRows, "output_contract": "standalone PIL",
-		"decoder_allocations_per_record": allocs, "payload_bytes": map[string]int64{"cbor": int64(at) - headerSize, "pil": podsStat.Size() - headerSize}, "index_bytes_each": len(original.rows), "query": results, "result_hashes": hashes, "matched_events": matched, "codec_batch_events": len(pilBatch), "codec": codecTimings})
+		"decoder_allocations_per_record": allocs, "payload_bytes": map[string]int64{"cbor": int64(at) - headerSize, "pil": packsStat.Size() - headerSize}, "index_bytes_each": len(original.rows), "query": results, "result_hashes": hashes, "matched_events": matched, "codec_batch_events": len(pilBatch), "codec": codecTimings})
 }
 
 func TestPayloadCodecEquivalence(t *testing.T) {
@@ -405,7 +405,7 @@ func TestPayloadCodecEquivalence(t *testing.T) {
 		for n := b.nextRecord(0); n < b.tail(); n = b.nextRecord(n + 1) {
 			at := int(n) * s.row.Width
 			row := b.assemblyRow(n)
-			reader := podsReader{}
+			reader := packsReader{}
 			raw, e := reader.read(b, uint64(at/s.row.Width), s.row)
 			if e != nil {
 				t.Fatal(e)
@@ -454,7 +454,7 @@ func TestPayloadCodecEquivalence(t *testing.T) {
 // All query modes use the same bounded payload reader and search traversal.
 // Decoder and output strategy are the variables under measurement.
 func (s *Store) directCBORReader(r *PositionalCBOR, reuse bool) func(*branchStore, uint64, []byte) ([]byte, error) {
-	var reader podsReader
+	var reader packsReader
 	decode := func(b *branchStore, number uint64, dst []byte, f *CBORFrame) ([]byte, error) {
 		raw, e := reader.read(b, number, s.row)
 		if e != nil {
@@ -475,7 +475,7 @@ func (s *Store) directCBORReader(r *PositionalCBOR, reuse bool) func(*branchStor
 	}
 }
 func (s *Store) reusingPILReader() func(*branchStore, uint64, []byte) ([]byte, error) {
-	var reader podsReader
+	var reader packsReader
 	var f Frame
 	return func(b *branchStore, number uint64, dst []byte) ([]byte, error) {
 		raw, e := reader.read(b, number, s.row)

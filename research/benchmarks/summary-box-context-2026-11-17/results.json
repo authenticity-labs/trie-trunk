@@ -1,0 +1,5206 @@
+[
+  {
+    "case": "narrow",
+    "comparison": {
+      "all_field_objects_us": {
+        "prior_median_us": 780.833,
+        "current_median_us": 780.208,
+        "change_percent": -0.08004272360414566,
+        "prior_min_max_us": [
+          739.6669999999999,
+          793.875
+        ],
+        "current_min_max_us": [
+          760.417,
+          808.584
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 6.625,
+        "current_median_us": 7.208,
+        "change_percent": 8.800000000000008,
+        "prior_min_max_us": [
+          6.0,
+          7.125
+        ],
+        "current_min_max_us": [
+          6.916,
+          8.125
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 2205.75,
+        "current_median_us": 2179.542,
+        "change_percent": -1.1881672900374007,
+        "prior_min_max_us": [
+          2148.291,
+          2316.541
+        ],
+        "current_min_max_us": [
+          2100.083,
+          2262.0840000000003
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 61.25,
+        "current_median_us": 61.958999999999996,
+        "change_percent": 1.157551020408154,
+        "prior_min_max_us": [
+          59.375,
+          62.291000000000004
+        ],
+        "current_min_max_us": [
+          59.583999999999996,
+          70.584
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 223.37599999999998,
+        "current_median_us": 167.999,
+        "change_percent": -24.7909354630757,
+        "prior_min_max_us": [
+          211.5,
+          239.043
+        ],
+        "current_min_max_us": [
+          159.5,
+          182.834
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 1660.6660000000002,
+        "current_median_us": 1675.209,
+        "change_percent": 0.8757329890537902,
+        "prior_min_max_us": [
+          1611.334,
+          1751.375
+        ],
+        "current_min_max_us": [
+          1619.208,
+          1762.0
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 97.459,
+        "current_median_us": 50.875,
+        "change_percent": -47.798561446351805,
+        "prior_min_max_us": [
+          93.75,
+          108.20899999999999
+        ],
+        "current_min_max_us": [
+          48.708,
+          55.292
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 825.792,
+        "current_median_us": 828.7080000000001,
+        "change_percent": 0.3531155545222209,
+        "prior_min_max_us": [
+          800.75,
+          865.958
+        ],
+        "current_min_max_us": [
+          803.208,
+          860.416
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 265.875,
+        "current_median_us": 275.70799999999997,
+        "change_percent": 3.698354489891864,
+        "prior_min_max_us": [
+          255.95799999999997,
+          278.708
+        ],
+        "current_min_max_us": [
+          254.833,
+          316.708
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 125.91699999999999,
+        "current_median_us": 116.583,
+        "change_percent": -7.412819555739092,
+        "prior_min_max_us": [
+          117.75,
+          134.54100000000003
+        ],
+        "current_min_max_us": [
+          110.792,
+          127.54199999999999
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 818.0830000000001,
+        "current_median_us": 770.0,
+        "change_percent": -5.8775209850345345,
+        "prior_min_max_us": [
+          786.875,
+          866.375
+        ],
+        "current_min_max_us": [
+          736.125,
+          816.167
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 566.167,
+        "current_median_us": 563.708,
+        "change_percent": -0.434324148175369,
+        "prior_min_max_us": [
+          548.958,
+          575.541
+        ],
+        "current_min_max_us": [
+          550.7919999999999,
+          592.542
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 46.5666,
+        "current_median_us": 39.2209,
+        "change_percent": -15.77461098727414,
+        "prior_min_max_us": [
+          45.2042,
+          47.1458
+        ],
+        "current_min_max_us": [
+          38.0375,
+          40.9833
+        ]
+      }
+    },
+    "pairs": [
+      {
+        "pair": 0,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 775.125,
+            "box_commit_and_owned_bytes_us": 6.0,
+            "build_total_us": 2190.041,
+            "category_preview_us": 60.375,
+            "cold_zero_total_us": 211.5,
+            "dashboard_collect_plus_ten_reductions_us": 1631.0829999999999,
+            "first_zero_preview_us": 93.75,
+            "ingress_and_accumulate_us": 804.667,
+            "one_field_objects_us": 257.75,
+            "open_us": 117.75,
+            "prepare_us": 818.0830000000001,
+            "summary_seal_and_append_us": 559.1669999999999,
+            "warm_zero_preview_us": 45.3209
+          },
+          "total_fields": 3
+        },
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 760.417,
+            "box_commit_and_owned_bytes_us": 7.083,
+            "build_total_us": 2112.125,
+            "category_preview_us": 60.25,
+            "cold_zero_total_us": 162.542,
+            "dashboard_collect_plus_ten_reductions_us": 1638.875,
+            "first_zero_preview_us": 50.042,
+            "ingress_and_accumulate_us": 806.917,
+            "one_field_objects_us": 257.667,
+            "open_us": 112.5,
+            "prepare_us": 744.375,
+            "summary_seal_and_append_us": 550.9159999999999,
+            "warm_zero_preview_us": 38.3959
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 1,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 761.7080000000001,
+            "box_commit_and_owned_bytes_us": 6.916,
+            "build_total_us": 2100.083,
+            "category_preview_us": 66.084,
+            "cold_zero_total_us": 162.125,
+            "dashboard_collect_plus_ten_reductions_us": 1619.208,
+            "first_zero_preview_us": 48.834,
+            "ingress_and_accumulate_us": 803.208,
+            "one_field_objects_us": 254.833,
+            "open_us": 113.291,
+            "prepare_us": 736.125,
+            "summary_seal_and_append_us": 550.7919999999999,
+            "warm_zero_preview_us": 38.0375
+          },
+          "total_fields": 3
+        },
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 739.6669999999999,
+            "box_commit_and_owned_bytes_us": 6.125,
+            "build_total_us": 2166.333,
+            "category_preview_us": 59.375,
+            "cold_zero_total_us": 223.37599999999998,
+            "dashboard_collect_plus_ten_reductions_us": 1621.041,
+            "first_zero_preview_us": 97.459,
+            "ingress_and_accumulate_us": 815.375,
+            "one_field_objects_us": 255.95799999999997,
+            "open_us": 125.91699999999999,
+            "prepare_us": 793.9159999999999,
+            "summary_seal_and_append_us": 548.958,
+            "warm_zero_preview_us": 45.2042
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 2,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 743.709,
+            "box_commit_and_owned_bytes_us": 6.167000000000001,
+            "build_total_us": 2148.291,
+            "category_preview_us": 60.042,
+            "cold_zero_total_us": 214.375,
+            "dashboard_collect_plus_ten_reductions_us": 1611.334,
+            "first_zero_preview_us": 93.917,
+            "ingress_and_accumulate_us": 800.75,
+            "one_field_objects_us": 269.625,
+            "open_us": 120.458,
+            "prepare_us": 786.875,
+            "summary_seal_and_append_us": 552.625,
+            "warm_zero_preview_us": 45.3292
+          },
+          "total_fields": 3
+        },
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 807.0,
+            "box_commit_and_owned_bytes_us": 6.917,
+            "build_total_us": 2135.167,
+            "category_preview_us": 59.833,
+            "cold_zero_total_us": 161.625,
+            "dashboard_collect_plus_ten_reductions_us": 1632.875,
+            "first_zero_preview_us": 49.042,
+            "ingress_and_accumulate_us": 807.583,
+            "one_field_objects_us": 289.209,
+            "open_us": 112.583,
+            "prepare_us": 761.958,
+            "summary_seal_and_append_us": 555.791,
+            "warm_zero_preview_us": 38.2208
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 3,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 768.75,
+            "box_commit_and_owned_bytes_us": 7.0,
+            "build_total_us": 2154.5420000000004,
+            "category_preview_us": 59.583999999999996,
+            "cold_zero_total_us": 159.5,
+            "dashboard_collect_plus_ten_reductions_us": 1634.75,
+            "first_zero_preview_us": 48.708,
+            "ingress_and_accumulate_us": 807.792,
+            "one_field_objects_us": 268.20799999999997,
+            "open_us": 110.792,
+            "prepare_us": 782.459,
+            "summary_seal_and_append_us": 554.666,
+            "warm_zero_preview_us": 38.225
+          },
+          "total_fields": 3
+        },
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 756.0,
+            "box_commit_and_owned_bytes_us": 7.0840000000000005,
+            "build_total_us": 2178.709,
+            "category_preview_us": 60.25,
+            "cold_zero_total_us": 220.20799999999997,
+            "dashboard_collect_plus_ten_reductions_us": 1617.917,
+            "first_zero_preview_us": 94.541,
+            "ingress_and_accumulate_us": 802.875,
+            "one_field_objects_us": 278.708,
+            "open_us": 125.66699999999999,
+            "prepare_us": 807.583,
+            "summary_seal_and_append_us": 558.708,
+            "warm_zero_preview_us": 45.529199999999996
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 4,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 780.833,
+            "box_commit_and_owned_bytes_us": 6.708,
+            "build_total_us": 2228.0,
+            "category_preview_us": 62.167,
+            "cold_zero_total_us": 232.20800000000003,
+            "dashboard_collect_plus_ten_reductions_us": 1679.292,
+            "first_zero_preview_us": 97.667,
+            "ingress_and_accumulate_us": 826.291,
+            "one_field_objects_us": 265.875,
+            "open_us": 134.54100000000003,
+            "prepare_us": 825.667,
+            "summary_seal_and_append_us": 567.5,
+            "warm_zero_preview_us": 47.1458
+          },
+          "total_fields": 3
+        },
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 808.584,
+            "box_commit_and_owned_bytes_us": 8.125,
+            "build_total_us": 2262.0840000000003,
+            "category_preview_us": 62.5,
+            "cold_zero_total_us": 182.834,
+            "dashboard_collect_plus_ten_reductions_us": 1762.0,
+            "first_zero_preview_us": 55.292,
+            "ingress_and_accumulate_us": 841.709,
+            "one_field_objects_us": 316.708,
+            "open_us": 127.54199999999999,
+            "prepare_us": 816.167,
+            "summary_seal_and_append_us": 592.542,
+            "warm_zero_preview_us": 40.9833
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 5,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 780.208,
+            "box_commit_and_owned_bytes_us": 7.25,
+            "build_total_us": 2221.75,
+            "category_preview_us": 62.333,
+            "cold_zero_total_us": 170.125,
+            "dashboard_collect_plus_ten_reductions_us": 1676.125,
+            "first_zero_preview_us": 52.0,
+            "ingress_and_accumulate_us": 860.416,
+            "one_field_objects_us": 286.5,
+            "open_us": 118.125,
+            "prepare_us": 784.25,
+            "summary_seal_and_append_us": 563.708,
+            "warm_zero_preview_us": 39.2209
+          },
+          "total_fields": 3
+        },
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 793.25,
+            "box_commit_and_owned_bytes_us": 7.125,
+            "build_total_us": 2271.5,
+            "category_preview_us": 61.708,
+            "cold_zero_total_us": 235.626,
+            "dashboard_collect_plus_ten_reductions_us": 1751.375,
+            "first_zero_preview_us": 101.709,
+            "ingress_and_accumulate_us": 843.4169999999999,
+            "one_field_objects_us": 264.125,
+            "open_us": 133.917,
+            "prepare_us": 848.042,
+            "summary_seal_and_append_us": 570.7080000000001,
+            "warm_zero_preview_us": 46.9
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 6,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 790.375,
+            "box_commit_and_owned_bytes_us": 6.666,
+            "build_total_us": 2270.583,
+            "category_preview_us": 61.375,
+            "cold_zero_total_us": 239.043,
+            "dashboard_collect_plus_ten_reductions_us": 1687.8329999999999,
+            "first_zero_preview_us": 108.20899999999999,
+            "ingress_and_accumulate_us": 836.25,
+            "one_field_objects_us": 267.25,
+            "open_us": 130.834,
+            "prepare_us": 854.1669999999999,
+            "summary_seal_and_append_us": 571.166,
+            "warm_zero_preview_us": 46.8292
+          },
+          "total_fields": 3
+        },
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 768.4159999999999,
+            "box_commit_and_owned_bytes_us": 7.584,
+            "build_total_us": 2179.542,
+            "category_preview_us": 61.958999999999996,
+            "cold_zero_total_us": 170.291,
+            "dashboard_collect_plus_ten_reductions_us": 1677.4170000000001,
+            "first_zero_preview_us": 51.833000000000006,
+            "ingress_and_accumulate_us": 828.7080000000001,
+            "one_field_objects_us": 265.417,
+            "open_us": 118.458,
+            "prepare_us": 769.5,
+            "summary_seal_and_append_us": 567.708,
+            "warm_zero_preview_us": 39.3209
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 7,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 782.8330000000001,
+            "box_commit_and_owned_bytes_us": 7.208,
+            "build_total_us": 2187.292,
+            "category_preview_us": 61.417,
+            "cold_zero_total_us": 170.125,
+            "dashboard_collect_plus_ten_reductions_us": 1680.625,
+            "first_zero_preview_us": 50.875,
+            "ingress_and_accumulate_us": 834.416,
+            "one_field_objects_us": 276.333,
+            "open_us": 119.25,
+            "prepare_us": 778.75,
+            "summary_seal_and_append_us": 563.875,
+            "warm_zero_preview_us": 39.4
+          },
+          "total_fields": 3
+        },
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 793.875,
+            "box_commit_and_owned_bytes_us": 6.625,
+            "build_total_us": 2316.541,
+            "category_preview_us": 62.291000000000004,
+            "cold_zero_total_us": 225.749,
+            "dashboard_collect_plus_ten_reductions_us": 1674.666,
+            "first_zero_preview_us": 97.833,
+            "ingress_and_accumulate_us": 865.958,
+            "one_field_objects_us": 266.917,
+            "open_us": 127.916,
+            "prepare_us": 866.375,
+            "summary_seal_and_append_us": 575.541,
+            "warm_zero_preview_us": 46.591699999999996
+          },
+          "total_fields": 3
+        }
+      },
+      {
+        "pair": 8,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2274,
+              "allocation_volume_bytes": 731882,
+              "peak_extra_bytes": 327282,
+              "retained_delta_bytes": 252417
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1751,
+              "allocation_volume_bytes": 527416,
+              "peak_extra_bytes": 235920,
+              "retained_delta_bytes": 159175
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 51422,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 788.084,
+            "box_commit_and_owned_bytes_us": 6.125,
+            "build_total_us": 2205.75,
+            "category_preview_us": 61.25,
+            "cold_zero_total_us": 220.667,
+            "dashboard_collect_plus_ten_reductions_us": 1660.6660000000002,
+            "first_zero_preview_us": 97.125,
+            "ingress_and_accumulate_us": 825.792,
+            "one_field_objects_us": 261.667,
+            "open_us": 123.542,
+            "prepare_us": 805.875,
+            "summary_seal_and_append_us": 566.167,
+            "warm_zero_preview_us": 46.5666
+          },
+          "total_fields": 3
+        },
+        "current": {
+          "case": "narrow",
+          "category": {
+            "eligible_periods": 288,
+            "matches": 288
+          },
+          "dashboard_sha256": "79340721e3203e04900f2071167d1111adc5e9aea3729c7bf0a6fa02395d7b53",
+          "days": 1,
+          "decoded_sha256": "7176e092324929be17eadf80ab983cd1b9eed0b0a2013c36e6aca299631553c8",
+          "event_bytes": 13835,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 22776,
+              "allocation_volume_bytes": 1732356,
+              "peak_extra_bytes": 1016705,
+              "retained_delta_bytes": 1016032
+            },
+            "cold_zero_query": {
+              "allocation_calls": 1733,
+              "allocation_volume_bytes": 571115,
+              "peak_extra_bytes": 272329,
+              "retained_delta_bytes": 185365
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 156672,
+              "peak_extra_bytes": 156672,
+              "retained_delta_bytes": 156672
+            },
+            "plan": {
+              "allocation_calls": 1612,
+              "allocation_volume_bytes": 447501,
+              "peak_extra_bytes": 223605,
+              "retained_delta_bytes": 144745
+            }
+          },
+          "numeric_fields": 1,
+          "summary_box_bytes": 37208,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 288,
+          "timing": {
+            "all_field_objects_us": 785.792,
+            "box_commit_and_owned_bytes_us": 7.291,
+            "build_total_us": 2189.583,
+            "category_preview_us": 70.584,
+            "cold_zero_total_us": 167.999,
+            "dashboard_collect_plus_ten_reductions_us": 1675.209,
+            "first_zero_preview_us": 51.416,
+            "ingress_and_accumulate_us": 839.4169999999999,
+            "one_field_objects_us": 275.70799999999997,
+            "open_us": 116.583,
+            "prepare_us": 770.0,
+            "summary_seal_and_append_us": 567.4169999999999,
+            "warm_zero_preview_us": 39.2959
+          },
+          "total_fields": 3
+        }
+      }
+    ]
+  },
+  {
+    "case": "typical",
+    "comparison": {
+      "all_field_objects_us": {
+        "prior_median_us": 17278.958,
+        "current_median_us": 17273.792,
+        "change_percent": -0.02989763618845842,
+        "prior_min_max_us": [
+          17066.75,
+          17920.917
+        ],
+        "current_min_max_us": [
+          17046.0,
+          18295.583000000002
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 176.375,
+        "current_median_us": 166.958,
+        "change_percent": -5.339192062367115,
+        "prior_min_max_us": [
+          166.667,
+          245.74999999999997
+        ],
+        "current_min_max_us": [
+          154.792,
+          191.625
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 25961.708,
+        "current_median_us": 25732.584,
+        "change_percent": -0.8825459403518421,
+        "prior_min_max_us": [
+          25751.625,
+          26702.291
+        ],
+        "current_min_max_us": [
+          25587.875,
+          27478.167
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 435.79200000000003,
+        "current_median_us": 430.83299999999997,
+        "change_percent": -1.1379281859235757,
+        "prior_min_max_us": [
+          425.459,
+          501.66700000000003
+        ],
+        "current_min_max_us": [
+          427.125,
+          484.41700000000003
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 592.25,
+        "current_median_us": 474.917,
+        "change_percent": -19.81139721401436,
+        "prior_min_max_us": [
+          572.625,
+          726.0829999999999
+        ],
+        "current_min_max_us": [
+          461.04200000000003,
+          586.749
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 10258.875,
+        "current_median_us": 10325.25,
+        "change_percent": 0.6470007676280254,
+        "prior_min_max_us": [
+          10191.875,
+          10857.625
+        ],
+        "current_min_max_us": [
+          10229.667,
+          10906.333
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 427.79200000000003,
+        "current_median_us": 326.667,
+        "change_percent": -23.638824475446018,
+        "prior_min_max_us": [
+          421.45799999999997,
+          537.1669999999999
+        ],
+        "current_min_max_us": [
+          321.0,
+          390.166
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 14819.458,
+        "current_median_us": 14775.25,
+        "change_percent": -0.29831050501307743,
+        "prior_min_max_us": [
+          14706.249999999998,
+          15255.291000000001
+        ],
+        "current_min_max_us": [
+          14664.582000000002,
+          15745.124000000002
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 1828.25,
+        "current_median_us": 1794.5839999999998,
+        "change_percent": -1.8414330644058619,
+        "prior_min_max_us": [
+          1779.917,
+          1903.9160000000002
+        ],
+        "current_min_max_us": [
+          1761.125,
+          1876.875
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 167.208,
+        "current_median_us": 148.25,
+        "change_percent": -11.337974259604799,
+        "prior_min_max_us": [
+          151.167,
+          191.541
+        ],
+        "current_min_max_us": [
+          140.042,
+          196.583
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 831.542,
+        "current_median_us": 774.875,
+        "change_percent": -6.814688855163064,
+        "prior_min_max_us": [
+          821.625,
+          909.0
+        ],
+        "current_min_max_us": [
+          764.667,
+          853.625
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 10172.291,
+        "current_median_us": 10070.582999999999,
+        "change_percent": -0.9998534253493174,
+        "prior_min_max_us": [
+          9988.541,
+          10415.708999999999
+        ],
+        "current_min_max_us": [
+          9984.793,
+          10712.373
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 327.575,
+        "current_median_us": 286.8084,
+        "change_percent": -12.444966801495838,
+        "prior_min_max_us": [
+          324.3875,
+          345.9166
+        ],
+        "current_min_max_us": [
+          285.0583,
+          303.1667
+        ]
+      }
+    },
+    "pairs": [
+      {
+        "pair": 0,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17882.25,
+            "box_commit_and_owned_bytes_us": 168.458,
+            "build_total_us": 26702.291,
+            "category_preview_us": 501.66700000000003,
+            "cold_zero_total_us": 726.0829999999999,
+            "dashboard_collect_plus_ten_reductions_us": 10857.625,
+            "first_zero_preview_us": 537.1669999999999,
+            "ingress_and_accumulate_us": 15255.291000000001,
+            "one_field_objects_us": 1862.0,
+            "open_us": 188.916,
+            "prepare_us": 859.25,
+            "summary_seal_and_append_us": 10415.708999999999,
+            "warm_zero_preview_us": 345.9166
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 18017.583,
+            "box_commit_and_owned_bytes_us": 165.125,
+            "build_total_us": 26456.875,
+            "category_preview_us": 451.79200000000003,
+            "cold_zero_total_us": 500.25,
+            "dashboard_collect_plus_ten_reductions_us": 10906.333,
+            "first_zero_preview_us": 334.0,
+            "ingress_and_accumulate_us": 15140.292000000001,
+            "one_field_objects_us": 1812.0420000000001,
+            "open_us": 166.25,
+            "prepare_us": 822.166,
+            "summary_seal_and_append_us": 10317.917000000001,
+            "warm_zero_preview_us": 295.6459
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 1,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 18295.583000000002,
+            "box_commit_and_owned_bytes_us": 173.292,
+            "build_total_us": 27478.167,
+            "category_preview_us": 484.41700000000003,
+            "cold_zero_total_us": 586.749,
+            "dashboard_collect_plus_ten_reductions_us": 10573.875,
+            "first_zero_preview_us": 390.166,
+            "ingress_and_accumulate_us": 15745.124000000002,
+            "one_field_objects_us": 1876.875,
+            "open_us": 196.583,
+            "prepare_us": 837.7080000000001,
+            "summary_seal_and_append_us": 10712.373,
+            "warm_zero_preview_us": 303.1667
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17920.917,
+            "box_commit_and_owned_bytes_us": 245.74999999999997,
+            "build_total_us": 26685.417,
+            "category_preview_us": 472.875,
+            "cold_zero_total_us": 644.5830000000001,
+            "dashboard_collect_plus_ten_reductions_us": 10776.707999999999,
+            "first_zero_preview_us": 453.04200000000003,
+            "ingress_and_accumulate_us": 15198.541000000001,
+            "one_field_objects_us": 1828.25,
+            "open_us": 191.541,
+            "prepare_us": 909.0,
+            "summary_seal_and_append_us": 10325.875,
+            "warm_zero_preview_us": 339.7375
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 2,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17108.292,
+            "box_commit_and_owned_bytes_us": 176.375,
+            "build_total_us": 25781.583,
+            "category_preview_us": 426.375,
+            "cold_zero_total_us": 581.292,
+            "dashboard_collect_plus_ten_reductions_us": 10308.25,
+            "first_zero_preview_us": 421.5,
+            "ingress_and_accumulate_us": 14706.249999999998,
+            "one_field_objects_us": 1779.917,
+            "open_us": 159.792,
+            "prepare_us": 822.2919999999999,
+            "summary_seal_and_append_us": 10074.457,
+            "warm_zero_preview_us": 324.9
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17296.208,
+            "box_commit_and_owned_bytes_us": 168.792,
+            "build_total_us": 25617.666,
+            "category_preview_us": 427.125,
+            "cold_zero_total_us": 466.875,
+            "dashboard_collect_plus_ten_reductions_us": 10325.25,
+            "first_zero_preview_us": 321.375,
+            "ingress_and_accumulate_us": 14690.332999999999,
+            "one_field_objects_us": 1761.125,
+            "open_us": 145.5,
+            "prepare_us": 770.0409999999999,
+            "summary_seal_and_append_us": 9984.793,
+            "warm_zero_preview_us": 285.9833
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 3,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17513.583,
+            "box_commit_and_owned_bytes_us": 166.958,
+            "build_total_us": 25732.584,
+            "category_preview_us": 427.333,
+            "cold_zero_total_us": 474.917,
+            "dashboard_collect_plus_ten_reductions_us": 10308.542000000001,
+            "first_zero_preview_us": 326.667,
+            "ingress_and_accumulate_us": 14775.25,
+            "one_field_objects_us": 1795.8329999999999,
+            "open_us": 148.25,
+            "prepare_us": 774.875,
+            "summary_seal_and_append_us": 10011.544,
+            "warm_zero_preview_us": 286.2583
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17527.125,
+            "box_commit_and_owned_bytes_us": 166.667,
+            "build_total_us": 26126.083000000002,
+            "category_preview_us": 468.16700000000003,
+            "cold_zero_total_us": 590.625,
+            "dashboard_collect_plus_ten_reductions_us": 10250.291,
+            "first_zero_preview_us": 427.625,
+            "ingress_and_accumulate_us": 14949.415,
+            "one_field_objects_us": 1839.5,
+            "open_us": 163.0,
+            "prepare_us": 834.4580000000001,
+            "summary_seal_and_append_us": 10172.291,
+            "warm_zero_preview_us": 327.575
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 4,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17219.417,
+            "box_commit_and_owned_bytes_us": 218.5,
+            "build_total_us": 25860.792,
+            "category_preview_us": 426.125,
+            "cold_zero_total_us": 591.4590000000001,
+            "dashboard_collect_plus_ten_reductions_us": 10191.875,
+            "first_zero_preview_us": 427.79200000000003,
+            "ingress_and_accumulate_us": 14819.458,
+            "one_field_objects_us": 1792.167,
+            "open_us": 163.667,
+            "prepare_us": 831.542,
+            "summary_seal_and_append_us": 9988.541,
+            "warm_zero_preview_us": 324.8125
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17273.792,
+            "box_commit_and_owned_bytes_us": 161.667,
+            "build_total_us": 25820.75,
+            "category_preview_us": 431.917,
+            "cold_zero_total_us": 468.41600000000005,
+            "dashboard_collect_plus_ten_reductions_us": 10229.667,
+            "first_zero_preview_us": 322.458,
+            "ingress_and_accumulate_us": 14794.999,
+            "one_field_objects_us": 1794.5839999999998,
+            "open_us": 145.958,
+            "prepare_us": 786.833,
+            "summary_seal_and_append_us": 10070.582999999999,
+            "warm_zero_preview_us": 286.925
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 5,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17187.917,
+            "box_commit_and_owned_bytes_us": 154.792,
+            "build_total_us": 25587.875,
+            "category_preview_us": 428.416,
+            "cold_zero_total_us": 461.04200000000003,
+            "dashboard_collect_plus_ten_reductions_us": 10493.208,
+            "first_zero_preview_us": 321.0,
+            "ingress_and_accumulate_us": 14664.582000000002,
+            "one_field_objects_us": 1780.042,
+            "open_us": 140.042,
+            "prepare_us": 774.667,
+            "summary_seal_and_append_us": 9989.914999999999,
+            "warm_zero_preview_us": 286.8084
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17066.75,
+            "box_commit_and_owned_bytes_us": 167.584,
+            "build_total_us": 25961.708,
+            "category_preview_us": 425.459,
+            "cold_zero_total_us": 592.25,
+            "dashboard_collect_plus_ten_reductions_us": 10225.375,
+            "first_zero_preview_us": 425.042,
+            "ingress_and_accumulate_us": 14740.5,
+            "one_field_objects_us": 1788.958,
+            "open_us": 167.208,
+            "prepare_us": 826.75,
+            "summary_seal_and_append_us": 10223.292,
+            "warm_zero_preview_us": 324.3875
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 6,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17194.625,
+            "box_commit_and_owned_bytes_us": 176.916,
+            "build_total_us": 25751.625,
+            "category_preview_us": 429.5,
+            "cold_zero_total_us": 603.542,
+            "dashboard_collect_plus_ten_reductions_us": 10258.875,
+            "first_zero_preview_us": 432.875,
+            "ingress_and_accumulate_us": 14731.749,
+            "one_field_objects_us": 1903.9160000000002,
+            "open_us": 170.667,
+            "prepare_us": 830.875,
+            "summary_seal_and_append_us": 10008.874,
+            "warm_zero_preview_us": 328.8625
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17062.041,
+            "box_commit_and_owned_bytes_us": 163.917,
+            "build_total_us": 25630.375,
+            "category_preview_us": 432.584,
+            "cold_zero_total_us": 489.875,
+            "dashboard_collect_plus_ten_reductions_us": 10367.583999999999,
+            "first_zero_preview_us": 338.291,
+            "ingress_and_accumulate_us": 14698.292000000001,
+            "one_field_objects_us": 1767.375,
+            "open_us": 151.584,
+            "prepare_us": 769.4590000000001,
+            "summary_seal_and_append_us": 9994.251,
+            "warm_zero_preview_us": 285.8833
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 7,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17046.0,
+            "box_commit_and_owned_bytes_us": 191.625,
+            "build_total_us": 25731.375,
+            "category_preview_us": 428.25,
+            "cold_zero_total_us": 485.00100000000003,
+            "dashboard_collect_plus_ten_reductions_us": 10271.542,
+            "first_zero_preview_us": 337.79200000000003,
+            "ingress_and_accumulate_us": 14670.873999999998,
+            "one_field_objects_us": 1766.084,
+            "open_us": 147.209,
+            "prepare_us": 764.667,
+            "summary_seal_and_append_us": 10100.209,
+            "warm_zero_preview_us": 287.1833
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17278.958,
+            "box_commit_and_owned_bytes_us": 192.375,
+            "build_total_us": 25796.833000000002,
+            "category_preview_us": 441.0,
+            "cold_zero_total_us": 572.625,
+            "dashboard_collect_plus_ten_reductions_us": 10290.875,
+            "first_zero_preview_us": 421.45799999999997,
+            "ingress_and_accumulate_us": 14733.956999999999,
+            "one_field_objects_us": 1872.0410000000002,
+            "open_us": 151.167,
+            "prepare_us": 858.9169999999999,
+            "summary_seal_and_append_us": 10008.289999999999,
+            "warm_zero_preview_us": 325.225
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 8,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17412.208,
+            "box_commit_and_owned_bytes_us": 167.292,
+            "build_total_us": 26356.75,
+            "category_preview_us": 435.79200000000003,
+            "cold_zero_total_us": 608.25,
+            "dashboard_collect_plus_ten_reductions_us": 10249.875,
+            "first_zero_preview_us": 430.292,
+            "ingress_and_accumulate_us": 15072.583999999999,
+            "one_field_objects_us": 1787.125,
+            "open_us": 177.958,
+            "prepare_us": 821.625,
+            "summary_seal_and_append_us": 10292.039999999999,
+            "warm_zero_preview_us": 327.575
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "typical",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "8a3d2a77cf0c9ca0c3164256f1d7eb0530738bc3a1037aaaddd371308e0a3cfe",
+          "event_bytes": 748976,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17202.042,
+            "box_commit_and_owned_bytes_us": 176.25,
+            "build_total_us": 25960.291999999998,
+            "category_preview_us": 430.83299999999997,
+            "cold_zero_total_us": 474.042,
+            "dashboard_collect_plus_ten_reductions_us": 10301.084,
+            "first_zero_preview_us": 323.042,
+            "ingress_and_accumulate_us": 14847.501,
+            "one_field_objects_us": 1801.208,
+            "open_us": 151.0,
+            "prepare_us": 853.625,
+            "summary_seal_and_append_us": 10078.582,
+            "warm_zero_preview_us": 285.0583
+          },
+          "total_fields": 10
+        }
+      }
+    ]
+  },
+  {
+    "case": "wide",
+    "comparison": {
+      "all_field_objects_us": {
+        "prior_median_us": 57466.583,
+        "current_median_us": 57388.333,
+        "change_percent": -0.1361660915179197,
+        "prior_min_max_us": [
+          57042.625,
+          59183.083
+        ],
+        "current_min_max_us": [
+          56934.333,
+          59024.959
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 643.458,
+        "current_median_us": 656.167,
+        "change_percent": 1.9751094865554597,
+        "prior_min_max_us": [
+          590.25,
+          681.7919999999999
+        ],
+        "current_min_max_us": [
+          584.375,
+          714.542
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 55329.042,
+        "current_median_us": 55342.166,
+        "change_percent": 0.02371991186833622,
+        "prior_min_max_us": [
+          54958.333999999995,
+          56766.333
+        ],
+        "current_min_max_us": [
+          55137.5,
+          56078.541000000005
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 441.125,
+        "current_median_us": 447.708,
+        "change_percent": 1.4923207707565833,
+        "prior_min_max_us": [
+          430.666,
+          493.416
+        ],
+        "current_min_max_us": [
+          438.66700000000003,
+          506.583
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 901.0420000000001,
+        "current_median_us": 699.0830000000001,
+        "change_percent": -22.413938528947597,
+        "prior_min_max_us": [
+          840.3339999999998,
+          1108.833
+        ],
+        "current_min_max_us": [
+          671.167,
+          815.5
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 10574.0,
+        "current_median_us": 10608.416000000001,
+        "change_percent": 0.3254775865330073,
+        "prior_min_max_us": [
+          10538.208,
+          10695.666
+        ],
+        "current_min_max_us": [
+          10562.416,
+          11002.583
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 621.2080000000001,
+        "current_median_us": 436.375,
+        "change_percent": -29.75380226912726,
+        "prior_min_max_us": [
+          590.708,
+          794.625
+        ],
+        "current_min_max_us": [
+          428.709,
+          528.583
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 26063.833000000002,
+        "current_median_us": 26171.249,
+        "change_percent": 0.41212664307661573,
+        "prior_min_max_us": [
+          25936.376,
+          26417.916
+        ],
+        "current_min_max_us": [
+          26111.334000000003,
+          26530.834
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 1781.709,
+        "current_median_us": 1787.292,
+        "change_percent": 0.3133508333852397,
+        "prior_min_max_us": [
+          1740.208,
+          1872.375
+        ],
+        "current_min_max_us": [
+          1756.375,
+          2072.875
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 270.916,
+        "current_median_us": 258.625,
+        "change_percent": -4.536830604320152,
+        "prior_min_max_us": [
+          244.41699999999997,
+          314.208
+        ],
+        "current_min_max_us": [
+          241.0,
+          286.917
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 872.208,
+        "current_median_us": 798.667,
+        "change_percent": -8.431589712545629,
+        "prior_min_max_us": [
+          853.708,
+          895.6669999999999
+        ],
+        "current_min_max_us": [
+          782.875,
+          856.667
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 27667.959,
+        "current_median_us": 27695.749,
+        "change_percent": 0.10044109144444757,
+        "prior_min_max_us": [
+          27532.292,
+          28813.750999999997
+        ],
+        "current_min_max_us": [
+          27565.042,
+          28069.167
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 326.7667,
+        "current_median_us": 288.1834,
+        "change_percent": -11.807598509884887,
+        "prior_min_max_us": [
+          325.8167,
+          342.7083
+        ],
+        "current_min_max_us": [
+          286.725,
+          291.0875
+        ]
+      }
+    },
+    "pairs": [
+      {
+        "pair": 0,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57647.458,
+            "box_commit_and_owned_bytes_us": 643.458,
+            "build_total_us": 55329.042,
+            "category_preview_us": 441.125,
+            "cold_zero_total_us": 901.0420000000001,
+            "dashboard_collect_plus_ten_reductions_us": 10596.916,
+            "first_zero_preview_us": 621.2080000000001,
+            "ingress_and_accumulate_us": 26157.167,
+            "one_field_objects_us": 1771.9579999999999,
+            "open_us": 279.834,
+            "prepare_us": 890.2909999999999,
+            "summary_seal_and_append_us": 27634.915,
+            "warm_zero_preview_us": 326.7667
+          },
+          "total_fields": 34
+        },
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57687.333,
+            "box_commit_and_owned_bytes_us": 684.458,
+            "build_total_us": 56078.541000000005,
+            "category_preview_us": 440.375,
+            "cold_zero_total_us": 709.0830000000001,
+            "dashboard_collect_plus_ten_reductions_us": 10633.333,
+            "first_zero_preview_us": 432.541,
+            "ingress_and_accumulate_us": 26530.834,
+            "one_field_objects_us": 1787.292,
+            "open_us": 276.54200000000003,
+            "prepare_us": 785.8340000000001,
+            "summary_seal_and_append_us": 28069.167,
+            "warm_zero_preview_us": 287.8875
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 1,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 59024.959,
+            "box_commit_and_owned_bytes_us": 669.833,
+            "build_total_us": 55552.0,
+            "category_preview_us": 475.54200000000003,
+            "cold_zero_total_us": 716.5419999999999,
+            "dashboard_collect_plus_ten_reductions_us": 11002.583,
+            "first_zero_preview_us": 436.08299999999997,
+            "ingress_and_accumulate_us": 26297.375000000004,
+            "one_field_objects_us": 2072.875,
+            "open_us": 280.459,
+            "prepare_us": 788.083,
+            "summary_seal_and_append_us": 27786.999,
+            "warm_zero_preview_us": 289.95
+          },
+          "total_fields": 34
+        },
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57677.416000000005,
+            "box_commit_and_owned_bytes_us": 681.7919999999999,
+            "build_total_us": 55463.625,
+            "category_preview_us": 434.66700000000003,
+            "cold_zero_total_us": 851.749,
+            "dashboard_collect_plus_ten_reductions_us": 10554.958999999999,
+            "first_zero_preview_us": 590.708,
+            "ingress_and_accumulate_us": 25970.417,
+            "one_field_objects_us": 1814.375,
+            "open_us": 261.041,
+            "prepare_us": 895.6669999999999,
+            "summary_seal_and_append_us": 27912.626,
+            "warm_zero_preview_us": 326.4
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 2,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57466.583,
+            "box_commit_and_owned_bytes_us": 624.25,
+            "build_total_us": 54958.333999999995,
+            "category_preview_us": 442.833,
+            "cold_zero_total_us": 840.3339999999998,
+            "dashboard_collect_plus_ten_reductions_us": 10695.666,
+            "first_zero_preview_us": 595.9169999999999,
+            "ingress_and_accumulate_us": 25936.376,
+            "one_field_objects_us": 1781.709,
+            "open_us": 244.41699999999997,
+            "prepare_us": 859.75,
+            "summary_seal_and_append_us": 27532.292,
+            "warm_zero_preview_us": 325.9833
+          },
+          "total_fields": 34
+        },
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57145.791000000005,
+            "box_commit_and_owned_bytes_us": 625.5,
+            "build_total_us": 55710.583,
+            "category_preview_us": 438.66700000000003,
+            "cold_zero_total_us": 700.249,
+            "dashboard_collect_plus_ten_reductions_us": 10650.583,
+            "first_zero_preview_us": 438.791,
+            "ingress_and_accumulate_us": 26517.918999999998,
+            "one_field_objects_us": 1756.375,
+            "open_us": 261.458,
+            "prepare_us": 856.667,
+            "summary_seal_and_append_us": 27703.374,
+            "warm_zero_preview_us": 288.30420000000004
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 3,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57388.333,
+            "box_commit_and_owned_bytes_us": 679.2080000000001,
+            "build_total_us": 55267.041000000005,
+            "category_preview_us": 439.375,
+            "cold_zero_total_us": 698.5409999999999,
+            "dashboard_collect_plus_ten_reductions_us": 10626.5,
+            "first_zero_preview_us": 439.916,
+            "ingress_and_accumulate_us": 26126.539999999997,
+            "one_field_objects_us": 1797.125,
+            "open_us": 258.625,
+            "prepare_us": 782.875,
+            "summary_seal_and_append_us": 27669.04,
+            "warm_zero_preview_us": 288.1834
+          },
+          "total_fields": 34
+        },
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57081.625,
+            "box_commit_and_owned_bytes_us": 662.417,
+            "build_total_us": 55319.917,
+            "category_preview_us": 438.042,
+            "cold_zero_total_us": 906.375,
+            "dashboard_collect_plus_ten_reductions_us": 10603.666,
+            "first_zero_preview_us": 635.459,
+            "ingress_and_accumulate_us": 26097.752,
+            "one_field_objects_us": 1740.208,
+            "open_us": 270.916,
+            "prepare_us": 884.833,
+            "summary_seal_and_append_us": 27667.959,
+            "warm_zero_preview_us": 326.4625
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 4,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57434.583999999995,
+            "box_commit_and_owned_bytes_us": 613.125,
+            "build_total_us": 55075.375,
+            "category_preview_us": 434.0,
+            "cold_zero_total_us": 852.0420000000001,
+            "dashboard_collect_plus_ten_reductions_us": 10611.0,
+            "first_zero_preview_us": 594.2080000000001,
+            "ingress_and_accumulate_us": 25936.457,
+            "one_field_objects_us": 1843.0,
+            "open_us": 257.834,
+            "prepare_us": 856.042,
+            "summary_seal_and_append_us": 27666.249999999996,
+            "warm_zero_preview_us": 325.8167
+          },
+          "total_fields": 34
+        },
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57469.042,
+            "box_commit_and_owned_bytes_us": 613.875,
+            "build_total_us": 55307.708,
+            "category_preview_us": 506.583,
+            "cold_zero_total_us": 686.7080000000001,
+            "dashboard_collect_plus_ten_reductions_us": 10594.375,
+            "first_zero_preview_us": 430.958,
+            "ingress_and_accumulate_us": 26171.249,
+            "one_field_objects_us": 1911.875,
+            "open_us": 255.75,
+            "prepare_us": 830.4169999999999,
+            "summary_seal_and_append_us": 27685.459,
+            "warm_zero_preview_us": 291.0875
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 5,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 56934.333,
+            "box_commit_and_owned_bytes_us": 714.542,
+            "build_total_us": 55342.166,
+            "category_preview_us": 445.125,
+            "cold_zero_total_us": 699.0830000000001,
+            "dashboard_collect_plus_ten_reductions_us": 10608.416000000001,
+            "first_zero_preview_us": 450.708,
+            "ingress_and_accumulate_us": 26122.791999999998,
+            "one_field_objects_us": 1781.541,
+            "open_us": 248.375,
+            "prepare_us": 800.875,
+            "summary_seal_and_append_us": 27695.749,
+            "warm_zero_preview_us": 287.2417
+          },
+          "total_fields": 34
+        },
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 59183.083,
+            "box_commit_and_owned_bytes_us": 590.25,
+            "build_total_us": 55154.708,
+            "category_preview_us": 430.666,
+            "cold_zero_total_us": 1108.833,
+            "dashboard_collect_plus_ten_reductions_us": 10574.0,
+            "first_zero_preview_us": 794.625,
+            "ingress_and_accumulate_us": 26040.377,
+            "one_field_objects_us": 1797.208,
+            "open_us": 314.208,
+            "prepare_us": 886.375,
+            "summary_seal_and_append_us": 27634.249999999996,
+            "warm_zero_preview_us": 332.37919999999997
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 6,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57581.125,
+            "box_commit_and_owned_bytes_us": 676.7080000000001,
+            "build_total_us": 56766.333,
+            "category_preview_us": 462.083,
+            "cold_zero_total_us": 905.75,
+            "dashboard_collect_plus_ten_reductions_us": 10558.0,
+            "first_zero_preview_us": 628.125,
+            "ingress_and_accumulate_us": 26417.916,
+            "one_field_objects_us": 1773.291,
+            "open_us": 277.625,
+            "prepare_us": 853.708,
+            "summary_seal_and_append_us": 28813.750999999997,
+            "warm_zero_preview_us": 328.5208
+          },
+          "total_fields": 34
+        },
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57259.625,
+            "box_commit_and_owned_bytes_us": 584.375,
+            "build_total_us": 55168.334,
+            "category_preview_us": 452.084,
+            "cold_zero_total_us": 677.375,
+            "dashboard_collect_plus_ten_reductions_us": 10562.416,
+            "first_zero_preview_us": 436.375,
+            "ingress_and_accumulate_us": 26218.249,
+            "one_field_objects_us": 1785.0,
+            "open_us": 241.0,
+            "prepare_us": 794.9590000000001,
+            "summary_seal_and_append_us": 27565.042,
+            "warm_zero_preview_us": 287.5792
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 7,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57137.417,
+            "box_commit_and_owned_bytes_us": 607.042,
+            "build_total_us": 55137.5,
+            "category_preview_us": 447.708,
+            "cold_zero_total_us": 671.167,
+            "dashboard_collect_plus_ten_reductions_us": 10601.416000000001,
+            "first_zero_preview_us": 428.709,
+            "ingress_and_accumulate_us": 26111.334000000003,
+            "one_field_objects_us": 1764.5,
+            "open_us": 242.458,
+            "prepare_us": 798.667,
+            "summary_seal_and_append_us": 27614.459000000003,
+            "warm_zero_preview_us": 289.0625
+          },
+          "total_fields": 34
+        },
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57042.625,
+            "box_commit_and_owned_bytes_us": 603.75,
+            "build_total_us": 55509.833,
+            "category_preview_us": 450.667,
+            "cold_zero_total_us": 852.1659999999999,
+            "dashboard_collect_plus_ten_reductions_us": 10563.25,
+            "first_zero_preview_us": 593.5,
+            "ingress_and_accumulate_us": 26173.001,
+            "one_field_objects_us": 1762.833,
+            "open_us": 258.666,
+            "prepare_us": 872.208,
+            "summary_seal_and_append_us": 27857.708,
+            "warm_zero_preview_us": 328.8875
+          },
+          "total_fields": 34
+        }
+      },
+      {
+        "pair": 8,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 4628,
+              "allocation_volume_bytes": 4980965,
+              "peak_extra_bytes": 3948031,
+              "retained_delta_bytes": 3821911
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 2632,
+              "allocation_volume_bytes": 609994,
+              "peak_extra_bytes": 247972,
+              "retained_delta_bytes": 165735
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3554996,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57278.708999999995,
+            "box_commit_and_owned_bytes_us": 657.125,
+            "build_total_us": 55461.5,
+            "category_preview_us": 493.416,
+            "cold_zero_total_us": 922.9169999999999,
+            "dashboard_collect_plus_ten_reductions_us": 10538.208,
+            "first_zero_preview_us": 644.0,
+            "ingress_and_accumulate_us": 26063.833000000002,
+            "one_field_objects_us": 1872.375,
+            "open_us": 278.917,
+            "prepare_us": 869.875,
+            "summary_seal_and_append_us": 27866.668,
+            "warm_zero_preview_us": 342.7083
+          },
+          "total_fields": 34
+        },
+        "current": {
+          "case": "wide",
+          "category": {
+            "eligible_periods": 2016,
+            "matches": 2016
+          },
+          "dashboard_sha256": "fcd674841d2ef2f6e74fbb737d2b49ee183cadd65dcdfdbc03c730edc3e5f886",
+          "days": 7,
+          "decoded_sha256": "606fdee7c428db136a7325e32f6b7617326c9abefafb6db8d2bc9fa0e3160556",
+          "event_bytes": 2887010,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 1433498,
+              "allocation_volume_bytes": 126618396,
+              "peak_extra_bytes": 50784737,
+              "retained_delta_bytes": 50784064
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2090,
+              "allocation_volume_bytes": 4637584,
+              "peak_extra_bytes": 3817505,
+              "retained_delta_bytes": 3691385
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 1442304,
+              "peak_extra_bytes": 1442304,
+              "retained_delta_bytes": 1442304
+            },
+            "plan": {
+              "allocation_calls": 1706,
+              "allocation_volume_bytes": 455635,
+              "peak_extra_bytes": 227347,
+              "retained_delta_bytes": 148535
+            }
+          },
+          "numeric_fields": 32,
+          "summary_box_bytes": 3539397,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 57535.667,
+            "box_commit_and_owned_bytes_us": 656.167,
+            "build_total_us": 55574.75,
+            "category_preview_us": 455.791,
+            "cold_zero_total_us": 815.5,
+            "dashboard_collect_plus_ten_reductions_us": 10578.625,
+            "first_zero_preview_us": 528.583,
+            "ingress_and_accumulate_us": 26125.208000000002,
+            "one_field_objects_us": 1791.208,
+            "open_us": 286.917,
+            "prepare_us": 819.125,
+            "summary_seal_and_append_us": 27964.377,
+            "warm_zero_preview_us": 286.725
+          },
+          "total_fields": 34
+        }
+      }
+    ]
+  },
+  {
+    "case": "quiet",
+    "comparison": {
+      "all_field_objects_us": {
+        "prior_median_us": 17228.208,
+        "current_median_us": 17449.167,
+        "change_percent": 1.2825419799900484,
+        "prior_min_max_us": [
+          16595.75,
+          17727.334000000003
+        ],
+        "current_min_max_us": [
+          16710.333000000002,
+          17804.125
+        ]
+      },
+      "box_commit_and_owned_bytes_us": {
+        "prior_median_us": 103.625,
+        "current_median_us": 101.459,
+        "change_percent": -2.0902291917973437,
+        "prior_min_max_us": [
+          97.291,
+          187.375
+        ],
+        "current_min_max_us": [
+          93.792,
+          117.54199999999999
+        ]
+      },
+      "build_total_us": {
+        "prior_median_us": 12153.75,
+        "current_median_us": 11943.167,
+        "change_percent": -1.7326586444513015,
+        "prior_min_max_us": [
+          11805.708999999999,
+          12466.667000000001
+        ],
+        "current_min_max_us": [
+          11694.958999999999,
+          12511.291000000001
+        ]
+      },
+      "category_preview_us": {
+        "prior_median_us": 115.875,
+        "current_median_us": 111.41699999999999,
+        "change_percent": -3.8472491909385176,
+        "prior_min_max_us": [
+          114.5,
+          124.29100000000001
+        ],
+        "current_min_max_us": [
+          110.29199999999999,
+          119.625
+        ]
+      },
+      "cold_zero_total_us": {
+        "prior_median_us": 415.25,
+        "current_median_us": 308.626,
+        "change_percent": -25.67706201083685,
+        "prior_min_max_us": [
+          367.20799999999997,
+          605.251
+        ],
+        "current_min_max_us": [
+          293.249,
+          370.416
+        ]
+      },
+      "dashboard_collect_plus_ten_reductions_us": {
+        "prior_median_us": 9724.75,
+        "current_median_us": 9740.792,
+        "change_percent": 0.16496053883132689,
+        "prior_min_max_us": [
+          9446.792000000001,
+          10066.042000000001
+        ],
+        "current_min_max_us": [
+          9434.416,
+          10091.0
+        ]
+      },
+      "first_zero_preview_us": {
+        "prior_median_us": 238.375,
+        "current_median_us": 161.542,
+        "change_percent": -32.231987414787625,
+        "prior_min_max_us": [
+          218.958,
+          274.959
+        ],
+        "current_min_max_us": [
+          157.666,
+          180.792
+        ]
+      },
+      "ingress_and_accumulate_us": {
+        "prior_median_us": 847.4990000000001,
+        "current_median_us": 847.04,
+        "change_percent": -0.05415935594026422,
+        "prior_min_max_us": [
+          820.458,
+          877.083
+        ],
+        "current_min_max_us": [
+          825.499,
+          893.2510000000001
+        ]
+      },
+      "one_field_objects_us": {
+        "prior_median_us": 1805.667,
+        "current_median_us": 1762.4170000000001,
+        "change_percent": -2.395236774000953,
+        "prior_min_max_us": [
+          1719.375,
+          1853.9579999999999
+        ],
+        "current_min_max_us": [
+          1718.375,
+          1848.0
+        ]
+      },
+      "open_us": {
+        "prior_median_us": 169.333,
+        "current_median_us": 147.084,
+        "change_percent": -13.139199092911602,
+        "prior_min_max_us": [
+          148.25,
+          330.292
+        ],
+        "current_min_max_us": [
+          135.583,
+          190.375
+        ]
+      },
+      "prepare_us": {
+        "prior_median_us": 873.625,
+        "current_median_us": 792.75,
+        "change_percent": -9.257404492774358,
+        "prior_min_max_us": [
+          821.416,
+          999.0419999999999
+        ],
+        "current_min_max_us": [
+          767.3330000000001,
+          866.792
+        ]
+      },
+      "summary_seal_and_append_us": {
+        "prior_median_us": 10264.294000000002,
+        "current_median_us": 10214.125999999998,
+        "change_percent": -0.488762305522461,
+        "prior_min_max_us": [
+          10023.833999999999,
+          10486.96
+        ],
+        "current_min_max_us": [
+          9978.873,
+          10652.499
+        ]
+      },
+      "warm_zero_preview_us": {
+        "prior_median_us": 107.04580000000001,
+        "current_median_us": 102.7041,
+        "change_percent": -4.055927462824338,
+        "prior_min_max_us": [
+          101.82500000000002,
+          110.8375
+        ],
+        "current_min_max_us": [
+          100.175,
+          107.4292
+        ]
+      }
+    },
+    "pairs": [
+      {
+        "pair": 0,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 16724.875,
+            "box_commit_and_owned_bytes_us": 117.833,
+            "build_total_us": 11805.708999999999,
+            "category_preview_us": 115.875,
+            "cold_zero_total_us": 367.20799999999997,
+            "dashboard_collect_plus_ten_reductions_us": 9446.792000000001,
+            "first_zero_preview_us": 218.958,
+            "ingress_and_accumulate_us": 823.5409999999999,
+            "one_field_objects_us": 1721.5,
+            "open_us": 148.25,
+            "prepare_us": 837.7919999999999,
+            "summary_seal_and_append_us": 10023.833999999999,
+            "warm_zero_preview_us": 102.8833
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17007.125,
+            "box_commit_and_owned_bytes_us": 96.041,
+            "build_total_us": 11943.167,
+            "category_preview_us": 111.41699999999999,
+            "cold_zero_total_us": 298.041,
+            "dashboard_collect_plus_ten_reductions_us": 10014.167,
+            "first_zero_preview_us": 158.458,
+            "ingress_and_accumulate_us": 839.667,
+            "one_field_objects_us": 1766.417,
+            "open_us": 139.583,
+            "prepare_us": 789.5419999999999,
+            "summary_seal_and_append_us": 10214.125999999998,
+            "warm_zero_preview_us": 100.9792
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 1,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17523.791,
+            "box_commit_and_owned_bytes_us": 108.333,
+            "build_total_us": 11714.875,
+            "category_preview_us": 111.41699999999999,
+            "cold_zero_total_us": 308.626,
+            "dashboard_collect_plus_ten_reductions_us": 10009.583,
+            "first_zero_preview_us": 161.542,
+            "ingress_and_accumulate_us": 833.375,
+            "one_field_objects_us": 1724.833,
+            "open_us": 147.084,
+            "prepare_us": 767.3330000000001,
+            "summary_seal_and_append_us": 10001.625,
+            "warm_zero_preview_us": 102.7041
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17727.334000000003,
+            "box_commit_and_owned_bytes_us": 102.167,
+            "build_total_us": 12153.75,
+            "category_preview_us": 116.458,
+            "cold_zero_total_us": 375.959,
+            "dashboard_collect_plus_ten_reductions_us": 10059.792,
+            "first_zero_preview_us": 224.917,
+            "ingress_and_accumulate_us": 834.375,
+            "one_field_objects_us": 1853.9579999999999,
+            "open_us": 151.042,
+            "prepare_us": 873.6669999999999,
+            "summary_seal_and_append_us": 10340.874,
+            "warm_zero_preview_us": 105.2
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 2,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17228.208,
+            "box_commit_and_owned_bytes_us": 99.5,
+            "build_total_us": 12084.375,
+            "category_preview_us": 114.708,
+            "cold_zero_total_us": 425.041,
+            "dashboard_collect_plus_ten_reductions_us": 9715.082999999999,
+            "first_zero_preview_us": 258.541,
+            "ingress_and_accumulate_us": 839.958,
+            "one_field_objects_us": 1749.1670000000001,
+            "open_us": 166.5,
+            "prepare_us": 875.042,
+            "summary_seal_and_append_us": 10264.294000000002,
+            "warm_zero_preview_us": 107.04580000000001
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17449.167,
+            "box_commit_and_owned_bytes_us": 107.833,
+            "build_total_us": 12170.0,
+            "category_preview_us": 114.709,
+            "cold_zero_total_us": 336.334,
+            "dashboard_collect_plus_ten_reductions_us": 9740.792,
+            "first_zero_preview_us": 180.792,
+            "ingress_and_accumulate_us": 868.374,
+            "one_field_objects_us": 1846.208,
+            "open_us": 155.542,
+            "prepare_us": 866.792,
+            "summary_seal_and_append_us": 10321.752,
+            "warm_zero_preview_us": 105.4125
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 3,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17804.125,
+            "box_commit_and_owned_bytes_us": 94.542,
+            "build_total_us": 12044.625,
+            "category_preview_us": 116.458,
+            "cold_zero_total_us": 321.0,
+            "dashboard_collect_plus_ten_reductions_us": 9688.125,
+            "first_zero_preview_us": 165.125,
+            "ingress_and_accumulate_us": 849.707,
+            "one_field_objects_us": 1762.4170000000001,
+            "open_us": 155.875,
+            "prepare_us": 794.5,
+            "summary_seal_and_append_us": 10296.542,
+            "warm_zero_preview_us": 104.1875
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17300.959000000003,
+            "box_commit_and_owned_bytes_us": 187.375,
+            "build_total_us": 12168.583,
+            "category_preview_us": 117.833,
+            "cold_zero_total_us": 605.251,
+            "dashboard_collect_plus_ten_reductions_us": 9724.75,
+            "first_zero_preview_us": 274.959,
+            "ingress_and_accumulate_us": 877.083,
+            "one_field_objects_us": 1832.958,
+            "open_us": 330.292,
+            "prepare_us": 867.0,
+            "summary_seal_and_append_us": 10230.958,
+            "warm_zero_preview_us": 107.3667
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 4,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17349.291999999998,
+            "box_commit_and_owned_bytes_us": 103.625,
+            "build_total_us": 12466.667000000001,
+            "category_preview_us": 114.95800000000001,
+            "cold_zero_total_us": 407.45799999999997,
+            "dashboard_collect_plus_ten_reductions_us": 10066.042000000001,
+            "first_zero_preview_us": 238.125,
+            "ingress_and_accumulate_us": 874.083,
+            "one_field_objects_us": 1805.667,
+            "open_us": 169.333,
+            "prepare_us": 999.0419999999999,
+            "summary_seal_and_append_us": 10486.96,
+            "warm_zero_preview_us": 107.13340000000001
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17611.541,
+            "box_commit_and_owned_bytes_us": 103.959,
+            "build_total_us": 12147.207999999999,
+            "category_preview_us": 114.167,
+            "cold_zero_total_us": 314.416,
+            "dashboard_collect_plus_ten_reductions_us": 9770.0,
+            "first_zero_preview_us": 162.708,
+            "ingress_and_accumulate_us": 847.04,
+            "one_field_objects_us": 1809.041,
+            "open_us": 151.708,
+            "prepare_us": 840.041,
+            "summary_seal_and_append_us": 10351.334,
+            "warm_zero_preview_us": 103.42909999999999
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 5,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17689.541999999998,
+            "box_commit_and_owned_bytes_us": 117.54199999999999,
+            "build_total_us": 12511.291000000001,
+            "category_preview_us": 119.625,
+            "cold_zero_total_us": 370.416,
+            "dashboard_collect_plus_ten_reductions_us": 10091.0,
+            "first_zero_preview_us": 180.041,
+            "ingress_and_accumulate_us": 893.2510000000001,
+            "one_field_objects_us": 1848.0,
+            "open_us": 190.375,
+            "prepare_us": 837.5830000000001,
+            "summary_seal_and_append_us": 10652.499,
+            "warm_zero_preview_us": 107.4292
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17694.167,
+            "box_commit_and_owned_bytes_us": 146.209,
+            "build_total_us": 12325.334,
+            "category_preview_us": 119.292,
+            "cold_zero_total_us": 437.33299999999997,
+            "dashboard_collect_plus_ten_reductions_us": 9780.208999999999,
+            "first_zero_preview_us": 249.5,
+            "ingress_and_accumulate_us": 853.3320000000001,
+            "one_field_objects_us": 1843.667,
+            "open_us": 187.833,
+            "prepare_us": 873.625,
+            "summary_seal_and_append_us": 10448.708999999999,
+            "warm_zero_preview_us": 109.025
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 6,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17106.208000000002,
+            "box_commit_and_owned_bytes_us": 102.167,
+            "build_total_us": 12121.542000000001,
+            "category_preview_us": 124.29100000000001,
+            "cold_zero_total_us": 428.99899999999997,
+            "dashboard_collect_plus_ten_reductions_us": 9873.75,
+            "first_zero_preview_us": 251.54099999999997,
+            "ingress_and_accumulate_us": 868.043,
+            "one_field_objects_us": 1839.667,
+            "open_us": 177.458,
+            "prepare_us": 884.458,
+            "summary_seal_and_append_us": 10264.128,
+            "warm_zero_preview_us": 110.8375
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 16785.25,
+            "box_commit_and_owned_bytes_us": 93.792,
+            "build_total_us": 11756.25,
+            "category_preview_us": 110.875,
+            "cold_zero_total_us": 293.249,
+            "dashboard_collect_plus_ten_reductions_us": 9434.416,
+            "first_zero_preview_us": 157.666,
+            "ingress_and_accumulate_us": 855.0819999999999,
+            "one_field_objects_us": 1718.375,
+            "open_us": 135.583,
+            "prepare_us": 792.75,
+            "summary_seal_and_append_us": 10010.041,
+            "warm_zero_preview_us": 101.2667
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 7,
+        "order": [
+          "current",
+          "prior"
+        ],
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 16771.125,
+            "box_commit_and_owned_bytes_us": 101.459,
+            "build_total_us": 11836.625,
+            "category_preview_us": 110.29199999999999,
+            "cold_zero_total_us": 298.58399999999995,
+            "dashboard_collect_plus_ten_reductions_us": 9458.625,
+            "first_zero_preview_us": 160.5,
+            "ingress_and_accumulate_us": 844.75,
+            "one_field_objects_us": 1733.667,
+            "open_us": 138.08399999999997,
+            "prepare_us": 787.208,
+            "summary_seal_and_append_us": 10098.998999999998,
+            "warm_zero_preview_us": 100.175
+          },
+          "total_fields": 10
+        },
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 17078.459,
+            "box_commit_and_owned_bytes_us": 97.291,
+            "build_total_us": 11820.707999999999,
+            "category_preview_us": 114.5,
+            "cold_zero_total_us": 385.95799999999997,
+            "dashboard_collect_plus_ten_reductions_us": 9611.583,
+            "first_zero_preview_us": 231.25,
+            "ingress_and_accumulate_us": 820.458,
+            "one_field_objects_us": 1763.2920000000001,
+            "open_us": 154.708,
+            "prepare_us": 850.458,
+            "summary_seal_and_append_us": 10049.832,
+            "warm_zero_preview_us": 101.82500000000002
+          },
+          "total_fields": 10
+        }
+      },
+      {
+        "pair": 8,
+        "order": [
+          "prior",
+          "current"
+        ],
+        "prior": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 3022,
+              "allocation_volume_bytes": 2291319,
+              "peak_extra_bytes": 1356057,
+              "retained_delta_bytes": 1229937
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1954,
+              "allocation_volume_bytes": 545750,
+              "peak_extra_bytes": 238602,
+              "retained_delta_bytes": 160677
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 1013758,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 16595.75,
+            "box_commit_and_owned_bytes_us": 106.875,
+            "build_total_us": 12205.792,
+            "category_preview_us": 115.0,
+            "cold_zero_total_us": 415.25,
+            "dashboard_collect_plus_ten_reductions_us": 9448.708,
+            "first_zero_preview_us": 238.375,
+            "ingress_and_accumulate_us": 847.4990000000001,
+            "one_field_objects_us": 1719.375,
+            "open_us": 176.875,
+            "prepare_us": 821.416,
+            "summary_seal_and_append_us": 10426.042000000001,
+            "warm_zero_preview_us": 102.825
+          },
+          "total_fields": 10
+        },
+        "current": {
+          "case": "quiet",
+          "category": {
+            "eligible_periods": 84,
+            "matches": 84
+          },
+          "dashboard_sha256": "b89971d1ff116ac20943142afd9ee8cb0a3e3d4e229919a08d6a7bc4e17fd9ae",
+          "days": 7,
+          "decoded_sha256": "6752c9a161457b1cfd40af5abdf85337d28c3b46a73d7a63006fe6213cd23208",
+          "event_bytes": 30597,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "heap": {
+            "all_field_objects": {
+              "allocation_calls": 449690,
+              "allocation_volume_bytes": 37499100,
+              "peak_extra_bytes": 16726433,
+              "retained_delta_bytes": 16725760
+            },
+            "cold_zero_query": {
+              "allocation_calls": 2018,
+              "allocation_volume_bytes": 2091258,
+              "peak_extra_bytes": 1274443,
+              "retained_delta_bytes": 1148323
+            },
+            "empty_day_accumulator": {
+              "allocation_calls": 577,
+              "allocation_volume_bytes": 446976,
+              "peak_extra_bytes": 446976,
+              "retained_delta_bytes": 446976
+            },
+            "plan": {
+              "allocation_calls": 1634,
+              "allocation_volume_bytes": 449469,
+              "peak_extra_bytes": 224445,
+              "retained_delta_bytes": 145633
+            }
+          },
+          "numeric_fields": 8,
+          "summary_box_bytes": 999237,
+          "summary_definition_bytes": 13976,
+          "summary_rows": 2016,
+          "timing": {
+            "all_field_objects_us": 16710.333000000002,
+            "box_commit_and_owned_bytes_us": 99.917,
+            "build_total_us": 11694.958999999999,
+            "category_preview_us": 110.833,
+            "cold_zero_total_us": 296.209,
+            "dashboard_collect_plus_ten_reductions_us": 9449.5,
+            "first_zero_preview_us": 159.959,
+            "ingress_and_accumulate_us": 825.499,
+            "one_field_objects_us": 1729.208,
+            "open_us": 136.25,
+            "prepare_us": 786.75,
+            "summary_seal_and_append_us": 9978.873,
+            "warm_zero_preview_us": 102.2834
+          },
+          "total_fields": 10
+        }
+      }
+    ]
+  }
+]

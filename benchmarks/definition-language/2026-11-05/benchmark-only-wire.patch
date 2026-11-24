@@ -1,0 +1,81 @@
+diff --git a/Users/Shared/code/applications/pill-packer/rust/src/authoring_language/wire.rs b/tmp/pil-definition-perf/codec/src/authoring_language/wire.rs
+index a9e7220..6b0de99 100644
+--- a/Users/Shared/code/applications/pill-packer/rust/src/authoring_language/wire.rs
++++ b/tmp/pil-definition-perf/codec/src/authoring_language/wire.rs
+@@ -406,8 +406,13 @@ fn read_field(b: &[u8]) -> Result<Field, String> {
+         value_size: opt(v[7])?,
+     })
+ }
+-pub fn read(bytes_in: &[u8]) -> Result<Vec<Definition>, String> {
++pub fn read(bytes_in: &[u8]) -> Result<Vec<Definition>, String> { read_benchmark(bytes_in, true) }
++
++pub fn read_benchmark(bytes_in: &[u8], verify_digest: bool) -> Result<Vec<Definition>, String> {
+     let rx = Doc::write(&member_layout().to_pil().map_err(error)?).map_err(error)?;
++    read_prepared_benchmark(bytes_in, verify_digest, &rx)
++}
++pub fn read_prepared_benchmark(bytes_in: &[u8], verify_digest: bool, rx: &codec::api::Prescription) -> Result<Vec<Definition>,String> {
+     let pack = rx.open(bytes_in).map_err(error)?;
+     if pack.len() > 256 {
+         return Err("RX exceeds the 256-definition ordinal space".into());
+@@ -434,6 +439,11 @@ pub fn read(bytes_in: &[u8]) -> Result<Vec<Definition>, String> {
+             .collect::<Result<_, String>>()?;
+         ds.push(Definition { header, fields });
+     }
++    if !verify_digest {
++        validate_without_digest(&ds)?;
++        if ds.iter().any(|d|d.header.rx_hash.len()!=32) || pack.headers().get("rx-hash").map(Vec::len)!=Some(32) { return Err("Invalid digest width".into()); }
++        return Ok(ds);
++    }
+     let hs = hashes(&ds)?;
+     let mut hash = Sha256::new();
+     for (d, h) in ds.iter().zip(hs) {
+@@ -447,3 +457,49 @@ pub fn read(bytes_in: &[u8]) -> Result<Vec<Definition>, String> {
+     }
+     Ok(ds)
+ }
++
++// Benchmark-only copy: preserve normalization and all semantic validation, omit digest preparation.
++fn validate_without_digest(definitions: &[Definition]) -> Result<(), String> {
++    let mut canonical = definitions.to_vec();
++    normalize(&mut canonical)?;
++    let definitions = canonical.as_slice();
++    if definitions.is_empty() || definitions.len() > 256 {
++        return Err("RX requires 1–256 definitions".into());
++    }
++    let mut identities = std::collections::HashSet::new();
++    for d in definitions {
++        if d.header.pil_version != 0 {
++            return Err("Unsupported definition language version".into());
++        }
++        if d.header.rx_name.is_empty()
++            || !identities.insert((
++                &d.header.namespace,
++                &d.header.rx_name,
++                d.header.rx_major,
++                d.header.rx_minor,
++            ))
++        {
++            return Err("Definition identities must be nonempty and unique within PAC".into());
++        }
++        language::validate(&d.fields, definitions.len())?;
++    }
++    fn visit(i: usize, ds: &[Definition], active: &mut [bool], done: &mut [bool]) -> Result<(), String> {
++        if done[i] { return Ok(()); }
++        if active[i] { return Err("Recursive definition reference".into()); }
++        active[i]=true;
++        let mut refs=vec![];
++        references(&ds[i].fields,&mut refs)?;
++        for r in refs { if r>=ds.len() { return Err("Object ordinal outside PAC".into()); } visit(r,ds,active,done)?; }
++        active[i]=false;done[i]=true;Ok(())
++    }
++    let mut active=vec![false;definitions.len()];let mut done=vec![false;definitions.len()];
++    for i in 0..definitions.len(){visit(i,definitions,&mut active,&mut done)?;}
++    Ok(())
++}
++
++// Benchmark-only: prepare exactly the inputs consumed by each member SHA-256.
++// Validation and preparation run outside the timed raw-digest loop.
++pub fn prepared_hash_inputs(definitions: &[Definition]) -> Result<Vec<Vec<u8>>,String> {
++ let mut ds=definitions.to_vec();normalize(&mut ds)?;let hs=hashes(&ds)?;
++ ds.iter().map(|d|{let mut input=member_bytes(d,None,false)?;let mut refs=vec![];references(&d.fields,&mut refs)?;for r in refs{input.extend_from_slice(&hs[r]);}Ok(input)}).collect()
++}

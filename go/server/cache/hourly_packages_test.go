@@ -3,7 +3,6 @@ package cache
 import (
 	"context"
 	"os"
-	"path/filepath"
 	"testing"
 	"time"
 )
@@ -33,12 +32,15 @@ func TestHourlyDefaultAndCalendarDays(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer s.Close()
-			raw, err := os.ReadFile(filepath.Join(s.root, "registry.cfg"))
+			if _, err := os.Stat(configurationPath(s.config.Root, []string{s.config.Cache})); !os.IsNotExist(err) {
+				t.Fatal("implicit cache override", err)
+			}
+			raw, err := os.ReadFile(configurationPath(s.config.Root, nil))
 			if err != nil {
 				t.Fatal(err)
 			}
-			// Defaults are implicit in new files so an ancestor policy can
-			// override them. The resolved calendar behavior remains hourly.
+			// Only the trunk file exists by default. Resolved calendar behavior
+			// remains hourly without a generated cache override.
 			config, err := ParseConfiguration(raw)
 			if err != nil || config.Defaults.Replication.hours() != 1 || s.policy.Replication.hours() != 1 || newTimeTrie().hours != 1 {
 				t.Fatal("default is not hourly")

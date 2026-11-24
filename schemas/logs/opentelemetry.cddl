@@ -1,0 +1,252 @@
+; Single-record provider profile. Additional keys remain valid.
+
+log_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-http_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "http.request.method": tstr,
+  ? "http.request.method_original": tstr,
+  ? "http.response.status_code": uint .size 8,
+  ? "url.full": tstr,
+  ? "url.path": tstr,
+  ? "http.route": tstr,
+  ? "url.scheme": tstr,
+  ? "network.protocol.version": tstr,
+  ? "server.address": tstr,
+  ? "server.port": uint .size 8,
+  ? "client.address": tstr,
+  ? "user_agent.original": tstr,
+  ? "http.response.body.size": uint .size 8,
+  ? "http.request.body.size": uint .size 8,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-db_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "db.system.name": tstr,
+  ? "db.namespace": tstr,
+  ? "db.collection.name": tstr,
+  ? "db.operation.name": tstr,
+  ? "db.query.summary": tstr,
+  ? "db.query.text": tstr,
+  ? "db.response.status_code": tstr,
+  ? "db.response.returned_rows": uint .size 8,
+  ? "db.operation.batch.size": uint .size 8,
+  ? "server.address": tstr,
+  ? "server.port": uint .size 8,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-messaging_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "messaging.system": tstr,
+  ? "messaging.destination.name": tstr,
+  ? "messaging.operation.name": tstr,
+  ? "messaging.operation.type": tstr,
+  ? "messaging.message.id": tstr,
+  ? "messaging.consumer.group.name": tstr,
+  ? "messaging.batch.message_count": uint .size 8,
+  ? "messaging.destination.partition.id": tstr,
+  ? "server.address": tstr,
+  ? "server.port": uint .size 8,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-security_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "action": tstr,
+  ? "outcome": tstr,
+  ? "decision": tstr,
+  ? "actor": tstr,
+  ? "target": tstr,
+  ? "reason": tstr,
+  ? "method": tstr,
+  ? "policy": tstr,
+  ? "session": tstr,
+  ? "client.address": tstr,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-job_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "job": tstr,
+  ? "run": tstr,
+  ? "status": tstr,
+  ? "attempt": uint,
+  ? "reason": tstr,
+  ? "schedule": tstr,
+  ? "queue": tstr,
+  ? "worker": tstr,
+  ? "task": tstr,
+  ? "workflow": tstr,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-task_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "task": tstr,
+  ? "run": tstr,
+  ? "status": tstr,
+  ? "attempt": uint,
+  ? "reason": tstr,
+  ? "job": tstr,
+  ? "workflow": tstr,
+  ? "step": tstr,
+  ? "worker": tstr,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-workflow_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "workflow": tstr,
+  ? "run": tstr,
+  ? "status": tstr,
+  ? "attempt": uint,
+  ? "reason": tstr,
+  ? "step": tstr,
+  ? "parent": tstr,
+  ? "object": tstr / uint / bstr,
+  * tstr => any
+ },
+ * tstr => any
+}
+
+
+log-system_opentelemetry = {
+ ? "Timestamp": uint .size 8,
+ ? "SeverityNumber": uint .size 8,
+ ? "Body": any,
+ ? "EventName": tstr,
+ ? "TraceId": bstr .size 16,
+ ? "SpanId": bstr .size 8,
+ ? "TraceFlags": uint .size 8,
+ ? "SeverityText": tstr,
+ ? Attributes: {
+  ? "error.type": tstr,
+  ? "exception.message": tstr,
+  ? "exception.stacktrace": tstr,
+  ? "action": tstr,
+  ? "process.pid": uint .size 8,
+  ? "process.parent_pid": uint .size 8,
+  ? "process.executable.name": tstr,
+  ? "process.exit.code": uint .size 8,
+  ? "signal": tstr,
+  ? "host.name": tstr,
+  ? "component": tstr,
+  * tstr => any
+ },
+ * tstr => any
+}
+

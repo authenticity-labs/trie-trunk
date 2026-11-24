@@ -70,7 +70,7 @@ func (b *branchStore) nextRecord(row uint64) uint64 {
 type recordContext struct {
 	branch *branchStore
 	run    *Run
-	reader *podsReader
+	reader *packsReader
 }
 
 func (c *recordContext) segment(b *branchStore, row uint64) *Run {

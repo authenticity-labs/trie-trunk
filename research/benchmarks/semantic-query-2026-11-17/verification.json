@@ -1,0 +1,19 @@
+{
+  "native": {
+    "passed": 210,
+    "failed": 0,
+    "ignored": 3
+  },
+  "client": {
+    "passed": 26,
+    "failed": 0
+  },
+  "typescript": "passed",
+  "minimal_feature_build": "passed",
+  "deployed": [
+    "local server",
+    "web",
+    "macOS"
+  ],
+  "data_reset": false
+}

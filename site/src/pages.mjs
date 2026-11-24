@@ -10,10 +10,11 @@ import {bench} from './bench.mjs';
 import {previousSnootPreview} from './archived-snoot-preview.mjs';
 import {homepageCharts as archivedHomepageCharts} from './archived-homepage-charts.mjs';
 
-export const github = 'https://github.com/AuthenticityLabs/trie-trunk';
+export const github = 'https://github.com/authenticity-labs/trie-trunk';
 const source = path => `${github}/blob/main/${path}`;
 const arrow = icon('arrow');
-const brand = `<svg class="brand-tree" viewBox="225 70 810 930" aria-hidden="true"><image href="/assets/brand/trie-trunk-transparent.png" width="1254" height="1254"/></svg><span>trie-trunk</span>`;
+const brandIcon = `<svg class="brand-tree" viewBox="225 70 810 930" aria-hidden="true"><image href="/assets/brand/trie-trunk-transparent.png" width="1254" height="1254"/></svg>`;
+const brand = `${brandIcon}<span>trie-trunk</span>`;
 const exampleRows = `
  <div class="record-row"><span>10:42:01.008</span><span>16</span><span>pending</span></div>
  <div class="record-row highlighted"><span>10:42:01.021</span><span>17</span><span>authorized</span></div>
@@ -23,34 +24,34 @@ const stamp = text => `<div class="scene-note">${icon('check')} ${text}</div>`;
 
 export const stages = [
  {
-  name:'Seeds', file:'.seed', location:'Server / Ingress', action:'Observability Ingress', acronym:'SEED · Sequentially Encoded Event Data',
+  name:'Seeds', file:'.seeds', location:'Node / Ingress', action:'Event Ingress', acronym:'SEEDS · Spooled Epoch Event Data Storage',
   note:'*Data seeds are trie-trunk’s implementation of <a href="/PIL">PIL</a>. Each seed arrives under a negotiated Definition.',
   copy:'The seed journal supports durability until the hourly seal completes, and recent seeds stay in native memory for live tail.\n\nCollections feature supports live fanout revision subscriptions for app synchronization.',
   foot:'Rejected data seeds go to Lost Events with their original content.',
   scene:`<div class="scene-route"><span>payment / transactions</span><span>Data Seed</span></div>
    <div class="field-lines"><div><code>event_id</code><span>UUIDv7</span></div><div><code>id</code><span>Transaction UUID</span></div><div><code>revision_id</code><span>17</span></div><div class="highlighted"><code>state</code><span>authorized</span></div></div>
-   <div class="scene-bottom"><span>Append to .seed</span><span>Available in Memory</span></div>`,
+   <div class="scene-bottom"><span>Append to .seeds</span><span>Available in Memory</span></div>`,
  },
  {
-  name:'Packs', file:'.pack', location:'Server / Sealing', action:'Seal & Compress the Hour', acronym:'PACK · Packed Array Container',
+  name:'Pack', file:'.pack', location:'Node / Staging', action:'Seal & Compress the Hour', acronym:'PACK · Packed Array Container Kompression',
   copy:'Seed packs are Trie-Trunk’s implementation of PIL PACs. Once the late-arrival window closes, data seeds from the hour are packed under a shared Definition. Common values can move into the prefix; compression is configurable by branch.',
   foot:'Sealing runs separately from incoming writes.',
   scene:`<div class="scene-route"><span>10:00 — 11:00 UTC</span><span>Hourly Seed Pack</span></div><div class="packet-prefix"><span>Shared Definition</span><code>payment/transactions</code></div>${table}${stamp('The illustrated change keeps its place in the hour.')}`,
  },
  {
-  name:'Pods', file:'.pods', location:'Server / Storage', action:'Packed Data Storage', acronym:'PODS · Packed Observability Datastore',
-  copy:'Pods hold sealed seed packs on the server. Research collects complete seed packs. Object history and replay use a separate lookup for individual data seeds.',
-  foot:'All branches can reuse compressed seed packs for delivery. Enabling Collections keeps write packs uncompressed for direct replay.',
-  scene:`<div class="scene-route"><span>Pods / Server Datastore</span><span>.pods</span></div><div class="pod-stack"><div><span>09:00</span><i></i><code>Seed Pack</code></div><div class="highlighted"><span>10:00</span><i></i><code>Seed Pack</code></div><div><span>11:00</span><i></i><code>Seed Pack</code></div></div><div class="scene-bottom"><span>Time & Text → Seed Pack</span><span>Object ID → Data Seed</span></div>`,
+  name:'Packs', file:'.packs', location:'Node / Container Storage', action:'Store Pack Containers', acronym:'PACKS · Packed Array Container Kompressed Storage',
+  copy:'Packs hold sealed seed packs, typically at the origin. Queries collect the required time ranges; compression follows the branch configuration.',
+  foot:'A node can serve the Pack container store and query a browsable event datastore on the same machine.',
+  scene:`<div class="scene-route"><span>Packs / Container Store</span><span>.packs</span></div><div class="pack-stack"><div><span>09:00</span><i></i><code>Seed Pack</code></div><div class="highlighted"><span>10:00</span><i></i><code>Seed Pack</code></div><div><span>11:00</span><i></i><code>Seed Pack</code></div></div><div class="scene-bottom"><span>Time & Text → Seed Pack</span><span>Object ID → Data Seed</span></div>`,
  },
  {
-  name:'Sods', file:'.sods', location:'Client / Local Storage', action:'Sparse Replication', acronym:'SODS · Sparse Observability Datastore',
-  copy:'Sods hold decoded data seeds in the browser. Collected seed packs populate complete hours; a missing hour remains unknown.',
-  foot:'The SharedWorker coordinates access. Repeated research can reuse the same collected data seeds.',
-  scene:`<div class="scene-route"><span>Client Working Set</span><span>.sods</span></div><div class="hour-grid">${[8,9,10,11,12,13].map(h=>`<div class="${h===10?'selected-hour':h===9||h===11?'known-hour':'missing-hour'}"><span>${h}:00</span><b>${h>=9&&h<=11?'Collected':'Missing'}</b></div>`).join('')}</div>${table}<div class="scene-note">A missing interval is different from an empty interval.</div>`,
+  name:'Beds', file:'.beds', location:'Node / Event Datastore', action:'Browse Events', acronym:'BEDS · Browsable Event Datastore',
+  copy:'Beds hold browsable events on any querying node: a browser, a server, or a desktop application. Collected seed packs populate complete hours; a missing hour remains unknown.',
+  foot:'Repeated queries can reuse collected events. Beds can coexist with Packs on the same node.',
+  scene:`<div class="scene-route"><span>Browsable Event Datastore</span><span>.beds</span></div><div class="hour-grid">${[8,9,10,11,12,13].map(h=>`<div class="${h===10?'selected-hour':h===9||h===11?'known-hour':'missing-hour'}"><span>${h}:00</span><b>${h>=9&&h<=11?'Collected':'Missing'}</b></div>`).join('')}</div>${table}<div class="scene-note">A missing interval is different from an empty interval.</div>`,
  },
  {
-  name:'Stalks', file:'In Memory', location:'Client / Analytics', action:'Analytic Engine', acronym:'STALKS · Sparse Telemetry Analytic Lineage Kolumns',
+  name:'Stalks', file:'In Memory', location:'Node / Analytics', action:'Analytic Engine', acronym:'STALKS · Sparse Telemetry And Lineage Kolumnar Storage',
   copy:'Stalks use precomputed (and realtime) columnar datasets for event counts, errors, and duration statistics in the browser. Collected summaries can be reused across time views without loading every data seed.',
   foot:'Planned Lineage: definition-declared relationships connecting resources, such as payments and invoices, through identity and time.',
   scene:`<div class="scene-route"><span>5-Minute Columnar Summaries</span><span>In Memory</span></div><div class="column-demo">${[['Period','10:00','10:05','10:10','10:15'],['Count','84','107','92','116'],['Errors','2','0','1','3']].map(col=>`<div><strong>${col[0]}</strong>${col.slice(1).map(v=>`<span>${v}</span>`).join('')}</div>`).join('')}</div><div class="scene-note">Illustrative values · summaries travel independently of event detail.</div>`,
@@ -60,8 +61,8 @@ export const stages = [
 const glyphs = [
  `<span class="diagram-glyph seeds-glyph">${[0,1,2,3].map(i=>`<i><b>${i===1?'17':'·'}</b><span></span></i>`).join('')}</span>`,
  `<span class="diagram-glyph pack-glyph"><b>Compress</b><i></i><i></i><i></i></span>`,
- `<span class="diagram-glyph pods-glyph"><i>09</i><i>10</i><i>11</i></span>`,
- `<span class="diagram-glyph sods-glyph">${Array.from({length:12},(_,i)=>`<i class="${[0,3,5,7,8].includes(i)?'gap':''}"></i>`).join('')}</span>`,
+ `<span class="diagram-glyph packs-glyph"><i>09</i><i>10</i><i>11</i></span>`,
+ `<span class="diagram-glyph beds-glyph">${Array.from({length:12},(_,i)=>`<i class="${[0,3,5,7,8].includes(i)?'gap':''}"></i>`).join('')}</span>`,
  `<span class="diagram-glyph stalks-glyph"><i></i><i></i><i></i><i></i></span>`
 ];
 const lifecycle = `
@@ -97,7 +98,7 @@ const performance = `
  <div class="measure-layout"><div class="measurement-total"><p class="measurement-comparison"><strong>Trunk Datastore vs. JSONL</strong></p><p>${mb(storage.total)} MB vs ${mb(storage.expanded)} MB</p><strong>${(100*(1-storage.total/storage.expanded)).toFixed(1)}<span>% Smaller</span></strong><p>Including Indexes, Summaries & Journals</p><a class="text-link" href="/measurements.txt">Read the Benchmark ${arrow}</a></div>
  <div class="storage-detail"><div class="storage-bar" role="img" aria-label="Storage breakdown: ${storage.components.map(c=>`${c.name} ${mb(c.bytes)} MB`).join(', ')}">${storage.components.map(c=>`<span class="bar-${c.key}" style="flex:${c.bytes}"></span>`).join('')}</div>
  <dl class="storage-list">${storage.components.map(c=>`<div class="bar-${c.key}"><dt>${c.name}</dt><dd>${mb(c.bytes)} MB</dd></div>`).join('')}</dl></div></div>
- <div class="measurement-context"><p><strong>${kb(storage.dailyMedian)} KB</strong> median daily summary transfer for analytics across the fixture’s resources.</p><p><strong>${(storage.total/storage.eventCount).toFixed(1)} bytes/event</strong> for the full indexed datastore, including journals and metadata.</p><p><strong>${mb(storage.seedPacks)} MB</strong> of seed packs in Pods, retrievable by hour for event detail. <a href="/seeds">See How Seeds Are Packed ↗</a></p></div>
+ <div class="measurement-context"><p><strong>${kb(storage.dailyMedian)} KB</strong> median daily summary transfer for analytics across the fixture’s resources.</p><p><strong>${(storage.total/storage.eventCount).toFixed(1)} bytes/event</strong> for the full indexed datastore, including journals and metadata.</p><p><strong>${mb(storage.seedPacks)} MB</strong> of seed packs in Packs, retrievable by hour for event detail. <a href="/seeds">See How Seeds Are Packed ↗</a></p></div>
  <p class="section-note">These are development measurements, not production guarantees. The linked report includes allocation, coverage, and format tradeoffs.</p>
 </div></section>`;
 
@@ -167,7 +168,7 @@ defer logger.Close()
 return logger.WriteFrames(ctx, frames...)</code></pre></div><p class="section-note">Import <code>trie-trunk/go/logger/pil</code>. Use <code>WriteValues</code> to encode positional values directly into the accepted layout.</p></section>
 <section class="wrap questions"><div class="section-heading"><h2>From Application to Journal</h2><p>One Definition binds the producer and receiver.<br>Partial changes keep their original meaning.</p></div>
 <div class="question-row"><div>${icon('code')}<h3>Register</h3></div><p>Exchange Definition identity and digest. Send missing maps, validate compatible server layouts, and prepare the encoder before delivery.</p><code>Definition → Accepted Layout</code></div>
-<div class="question-row"><div>${icon('clock')}<h3>Batch & Deliver</h3></div><p>Send immediately or configure a millisecond batching window for concurrent producers. HTTP gzip can compress the entire batch; revisions are preserved without coalescing.</p><code>Data Seeds → HTTP → .seed</code></div>
+<div class="question-row"><div>${icon('clock')}<h3>Batch & Deliver</h3></div><p>Send immediately or configure a millisecond batching window for concurrent producers. HTTP gzip can compress the entire batch; revisions are preserved without coalescing.</p><code>Data Seeds → HTTP → .seeds</code></div>
 <div class="question-row"><div>${icon('check')}<h3>Handle Failures</h3></div><p>Observe delivery errors and retain event identities for retries. A successful call requires the server’s staging acknowledgement; queueing alone is not success.</p><code>event_id → Delivery Identity</code></div></section>
 <section class="wrap product-notes"><h2>Requests & Object Changes</h2><div><p>The request-scoped logger supplies a fluent builder, HTTP middleware, durations, and checkpoints through <code>client.NewPIL</code>. A request completion does not imply a committed object mutation.</p><p>Use the generic PIL logger for explicit object changes. Define object identity and revision roles when collection replay is enabled. Omitted fields remain absent; null remains an explicit value.</p><p>Definitions can allow <code>@fields</code> for extensions. Compatible newer Definitions can promote these values into typed fields without renaming them.</p><a class="text-link" href="${source('README.md#logger')}">Request Logger Reference ${arrow}</a></div></section>`;
 
@@ -203,6 +204,6 @@ export function render(name,css,js) {
  <link rel="canonical" href="${canonical}"><link rel="icon" href="/assets/brand/trie-trunk-transparent.png" type="image/png">
  <link rel="stylesheet" href="/assets/${css}"><script src="/assets/${js}" type="module"></script>
  </head><body data-page="${name}"${p.landing?' class="landing-site"':''}><a class="skip-link" href="#main">Skip to Content</a>
- <header class="site-header wrap"><a class="brand header-brand" href="/" aria-label="Trie-Trunk Home">${brand}</a><nav aria-label="Main Navigation">${navigation.map(n=>`<a href="${p.landing?`#${n}`:`/#${n}`}" data-page-link="${n}" ${n===name?'aria-current="page"':(n==='seeds' && (name.startsWith('seeds/') || name==='PIL'))?'aria-current="location"':''}>${n[0].toUpperCase()+n.slice(1)}</a>`).join('')}<a href="${github}">GitHub ${arrow}</a></nav><div class="theme-picker" role="group" aria-label="Color Theme">${['light','dark','auto'].map(mode=>`<button type="button" data-theme-choice="${mode}" aria-pressed="false" title="${mode==='auto'?'Follow System Theme':mode==='dark'?'Dark Mode':'Light Mode'}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')}</div></header>
+ <header class="site-header wrap"><a class="brand header-brand" href="/" aria-label="Trie-Trunk Home">${brand}</a>${name==='PIL'?`<nav aria-label="PIL Sections">${[['layout','Pills'],['libraries','Code'],['definition','Definitions'],['bench','Bench']].map(([id,label])=>`<a href="#${id}" data-pil-section="${id}">${label}</a>`).join('')}</nav>`:`<nav aria-label="Main Navigation">${navigation.map(n=>`<a href="${p.landing?`#${n}`:`/#${n}`}" data-page-link="${n}" ${n===name?'aria-current="page"':(n==='seeds' && (name.startsWith('seeds/') || name==='PIL'))?'aria-current="location"':''}>${n[0].toUpperCase()+n.slice(1)}</a>`).join('')}<a href="${github}">GitHub ${arrow}</a></nav>`}<div class="theme-picker" role="group" aria-label="Color Theme">${['light','dark','auto'].map(mode=>`<button type="button" data-theme-choice="${mode}" aria-pressed="false" title="${mode==='auto'?'Follow System Theme':mode==='dark'?'Dark Mode':'Light Mode'}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')}</div></header>
  <main id="main">${p.body}</main>${p.landing?'':`<footer class="wrap site-footer"><div><a href="${source('README.md#licensing')}">Licensing</a><a href="${source('README.md#architecture')}">Architecture</a><a href="${github}">GitHub ${arrow}</a></div><p>Authenticity Labs · Version Zero</p></footer>`}</body></html>`;
 }

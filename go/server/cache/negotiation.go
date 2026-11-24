@@ -1,16 +1,18 @@
 package cache
 
+// RX documents are PIL payloads. Placement belongs to request metadata and is
+// resolved by the same Rust registration transaction used by other adapters.
 import (
-	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"mime"
 	"net/http"
-	"os"
-	"path/filepath"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
+	"trie-trunk/go/internal/node"
 )
 
 func definitionHeaders(h http.Header, l *Layout) {
@@ -21,156 +23,136 @@ func definitionHeaders(h http.Header, l *Layout) {
 	h.Set("Definition-Revision", fmt.Sprint(l.Definition.Version))
 }
 func (p *Endpoint) registration(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "HEAD", "GET", "PUT", "POST":
+	if r.Method != http.MethodPut && r.Method != http.MethodPost {
+		w.Header().Set("Allow", "PUT, POST")
+		http.Error(w, "PUT or POST required; retrieve RX through the separate Definition resource", 405)
+		return
+	}
+	if r.URL.RawQuery != "" {
+		http.Error(w, "registration placement belongs in headers", 400)
+		return
+	}
+	kind, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if err != nil || kind != "application/pil" {
+		http.Error(w, "RX body requires Content-Type: application/pil", 415)
+		return
+	}
+	if encoding := r.Header.Get("Content-Encoding"); encoding != "" && encoding != "identity" {
+		http.Error(w, "raw RX PIL required", 415)
+		return
+	}
+	target := node.RegistrationTarget{Cache: p.config.Cache}
+	for _, field := range []struct {
+		name  string
+		value *string
+	}{
+		{"Draft-Action", &target.Action}, {"Draft-Generation", &target.Generation}, {"Resource-Service", &target.Service}, {"Resource-Name", &target.Resource}, {"Resource-Type", &target.Type}, {"Resource-Split", &target.Split},
+	} {
+		values := r.Header.Values(field.name)
+		if len(values) > 1 {
+			http.Error(w, "one "+field.name+" required", 400)
+			return
+		}
+		if len(values) == 1 {
+			if !name(values[0]) {
+				http.Error(w, "invalid "+field.name, 400)
+				return
+			}
+			*field.value = values[0]
+		}
+	}
+	if target.Action != "" && target.Action != "save" && target.Action != "promote" && target.Action != "inspect" && target.Action != "read" {
+		http.Error(w, "Unknown Definition action", 400)
+		return
+	}
+	target.Discard = r.Header.Get("Draft-Discard") == "true"
+	if values := r.Header.Values("Trunk-Branch"); len(values) > 0 {
+		if len(values) != 1 {
+			http.Error(w, "one Trunk-Branch required", 400)
+			return
+		}
+		id, e := strconv.ParseUint(values[0], 10, 16)
+		if e != nil || id == 0 {
+			http.Error(w, "invalid Trunk-Branch", 400)
+			return
+		}
+		branch := uint16(id)
+		target.Branch = &branch
+	} else if target.Service == "" || target.Resource == "" || target.Type == "" {
+		http.Error(w, "Resource-Service, Resource-Name and Resource-Type are required", 400)
+		return
+	}
+	if p.node == nil {
+		http.Error(w, "Trunk unavailable", 503)
+		return
+	}
+	select {
+	case p.registrationSlots <- struct{}{}:
+		defer func() { <-p.registrationSlots }()
 	default:
-		w.Header().Set("Allow", "HEAD, GET, PUT, POST")
-		http.Error(w, "method not allowed", 405)
+		http.Error(w, "registration busy", 503)
 		return
 	}
-	if r.Header.Get("PIL-Version") != "2" {
-		http.Error(w, "PIL-Version: 2 required", 426)
+	controller := http.NewResponseController(w)
+	_ = controller.SetReadDeadline(time.Now().Add(5 * time.Minute))
+	defer controller.SetReadDeadline(time.Time{})
+	const maximum = 16 << 20
+	if r.ContentLength > maximum {
+		http.Error(w, "RX body exceeds registration limit", 413)
 		return
 	}
-	wanted, e := hex.DecodeString(r.Header.Get("Definition-Version"))
-	if e != nil || len(wanted) != 32 {
-		http.Error(w, "definition digest required", 400)
-		return
-	}
-	digest := hex.EncodeToString(wanted)
-	var proposed *Layout
-	if r.Method == "PUT" {
-		select {
-		case p.registrationSlots <- struct{}{}:
-			defer func() { <-p.registrationSlots }()
-		default:
-			http.Error(w, "registration busy", 503)
-			return
-		}
-		controller := http.NewResponseController(w)
-		_ = controller.SetReadDeadline(time.Now().Add(5 * time.Minute))
-		defer controller.SetReadDeadline(time.Time{})
-		kind, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
-		if kind != "application/pil" {
-			http.Error(w, "definition map requires application/pil", 415)
-			return
-		}
-		raw, e := io.ReadAll(http.MaxBytesReader(w, r.Body, MaxFrame))
+	buffer := p.readMemory.buffer()
+	defer buffer.close()
+	size := 0
+	for {
+		space, e := buffer.resizeLimit(min(maximum+1, size+64*1024), maximum+1)
 		if e != nil {
-			http.Error(w, "definition too large or unreadable", 413)
+			http.Error(w, e.Error(), 503)
 			return
 		}
-		proposed, e = ParseDefinition(raw)
+		n, e := r.Body.Read(space[size:])
+		size += n
+		if size > maximum {
+			http.Error(w, "RX body exceeds registration limit", 413)
+			return
+		}
+		if e == io.EOF {
+			break
+		}
 		if e != nil {
-			http.Error(w, e.Error(), 400)
-			return
-		}
-		if identity := r.Header.Get("Definition-Identity"); identity != "" && identity != proposed.Definition.Identity {
-			http.Error(w, "definition identity mismatch", 400)
-			return
-		}
-		if version := r.Header.Get("Definition-Revision"); version != "" && version != fmt.Sprint(proposed.Definition.Version) {
-			http.Error(w, "definition revision mismatch", 400)
-			return
-		}
-		if fmt.Sprintf("%x", proposed.Digest) != digest {
-			http.Error(w, "definition digest mismatch", 400)
+			http.Error(w, "unreadable RX body", 400)
 			return
 		}
 	}
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	if p.closed {
-		http.Error(w, "endpoint closed", 503)
-		return
-	}
-	api, err := p.registrationAPI(r, proposed)
+	registered, err := p.node.Registration(target, buffer.bytes[:size])
 	if err != nil {
-		http.Error(w, err.Error(), 400)
+		status := http.StatusServiceUnavailable
+		var failure *node.Error
+		if errors.As(err, &failure) {
+			status = failure.Status
+		}
+		http.Error(w, err.Error(), status)
 		return
 	}
-	if api == nil {
-		if proposed == nil {
-			w.WriteHeader(404)
-			return
-		}
-		if proposed.Adaptive() && !hasAdaptive(r) {
-			http.Error(w, "adaptive-integers feature required", 426)
-			return
-		}
-		if e = p.install(proposed); e != nil {
-			http.Error(w, e.Error(), 409)
-			return
-		}
-		if e = p.persistPreferences(); e != nil {
-			http.Error(w, e.Error(), 500)
-			return
-		}
-		api = p.preferred[collectionKey(proposed)]
-	}
-	preferred := api.Store.layout
-	definitionHeaders(w.Header(), preferred)
-	if preferred.Adaptive() && !hasAdaptive(r) {
-		http.Error(w, "adaptive-integers feature required", 426)
-		return
-	}
-	if identity := r.Header.Get("Definition-Identity"); identity != "" && identity != preferred.Definition.Identity {
-		http.Error(w, "different collection", 409)
-		return
-	}
-	if revision := r.Header.Get("Definition-Revision"); revision != "" {
-		n, e := strconv.ParseUint(revision, 10, 64)
-		if e != nil || n>>20 != preferred.Definition.Version>>20 || n > preferred.Definition.Version {
-			http.Error(w, "incompatible definition revision", 409)
-			return
-		}
-	}
-	if digest == fmt.Sprintf("%x", preferred.Digest) {
-		if r.Method == "GET" {
+	if registered.Generation != "" {
+		w.Header().Set("Draft-Generation", registered.Generation)
+		w.Header().Set("Cache-Control", "no-store")
+		if target.Action == "read" {
 			w.Header().Set("Content-Type", "application/pil")
-			_, _ = w.Write(preferred.Bytes)
+			_, _ = w.Write(registered.Bytes)
 			return
 		}
-		w.WriteHeader(204)
+		if len(registered.Model) > 0 {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write(registered.Model)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	if r.Method == "POST" {
-		http.Error(w, "acknowledgement must identify preferred definition", 409)
-		return
-	}
-	path := filepath.Join(api.Store.collection, "producer-"+digest+".rx")
-	if proposed == nil {
-		raw, e := os.ReadFile(path)
-		if os.IsNotExist(e) {
-			w.WriteHeader(404)
-			return
-		}
-		if e != nil {
-			http.Error(w, e.Error(), 500)
-			return
-		}
-		proposed, e = ParseDefinition(raw)
-		if e != nil || fmt.Sprintf("%x", proposed.Digest) != digest {
-			http.Error(w, "invalid cached producer map", 500)
-			return
-		}
-	}
-	if _, e = CompileProjection(proposed, preferred); e != nil {
-		http.Error(w, e.Error(), 409)
-		return
-	}
-	if r.Method == "PUT" {
-		if e = ensureMap(path, proposed.Bytes); e != nil {
-			http.Error(w, e.Error(), 500)
-			return
-		}
-	}
-	if r.Method == "HEAD" {
-		w.WriteHeader(200)
-		return
-	}
-	w.Header().Set("Content-Type", "application/pil")
-	_, _ = w.Write(preferred.Bytes)
+	w.Header().Set("Trunk-Branch", strconv.Itoa(int(registered.Branch)))
+	w.Header().Set("Location", "/"+url.PathEscape(p.config.Cache)+"/definitions?file="+url.QueryEscape(registered.File))
+	w.WriteHeader(http.StatusNoContent)
 }
 func hasAdaptive(r *http.Request) bool {
 	return strings.Contains(","+r.Header.Get("PIL-Features")+",", ",adaptive-integers,")

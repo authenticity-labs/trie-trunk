@@ -1,0 +1,64 @@
+{
+  "kind": "integration-verification",
+  "date": "2026-11-16",
+  "origin": "http://127.0.0.1:3020",
+  "browser": "Headless Chrome 157",
+  "route": "/demo/trie-trunk/queries/query/seeds",
+  "request_content_type": "application/pil",
+  "acknowledgement_status": 204,
+  "checks": {
+    "browser_zero_result_search": true,
+    "scoped_search_telemetry": true,
+    "live_query_before_seal": true,
+    "clear_browser_cache_and_reload": true,
+    "forced_sigkill_automatic_restart": true,
+    "live_pack_byte_identical_after_restart": true,
+    "browser_query_after_restart_returned_two_acknowledged_events": true,
+    "browser_console_errors": 0
+  },
+  "recovered_live_pack": {
+    "bytes": 628,
+    "sha256": "7e59c6d7556b97103f17529479b854a67a8b27e01ca0794578b44e8abd19cf04"
+  },
+  "tests": {
+    "rust_ingress_reader_summary": 17,
+    "client_time_stream_summary": 28,
+    "http_recovery_suites": [
+      "TestRegisteredHTTPIngressRecoveryAndPublication",
+      "TestRegisteredCommitCheckpointRecoversEveryPublicationBoundary",
+      "TestQueryEventRegistrationIsIdempotent"
+    ],
+    "socket_tests": [
+      "TestSocketDoesNotReplaceFilesOrListeners",
+      "TestSocketRecoversDeadListener"
+    ],
+    "typecheck": "passed",
+    "vite_build": "passed",
+    "http_recovery_race_detector": "passed"
+  },
+  "publication_fault_points": [
+    "checkpoint persisted",
+    "partial Pack write",
+    "complete Pack write",
+    "index write",
+    "Time published"
+  ],
+  "single_observation_not_benchmark": {
+    "query": "events | where duration > 30000 or duration < 0",
+    "event_id": "ce867b3a75bef3910571",
+    "rows": 0,
+    "duration_us": 112899.99985694884,
+    "worker_us": 73600.00014305115,
+    "before_collection_us": 53500,
+    "collection_us": 19800.000190734863,
+    "after_collection_us": 299.9999523162842,
+    "presentation_us": 31000
+  },
+  "limits": [
+    "No performance parity claim; one browser observation is not a benchmark.",
+    "iOS Safari was not exercised.",
+    "Hourly publication tested with controlled clock and fault injection; browser data remained in its live hour.",
+    "HTTP retries are not idempotent.",
+    "HTTP ingestion retains full fields; state factoring and summary accumulation are not connected by this change."
+  ]
+}

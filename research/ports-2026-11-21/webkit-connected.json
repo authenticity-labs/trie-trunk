@@ -1,0 +1,121 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"nativeCandidate\":true,\"uuidv7First\":true,\"wideIntegers\":true,\"timestampRequired\":true,\"observedRanges\":true,\"floatPrecision\":true,\"utf8Sizing\":true,\"potentialEnums\":true,\"workflow\":true,\"measurementDomain\":true,\"backPreservesChoices\":true,\"replacementInvalidatesChoices\":true,\"manualMappingExplicit\":true},\"candidate\":\"Quick Branch Setup\\n1. Choose Source\\n2. Review Format\\n3. Describe Data\\n4. Resolve Time\\n5. Review Fields\\n6. Review Setup\\nReview Fields\\n\\nReview the proposed field types. Text capacity uses the largest sampled UTF-8 byte length; float narrowing preserves every sampled value. Potential enums are suggestions, not enforced choices.\\n\\nAnnotations beginning with @ describe field semantics; # selects summary analytics. Changing a field invalidates its review. Unsupported annotations or incompatible types are rejected before import.\\n\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\ntstr(20)\\n\\nObserved: 20 \u2192 20 bytes \u00b7 Present: 1 \u00b7 Null: 0\\n\\nEnum Values\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nuint(16)\\n\\nObserved: 340282366920938463463374607431768211455 \u2192 340282366920938463463374607431768211455 \u00b7 Present: 1 \u00b7 Null: 0\\n\\nEnum Values\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nuint(3)\\n\\nObserved: 65536 \u2192 65536 \u00b7 Present: 1 \u00b7 Null: 0\\n\\nEnum Values\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\n\\nEvent time and UUIDv7 identity are supplied by your timestamp mapping.\\n\\nObserved: 36 \u2192 36 bytes \u00b7 Present: 1 \u00b7 Null: 0\\n\\nTypes and widths describe the sample only; validate every record during import.\\n\\n I Have Reviewed The Sample\\nBack\\nContinue\",\"ranges\":\"Quick Branch Setup\\n1. Choose Source\\n2. Review Format\\n3. Describe Data\\n4. Resolve Time\\n5. Review Fields\\n6. Review Setup\\nReview Fields\\n\\nReview the proposed field types. Text capacity uses the largest sampled UTF-8 byte length; float narrowing preserves every sampled value. Potential enums are suggestions, not enforced choices.\\n\\nAnnotations beginning with @ describe field semantics; # selects summary analytics. Changing a field invalidates its review. Unsupported annotations or incompatible types are rejected before import.\\n\\nSource Field\\nField Name\\n Include Field\\n\\nEvent time and UUIDv7 identity are supplied by your timestamp mapping.\\n\\nObserved: 1763500000 \u2192 1763500003 \u00b7 Present: 4 \u00b7 Null: 0\\n\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\ntstr(2)\\n\\nObserved: 2 \u2192 2 bytes \u00b7 Present: 4 \u00b7 Null: 0\\n\\n2 Observed Values\\nEnum Values\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nfloat(4)\\n\\nObserved: 1.5 \u2192 2.25 \u00b7 Present: 4 \u00b7 Null: 0\\n\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\nSource Field\\nField Name\\n Include Field\\nType\\nByte Size\\nuint(2)\\n\\nObserved: 200 \u2192 404 \u00b7 Present: 4 \u00b7 Null: 0\\n\\n2 Observed Values\\nEnum Values\\nValue Bounds\\n Summary Analytics\\nAnnotations\\nAdd Annotation\\n\\nTypes and widths describe the sample only; validate every record during import.\\n\\nMap an event timestamp before import; import time is not a substitute.\\n\\n I Have Reviewed The Sample\\nBack\\nContinue\"}",
+  "nativeStderr": "2026/11/21 13:38:56 Snoot listening on http://127.0.0.1:54303 using HTTP\n",
+  "requests": [
+    {
+      "path": "/caches",
+      "target": "/caches",
+      "startedAt": 1795286338034.7532,
+      "headersMs": 68.32045799819753,
+      "upstreamMs": 68.37524997536093,
+      "injectedDelaySeconds": 0,
+      "bytes": 118,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=taxonomy",
+      "startedAt": 1795286338113.051,
+      "headersMs": 144.58858402213082,
+      "upstreamMs": 149.64062499348074,
+      "injectedDelaySeconds": 0,
+      "bytes": 27164,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=indexed.rx",
+      "startedAt": 1795286338282.3901,
+      "headersMs": 177.2852080175653,
+      "upstreamMs": 177.369249984622,
+      "injectedDelaySeconds": 0,
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=summary.rx",
+      "startedAt": 1795286338282.266,
+      "headersMs": 183.06962499627843,
+      "upstreamMs": 183.1280830083415,
+      "injectedDelaySeconds": 0,
+      "bytes": 1068,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=log-query.rx",
+      "startedAt": 1795286338281.595,
+      "headersMs": 184.02062501991168,
+      "upstreamMs": 184.0381670044735,
+      "injectedDelaySeconds": 0,
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=inventory",
+      "startedAt": 1795286338484.4202,
+      "headersMs": 84.56833299715072,
+      "upstreamMs": 84.65304202400148,
+      "injectedDelaySeconds": 0,
+      "bytes": 4168,
+      "status": 200
+    },
+    {
+      "path": "/demo/trunk-client/queries/leaves",
+      "target": "/demo/trunk-client/queries/leaves",
+      "startedAt": 1795286338584.628,
+      "headersMs": 79.37254197895527,
+      "upstreamMs": 79.41083400510252,
+      "injectedDelaySeconds": 0,
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "target": "/demo/lab/indexed/leaves",
+      "startedAt": 1795286338584.511,
+      "headersMs": 88.06649997131899,
+      "upstreamMs": 88.1264170166105,
+      "injectedDelaySeconds": 0,
+      "bytes": 714,
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "nativePerformance": false,
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      10.421875,
+      7.08837890625,
+      5.09033203125
+    ],
+    "runtime": "d6334bfd34bd62b94ca22414a6980d51651bd30427a96a75b516661e3200a6b5",
+    "web": "1618c95cdf99015b82cacbe17694742ff612997ec0117c80a38107aef11e056c",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795286336764.7559,
+    "processMs": 2939.9548749788664,
+    "loadAfter": [
+      9.9072265625,
+      7.03662109375,
+      5.08349609375
+    ]
+  }
+}

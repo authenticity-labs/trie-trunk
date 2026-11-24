@@ -3,8 +3,10 @@ package cache
 import (
 	"context"
 	"fmt"
+	"hash/crc32"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
@@ -35,101 +37,318 @@ func (s *Store) Run(ctx context.Context, interval time.Duration) error {
 func (s *Store) swapPath(b *branchStore) string {
 	// Independent of retention generations: the unfinalized tail must survive
 	// replacement of the finalized prefix.
-	return filepath.Join(s.dir, b.branch.Prefix()+".seed")
+	return filepath.Join(s.dir, b.branch.Prefix()+".seeds")
+}
+
+// The first framed record identifies the ingress hour. The rest are immutable PILs.
+func stagingHour(f *os.File) (int64, error) {
+	var raw [16]byte
+	if _, err := f.ReadAt(raw[:], headerSize); err != nil {
+		return 0, err
+	}
+	if order.Uint32(raw[:4]) != 8 || crc32.Checksum(raw[8:], checksum) != order.Uint32(raw[4:8]) {
+		return 0, fmt.Errorf("invalid ingress hour header")
+	}
+	hour := int64(order.Uint64(raw[8:]))
+	if hour < 0 || hour != utcHour(hour) {
+		return 0, fmt.Errorf("invalid ingress hour")
+	}
+	return hour, nil
+}
+
+func (s *Store) createStaging(path string, hour int64) (*os.File, error) {
+	// No event can have been acknowledged before the initial header/hour sync.
+	if info, e := os.Stat(path); e == nil && info.Size() < headerSize+16 {
+		size := int64(0)
+		if info.Size() >= headerSize {
+			size = headerSize
+		}
+		if e = os.Truncate(path, size); e != nil {
+			return nil, e
+		}
+	}
+	f, err := openFile(path, "PILSEED0", s.layout.Digest, [16]byte{}, 0)
+	if err != nil {
+		return nil, err
+	}
+	fail := func(err error) (*os.File, error) { f.Close(); return nil, err }
+	stat, err := f.Stat()
+	if err != nil {
+		return fail(err)
+	}
+	if stat.Size() == headerSize {
+		if err = s.sealProbe("seed-file-header"); err != nil {
+			return fail(err)
+		}
+		var raw [8]byte
+		order.PutUint64(raw[:], uint64(hour))
+		if err = appendRecord(f, raw[:]); err != nil {
+			return fail(err)
+		}
+		if err = s.sealProbe("seed-hour-written"); err != nil {
+			return fail(err)
+		}
+		if err = f.Sync(); err != nil {
+			return fail(err)
+		}
+		if err = s.sealProbe("seed-file-durable"); err != nil {
+			return fail(err)
+		}
+		if err = syncDir(s.dir); err != nil {
+			return fail(err)
+		}
+	}
+	return f, nil
+}
+
+func (s *Store) packPath(b *branchStore, hour int64) string {
+	// Normally only the previous hour exists. Qualified names retain a backlog
+	// across downtime/backfill without overwriting another hour's recovery file.
+	primary := filepath.Join(s.dir, b.branch.Prefix()+".pack")
+	if _, err := os.Stat(primary); os.IsNotExist(err) {
+		return primary
+	}
+	return filepath.Join(s.dir, fmt.Sprintf("%s.%d.pack", b.branch.Prefix(), hour))
+}
+
+func (s *Store) openStaging(b *branchStore) error {
+	b.stagingPacks = map[int64]*os.File{}
+	b.ingressDirty = map[*os.File]bool{}
+	paths, err := filepath.Glob(filepath.Join(s.dir, b.branch.Prefix()+".*pack"))
+	if err != nil {
+		return err
+	}
+	for _, path := range paths {
+		if filepath.Ext(path) != ".pack" {
+			continue
+		}
+		if info, e := os.Stat(path); e != nil {
+			return e
+		} else if info.Size() < headerSize+16 {
+			if e = os.Remove(path); e != nil {
+				return e
+			}
+			if e = syncDir(s.dir); e != nil {
+				return e
+			}
+			continue
+		}
+		f, err := openFile(path, "PILSEED0", s.layout.Digest, [16]byte{}, 0)
+		if err != nil {
+			return err
+		}
+		hour, err := stagingHour(f)
+		if err != nil {
+			f.Close()
+			return err
+		}
+		if b.stagingPacks[hour] != nil {
+			f.Close()
+			return fmt.Errorf("duplicate ingress hour")
+		}
+		b.stagingPacks[hour] = f
+	}
+	b.swap, err = s.createStaging(s.swapPath(b), utcHour(s.config.Now().UnixMilli()))
+	if err != nil {
+		return err
+	}
+	b.seedHour, err = stagingHour(b.swap)
+	if err != nil {
+		return err
+	}
+	return s.rotateSeed(b)
+}
+
+func (s *Store) rotateSeed(b *branchStore) error {
+	hour := utcHour(s.config.Now().UnixMilli())
+	if hour <= b.seedHour {
+		return nil
+	}
+	if b.stagingPacks[b.seedHour] != nil {
+		return fmt.Errorf("duplicate rotating ingress hour")
+	}
+	if err := b.swap.Sync(); err != nil {
+		return err
+	}
+	if err := s.sealProbe("seed-synced"); err != nil {
+		return err
+	}
+	delete(b.ingressDirty, b.swap)
+	path := s.packPath(b, b.seedHour)
+	if err := os.Rename(s.swapPath(b), path); err != nil {
+		return err
+	}
+	if err := s.sealProbe("seed-renamed"); err != nil {
+		return err
+	}
+	if err := syncDir(s.dir); err != nil {
+		return err
+	}
+	// Reopen under its new name so deletion always targets the rotated file.
+	if err := b.swap.Close(); err != nil {
+		return err
+	}
+	f, err := os.OpenFile(path, os.O_RDWR, 0600)
+	if err != nil {
+		return err
+	}
+	b.stagingPacks[b.seedHour] = f
+	b.swap = nil
+	if err := s.sealProbe("rotation-durable"); err != nil {
+		return err
+	}
+	b.swap, err = s.createStaging(s.swapPath(b), hour)
+	if err != nil {
+		return err
+	}
+	b.seedHour = hour
+	if b.finalizedBefore > 0 {
+		var raw [8]byte
+		order.PutUint64(raw[:], uint64(b.finalizedBefore))
+		if err := appendRecord(b.swap, raw[:]); err != nil {
+			return err
+		}
+		if err := b.swap.Sync(); err != nil {
+			return err
+		}
+	}
+	return s.sealProbe("fresh-seed")
+}
+
+func (s *Store) ingressFile(b *branchStore, hour int64) (*os.File, error) {
+	if err := s.rotateSeed(b); err != nil {
+		return nil, err
+	}
+	if hour == b.seedHour {
+		return b.swap, nil
+	}
+	if f := b.stagingPacks[hour]; f != nil {
+		return f, nil
+	}
+	f, err := s.createStaging(s.packPath(b, hour), hour)
+	if err != nil {
+		return nil, err
+	}
+	b.stagingPacks[hour] = f
+	return f, nil
+}
+
+func (b *branchStore) syncIngress() error {
+	for f := range b.ingressDirty {
+		if err := f.Sync(); err != nil {
+			return err
+		}
+		delete(b.ingressDirty, f)
+	}
+	return nil
 }
 
 func (s *Store) openSwap(b *branchStore) error {
-	var e error
-	b.swap, e = openFile(s.swapPath(b), "PILSEED0", s.layout.Digest, [16]byte{}, 0)
-	if e != nil {
-		return e
+	files := []*os.File{b.swap}
+	hours := make([]int64, 0, len(b.stagingPacks))
+	for hour := range b.stagingPacks {
+		hours = append(hours, hour)
 	}
-	first := true
-	// Old files remain readable. New appends may never precede their greatest
-	// committed timestamp, even after a crash between commit and swap cleanup.
-	for _, run := range b.runs {
-		if run.MaxMS > b.finalizedBefore {
-			b.finalizedBefore = run.MaxMS
-		}
+	sort.Slice(hours, func(i, j int) bool { return hours[i] < hours[j] })
+	for _, hour := range hours {
+		files = append(files, b.stagingPacks[hour])
 	}
-	e = visitRecords(b.swap, MaxFrame, s.memory, func(raw []byte, input *nativeBuffer) error {
-		if first {
-			first = false
-			if len(raw) != 8 {
-				return fmt.Errorf("invalid swap watermark")
+	for _, f := range files {
+		hour, err := stagingHour(f)
+		if err != nil {
+			return err
+		}
+		first := true
+		err = visitRecords(f, MaxFrame, s.memory, func(raw []byte, input *nativeBuffer) error {
+			if first {
+				first = false
+				return nil
 			}
-			cutoff := int64(order.Uint64(raw))
-			if cutoff < 0 {
-				return fmt.Errorf("invalid swap cutoff")
+			if len(raw) == 8 {
+				cutoff := int64(order.Uint64(raw))
+				if cutoff < 0 || cutoff != utcHour(cutoff) {
+					return fmt.Errorf("invalid ingress finalization watermark")
+				}
+				b.finalizedBefore = max(b.finalizedBefore, cutoff)
+				return nil
 			}
-			if cutoff > b.finalizedBefore {
-				b.finalizedBefore = cutoff
+			var frame Frame
+			if err := s.layout.Scan(raw, &frame); err != nil {
+				return err
 			}
-			return nil
-		}
-		var f Frame
-		if e := s.layout.Scan(raw, &f); e != nil {
-			return e
-		}
-		id, e := eventID(f.Values[s.layout.Event])
-		if e != nil {
-			return e
-		}
-		if eventTime(id[:]) < b.ingressBoundary() {
-			return nil
-		}
-		if prior := b.live.get(id[:], true, s.config.Now()); prior != nil {
-			if !s.layout.sameEvent(prior, raw) {
-				return fmt.Errorf("conflicting staged event_id")
+			id, err := s.layout.orderingKey(frame.Values)
+			if err != nil {
+				return err
 			}
-			return nil
-		}
-		// A partially promoted batch can share a timestamp with the committed tail.
-		if eventTime(id[:]) < b.finalizedBefore {
-			return fmt.Errorf("staged event precedes finalized boundary")
-		}
-		if b.branch == Write && s.config.ObjectIndex {
-			if _, e := s.checkCollectionWrite(b, f.Values); e != nil {
-				return e
+			if utcHour(eventTime(id[:])) != hour {
+				return fmt.Errorf("PIL outside ingress hour")
 			}
-		}
-		if e := s.invalidateReceived(b.branch, raw); e != nil {
-			return e
-		}
-		raw, e = b.own(s, id, raw, input)
-		if e != nil {
-			return e
-		}
-		return s.rememberPendingValues(b, pending{id, raw}, f.Values)
-	})
-	if e != nil {
-		return e
-	}
-	if first {
-		var cutoff [8]byte
-		order.PutUint64(cutoff[:], uint64(b.finalizedBefore))
-		if e = appendRecord(b.swap, cutoff[:]); e != nil {
-			return e
+			if eventTime(id[:]) < b.ingressBoundary() {
+				return nil
+			}
+			if prior := b.live.get(id[:], true, s.config.Now()); prior != nil {
+				if !s.layout.sameEvent(prior, raw) {
+					return fmt.Errorf("conflicting staged event_id")
+				}
+				return nil
+			}
+			if b.branch == Write && s.config.ObjectIndex {
+				if _, err = s.checkCollectionWrite(b, frame.Values); err != nil {
+					return err
+				}
+			}
+			if err = s.invalidateReceived(b.branch, raw); err != nil {
+				return err
+			}
+			raw, err = b.own(s, id, raw, input)
+			if err != nil {
+				return err
+			}
+			return s.rememberPendingValues(b, pending{id, raw}, frame.Values)
+		})
+		if err != nil {
+			return err
 		}
 	}
-	return b.swap.Sync()
+	return nil
+}
+
+func (s *Store) retirePack(b *branchStore, hour int64) error {
+	f := b.stagingPacks[hour]
+	if f == nil {
+		return nil
+	}
+	if err := s.sealProbe("before-pack-remove"); err != nil {
+		return err
+	}
+	if err := os.Remove(f.Name()); err != nil {
+		return err
+	}
+	if err := s.sealProbe("pack-removed"); err != nil {
+		return err
+	}
+	if err := syncDir(s.dir); err != nil {
+		return err
+	}
+	delete(b.stagingPacks, hour)
+	delete(b.ingressDirty, f)
+	if err := f.Close(); err != nil {
+		return err
+	}
+	return s.sealProbe("pack-removal-durable")
 }
 
 func (s *Store) flush(b *branchStore) error {
 	if s.sealing != nil {
 		return nil
 	}
-	b.live.prune(s.config.Now())
-	defer b.pruneMemory(s.config.Now())
-	mature := s.config.Now().Truncate(FinalizationCycle).Add(-FinalizationCycles * FinalizationCycle)
-	boundary, _ := semanticBounds(mature, 1, s.location)
-	cutoff := boundary.UnixMilli()
-	if cutoff < b.finalizedBefore {
-		cutoff = b.finalizedBefore
+	if err := s.rotateSeed(b); err != nil {
+		return err
 	}
-	count := 0
-	// The native time ordering selects one hour at a time. Backfill no longer
-	// copies/sorts the entire pending set before processing its first hour.
+	b.live.prune(s.config.Now())
+	defer s.publishMaintained(b)
+	cutoff := utcHour(s.config.Now().Add(-15 * time.Minute).UnixMilli())
+	cutoff = max(cutoff, b.finalizedBefore)
 	for {
 		first := b.live.firstPending()
 		if first >= cutoff {
@@ -140,73 +359,36 @@ func (s *Store) flush(b *branchStore) error {
 		if len(batch) == 0 {
 			return fmt.Errorf("native pending hour is empty")
 		}
-		if e := s.commitBatch(b, batch); e != nil {
-			return e
+		if err := s.commitBatch(b, batch); err != nil {
+			return err
 		}
-		count += len(batch)
+		if err := s.retirePack(b, start.UnixMilli()); err != nil {
+			return err
+		}
 	}
-	if count == 0 && cutoff == b.finalizedBefore {
-		if !b.timeDirty {
-			return s.packSummaryDays(b)
+	// Empty rotated hours have no payload to publish.
+	for hour := range b.stagingPacks {
+		if hour < cutoff {
+			if err := s.retirePack(b, hour); err != nil {
+				return err
+			}
 		}
-		if e := s.publishTime(b); e != nil {
-			return e
-		}
-		return s.packSummaryDays(b)
 	}
-	// Publish the cutoff and surviving tail atomically only after every mature
-	// commit is durable. Recovery deduplicates commits left in the previous swap.
-	if e := s.rewriteSwap(b, cutoff, b.pendingWindow(nil, time.UnixMilli(cutoff), time.UnixMilli(1<<48))); e != nil {
-		return e
+	if cutoff > b.finalizedBefore {
+		var raw [8]byte
+		order.PutUint64(raw[:], uint64(cutoff))
+		if err := appendRecord(b.swap, raw[:]); err != nil {
+			return err
+		}
+		if err := b.swap.Sync(); err != nil {
+			return err
+		}
 	}
 	b.finalizedBefore = cutoff
-	if e := s.publishTime(b); e != nil {
-		return e
+	if err := s.publishTime(b); err != nil {
+		return err
 	}
 	return s.packSummaryDays(b)
-}
-
-func (s *Store) rewriteSwap(b *branchStore, cutoff int64, tail []pending) error {
-	tmp, e := os.CreateTemp(s.dir, ".seed-")
-	if e != nil {
-		return e
-	}
-	path := tmp.Name()
-	tmp.Close()
-	defer os.Remove(path)
-	next, e := openFile(path, "PILSEED0", s.layout.Digest, [16]byte{}, 0)
-	if e != nil {
-		return e
-	}
-	published := false
-	defer func() {
-		if !published {
-			next.Close()
-		}
-	}()
-	var raw [8]byte
-	order.PutUint64(raw[:], uint64(cutoff))
-	if e = appendRecord(next, raw[:]); e != nil {
-		return e
-	}
-	for _, p := range tail {
-		if e = appendRecord(next, p.frame); e != nil {
-			return e
-		}
-	}
-	if e = next.Sync(); e != nil {
-		return e
-	}
-	if e = os.Rename(path, s.swapPath(b)); e != nil {
-		return e
-	}
-	old := b.swap
-	b.swap = next
-	published = true
-	if e = old.Close(); e != nil {
-		return e
-	}
-	return syncDir(s.dir)
 }
 
 // An error or revision-less collection write invalidates replay caches at receipt.
@@ -221,11 +403,19 @@ func (s *Store) invalidateReceived(branch Branch, raw []byte) error {
 	if e := s.layout.Scan(raw, &f); e != nil {
 		return e
 	}
-	if branch == Write && f.Values[s.layout.Revision].State != Absent {
+	return s.invalidateReceivedValues(branch, f.Values)
+}
+
+func (s *Store) invalidateReceivedValues(branch Branch, values []Value) error {
+	policy := s.policyFor(branch)
+	if (branch != Error && !(branch == Write && s.config.ObjectIndex)) || policy.CacheInvalidation != nil && !*policy.CacheInvalidation {
 		return nil
 	}
-	if s.layout.Object >= 0 && f.Values[s.layout.Object].State >= Direct {
-		return s.invalidate([][]byte{s.layout.NormalizeIntegerWidth(s.layout.Object, f.Values[s.layout.Object]).Bytes}, false)
+	if branch == Write && values[s.layout.Revision].State != Absent {
+		return nil
+	}
+	if s.layout.Object >= 0 && values[s.layout.Object].State >= Direct {
+		return s.invalidate([][]byte{s.layout.NormalizeIntegerWidth(s.layout.Object, values[s.layout.Object]).Bytes}, false)
 	}
 	return s.invalidate(nil, true)
 }

@@ -14,9 +14,13 @@ import (
 // built-in defaults for this scope; explicit false and zero policy values remain
 // real overrides. Immutable definition identity/timezone do not live here.
 type scopeConfiguration struct {
-	Version uint32 `toml:"version"`
-	Inherit *bool  `toml:"inherit"`
-	Policy  Policy `toml:"policy"`
+	Quota     *quotaConfiguration `toml:"quota"`
+	Timezone  string              `toml:"timezone"`
+	Defaults  Policy              `toml:"defaults"`
+	Resources map[string]Policy   `toml:"resources"`
+	Version   uint32              `toml:"version"`
+	Inherit   *bool               `toml:"inherit"`
+	Policy    Policy              `toml:"policy"`
 }
 
 func readScope(path string, parent Policy, branch bool) (Policy, bool, error) {
@@ -87,7 +91,7 @@ func (s *Store) hierarchicalPolicy(c Configuration, key string) (Policy, map[Bra
 	}
 	branches := map[Branch]Policy{}
 	for branch := Read; branch <= Trace; branch++ {
-		q, exists, e := readScope(filepath.Join(s.collection, branch.Prefix()+".cfg"), p, true)
+		q, exists, e := readScope(configurationPath(s.config.Root, []string{s.config.Cache, n.Service, key[strings.LastIndex(key, "/")+1:], branch.Prefix()}), p, true)
 		if e != nil {
 			return Policy{}, nil, e
 		}
@@ -108,7 +112,7 @@ func (s *Store) policyFor(branch Branch) Policy {
 // Shared by the runtime and configuration editor so displayed inheritance follows
 // precisely the same registry and filesystem precedence as ingestion.
 func configuredScope(root string, scope []string, c Configuration) (Policy, error) {
-	p, _, err := readScope(filepath.Join(filepath.Dir(root), "trunk.cfg"), Policy{}, false)
+	p, _, err := readScope(configurationPath(root, nil), Policy{}, false)
 	if err != nil || len(scope) == 0 {
 		return p, err
 	}
@@ -127,16 +131,9 @@ func configuredScope(root string, scope []string, c Configuration) (Policy, erro
 
 // Callers must verify scope against the physical catalog before resolving paths.
 func configurationPath(root string, scope []string) string {
-	switch len(scope) {
-	case 0:
-		return filepath.Join(filepath.Dir(root), "trunk.cfg")
-	case 1:
-		return filepath.Join(root, scope[0], "cache.cfg")
-	case 2:
-		return filepath.Join(root, scope[0], scope[1], "service.cfg")
-	case 3:
-		return filepath.Join(root, scope[0], scope[1], scope[2], "resource.cfg")
-	default:
-		return filepath.Join(root, scope[0], scope[1], scope[2], scope[3]+".cfg")
+	if len(scope) == 0 {
+		return filepath.Join(root, "trunk.conf")
 	}
+	parts := append([]string{root}, scope...)
+	return filepath.Join(append(parts, scope[len(scope)-1]+".conf")...)
 }

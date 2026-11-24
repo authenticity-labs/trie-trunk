@@ -1,0 +1,16 @@
+{
+  "beds_bytes": 26179368,
+  "branch": 1,
+  "fields": 10,
+  "from": 1794960000000,
+  "generation_in_query_timings": false,
+  "generation_ms": 170.024083,
+  "hours": 24,
+  "identity": "deterministic test entropy, not production random generation",
+  "index_bytes": 1440144,
+  "rare_matches": 12,
+  "records": 240000,
+  "summary_packs": 0,
+  "time_bytes": 140608,
+  "to": 1795046400000
+}

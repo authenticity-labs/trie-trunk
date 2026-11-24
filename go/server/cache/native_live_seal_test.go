@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"os"
@@ -10,7 +11,7 @@ import (
 	"time"
 )
 
-func awaitSeal(t *testing.T, scheduler *SealScheduler) {
+func awaitSeal(t *testing.T, scheduler *CommitScheduler) {
 	t.Helper()
 	deadline := time.Now().Add(5 * time.Second)
 	for scheduler.Stats().Waiting == 0 {
@@ -37,8 +38,8 @@ func TestSealWaitDoesNotBlockIngressOrReplay(t *testing.T) {
 	at := time.Date(2026, 10, 24, 12, 0, 0, 0, time.UTC)
 	var clock atomic.Int64
 	clock.Store(at.Add(time.Minute).UnixMilli())
-	scheduler := NewSealScheduler(1)
-	c := Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: true, Sealer: scheduler, Now: func() time.Time { return time.UnixMilli(clock.Load()) }}
+	scheduler := NewCommitScheduler(1)
+	c := Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: true, CommitScheduler: scheduler, Now: func() time.Time { return time.UnixMilli(clock.Load()) }}
 	p, e := OpenEndpoint(c)
 	if e != nil {
 		t.Fatal(e)
@@ -167,8 +168,37 @@ func TestSealCrashPublication(t *testing.T) {
 	if root := os.Getenv("TRUNK_SEAL_CRASH_ROOT"); root != "" {
 		l := testLayout(t, false)
 		at := time.Date(2026, 10, 24, 12, 0, 0, 0, time.UTC)
-		s, e := Open(Config{Root: root, Cache: "demo", Tenant: "test", Layout: l, Now: func() time.Time { return at.Add(80 * time.Minute) }, sealHook: func(stage string) error {
-			if stage == os.Getenv("TRUNK_SEAL_CRASH_STAGE") {
+		var s *Store
+		var e error
+		s, e = Open(Config{Root: root, Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: true, Now: func() time.Time { return at.Add(80 * time.Minute) }, sealHook: func(stage string) error {
+			wanted := os.Getenv("TRUNK_SEAL_CRASH_STAGE")
+			written := map[string]string{"payload-torn": "payload-written", "index-torn": "index-written", "summary-torn": "summary-written"}
+			if stage == written[wanted] {
+				branch := Read
+				if os.Getenv("TRUNK_SEAL_CRASH_BRANCH") == "write" {
+					branch = Write
+				}
+				b := s.branches[branch]
+				f := b.packs
+				if wanted == "index-torn" {
+					f = b.idx
+				}
+				if wanted == "summary-torn" {
+					f = b.sum
+				}
+				info, err := f.Stat()
+				if err != nil {
+					panic(err)
+				}
+				if err = f.Truncate(info.Size() - 1); err != nil {
+					panic(err)
+				}
+				if err = f.Sync(); err != nil {
+					panic(err)
+				}
+				os.Exit(77)
+			}
+			if stage == wanted {
 				os.Exit(77)
 			}
 			return nil
@@ -181,44 +211,81 @@ func TestSealCrashPublication(t *testing.T) {
 		}
 		t.Fatal("crash hook not reached")
 	}
-	for _, stage := range []string{"payload", "index", "journal"} {
-		t.Run(stage, func(t *testing.T) {
-			l := testLayout(t, false)
-			at := time.Date(2026, 10, 24, 12, 0, 0, 0, time.UTC)
-			now := at.Add(time.Minute)
-			c := Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, Now: func() time.Time { return now }}
-			s, e := Open(c)
-			if e != nil {
-				t.Fatal(e)
-			}
-			raw := testFrame(t, l, at, 1, false)
-			if _, e = s.Append(Read, raw); e != nil {
-				t.Fatal(e)
-			}
-			if e = s.Close(); e != nil {
-				t.Fatal(e)
-			}
-			cmd := exec.Command(os.Args[0], "-test.run=^TestSealCrashPublication$")
-			cmd.Env = append(os.Environ(), "TRUNK_SEAL_CRASH_ROOT="+c.Root, "TRUNK_SEAL_CRASH_STAGE="+stage)
-			if out, err := cmd.CombinedOutput(); err == nil {
-				t.Fatalf("child did not crash: %s", out)
-			} else if exit, ok := err.(*exec.ExitError); !ok || exit.ExitCode() != 77 {
-				t.Fatalf("child failure: %v %s", err, out)
-			}
-			now = at.Add(80 * time.Minute)
-			s, e = Open(c)
-			if e != nil {
-				t.Fatal(e)
-			}
-			defer s.Close()
-			if e = s.Flush(); e != nil {
-				t.Fatal(e)
-			}
-			got := collect(t, s, Read, at, at.Add(time.Hour))
-			if len(got) != 1 || !sameSeedData(t, l, got[0], raw) {
-				t.Fatal("lost or duplicated record after crash")
-			}
-		})
+	for _, branch := range []Branch{Read, Write} {
+		for _, stage := range []string{"seed-synced", "seed-renamed", "rotation-durable", "seed-file-header", "seed-hour-written", "seed-file-durable", "fresh-seed", "prepare", "packed", "payload-written", "payload", "index-header-written", "index-written", "index", "summary-written", "summary", "collection-published", "before-pack-remove", "pack-removed", "pack-removal-durable", "payload-torn", "index-torn", "summary-torn"} {
+			t.Run(branch.Name()+"/"+stage, func(t *testing.T) {
+				l := testLayout(t, false)
+				at := time.Date(2026, 10, 24, 12, 0, 0, 0, time.UTC)
+				now := at.Add(time.Minute)
+				c := Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: true, Now: func() time.Time { return now }}
+				s, e := Open(c)
+				if e != nil {
+					t.Fatal(e)
+				}
+				older := testFrame(t, l, at.Add(-time.Hour), 10, false)
+				if _, e = s.Append(branch, older); e != nil {
+					t.Fatal(e)
+				}
+				if e = s.Flush(); e != nil {
+					t.Fatal(e)
+				}
+				oldPacks, e := os.ReadFile(s.branches[branch].packs.Name())
+				if e != nil {
+					t.Fatal(e)
+				}
+				oldIndex, e := os.ReadFile(s.branches[branch].idx.Name())
+				if e != nil {
+					t.Fatal(e)
+				}
+				raw := testFrame(t, l, at, 1, false)
+				if _, e = s.Append(branch, raw); e != nil {
+					t.Fatal(e)
+				}
+				if e = s.Close(); e != nil {
+					t.Fatal(e)
+				}
+				cmd := exec.Command(os.Args[0], "-test.run=^TestSealCrashPublication$")
+				cmd.Env = append(os.Environ(), "TRUNK_SEAL_CRASH_ROOT="+c.Root, "TRUNK_SEAL_CRASH_STAGE="+stage, "TRUNK_SEAL_CRASH_BRANCH="+branch.Prefix())
+				if out, err := cmd.CombinedOutput(); err == nil {
+					t.Fatalf("child did not crash: %s", out)
+				} else if exit, ok := err.(*exec.ExitError); !ok || exit.ExitCode() != 77 {
+					t.Fatalf("child failure: %v %s", err, out)
+				}
+				now = at.Add(80 * time.Minute)
+				s, e = Open(c)
+				if e != nil {
+					t.Fatal(e)
+				}
+				defer s.Close()
+				if e = s.Flush(); e != nil {
+					t.Fatal(e)
+				}
+				packs, e := os.ReadFile(s.branches[branch].packs.Name())
+				if e != nil {
+					t.Fatal(e)
+				}
+				index, e := os.ReadFile(s.branches[branch].idx.Name())
+				if e != nil {
+					t.Fatal(e)
+				}
+				if !bytes.HasPrefix(packs, oldPacks) || !bytes.HasPrefix(index, oldIndex) {
+					t.Fatal("recovery changed the prior sealed hour")
+				}
+				if old := collect(t, s, branch, at.Add(-time.Hour), at); len(old) != 1 || !sameSeedData(t, l, old[0], older) {
+					t.Fatal("prior sealed record changed")
+				}
+				if branch == Write {
+					locations, e := s.ObjectLocations(testObject(42))
+					if e != nil || len(locations) == 0 {
+						t.Fatalf("collection recovery: %v %v", locations, e)
+					}
+				}
+				got := collect(t, s, branch, at, at.Add(time.Hour))
+				if len(got) != 1 || !sameSeedData(t, l, got[0], raw) {
+					t.Fatal("lost or duplicated record after crash")
+				}
+			})
+		}
 	}
 }
 

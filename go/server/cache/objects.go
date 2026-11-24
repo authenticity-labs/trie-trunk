@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var ErrObjectIndexDisabled = errors.New("object lookup requires collection.idx (object_index=true)")
+var ErrObjectIndexDisabled = errors.New("object lookup requires collection.indx (object_index=true)")
 
 type ObjectLocation struct {
 	Minor      uint32
@@ -120,7 +120,7 @@ func (s *Store) openObjects() error {
 		s.objects = g.objects[s.collection]
 		return nil
 	}
-	f, e := os.OpenFile(filepath.Join(s.collection, "collection.idx"), os.O_CREATE|os.O_RDWR, 0600)
+	f, e := os.OpenFile(filepath.Join(s.collection, "collection.indx"), os.O_CREATE|os.O_RDWR, 0600)
 	if e != nil {
 		return e
 	}
@@ -149,7 +149,7 @@ func (s *Store) openObjects() error {
 	return nil
 }
 
-// The optional index is derived. A crash after write.journal commits but before this
+// The optional index is derived. A crash after the WRITE PAC is durable but before this
 // append is recovered by backfilling the missing source rows, without duplicating
 // payloads or accepting an object posting as evidence of a committed write.
 func (s *Store) indexObjects(b *branchStore) error {
@@ -173,7 +173,7 @@ func (s *Store) indexObjects(b *branchStore) error {
 	if through == tail {
 		return nil
 	}
-	reader := podsReader{}
+	reader := packsReader{}
 	var frame Frame
 	for through < tail {
 		end := min(through+1024, tail)

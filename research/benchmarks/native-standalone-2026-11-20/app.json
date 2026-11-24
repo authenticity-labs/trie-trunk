@@ -1,0 +1,40 @@
+{
+  "native": "{\"ok\":true,\"cases\":[{\"name\":\"first_page\",\"runs\":[{\"iteration\":0,\"rows\":100,\"elapsed_ms\":11},{\"iteration\":1,\"rows\":100,\"elapsed_ms\":19},{\"iteration\":2,\"rows\":100,\"elapsed_ms\":16},{\"iteration\":3,\"rows\":100,\"elapsed_ms\":16},{\"iteration\":4,\"rows\":100,\"elapsed_ms\":16},{\"iteration\":5,\"rows\":100,\"elapsed_ms\":15}]},{\"name\":\"rare\",\"runs\":[{\"iteration\":0,\"rows\":12,\"elapsed_ms\":34},{\"iteration\":1,\"rows\":12,\"elapsed_ms\":25},{\"iteration\":2,\"rows\":12,\"elapsed_ms\":24},{\"iteration\":3,\"rows\":12,\"elapsed_ms\":25},{\"iteration\":4,\"rows\":12,\"elapsed_ms\":25},{\"iteration\":5,\"rows\":12,\"elapsed_ms\":25}]},{\"name\":\"zero\",\"runs\":[{\"iteration\":0,\"rows\":0,\"elapsed_ms\":25},{\"iteration\":1,\"rows\":0,\"elapsed_ms\":23},{\"iteration\":2,\"rows\":0,\"elapsed_ms\":23},{\"iteration\":3,\"rows\":0,\"elapsed_ms\":23},{\"iteration\":4,\"rows\":0,\"elapsed_ms\":23},{\"iteration\":5,\"rows\":0,\"elapsed_ms\":23}]}],\"workers\":0,\"wasm\":false,\"scope\":\"Search click through DOM completion, not GPU paint; bundled native Rust via private socket; same node and OS cache, no upstream origin; no summary PACs\"}",
+  "nativeStderr": "2026/11/20 01:19:55 Snoot listening on http://127.0.0.1:52435 using Setup\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": false,
+  "from": null,
+  "to": null,
+  "query": null,
+  "dispatch": "native-socket",
+  "nativePerformance": true,
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      3.30419921875,
+      3.9755859375,
+      3.19775390625
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "dde275b3dd64332af85f2c17e647812cec93ffe68a4e8499f64f8834bcecc41f",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795155595719.866,
+    "processMs": 1195.8649999869522,
+    "loadAfter": [
+      3.30419921875,
+      3.9755859375,
+      3.19775390625
+    ]
+  }
+}

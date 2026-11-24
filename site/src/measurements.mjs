@@ -26,6 +26,7 @@ export const storage = {
  total: fixture.trie_trunk_bytes, expanded: fixture.expanded_jsonl_bytes,
  // N compact objects plus N line feeds become N-1 commas and two brackets.
  expandedArray: fixture.expanded_jsonl_bytes + 1,
+ // Historical benchmark keys retain their recorded names; display current terminology.
  seedPacks: c['.pods'], standalonePacks: fast.standalone_pac_bytes,
  standalonePlainPacks: compression.plain_pac_bytes,
  dailyMedian: summary.whole_day_median_bytes,
@@ -33,7 +34,7 @@ export const storage = {
  timing,
  showCompressionComparison: [fast,dense].every(row=>1-row.standalone_pac_bytes/row.jsonl_hourly_bytes>=0.15),
  components: [
-  {name:'Pods', key:'pods', bytes:c['.pods']},
+  {name:'Packs', key:'packs', bytes:c['.pods']},
   {name:'Tantivy', key:'search', bytes:c.tantivy},
   {name:'Tries', key:'tri', bytes:c['.tri']},
   {name:'Indexes', key:'idx', bytes:c['.idx']},
@@ -81,8 +82,8 @@ Standalone PACs retain every payload field, including complete event UUIDs.
 Routing context is in PACSource; timestamps are verified against UUIDs.
 Definition bytes are counted once; compressed PAC headers are included.
 Every PAC member was resolved and compared byte-for-byte with its input frame.
-Pods are measured separately: stored packs place event identity in branch indexes.
-Do not treat Pods alone as a complete standalone encoding or an entire datastore.
+Packs are measured separately: stored packs place event identity in branch indexes.
+Do not treat Packs alone as a complete standalone encoding or an entire datastore.
 
 Every stored event was read back; UUID uniqueness and counts were verified.
 Tantivy catch-up completed before accounting. Datastore totals include all files,

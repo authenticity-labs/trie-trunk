@@ -4,7 +4,7 @@ package cache
 import (
 	"encoding/hex"
 	"fmt"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"github.com/fxamacker/cbor/v2"
 	"strings"
 	"trie-trunk/go/codec"

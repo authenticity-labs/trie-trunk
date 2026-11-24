@@ -1,0 +1,41 @@
+{
+  "packs": {
+    "target": "/demo/lab/indexed/sample/packs?range=1794765600000%2C1794772800000&definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a",
+    "headers": {
+      "Accept": "application/pil",
+      "Trunk-Branch": "2"
+    },
+    "samples": [
+      {
+        "ms": 1.746417001413647,
+        "bytes": 260100,
+        "status": 200
+      },
+      {
+        "ms": 1.061999995727092,
+        "bytes": 260100,
+        "status": 200
+      },
+      {
+        "ms": 1.0989160000463016,
+        "bytes": 260100,
+        "status": 200
+      },
+      {
+        "ms": 1.266332998056896,
+        "bytes": 260100,
+        "status": 200
+      },
+      {
+        "ms": 1.3335839976207353,
+        "bytes": 260100,
+        "status": 200
+      },
+      {
+        "ms": 1.6137089987751096,
+        "bytes": 260100,
+        "status": 200
+      }
+    ]
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "fixed_strings": {},
+  "identity": "field-meta",
+  "root": "field-meta",
+  "types": {
+    "domain-meta": {
+      "fields": [
+        {
+          "name": "ordinal",
+          "optional": false,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "value",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "values",
+          "optional": false,
+          "value": {
+            "items": {
+              "name": "value-meta",
+              "type": "reference"
+            },
+            "max": null,
+            "min": 0,
+            "type": "array"
+          }
+        }
+      ],
+      "type": "record"
+    },
+    "field-meta": {
+      "fields": [
+        {
+          "name": "semantic",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "label",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "unit",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "format",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "role",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "source",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "values",
+          "optional": true,
+          "value": {
+            "items": {
+              "name": "value-meta",
+              "type": "reference"
+            },
+            "max": null,
+            "min": 0,
+            "type": "array"
+          }
+        },
+        {
+          "name": "domains",
+          "optional": true,
+          "value": {
+            "items": {
+              "name": "domain-meta",
+              "type": "reference"
+            },
+            "max": null,
+            "min": 0,
+            "type": "array"
+          }
+        }
+      ],
+      "type": "record"
+    },
+    "value-meta": {
+      "fields": [
+        {
+          "name": "value",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "label",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        }
+      ],
+      "type": "record"
+    }
+  }
+}

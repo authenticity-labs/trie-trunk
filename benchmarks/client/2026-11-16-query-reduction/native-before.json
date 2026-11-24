@@ -1,0 +1,9 @@
+{
+  "native": "{\"ok\":true,\"loaded\":100,\"visible\":10,\"wallMs\":1167,\"submitHandlerMs\":15,\"window\":\"2026-09-18 00:00 \u2192 2026-11-17 00:00\",\"boundary\":{\"totalMs\":945,\"workerMs\":654,\"outsideWorkerMs\":291,\"steps\":{\"startedAt\":1794876088086,\"beforeReplicationMs\":78,\"replicationMs\":435,\"afterReplicationMs\":141}},\"runs\":[{\"loaded\":100,\"visible\":10,\"wallMs\":1167,\"submitHandlerMs\":15,\"window\":\"2026-09-18 00:00 \u2192 2026-11-17 00:00\",\"boundary\":{\"totalMs\":945,\"workerMs\":654,\"outsideWorkerMs\":291,\"steps\":{\"startedAt\":1794876088086,\"beforeReplicationMs\":78,\"replicationMs\":435,\"afterReplicationMs\":141}}},{\"loaded\":100,\"visible\":8,\"wallMs\":986,\"submitHandlerMs\":43,\"window\":\"2026-09-18 00:00 \u2192 2026-11-17 00:00\",\"boundary\":{\"totalMs\":471,\"workerMs\":239,\"outsideWorkerMs\":232,\"steps\":{\"startedAt\":1794876090186,\"beforeReplicationMs\":45,\"replicationMs\":106,\"afterReplicationMs\":88}}},{\"loaded\":100,\"visible\":8,\"wallMs\":887,\"submitHandlerMs\":24,\"window\":\"2026-09-18 00:00 \u2192 2026-11-17 00:00\",\"boundary\":{\"totalMs\":488,\"workerMs\":160,\"outsideWorkerMs\":328,\"steps\":{\"startedAt\":1794876092102,\"beforeReplicationMs\":15,\"replicationMs\":99,\"afterReplicationMs\":46}}}]}",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-09-18T00:00:00.000Z",
+  "to": "2026-11-17T00:00:00.000Z",
+  "query": "events | where duration >= 10000"
+}

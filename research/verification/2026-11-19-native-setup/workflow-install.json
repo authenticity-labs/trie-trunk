@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"firstLaunchChoices\":true,\"noImplicitOrigin\":true,\"localInstallation\":true,\"nativeOwnership\":true,\"localCandidate\":true},\"installed\":{\"directory\":\"/var/folders/85/cj8xpvmj32jfrbhxvj3f44jh0000gn/T/snoot-search-test-dan4vnbw/profile/Trunks/54d91619ac3aa920\",\"kind\":\"local\",\"name\":\"Personal Test\",\"transport\":\"Native\"}}",
+  "nativeStderr": "2026/11/19 05:22:18 Snoot listening on http://127.0.0.1:64123 using Setup\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": false,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      4.31005859375,
+      4.921875,
+      4.990234375
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "c4490874bbfe3adf839f79f6df3bde8bcc0d4d3fa628e989ac0bcec50900574e",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795083737936.0042,
+    "processMs": 1051.2656659993809,
+    "loadAfter": [
+      4.28515625,
+      4.90625,
+      4.984375
+    ]
+  }
+}

@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"math/rand/v2"
 	"sync/atomic"
@@ -110,6 +111,15 @@ func (r *nativeIngress) resize(n int) ([]byte, error) {
 	if n < 0 || n > MaxFrame {
 		return nil, fmt.Errorf("frame too large")
 	}
+	return r.reserve(n)
+}
+
+// Codec encoding can need transient control bytes beyond the final frame size.
+// The codec enforces the final PIL limit; the native allocator enforces capacity.
+func (r *nativeIngress) reserve(n int) ([]byte, error) {
+	if n < 0 || n > MaxFrame*8 {
+		return nil, fmt.Errorf("native encoding capacity exceeded")
+	}
 	if r.current == nil || len(r.current.buffer.bytes)-r.current.used < n {
 		next, err := r.memory.takeChunk(n)
 		if err != nil {
@@ -143,6 +153,9 @@ func (r *nativeIngress) allocate(n int) (nativeInput, error) {
 	return nativeInput{raw: raw, buffer: r.current.buffer}, nil
 }
 func (r *nativeIngress) read(l *Layout, input io.Reader) (nativeInput, error) {
+	return r.readProvider(l.Layout, input)
+}
+func (r *nativeIngress) readProvider(l *pil.Layout, input io.Reader) (nativeInput, error) {
 	r.partial = 0
 	raw, err := l.ReadFrameBuffer(input, nil, r.resize)
 	if err != nil {

@@ -1,0 +1,81 @@
+{
+  "ok": true,
+  "loaded": 2,
+  "visible": 0,
+  "wallMs": 808,
+  "domReadyMs": 147,
+  "submitHandlerMs": 11,
+  "startedAt": 1795058246663,
+  "observedAt": 1795058247471,
+  "visibility": "hidden",
+  "window": "2026-11-15 18:00 \u2192 20:00",
+  "boundary": {
+    "totalMs": 146,
+    "workerMs": 80,
+    "outsideWorkerMs": 66,
+    "steps": {
+      "startedAt": 1795058246728,
+      "beforeReplicationMs": 8,
+      "replicationMs": 55,
+      "afterReplicationMs": 17,
+      "lastSeed": {
+        "tap": "demo/lab/indexed/sample",
+        "dispatchOffsetMs": 1,
+        "responseWaitMs": 28,
+        "bodyAndImportMs": 26,
+        "finalDependenciesMs": 0
+      }
+    }
+  },
+  "startup": {
+    "navigationStartAt": 1795058244709,
+    "driverMs": 16,
+    "controlsReadyMs": 532,
+    "submitMs": 1954,
+    "replicaReset": {
+      "removed": false,
+      "ms": 1
+    }
+  },
+  "runs": [
+    {
+      "loaded": 2,
+      "visible": 0,
+      "wallMs": 808,
+      "domReadyMs": 147,
+      "submitHandlerMs": 11,
+      "startedAt": 1795058246663,
+      "observedAt": 1795058247471,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 146,
+        "workerMs": 80,
+        "outsideWorkerMs": 66,
+        "steps": {
+          "startedAt": 1795058246728,
+          "beforeReplicationMs": 8,
+          "replicationMs": 55,
+          "afterReplicationMs": 17,
+          "lastSeed": {
+            "tap": "demo/lab/indexed/sample",
+            "dispatchOffsetMs": 1,
+            "responseWaitMs": 28,
+            "bodyAndImportMs": 26,
+            "finalDependenciesMs": 0
+          }
+        }
+      }
+    }
+  ],
+  "nativeActivityState": {
+    "peak": 3,
+    "pending": 0,
+    "starts": 3,
+    "active": 0,
+    "errors": 0,
+    "mode": "native",
+    "ends": 3
+  },
+  "warnings": []
+}

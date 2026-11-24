@@ -1,0 +1,9 @@
+{
+  "native": "{\"ok\":true,\"loaded\":100,\"visible\":8,\"wallMs\":171,\"submitHandlerMs\":2,\"boundary\":{\"totalMs\":170,\"workerMs\":149,\"outsideWorkerMs\":21,\"steps\":{\"startedAt\":1794869586850,\"beforeReplicationMs\":68,\"replicationMs\":65,\"afterReplicationMs\":16}},\"runs\":[{\"loaded\":100,\"visible\":8,\"wallMs\":171,\"submitHandlerMs\":2,\"boundary\":{\"totalMs\":170,\"workerMs\":149,\"outsideWorkerMs\":21,\"steps\":{\"startedAt\":1794869586850,\"beforeReplicationMs\":68,\"replicationMs\":65,\"afterReplicationMs\":16}}},{\"loaded\":100,\"visible\":8,\"wallMs\":100,\"submitHandlerMs\":4,\"boundary\":{\"totalMs\":94,\"workerMs\":77,\"outsideWorkerMs\":17,\"steps\":{\"startedAt\":1794869587283,\"beforeReplicationMs\":46,\"replicationMs\":19,\"afterReplicationMs\":12}}},{\"loaded\":100,\"visible\":10,\"wallMs\":103,\"submitHandlerMs\":3,\"boundary\":{\"totalMs\":92,\"workerMs\":78,\"outsideWorkerMs\":14,\"steps\":{\"startedAt\":1794869587637,\"beforeReplicationMs\":47,\"replicationMs\":18,\"afterReplicationMs\":13}}}]}",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000"
+}

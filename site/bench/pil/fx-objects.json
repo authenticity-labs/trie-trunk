@@ -1,0 +1,298 @@
+{
+  "date": "2026-11-06T00:18:56.082Z",
+  "runtime": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+  "cpu": "Apple M1 Max",
+  "baseline": "a7712d9 (2026-11-03 pre-CDDL-AST checkpoint) JS reader with same WASM validator as current, identical current PAC bytes; isolates reader cost, not a full historical binary rebuild",
+  "method": "10,000 identical objects. Existing Rust FX built to WASM in isolated benchmark adapter, no production codec changes. Per-field calls to FX accessors, TextDecoder for text, and JS object allocation included. 3 warmups, 7 rotating batches; output arrays retained. Definition registration, initialization, validation and PAC open excluded for all readers. No compression. FX text capacity 16 bytes; optional/null slots retained. No FX object-input timing: fixtures use existing FX encoder outside timing.",
+  "reports": [
+    {
+      "scenario": "dense-numeric",
+      "count": 10000,
+      "fields": 32,
+      "selected_field": "f31",
+      "selected_field_present_rows": 10000,
+      "fx_text_capacity": null,
+      "rx_pac_bytes": 1389538,
+      "fx_pac_bytes": 1360067,
+      "json_utf8_bytes": 3968891,
+      "operations": [
+        {
+          "name": "RX Before Definitions: Pills -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 31.6,
+          "samples_ms": [
+            32,
+            31,
+            31.4,
+            32.6,
+            31.6,
+            32,
+            31
+          ]
+        },
+        {
+          "name": "RX Current: Pills -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 31.4,
+          "samples_ms": [
+            33.2,
+            31.2,
+            29.4,
+            32.2,
+            31.4,
+            31.8,
+            31.4
+          ]
+        },
+        {
+          "name": "RX Current: Pack -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 32,
+          "samples_ms": [
+            31.4,
+            32.2,
+            32,
+            32.2,
+            32.2,
+            32,
+            32
+          ]
+        },
+        {
+          "name": "FX WASM Accessors -> JS Objects",
+          "batch_repetitions": 5,
+          "median_ms": 5.8,
+          "samples_ms": [
+            5.6,
+            5.6,
+            5.8,
+            7.8,
+            5.8,
+            5.4,
+            5.8
+          ]
+        },
+        {
+          "name": "JSON.parse -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 7.8,
+          "samples_ms": [
+            8.2,
+            7.8,
+            8,
+            7.6,
+            7.8,
+            8,
+            7.8
+          ]
+        },
+        {
+          "name": "RX Selected Field Across Pills",
+          "batch_repetitions": 5,
+          "median_ms": 6.2,
+          "samples_ms": [
+            6.4,
+            6.2,
+            8,
+            6.2,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "name": "FX Selected Field Across Pills",
+          "batch_repetitions": 500,
+          "median_ms": 0.098,
+          "samples_ms": [
+            0.098,
+            0.098,
+            0.096,
+            0.1,
+            0.098,
+            0.096,
+            0.098
+          ]
+        },
+        {
+          "name": "FX Entire Field Scan Inside WASM",
+          "batch_repetitions": 500,
+          "median_ms": 0.082,
+          "samples_ms": [
+            0.084,
+            0.08,
+            0.082,
+            0.084,
+            0.082,
+            0.082,
+            0.08
+          ]
+        },
+        {
+          "name": "Materialized JS Object Field Reads",
+          "batch_repetitions": 1000,
+          "median_ms": 0.015,
+          "samples_ms": [
+            0.017,
+            0.016,
+            0.015,
+            0.016,
+            0.015,
+            0.015,
+            0.015
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": "mixed-sparse",
+      "count": 10000,
+      "fields": 12,
+      "selected_field": "f10",
+      "selected_field_present_rows": 8068,
+      "fx_text_capacity": 16,
+      "rx_pac_bytes": 620938,
+      "fx_pac_bytes": 1030067,
+      "json_utf8_bytes": 1219865,
+      "operations": [
+        {
+          "name": "RX Before Definitions: Pills -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 12,
+          "samples_ms": [
+            11.8,
+            11.8,
+            12,
+            13.8,
+            14,
+            12,
+            12
+          ]
+        },
+        {
+          "name": "RX Current: Pills -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 12,
+          "samples_ms": [
+            14,
+            12,
+            11.8,
+            12,
+            12,
+            12.2,
+            12.4
+          ]
+        },
+        {
+          "name": "RX Current: Pack -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 12.4,
+          "samples_ms": [
+            14.8,
+            12.4,
+            12.4,
+            12.4,
+            12.4,
+            14.6,
+            14.4
+          ]
+        },
+        {
+          "name": "FX WASM Accessors -> JS Objects",
+          "batch_repetitions": 5,
+          "median_ms": 8.6,
+          "samples_ms": [
+            8.6,
+            10.2,
+            8.6,
+            8.4,
+            10,
+            8.6,
+            8.8
+          ]
+        },
+        {
+          "name": "JSON.parse -> Objects",
+          "batch_repetitions": 5,
+          "median_ms": 3.2,
+          "samples_ms": [
+            3.2,
+            3,
+            2.8,
+            3.4,
+            3.2,
+            3.2,
+            3
+          ]
+        },
+        {
+          "name": "RX Selected Field Across Pills",
+          "batch_repetitions": 5,
+          "median_ms": 2.6,
+          "samples_ms": [
+            2.6,
+            2.4,
+            3.8,
+            2.4,
+            2.4,
+            2.6,
+            2.6
+          ]
+        },
+        {
+          "name": "FX Selected Field Across Pills",
+          "batch_repetitions": 500,
+          "median_ms": 0.186,
+          "samples_ms": [
+            0.186,
+            0.186,
+            0.186,
+            0.184,
+            0.186,
+            0.184,
+            0.186
+          ]
+        },
+        {
+          "name": "FX Entire Field Scan Inside WASM",
+          "batch_repetitions": 500,
+          "median_ms": 0.078,
+          "samples_ms": [
+            0.08,
+            0.078,
+            0.078,
+            0.078,
+            0.076,
+            0.078,
+            0.076
+          ]
+        },
+        {
+          "name": "Materialized JS Object Field Reads",
+          "batch_repetitions": 1000,
+          "median_ms": 0.044,
+          "samples_ms": [
+            0.046,
+            0.044,
+            0.044,
+            0.044,
+            0.044,
+            0.044,
+            0.045
+          ]
+        }
+      ]
+    }
+  ],
+  "sink": 40609018089448,
+  "source_sha256": {
+    "rust/src/fx.rs": "614467ca754a950f86f1e70d0edd81242e553ef08463c1fc9b289af3dbe634d5",
+    "rust/src/authoring_language/language.rs": "aea08c6f854a3afc4ecde8c0507845563fc0316dc59626034013db0231d04cd6",
+    "rust/src/authoring_language/wire.rs": "467045dc5320c272bb3d0c237cf0c952004df0427f8d2f15b77c1ec694f04857",
+    "npm/src/layout.ts": "b7f2c8ab830d6afcd0d87c56e443170ce69550f84ed2f4f6d3b03fef9d9a7e47",
+    "npm/src/prescription.ts": "c0c08f858637ab87e0a8415f8124331860fe10d4d5778472bbe181c79465f629",
+    "benchmarks/fx-objects/run.mjs": "a7113248da5b5712bc3a34ebd10223bdfcb67d3fece4b3fc5df5a65d82aaea3d",
+    "benchmarks/fx-objects/adapter.rs": "792b6ff5908c06cf84f3e630e15e7058ec801af4cca45dac7101b8cf3a196c41",
+    "benchmarks/fx-objects/compare.mjs": "cf606f3fd2f236a312f9bac6f60e930858cecd196c5a71392143515971f65694"
+  }
+}

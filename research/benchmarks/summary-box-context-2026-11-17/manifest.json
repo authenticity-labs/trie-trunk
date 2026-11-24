@@ -1,0 +1,27 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "timestamp": "2026-11-17T13:03:54-0500",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+  "binaries": {
+    "prior": "83e70560a26d7480b01ad4cb64b7dc470dbc71f791ca934e795255e1d7f4389e",
+    "current": "8ac582ca43e097e3d1a5b8a387a4670696e57554fa97823aed5570b67a441679"
+  },
+  "scope": "Registered SummaryReader::registered_box over resident Box bytes. Shared event/RX registration is outside timing in both implementations; summary preparation, ingest, retained event Pack encoding, accumulation, seal and first query are timed. No disk/network/UI/full SQL-planner timing.",
+  "heap": "Separate untimed allocation pass. Incremental live requested heap, not RSS; existing input/Definition allocations excluded. Cold reader includes copying Box input.",
+  "prior": "Saved implementation after removal of daily PAC bindings, before taxonomy annotation history and registered Box contexts. Both binaries use the identical registered-Box harness and current shared codec/taxonomy.",
+  "pairs": 9,
+  "warmups_per_case_per_binary": 1,
+  "baseline_source": "../summary-pac-bindings-2026-11-17/current-source.tar.gz",
+  "shared_dependencies": "Both binaries use identical current Pill Packer and taxonomy dependencies. This isolates Box/Seeds changes; registration-history creation itself is not benchmarked.",
+  "harness_sha256": "42ed34697accf3ba3bcd3e19099e94219818952ed1de91dab39baf1231bfb217",
+  "verification": {
+    "seed_tests": 47,
+    "taxonomy_registration_tests": 17,
+    "native_http_ingestion_recovery_tests": 2,
+    "wasm_http_roundtrip": true,
+    "wasm_box_history_rollback": true,
+    "deployed": false
+  },
+  "pending": "Historical annotation selection for standalone /summaries PAC responses is not solved by Box metadata. No deployment until its transport decision is resolved."
+}

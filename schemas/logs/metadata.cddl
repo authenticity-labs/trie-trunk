@@ -1,0 +1,11 @@
+field-meta = {
+ semantic: tstr, label: tstr, description: tstr,
+ ? unit: tstr, ? format: tstr, ? role: tstr, ? source: tstr,
+ ? values: [* value-meta], ? domains: [* domain-meta]
+}
+value-meta = { value: tstr, label: tstr, description: tstr }
+domain-meta = { ordinal: uint, value: tstr, values: [* value-meta] }
+synonym = { from: [+ path-part], ordinal: uint, cast: tstr, priority: uint,
+ ? numerator: uint, ? denominator: uint }
+
+path-part = tstr

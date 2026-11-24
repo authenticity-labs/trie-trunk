@@ -1,0 +1,30 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "timestamp": "2026-11-17T12:48:18-0500",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+  "binaries": {
+    "prior": "67848ba08cab325ec2e9784e6facbe9df346886fb947de877e2c133c8e756a19",
+    "current": "b8334041d851990a211ac5d08780116dc9370e5bb539e04d9ec90c782373ef8a"
+  },
+  "scope": "Unchanged native release harness: ingestion through retained event Packs, summary accumulation/sealing and Box reads. No HTTP, disk, UI or full SQL-planner latency measured.",
+  "heap": "Separate untimed allocation pass. Incremental live requested heap, not RSS; existing input/Definition allocations excluded. Cold reader includes copying Box input.",
+  "prior": "Frozen optimized generic-array implementation before removal of daily PAC field metadata.",
+  "pairs": 9,
+  "warmups_per_case_per_binary": 1,
+  "baseline_archive": "../summary-arrays-optimized-2026-11-17/current-source.tar.gz",
+  "change": "Daily PACs omit summary.bindings. Registered PAC reads derive bindings from the selected event RX; the Box historical-binding catalog remains unchanged.",
+  "historical_limit": "Standalone registered PAC reads require the appropriate source annotation snapshot supplied by their taxonomy scope. Runtime array dimensions do not identify historical annotation-only changes.",
+  "harness_sha256": "7256224a0926432f38a5671fd027880f8d2045d7820bebf8a856a355df476ba7",
+  "verification": {
+    "focused_summary_tests": 41,
+    "http_tests": [
+      "TestRegisteredHTTPIngestionSummaries",
+      "TestSummaryAnnotationRegistrationRefresh"
+    ],
+    "native_release_build": true,
+    "wasm_release_build": true,
+    "http_fixture_wasm_roundtrip": true,
+    "deployed": false
+  }
+}

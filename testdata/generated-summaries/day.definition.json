@@ -1,0 +1,536 @@
+[
+  {
+    "header": {
+      "pil-version": 0,
+      "rx-name": "summary",
+      "rx-major": 0,
+      "rx-minor": 0,
+      "namespace": "",
+      "rx-hash": [
+        152,
+        130,
+        211,
+        77,
+        72,
+        218,
+        188,
+        147,
+        133,
+        157,
+        87,
+        224,
+        219,
+        52,
+        49,
+        249,
+        138,
+        196,
+        22,
+        87,
+        153,
+        153,
+        229,
+        19,
+        230,
+        32,
+        152,
+        174,
+        26,
+        75,
+        202,
+        143
+      ]
+    },
+    "fields": [
+      {
+        "name": "count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "numeric",
+        "type": [
+          126,
+          127
+        ],
+        "size": 0,
+        "values": [
+          1
+        ]
+      },
+      {
+        "name": "real",
+        "type": [
+          126,
+          127
+        ],
+        "size": 0,
+        "values": [
+          2
+        ]
+      },
+      {
+        "name": "temporal",
+        "type": [
+          126,
+          127
+        ],
+        "size": 0,
+        "values": [
+          3
+        ]
+      },
+      {
+        "name": "boolean",
+        "type": [
+          126,
+          127
+        ],
+        "size": 0,
+        "values": [
+          4
+        ]
+      },
+      {
+        "name": "categories",
+        "type": [
+          126,
+          127
+        ],
+        "size": 0,
+        "values": [
+          5
+        ]
+      },
+      {
+        "name": "counts",
+        "type": [
+          126,
+          1
+        ],
+        "size": 0,
+        "element-size": 3
+      }
+    ]
+  },
+  {
+    "header": {
+      "pil-version": 0,
+      "rx-name": "numeric",
+      "rx-major": 0,
+      "rx-minor": 0,
+      "namespace": "",
+      "rx-hash": [
+        255,
+        241,
+        110,
+        127,
+        115,
+        185,
+        45,
+        146,
+        138,
+        138,
+        214,
+        212,
+        193,
+        76,
+        162,
+        218,
+        48,
+        179,
+        32,
+        135,
+        243,
+        77,
+        169,
+        152,
+        218,
+        222,
+        186,
+        80,
+        195,
+        231,
+        228,
+        24
+      ]
+    },
+    "fields": [
+      {
+        "name": "count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "null_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "min",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "max",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "sum",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "nonfinite_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "overflow",
+        "type": [
+          6,
+          0
+        ],
+        "size": 0
+      }
+    ]
+  },
+  {
+    "header": {
+      "pil-version": 0,
+      "rx-name": "real",
+      "rx-major": 0,
+      "rx-minor": 0,
+      "namespace": "",
+      "rx-hash": [
+        217,
+        33,
+        241,
+        250,
+        156,
+        231,
+        157,
+        42,
+        89,
+        106,
+        83,
+        72,
+        131,
+        183,
+        79,
+        148,
+        199,
+        142,
+        28,
+        61,
+        161,
+        169,
+        242,
+        169,
+        241,
+        157,
+        244,
+        7,
+        110,
+        70,
+        125,
+        178
+      ]
+    },
+    "fields": [
+      {
+        "name": "count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "null_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "min",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "max",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "sum",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "nonfinite_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "overflow",
+        "type": [
+          6,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "compensation",
+        "type": [
+          3,
+          0
+        ],
+        "size": 8
+      }
+    ]
+  },
+  {
+    "header": {
+      "pil-version": 0,
+      "rx-name": "temporal",
+      "rx-major": 0,
+      "rx-minor": 0,
+      "namespace": "",
+      "rx-hash": [
+        30,
+        121,
+        64,
+        162,
+        229,
+        74,
+        5,
+        61,
+        219,
+        160,
+        21,
+        103,
+        12,
+        102,
+        245,
+        48,
+        201,
+        242,
+        73,
+        107,
+        57,
+        214,
+        56,
+        105,
+        237,
+        248,
+        226,
+        251,
+        128,
+        129,
+        24,
+        249
+      ]
+    },
+    "fields": [
+      {
+        "name": "count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "null_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "min",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      },
+      {
+        "name": "max",
+        "type": [
+          122,
+          0
+        ],
+        "size": 0
+      }
+    ]
+  },
+  {
+    "header": {
+      "pil-version": 0,
+      "rx-name": "boolean",
+      "rx-major": 0,
+      "rx-minor": 0,
+      "namespace": "",
+      "rx-hash": [
+        234,
+        250,
+        12,
+        154,
+        45,
+        112,
+        209,
+        195,
+        117,
+        65,
+        121,
+        47,
+        12,
+        111,
+        65,
+        60,
+        199,
+        86,
+        241,
+        35,
+        255,
+        219,
+        51,
+        90,
+        170,
+        184,
+        112,
+        174,
+        56,
+        146,
+        71,
+        174
+      ]
+    },
+    "fields": [
+      {
+        "name": "count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "null_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "true_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      }
+    ]
+  },
+  {
+    "header": {
+      "pil-version": 0,
+      "rx-name": "categories",
+      "rx-major": 0,
+      "rx-minor": 0,
+      "namespace": "",
+      "rx-hash": [
+        234,
+        70,
+        216,
+        107,
+        209,
+        196,
+        231,
+        216,
+        253,
+        93,
+        169,
+        245,
+        23,
+        245,
+        199,
+        57,
+        165,
+        35,
+        13,
+        179,
+        21,
+        232,
+        76,
+        227,
+        54,
+        173,
+        148,
+        120,
+        251,
+        227,
+        250,
+        3
+      ]
+    },
+    "fields": [
+      {
+        "name": "count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      },
+      {
+        "name": "null_count",
+        "type": [
+          1,
+          0
+        ],
+        "size": 8
+      }
+    ]
+  }
+]

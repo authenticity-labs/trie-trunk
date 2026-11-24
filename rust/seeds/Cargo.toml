@@ -1,0 +1,47 @@
+[package]
+name = "data-seeds"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[features]
+default = ["compression", "registration"]
+registration = ["dep:trie-trunk-taxonomy", "trie-trunk-taxonomy/registration", "dep:serde", "dep:serde_json"]
+compression = ["pil-codec/gzip"]
+query-language = ["dep:trie-trunk-taxonomy", "dep:sqlparser", "dep:serde", "dep:serde_json"]
+planner-lab = ["dep:serde", "dep:serde_json", "dep:sha2"]
+
+[dependencies]
+trie-trunk-taxonomy = { path = "../trunk", optional = true }
+pil-codec = { package = "pill-packer", path = "../../../pill-packer/rust", features = ["source"] }
+ciborium = "0.2.2"
+crc32c = "0.6.8"
+chrono = { version = "0.4.45", default-features = false, features = ["std"] }
+chrono-tz = "0.10"
+num-bigint = "0.4"
+num-rational = "0.4"
+num-traits = "0.2"
+runits = "=0.2.0"
+fend-core = "=1.5.9"
+serde = { version = "1", features = ["derive", "rc"], optional = true }
+serde_json = { version = "1", features = ["raw_value"], optional = true }
+sha2 = { version = "0.10", optional = true }
+
+sqlparser = { version = "=0.64.0", default-features = false, features = ["std"], optional = true }
+
+[dev-dependencies]
+serde_json = "1"
+sha2 = "0.10"
+
+[[example]]
+name = "planner_lab"
+required-features = ["planner-lab"]
+
+
+[[example]]
+name = "summary_reduction"
+required-features = ["registration", "compression", "planner-lab"]
+
+[[example]]
+name = "summary_collection"
+required-features = ["registration", "compression", "planner-lab"]

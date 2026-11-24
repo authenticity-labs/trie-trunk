@@ -1,0 +1,25 @@
+(node:78888) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ registered daily rows feed histogram and margin statistics through Rust (21.8915ms)
+✔ summary cache keeps separate resource fetches, authorization partitions and content checks (5.897125ms)
+✔ Rust report keeps interval percentiles distinct from event percentiles (1.056667ms)
+(node:78889) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ event count and explicit summary sum preserve source through both query syntaxes (2.690041ms)
+✔ real table count and explicit summaries query use identical retrieval and counts (42.715167ms)
+✔ summary source accepts arbitrary windows and reports the overlapping coverage (2.396708ms)
+✔ aggregate queries publish an empty page before progressive completion (2.333208ms)
+✔ registered Boolean zero proof skips event readers on cold and warm queries (9.651375ms)
+✔ an unknown OR alternative cannot become a summary zero proof (3.560958ms)
+✔ a sealed preview supplies the subsequent execution reader without disk rereads (3.24225ms)
+✔ unavailable summary bytes are recollected instead of failing or asserting zero (3.844667ms)
+✔ summary disk cache retains more than 128 small packets and evicts by bytes (24.263958ms)
+✔ foreground writes are bounded and storage failure releases the queue (11.127125ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 230.596

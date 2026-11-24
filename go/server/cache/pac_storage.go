@@ -3,26 +3,29 @@ package cache
 import (
 	"crypto/sha256"
 	"fmt"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"math"
 	"time"
 )
 
-// StoredPAC is the block directory entry in the companion commit journal. MemberRanges
+// StoredPAC is the in-memory directory rebuilt from PAC placement headers. MemberRanges
 // addresses are encoded extents; placement addresses count decoded members only.
 // PAC directories keep decoded member starts; the segment directory owns compressed extents.
 type StoredPAC struct {
-	Placement PACPlacement `pil:"0"`
-	Decoded   uint64       `pil:"1"`
-	Gzip      bool         `pil:"2"`
+	Placement  PACPlacement `pil:"0"`
+	Decoded    uint64       `pil:"1"`
+	Compressed bool         `pil:"2"`
 }
 
 const NativePageSize = 1 << 20
 
-func (s *Store) packBlock(b *branchStore, first uint64, batch []pending, frames [][]byte, rows []byte) ([]byte, *StoredPAC, error) {
+func (s *Store) packBlock(b *branchStore, first uint64, batch []pending, frames [][]byte, rows []byte) (*nativeBuffer, *StoredPAC, error) {
 	if uint64(b.blockBase)+uint64(len(b.runs)) > math.MaxUint32 {
 		return nil, nil, fmt.Errorf("payload block number exhausted")
 	}
-	p, err := factorPAC(s.layout, frames, nil, true)
+	scratch := nativeScratch{memory: s.memory}
+	defer scratch.close()
+	p, err := pil.FactorPACAllocated(s.layout.Layout, frames, nil, true, scratch.allocate)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -54,25 +57,31 @@ func (s *Store) packBlock(b *branchStore, first uint64, batch []pending, frames 
 	}
 	p.Extensions = []PACExtension{{Type: PACSource, Data: []byte((&HTTP{Store: s}).tap(b.branch))}, e}
 	p.AddressBytes = 4
-	p.Bytes, err = p.Marshal()
+	// Keep the existing storage policy decision separate from integrity handling.
+	block := &StoredPAC{Placement: place, Compressed: b.branch != Write}
+	owner := s.memory.buffer()
+	p.Bytes, err = marshalStoredPAC(s.layout, p, block.Compressed, owner.resizePAC)
+	if err == nil {
+		owner.bytes = p.Bytes
+	}
 	if err != nil {
+		owner.close()
 		return nil, nil, err
 	}
 	if uint64(len(p.Directory))+place.MemberBytes+4 > math.MaxUint32 {
+		owner.close()
 		return nil, nil, fmt.Errorf("decoded segment exceeds U32")
 	}
 
 	// Write packs remain directly addressable for object history. Replication
 	// still transfers whole packs, exactly as it does for the other branches.
-	block := &StoredPAC{Placement: place, Decoded: uint64(len(p.Bytes)), Gzip: b.branch != Write}
-	if block.Gzip {
-		sealed, err := compressPAC(p.Bytes, s.policyFor(b.branch).PAC.level())
-		if err == nil {
-			block.Gzip = order.Uint32(sealed[4:8])&2 != 0
-		}
+	block.Decoded = uint64(len(p.Bytes))
+	if block.Compressed {
+		sealed, err := s.memory.sealPAC(p.Bytes, s.policyFor(b.branch).PAC.algorithmCode(), s.policyFor(b.branch).PAC.level())
+		owner.close()
 		return sealed, block, err
 	}
-	return p.Bytes, block, nil
+	return owner, block, nil
 }
 
 func validateBlock(run Run, rows []byte, layout RowLayout, source [16]byte) error {
@@ -119,6 +128,9 @@ func decodeStoredPAC(l *Layout, run Run, raw []byte) (*PAC, error) {
 	p, err := ParsePAC(l, raw, map[uint32]bool{PACNative: true})
 	if err != nil {
 		return nil, err
+	}
+	if !run.PAC.Compressed && len(p.Headers[pacChecksumHeader]) != 4 {
+		return nil, fmt.Errorf("stored uncompressed PAC requires crc32c")
 	}
 	if uint64(len(p.Members)) != run.End-run.Start {
 		return nil, fmt.Errorf("PAC member count mismatch")

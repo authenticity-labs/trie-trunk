@@ -1,0 +1,81 @@
+   Compiling data-seeds v0.1.0 (/Users/Shared/code/applications/trie-trunk/rust/seeds)
+warning: struct `ObjectRow` is never constructed
+   --> src/query.rs:184:19
+    |
+184 | pub(crate) struct ObjectRow<'a> {
+    |                   ^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `get` is never used
+   --> src/query.rs:189:8
+    |
+188 | impl ObjectRow<'_> {
+    | ------------------ method in this implementation
+189 |     fn get(&self, ordinal: usize) -> Option<&Data> {
+    |        ^^^
+
+warning: method `fields` is never used
+   --> src/query.rs:234:19
+    |
+233 | impl Expression {
+    | --------------- method in this implementation
+234 |     pub(crate) fn fields(&self, out: &mut Vec<usize>) {
+    |                   ^^^^^^
+
+warning: associated function `excluding` is never used
+   --> src/query.rs:432:19
+    |
+431 | impl PackScan {
+    | ------------- associated function in this implementation
+432 |     pub(crate) fn excluding(pack: &SeedPackSnapshot, predicate: Arc<Expression>) -> Self {
+    |                   ^^^^^^^^^
+
+warning: `data-seeds` (lib) generated 4 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.03s
+     Running tests/registered_summaries.rs (rust/seeds/target/debug/deps/registered_summaries-ed8fc460d82df791)
+
+running 4 tests
+test unused_versions_and_failed_ingestion_do_not_force_sparse_days ... ok
+test deployments_and_rollbacks_share_period_ordinals_and_keep_real_event_bytes ... ok
+test full_pil_observations_match_builder_summaries_without_reencoding ... ok
+test annotation_changes_refresh_an_open_day_without_changing_the_event_version ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running tests/summary_accumulator.rs (rust/seeds/target/debug/deps/summary_accumulator-fc7b7fecf845e88c)
+
+running 5 tests
+test calendar_bounds_and_failed_ingestion_do_not_complete_periods ... ok
+test completion_follows_commit_watermark_not_new_hour_arrival ... ok
+test daily_summary_calendar_uses_the_published_fixed_utc_offset ... ok
+test silent_and_active_days_have_identical_pack_extents ... ok
+test snapshot_resumes_open_day_and_daily_seal_releases_state ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/summary_definitions.rs (rust/seeds/target/debug/deps/summary_definitions-6408cf56bc2a611f)
+
+running 9 tests
+test prescribing_parsed_doc_matches_loading_signed_bundle ... ok
+test prepared_categories_keep_each_sources_vocabulary_and_predicate ... ok
+test generic_library_is_reproducible_and_classes_are_fixed ... ok
+test field_sizes_names_and_annotations_change_bindings_not_definitions ... ok
+test categories_use_uint3_counters_and_seed_owned_vocabularies ... ok
+test annotation_only_field_selection_preserves_historical_meaning ... ok
+test different_day_dimensions_and_names_survive_restart_and_rollup ... ok
+test source_ordinals_and_field_counts_do_not_change_library ... ok
+test registered_packs_bind_fields_from_the_selected_taxonomy ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+     Running tests/summary_publication.rs (rust/seeds/target/debug/deps/summary_publication-be63bcc6dce28e76)
+
+running 4 tests
+test empty_summary_box_has_no_hour_counts ... ok
+test dependency_failure_blocks_footer_and_retry_reuses_the_prepared_tail ... ok
+test native_commit_restarts_from_footer_and_keeps_annotation_lineage ... ok
+test resident_summary_snapshots_invalidate_on_ingest_completion_and_annotation_refresh ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.85s
+

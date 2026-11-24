@@ -492,3 +492,25 @@ func TestHTTPOriginRejectsNonLoopback(t *testing.T) {
 		}
 	}
 }
+
+func TestSocketRecoversDeadListener(t *testing.T) {
+	name := filepath.Join(shortDirectory(t), "private", "search.sock")
+	first, err := listenUnix(name)
+	if err != nil {
+		t.Fatal(err)
+	}
+	first.SetUnlinkOnClose(false)
+	if err = first.Close(); err != nil {
+		t.Fatal(err)
+	}
+	next, err := listenUnix(name)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer next.Close()
+	connection, err := net.Dial("unix", name)
+	if err != nil {
+		t.Fatal(err)
+	}
+	connection.Close()
+}

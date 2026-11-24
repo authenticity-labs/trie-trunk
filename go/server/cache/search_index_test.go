@@ -3,6 +3,7 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"math"
 	"net/http/httptest"
 	"net/url"
@@ -214,10 +215,10 @@ func TestTantivyTypedValuesAndLiteralDictionaryEscapes(t *testing.T) {
 		order.PutUint32(ratio[:], math.Float32bits(float32(i)+0.1))
 		var signed [8]byte
 		order.PutUint64(signed[:], uint64(int64(i)-2))
-		tags := extended(nil, 2)
-		tags = extended(tags, 10)
-		tags = extended(tags, 17)
-		tags = append(tags, []byte("connectiontimeout")...)
+		tags, e := pil.EncodeArray([][]byte{[]byte("connection"), []byte("timeout")}, 0)
+		if e != nil {
+			t.Fatal(e)
+		}
 		extension, _ := encoder.Marshal(map[string]any{"nested": []any{"specific extension text", nil}})
 		f.Values = append(f.Values, Value{Direct, ratio[:]}, Value{Direct, signed[:]}, Uint(uint64(i%2), 1), Value{Offset, tags}, Value{Offset, extension})
 		if i == 2 {

@@ -1,0 +1,9 @@
+{
+  "native": "{\"ok\":true,\"dashboard\":\"Fast\\nDeep\\nTime Window\\nRefresh\\nOct 18 \u2013 Nov 17 \u00b7 UTC \u00b7 Includes Current Summary Period\\nPrecomputed Summaries\\nSummarized Events\\n60\\n\u2014\\nError Rate\\n\u2014\\n\u2014\\nAverage Duration\\n420.34 ms\\n\u2014\\nP95 Period Mean Duration\\n937 ms\\n\u2014\\nEvent Activity\\nEvents\\n0\\n10\\n20\\n30\\n40\\n50\\n60\\nOct 22\\nOct 29\\nNov 8\\nNov 15\\nP95 Period Mean Trend\\nms\\n0\\n200\\n400\\n600\\n800\\n1,000\\nOct 22\\nOct 29\\nNov 8\\nNov 15\\nTop 10 Resources\\ndemo / trie-trunk / que...\\n0\\n30\\n60\\nBottom 10 Active Resources\\ndemo / trie-trunk / que...\\n0\\n30\\n60\\nServices With Trends\\ndemo / trie-trunk\\n60\\nObserved Levels\\nResource Summary\\nExport CSV\\nResource\\tEvents\\tErrors\\tError Rate\\tAverage Duration\\tP95 Period Mean Duration\\ndemo/trie-trunk/queries\\t60\\t\u2014\\t\u2014\\t420.34 ms\\t937 ms\\nDefault Chart Definition\"}",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000"
+}

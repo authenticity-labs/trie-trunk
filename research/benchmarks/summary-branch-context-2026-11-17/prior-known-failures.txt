@@ -1,0 +1,37 @@
+   Compiling data-seeds v0.1.0 (/tmp/summary-context-prior)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.45s
+     Running tests/registered_summaries.rs (rust/seeds/target/debug/deps/registered_summaries-ed8fc460d82df791)
+
+running 4 tests
+test deployments_and_rollbacks_share_period_ordinals_and_keep_real_event_bytes ... FAILED
+test full_pil_observations_match_builder_summaries_without_reencoding ... FAILED
+test unused_versions_and_failed_ingestion_do_not_force_sparse_days ... ok
+test annotation_changes_refresh_an_open_day_without_changing_the_event_version ... FAILED
+
+failures:
+
+---- deployments_and_rollbacks_share_period_ordinals_and_keep_real_event_bytes stdout ----
+
+thread 'deployments_and_rollbacks_share_period_ordinals_and_keep_real_event_bytes' (490700) panicked at tests/registered_summaries.rs:101:41:
+called `Result::unwrap()` on an `Err` value: Definition("mixed summary has incomplete field contributions; exception policy required")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- full_pil_observations_match_builder_summaries_without_reencoding stdout ----
+
+thread 'full_pil_observations_match_builder_summaries_without_reencoding' (490701) panicked at tests/registered_summaries.rs:298:29:
+called `Result::unwrap()` on an `Err` value: Definition("mixed summary has incomplete field contributions; exception policy required")
+
+---- annotation_changes_refresh_an_open_day_without_changing_the_event_version stdout ----
+
+thread 'annotation_changes_refresh_an_open_day_without_changing_the_event_version' (490699) panicked at tests/registered_summaries.rs:202:61:
+called `Result::unwrap()` on an `Err` value: Definition("Definition annotations are not registered")
+
+
+failures:
+    annotation_changes_refresh_an_open_day_without_changing_the_event_version
+    deployments_and_rollbacks_share_period_ordinals_and_keep_real_event_bytes
+    full_pil_observations_match_builder_summaries_without_reencoding
+
+test result: FAILED. 1 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+error: test failed, to rerun pass `--test registered_summaries`

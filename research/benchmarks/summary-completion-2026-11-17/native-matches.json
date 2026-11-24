@@ -1,0 +1,90 @@
+{
+  "native": "{\"ok\":true,\"loaded\":100,\"visible\":8,\"wallMs\":1871,\"submitHandlerMs\":20,\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":985,\"workerMs\":589,\"outsideWorkerMs\":396,\"steps\":{\"startedAt\":1794944774959,\"beforeReplicationMs\":66,\"replicationMs\":285,\"afterReplicationMs\":238,\"lastSeed\":{\"tap\":\"demo/lab/indexed/sample\",\"dispatchOffsetMs\":36,\"responseWaitMs\":82,\"bodyAndImportMs\":166,\"finalDependenciesMs\":0}}},\"runs\":[{\"loaded\":100,\"visible\":8,\"wallMs\":1871,\"submitHandlerMs\":20,\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":985,\"workerMs\":589,\"outsideWorkerMs\":396,\"steps\":{\"startedAt\":1794944774959,\"beforeReplicationMs\":66,\"replicationMs\":285,\"afterReplicationMs\":238,\"lastSeed\":{\"tap\":\"demo/lab/indexed/sample\",\"dispatchOffsetMs\":36,\"responseWaitMs\":82,\"bodyAndImportMs\":166,\"finalDependenciesMs\":0}}}},{\"loaded\":100,\"visible\":8,\"wallMs\":1102,\"submitHandlerMs\":44,\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":589,\"workerMs\":126,\"outsideWorkerMs\":463,\"steps\":{\"startedAt\":1794944777051,\"beforeReplicationMs\":40,\"replicationMs\":0,\"afterReplicationMs\":86}}}]}",
+  "requests": [
+    {
+      "path": "/caches",
+      "bytes": 116,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "bytes": 146117,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "bytes": 13976,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "bytes": 3912,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/leaves",
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/timelines",
+      "bytes": 96,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/summaries",
+      "bytes": 36707,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/packs",
+      "bytes": 260100,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/indexes",
+      "bytes": 120012,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "bytes": 19,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "bytes": 0,
+      "status": 204
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "bytes": 0,
+      "status": 204
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "query": "events | where duration >= 10000"
+}

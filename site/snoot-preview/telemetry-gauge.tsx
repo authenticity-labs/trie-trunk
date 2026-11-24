@@ -3,7 +3,7 @@ import {init,use} from 'echarts/core';
 import {GaugeChart} from 'echarts/charts';
 import {AriaComponent,TooltipComponent} from 'echarts/components';
 import {SVGRenderer} from 'echarts/renderers';
-import type {FastResult} from '../../client/services/fast-dashboard';
+import type {FastResult} from '../../../snoot/client/services/fast-dashboard';
 
 use([GaugeChart,AriaComponent,TooltipComponent,SVGRenderer]);
 

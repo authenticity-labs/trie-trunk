@@ -1,4 +1,4 @@
-import type {PanelDefinition} from '../../client/services/fast-dashboard';
+import type {PanelDefinition} from '../../../snoot/client/services/fast-dashboard';
 
 // The marketing variant changes a supported metric, not the chart renderer.
 export function previewPanels(panels:PanelDefinition[],mode?:string):PanelDefinition[]{

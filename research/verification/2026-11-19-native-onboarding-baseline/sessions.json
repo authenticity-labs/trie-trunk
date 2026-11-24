@@ -1,0 +1,1856 @@
+[
+  {
+    "case": "selective",
+    "round": 1,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT CAST(duration AS BIGINT) AS time FROM events WHERE sequence = 1",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/1-selective.json",
+      "--expect-table-total",
+      "34"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 2,
+      "visible": 0,
+      "wallMs": 968,
+      "domReadyMs": 104,
+      "submitHandlerMs": 14,
+      "startedAt": 1795079468911,
+      "observedAt": 1795079469879,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 100,
+        "workerMs": 80,
+        "outsideWorkerMs": 20,
+        "steps": {
+          "startedAt": 1795079468932,
+          "beforeReplicationMs": 13,
+          "replicationMs": 51,
+          "afterReplicationMs": 16,
+          "lastSeed": {
+            "tap": "demo/lab/indexed/sample",
+            "dispatchOffsetMs": 2,
+            "responseWaitMs": 8,
+            "dependencyWaitMs": 12,
+            "bodyAndImportMs": 29,
+            "finalDependenciesMs": 0
+          }
+        }
+      },
+      "startup": {
+        "navigationStartAt": 1795079466160,
+        "driverMs": 23,
+        "controlsReadyMs": 815,
+        "submitMs": 2751,
+        "replicaReset": {
+          "removed": true,
+          "ms": 5
+        }
+      },
+      "runs": [
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 968,
+          "domReadyMs": 104,
+          "submitHandlerMs": 14,
+          "startedAt": 1795079468911,
+          "observedAt": 1795079469879,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 100,
+            "workerMs": 80,
+            "outsideWorkerMs": 20,
+            "steps": {
+              "startedAt": 1795079468932,
+              "beforeReplicationMs": 13,
+              "replicationMs": 51,
+              "afterReplicationMs": 16,
+              "lastSeed": {
+                "tap": "demo/lab/indexed/sample",
+                "dispatchOffsetMs": 2,
+                "responseWaitMs": 8,
+                "dependencyWaitMs": 12,
+                "bodyAndImportMs": 29,
+                "finalDependenciesMs": 0
+              }
+            }
+          }
+        },
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 983,
+          "domReadyMs": 89,
+          "submitHandlerMs": 9,
+          "startedAt": 1795079469891,
+          "observedAt": 1795079470874,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 87,
+            "workerMs": 32,
+            "outsideWorkerMs": 55,
+            "steps": {
+              "startedAt": 1795079469946,
+              "beforeReplicationMs": 10,
+              "replicationMs": 0,
+              "afterReplicationMs": 22
+            }
+          }
+        },
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 987,
+          "domReadyMs": 31,
+          "submitHandlerMs": 4,
+          "startedAt": 1795079470886,
+          "observedAt": 1795079471873,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 29,
+            "workerMs": 21,
+            "outsideWorkerMs": 8,
+            "steps": {
+              "startedAt": 1795079470894,
+              "beforeReplicationMs": 2,
+              "replicationMs": 0,
+              "afterReplicationMs": 19
+            }
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "pending": 0,
+        "peak": 2,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native"
+      },
+      "warnings": [],
+      "activity": {
+        "starts": 7,
+        "pending": 0,
+        "mode": "native",
+        "peak": 2,
+        "ends": 7,
+        "active": 0,
+        "errors": 0
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "events",
+    "round": 1,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "events | where duration >= \"10000\"",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/1-events.json",
+      "--expect-min-matches",
+      "100"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 100,
+      "visible": 8,
+      "wallMs": 898,
+      "domReadyMs": 113,
+      "submitHandlerMs": 8,
+      "startedAt": 1795079475124,
+      "observedAt": 1795079476022,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 110,
+        "workerMs": 80,
+        "outsideWorkerMs": 30,
+        "steps": {
+          "startedAt": 1795079475138,
+          "beforeReplicationMs": 13,
+          "replicationMs": 49,
+          "afterReplicationMs": 18,
+          "lastSeed": {
+            "tap": "demo/lab/indexed/sample",
+            "dispatchOffsetMs": 2,
+            "responseWaitMs": 9,
+            "dependencyWaitMs": 11,
+            "bodyAndImportMs": 27,
+            "finalDependenciesMs": 0
+          }
+        }
+      },
+      "startup": {
+        "navigationStartAt": 1795079472895,
+        "driverMs": 16,
+        "controlsReadyMs": 578,
+        "submitMs": 2229,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 898,
+          "domReadyMs": 113,
+          "submitHandlerMs": 8,
+          "startedAt": 1795079475124,
+          "observedAt": 1795079476022,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 110,
+            "workerMs": 80,
+            "outsideWorkerMs": 30,
+            "steps": {
+              "startedAt": 1795079475138,
+              "beforeReplicationMs": 13,
+              "replicationMs": 49,
+              "afterReplicationMs": 18,
+              "lastSeed": {
+                "tap": "demo/lab/indexed/sample",
+                "dispatchOffsetMs": 2,
+                "responseWaitMs": 9,
+                "dependencyWaitMs": 11,
+                "bodyAndImportMs": 27,
+                "finalDependenciesMs": 0
+              }
+            }
+          }
+        },
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 992,
+          "domReadyMs": 95,
+          "submitHandlerMs": 6,
+          "startedAt": 1795079476030,
+          "observedAt": 1795079477022,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 94,
+            "workerMs": 32,
+            "outsideWorkerMs": 62,
+            "steps": {
+              "startedAt": 1795079476081,
+              "beforeReplicationMs": 11,
+              "replicationMs": 0,
+              "afterReplicationMs": 21
+            }
+          }
+        },
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 987,
+          "domReadyMs": 45,
+          "submitHandlerMs": 4,
+          "startedAt": 1795079477036,
+          "observedAt": 1795079478023,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 43,
+            "workerMs": 24,
+            "outsideWorkerMs": 19,
+            "steps": {
+              "startedAt": 1795079477047,
+              "beforeReplicationMs": 3,
+              "replicationMs": 0,
+              "afterReplicationMs": 21
+            }
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "mode": "native",
+        "ends": 7,
+        "peak": 2,
+        "active": 0,
+        "errors": 0,
+        "starts": 7,
+        "pending": 0
+      },
+      "warnings": [],
+      "activity": {
+        "pending": 0,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native",
+        "peak": 2
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "counts",
+    "round": 1,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT bucket, SUM(count) AS total FROM summaries GROUP BY bucket",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/1-counts.json",
+      "--expect-table-total",
+      "20000"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 1002,
+      "domReadyMs": 77,
+      "submitHandlerMs": 9,
+      "startedAt": 1795079480686,
+      "observedAt": 1795079481688,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 76,
+        "workerMs": 3,
+        "outsideWorkerMs": 73
+      },
+      "startup": {
+        "navigationStartAt": 1795079479054,
+        "driverMs": 17,
+        "controlsReadyMs": 553,
+        "submitMs": 1632,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 1002,
+          "domReadyMs": 77,
+          "submitHandlerMs": 9,
+          "startedAt": 1795079480686,
+          "observedAt": 1795079481688,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 76,
+            "workerMs": 3,
+            "outsideWorkerMs": 73
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 995,
+          "domReadyMs": 20,
+          "submitHandlerMs": 5,
+          "startedAt": 1795079481696,
+          "observedAt": 1795079482691,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 18,
+            "workerMs": 3,
+            "outsideWorkerMs": 15
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 983,
+          "domReadyMs": 68,
+          "submitHandlerMs": 8,
+          "startedAt": 1795079482706,
+          "observedAt": 1795079483689,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 66,
+            "workerMs": 8,
+            "outsideWorkerMs": 58
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "pending": 0,
+        "peak": 2,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native"
+      },
+      "warnings": [],
+      "activity": {
+        "starts": 7,
+        "pending": 0,
+        "mode": "native",
+        "peak": 2,
+        "ends": 7,
+        "active": 0,
+        "errors": 0
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "members",
+    "round": 1,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT MIN(\"duration.min\") AS minimum, MAX(\"duration.max\") AS maximum FROM summaries GROUP BY bucket",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/1-members.json"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 810,
+      "domReadyMs": 37,
+      "submitHandlerMs": 13,
+      "startedAt": 1795079487225,
+      "observedAt": 1795079488035,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 28,
+        "workerMs": 6,
+        "outsideWorkerMs": 22
+      },
+      "startup": {
+        "navigationStartAt": 1795079484693,
+        "driverMs": 18,
+        "controlsReadyMs": 555,
+        "submitMs": 2532,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 810,
+          "domReadyMs": 37,
+          "submitHandlerMs": 13,
+          "startedAt": 1795079487225,
+          "observedAt": 1795079488035,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 28,
+            "workerMs": 6,
+            "outsideWorkerMs": 22
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 981,
+          "domReadyMs": 75,
+          "submitHandlerMs": 10,
+          "startedAt": 1795079488048,
+          "observedAt": 1795079489029,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 73,
+            "workerMs": 7,
+            "outsideWorkerMs": 66
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 987,
+          "domReadyMs": 21,
+          "submitHandlerMs": 5,
+          "startedAt": 1795079489042,
+          "observedAt": 1795079490029,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 19,
+            "workerMs": 3,
+            "outsideWorkerMs": 16
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "pending": 0,
+        "peak": 2,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native"
+      },
+      "warnings": [],
+      "activity": {
+        "starts": 7,
+        "pending": 0,
+        "mode": "native",
+        "peak": 2,
+        "ends": 7,
+        "active": 0,
+        "errors": 0
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "zero",
+    "round": 1,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "events | where duration > \"20000\"",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/1-zero.json",
+      "--expect-summary-pruned"
+    ],
+    "result": {
+      "ok": true,
+      "summaryPruned": true,
+      "previewWaitMs": 986,
+      "query": "events | where duration > \"20000\"",
+      "screen": "Local Trunk\nSearch\nDashboards\nAlerts\nCollections\nModels\nTrunks\nSearch Guide\nDemo User\nLog Out\n\u2014 Search\nQuick Guide\nLight\nDark\nAuto\ndemo\n/\nlab\n/\nindexed\nPipeline\nBuilder\nSQL\nDrag tabs to reorder, or use Alt and Left or Right Arrow. The first tab is the default for new queries.\nDeep\nLive\nSearch Query\nAdd a clause, or press Enter to search.\n+ Filter\n+ Text\n+ Sort\n+ Page Size\nText Mode\n2026-11-15 18:00 \u2192 20:00\nSearch\nNo Matches In This Time Window\nEvents\nCharts\nEvent Activity\nQuery Preview\n0 Events\nEvents\n0"
+    },
+    "valid": true
+  },
+  {
+    "case": "selective",
+    "round": 2,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT CAST(duration AS BIGINT) AS time FROM events WHERE sequence = 1",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/2-selective.json",
+      "--expect-table-total",
+      "34"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 2,
+      "visible": 0,
+      "wallMs": 997,
+      "domReadyMs": 132,
+      "submitHandlerMs": 14,
+      "startedAt": 1795079496804,
+      "observedAt": 1795079497801,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 125,
+        "workerMs": 61,
+        "outsideWorkerMs": 64,
+        "steps": {
+          "startedAt": 1795079496873,
+          "beforeReplicationMs": 7,
+          "replicationMs": 38,
+          "afterReplicationMs": 16,
+          "lastSeed": {
+            "tap": "demo/lab/indexed/sample",
+            "dispatchOffsetMs": 2,
+            "responseWaitMs": 5,
+            "dependencyWaitMs": 5,
+            "bodyAndImportMs": 26,
+            "finalDependenciesMs": 0
+          }
+        }
+      },
+      "startup": {
+        "navigationStartAt": 1795079495006,
+        "driverMs": 17,
+        "controlsReadyMs": 551,
+        "submitMs": 1798,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 997,
+          "domReadyMs": 132,
+          "submitHandlerMs": 14,
+          "startedAt": 1795079496804,
+          "observedAt": 1795079497801,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 125,
+            "workerMs": 61,
+            "outsideWorkerMs": 64,
+            "steps": {
+              "startedAt": 1795079496873,
+              "beforeReplicationMs": 7,
+              "replicationMs": 38,
+              "afterReplicationMs": 16,
+              "lastSeed": {
+                "tap": "demo/lab/indexed/sample",
+                "dispatchOffsetMs": 2,
+                "responseWaitMs": 5,
+                "dependencyWaitMs": 5,
+                "bodyAndImportMs": 26,
+                "finalDependenciesMs": 0
+              }
+            }
+          }
+        },
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 994,
+          "domReadyMs": 32,
+          "submitHandlerMs": 4,
+          "startedAt": 1795079497810,
+          "observedAt": 1795079498804,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 30,
+            "workerMs": 22,
+            "outsideWorkerMs": 8,
+            "steps": {
+              "startedAt": 1795079497819,
+              "beforeReplicationMs": 2,
+              "replicationMs": 0,
+              "afterReplicationMs": 20
+            }
+          }
+        },
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 981,
+          "domReadyMs": 86,
+          "submitHandlerMs": 8,
+          "startedAt": 1795079498820,
+          "observedAt": 1795079499801,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 83,
+            "workerMs": 31,
+            "outsideWorkerMs": 52,
+            "steps": {
+              "startedAt": 1795079498873,
+              "beforeReplicationMs": 10,
+              "replicationMs": 0,
+              "afterReplicationMs": 21
+            }
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "mode": "native",
+        "ends": 7,
+        "peak": 2,
+        "active": 0,
+        "errors": 0,
+        "starts": 7,
+        "pending": 0
+      },
+      "warnings": [],
+      "activity": {
+        "pending": 0,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native",
+        "peak": 2
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "events",
+    "round": 2,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "events | where duration >= \"10000\"",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/2-events.json",
+      "--expect-min-matches",
+      "100"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 100,
+      "visible": 8,
+      "wallMs": 804,
+      "domReadyMs": 102,
+      "submitHandlerMs": 10,
+      "startedAt": 1795079503077,
+      "observedAt": 1795079503881,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 96,
+        "workerMs": 71,
+        "outsideWorkerMs": 25,
+        "steps": {
+          "startedAt": 1795079503092,
+          "beforeReplicationMs": 9,
+          "replicationMs": 43,
+          "afterReplicationMs": 19,
+          "lastSeed": {
+            "tap": "demo/lab/indexed/sample",
+            "dispatchOffsetMs": 1,
+            "responseWaitMs": 8,
+            "dependencyWaitMs": 4,
+            "bodyAndImportMs": 30,
+            "finalDependenciesMs": 0
+          }
+        }
+      },
+      "startup": {
+        "navigationStartAt": 1795079500637,
+        "driverMs": 17,
+        "controlsReadyMs": 550,
+        "submitMs": 2440,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 804,
+          "domReadyMs": 102,
+          "submitHandlerMs": 10,
+          "startedAt": 1795079503077,
+          "observedAt": 1795079503881,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 96,
+            "workerMs": 71,
+            "outsideWorkerMs": 25,
+            "steps": {
+              "startedAt": 1795079503092,
+              "beforeReplicationMs": 9,
+              "replicationMs": 43,
+              "afterReplicationMs": 19,
+              "lastSeed": {
+                "tap": "demo/lab/indexed/sample",
+                "dispatchOffsetMs": 1,
+                "responseWaitMs": 8,
+                "dependencyWaitMs": 4,
+                "bodyAndImportMs": 30,
+                "finalDependenciesMs": 0
+              }
+            }
+          }
+        },
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 984,
+          "domReadyMs": 103,
+          "submitHandlerMs": 8,
+          "startedAt": 1795079503895,
+          "observedAt": 1795079504879,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 101,
+            "workerMs": 33,
+            "outsideWorkerMs": 68,
+            "steps": {
+              "startedAt": 1795079503952,
+              "beforeReplicationMs": 10,
+              "replicationMs": 0,
+              "afterReplicationMs": 23
+            }
+          }
+        },
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 990,
+          "domReadyMs": 47,
+          "submitHandlerMs": 6,
+          "startedAt": 1795079504890,
+          "observedAt": 1795079505880,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 43,
+            "workerMs": 25,
+            "outsideWorkerMs": 18,
+            "steps": {
+              "startedAt": 1795079504903,
+              "beforeReplicationMs": 3,
+              "replicationMs": 0,
+              "afterReplicationMs": 22
+            }
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "mode": "native",
+        "ends": 7,
+        "peak": 2,
+        "active": 0,
+        "errors": 0,
+        "starts": 7,
+        "pending": 0
+      },
+      "warnings": [],
+      "activity": {
+        "pending": 0,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native",
+        "peak": 2
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "counts",
+    "round": 2,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT bucket, SUM(count) AS total FROM summaries GROUP BY bucket",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/2-counts.json",
+      "--expect-table-total",
+      "20000"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 799,
+      "domReadyMs": 78,
+      "submitHandlerMs": 11,
+      "startedAt": 1795079508954,
+      "observedAt": 1795079509753,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 73,
+        "workerMs": 4,
+        "outsideWorkerMs": 69
+      },
+      "startup": {
+        "navigationStartAt": 1795079506843,
+        "driverMs": 17,
+        "controlsReadyMs": 550,
+        "submitMs": 2111,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 799,
+          "domReadyMs": 78,
+          "submitHandlerMs": 11,
+          "startedAt": 1795079508954,
+          "observedAt": 1795079509753,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 73,
+            "workerMs": 4,
+            "outsideWorkerMs": 69
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 1003,
+          "domReadyMs": 19,
+          "submitHandlerMs": 5,
+          "startedAt": 1795079509757,
+          "observedAt": 1795079510760,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 17,
+            "workerMs": 3,
+            "outsideWorkerMs": 14
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 981,
+          "domReadyMs": 68,
+          "submitHandlerMs": 7,
+          "startedAt": 1795079510775,
+          "observedAt": 1795079511756,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 66,
+            "workerMs": 7,
+            "outsideWorkerMs": 59
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "mode": "native",
+        "ends": 7,
+        "peak": 2,
+        "active": 0,
+        "errors": 0,
+        "starts": 7,
+        "pending": 0
+      },
+      "warnings": [],
+      "activity": {
+        "pending": 0,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native",
+        "peak": 2
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "members",
+    "round": 2,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT MIN(\"duration.min\") AS minimum, MAX(\"duration.max\") AS maximum FROM summaries GROUP BY bucket",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/2-members.json"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 801,
+      "domReadyMs": 73,
+      "submitHandlerMs": 12,
+      "startedAt": 1795079515050,
+      "observedAt": 1795079515851,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 71,
+        "workerMs": 4,
+        "outsideWorkerMs": 67
+      },
+      "startup": {
+        "navigationStartAt": 1795079512974,
+        "driverMs": 17,
+        "controlsReadyMs": 559,
+        "submitMs": 2076,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 801,
+          "domReadyMs": 73,
+          "submitHandlerMs": 12,
+          "startedAt": 1795079515050,
+          "observedAt": 1795079515851,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 71,
+            "workerMs": 4,
+            "outsideWorkerMs": 67
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 996,
+          "domReadyMs": 13,
+          "submitHandlerMs": 4,
+          "startedAt": 1795079515860,
+          "observedAt": 1795079516856,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 13,
+            "workerMs": 1,
+            "outsideWorkerMs": 12
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 980,
+          "domReadyMs": 68,
+          "submitHandlerMs": 8,
+          "startedAt": 1795079516871,
+          "observedAt": 1795079517851,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 65,
+            "workerMs": 7,
+            "outsideWorkerMs": 58
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "pending": 0,
+        "peak": 2,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native"
+      },
+      "warnings": [],
+      "activity": {
+        "starts": 7,
+        "pending": 0,
+        "mode": "native",
+        "peak": 2,
+        "ends": 7,
+        "active": 0,
+        "errors": 0
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "zero",
+    "round": 2,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "events | where duration > \"20000\"",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/2-zero.json",
+      "--expect-summary-pruned"
+    ],
+    "result": {
+      "ok": true,
+      "summaryPruned": true,
+      "previewWaitMs": 975,
+      "query": "events | where duration > \"20000\"",
+      "screen": "Local Trunk\nSearch\nDashboards\nAlerts\nCollections\nModels\nTrunks\nSearch Guide\nDemo User\nLog Out\n\u2014 Search\nQuick Guide\nLight\nDark\nAuto\ndemo\n/\nlab\n/\nindexed\nPipeline\nBuilder\nSQL\nDrag tabs to reorder, or use Alt and Left or Right Arrow. The first tab is the default for new queries.\nDeep\nLive\nSearch Query\nAdd a clause, or press Enter to search.\n+ Filter\n+ Text\n+ Sort\n+ Page Size\nText Mode\n2026-11-15 18:00 \u2192 20:00\nSearch\nNo Matches In This Time Window\nEvents\nCharts\nEvent Activity\nQuery Preview\n0 Events\nEvents\n0"
+    },
+    "valid": true
+  },
+  {
+    "case": "selective",
+    "round": 3,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT CAST(duration AS BIGINT) AS time FROM events WHERE sequence = 1",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/3-selective.json",
+      "--expect-table-total",
+      "34"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 2,
+      "visible": 0,
+      "wallMs": 790,
+      "domReadyMs": 97,
+      "submitHandlerMs": 9,
+      "startedAt": 1795079525403,
+      "observedAt": 1795079526193,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 96,
+        "workerMs": 79,
+        "outsideWorkerMs": 17,
+        "steps": {
+          "startedAt": 1795079525419,
+          "beforeReplicationMs": 13,
+          "replicationMs": 49,
+          "afterReplicationMs": 17,
+          "lastSeed": {
+            "tap": "demo/lab/indexed/sample",
+            "dispatchOffsetMs": 2,
+            "responseWaitMs": 6,
+            "dependencyWaitMs": 10,
+            "bodyAndImportMs": 31,
+            "finalDependenciesMs": 0
+          }
+        }
+      },
+      "startup": {
+        "navigationStartAt": 1795079522796,
+        "driverMs": 17,
+        "controlsReadyMs": 549,
+        "submitMs": 2607,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 790,
+          "domReadyMs": 97,
+          "submitHandlerMs": 9,
+          "startedAt": 1795079525403,
+          "observedAt": 1795079526193,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 96,
+            "workerMs": 79,
+            "outsideWorkerMs": 17,
+            "steps": {
+              "startedAt": 1795079525419,
+              "beforeReplicationMs": 13,
+              "replicationMs": 49,
+              "afterReplicationMs": 17,
+              "lastSeed": {
+                "tap": "demo/lab/indexed/sample",
+                "dispatchOffsetMs": 2,
+                "responseWaitMs": 6,
+                "dependencyWaitMs": 10,
+                "bodyAndImportMs": 31,
+                "finalDependenciesMs": 0
+              }
+            }
+          }
+        },
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 985,
+          "domReadyMs": 89,
+          "submitHandlerMs": 7,
+          "startedAt": 1795079526204,
+          "observedAt": 1795079527189,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 88,
+            "workerMs": 32,
+            "outsideWorkerMs": 56,
+            "steps": {
+              "startedAt": 1795079526258,
+              "beforeReplicationMs": 10,
+              "replicationMs": 0,
+              "afterReplicationMs": 22
+            }
+          }
+        },
+        {
+          "loaded": 2,
+          "visible": 0,
+          "wallMs": 992,
+          "domReadyMs": 35,
+          "submitHandlerMs": 4,
+          "startedAt": 1795079527196,
+          "observedAt": 1795079528188,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 34,
+            "workerMs": 26,
+            "outsideWorkerMs": 8,
+            "steps": {
+              "startedAt": 1795079527204,
+              "beforeReplicationMs": 3,
+              "replicationMs": 0,
+              "afterReplicationMs": 23
+            }
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "ends": 7,
+        "mode": "native",
+        "active": 0,
+        "starts": 7,
+        "peak": 2,
+        "errors": 0,
+        "pending": 0
+      },
+      "warnings": [],
+      "activity": {
+        "mode": "native",
+        "pending": 0,
+        "starts": 7,
+        "active": 0,
+        "ends": 7,
+        "peak": 2,
+        "errors": 0
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "events",
+    "round": 3,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "events | where duration >= \"10000\"",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/3-events.json",
+      "--expect-min-matches",
+      "100"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 100,
+      "visible": 8,
+      "wallMs": 1003,
+      "domReadyMs": 94,
+      "submitHandlerMs": 3,
+      "startedAt": 1795079531185,
+      "observedAt": 1795079532188,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 92,
+        "workerMs": 72,
+        "outsideWorkerMs": 20,
+        "steps": {
+          "startedAt": 1795079531190,
+          "beforeReplicationMs": 7,
+          "replicationMs": 47,
+          "afterReplicationMs": 18,
+          "lastSeed": {
+            "tap": "demo/lab/indexed/sample",
+            "dispatchOffsetMs": 2,
+            "responseWaitMs": 8,
+            "dependencyWaitMs": 7,
+            "bodyAndImportMs": 30,
+            "finalDependenciesMs": 0
+          }
+        }
+      },
+      "startup": {
+        "navigationStartAt": 1795079528958,
+        "driverMs": 17,
+        "controlsReadyMs": 554,
+        "submitMs": 2227,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 1003,
+          "domReadyMs": 94,
+          "submitHandlerMs": 3,
+          "startedAt": 1795079531185,
+          "observedAt": 1795079532188,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 92,
+            "workerMs": 72,
+            "outsideWorkerMs": 20,
+            "steps": {
+              "startedAt": 1795079531190,
+              "beforeReplicationMs": 7,
+              "replicationMs": 47,
+              "afterReplicationMs": 18,
+              "lastSeed": {
+                "tap": "demo/lab/indexed/sample",
+                "dispatchOffsetMs": 2,
+                "responseWaitMs": 8,
+                "dependencyWaitMs": 7,
+                "bodyAndImportMs": 30,
+                "finalDependenciesMs": 0
+              }
+            }
+          }
+        },
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 985,
+          "domReadyMs": 112,
+          "submitHandlerMs": 7,
+          "startedAt": 1795079532199,
+          "observedAt": 1795079533184,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 110,
+            "workerMs": 42,
+            "outsideWorkerMs": 68,
+            "steps": {
+              "startedAt": 1795079532255,
+              "beforeReplicationMs": 10,
+              "replicationMs": 0,
+              "afterReplicationMs": 32
+            }
+          }
+        },
+        {
+          "loaded": 100,
+          "visible": 8,
+          "wallMs": 991,
+          "domReadyMs": 45,
+          "submitHandlerMs": 4,
+          "startedAt": 1795079533194,
+          "observedAt": 1795079534185,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 43,
+            "workerMs": 26,
+            "outsideWorkerMs": 17,
+            "steps": {
+              "startedAt": 1795079533203,
+              "beforeReplicationMs": 3,
+              "replicationMs": 0,
+              "afterReplicationMs": 23
+            }
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "pending": 0,
+        "starts": 7,
+        "active": 0,
+        "ends": 7,
+        "peak": 2,
+        "mode": "native",
+        "errors": 0
+      },
+      "warnings": [],
+      "activity": {
+        "peak": 2,
+        "active": 0,
+        "starts": 7,
+        "errors": 0,
+        "pending": 0,
+        "mode": "native",
+        "ends": 7
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "counts",
+    "round": 3,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT bucket, SUM(count) AS total FROM summaries GROUP BY bucket",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/3-counts.json",
+      "--expect-table-total",
+      "20000"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 791,
+      "domReadyMs": 77,
+      "submitHandlerMs": 8,
+      "startedAt": 1795079537303,
+      "observedAt": 1795079538094,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 76,
+        "workerMs": 3,
+        "outsideWorkerMs": 73
+      },
+      "startup": {
+        "navigationStartAt": 1795079535124,
+        "driverMs": 18,
+        "controlsReadyMs": 559,
+        "submitMs": 2179,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 791,
+          "domReadyMs": 77,
+          "submitHandlerMs": 8,
+          "startedAt": 1795079537303,
+          "observedAt": 1795079538094,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 76,
+            "workerMs": 3,
+            "outsideWorkerMs": 73
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 1004,
+          "domReadyMs": 10,
+          "submitHandlerMs": 2,
+          "startedAt": 1795079538096,
+          "observedAt": 1795079539100,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 10,
+            "workerMs": 2,
+            "outsideWorkerMs": 8
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 990,
+          "domReadyMs": 68,
+          "submitHandlerMs": 5,
+          "startedAt": 1795079539107,
+          "observedAt": 1795079540097,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 66,
+            "workerMs": 8,
+            "outsideWorkerMs": 58
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "pending": 0,
+        "peak": 2,
+        "starts": 7,
+        "errors": 0,
+        "active": 0,
+        "ends": 7,
+        "mode": "native"
+      },
+      "warnings": [],
+      "activity": {
+        "starts": 7,
+        "pending": 0,
+        "mode": "native",
+        "peak": 2,
+        "ends": 7,
+        "active": 0,
+        "errors": 0
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "members",
+    "round": 3,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "SELECT MIN(\"duration.min\") AS minimum, MAX(\"duration.max\") AS maximum FROM summaries GROUP BY bucket",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/3-members.json"
+    ],
+    "result": {
+      "ok": true,
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 811,
+      "domReadyMs": 57,
+      "submitHandlerMs": 27,
+      "startedAt": 1795079543922,
+      "observedAt": 1795079544733,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 45,
+        "workerMs": 7,
+        "outsideWorkerMs": 38
+      },
+      "startup": {
+        "navigationStartAt": 1795079541300,
+        "driverMs": 16,
+        "controlsReadyMs": 555,
+        "submitMs": 2622,
+        "replicaReset": {
+          "removed": false,
+          "ms": 1
+        }
+      },
+      "runs": [
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 811,
+          "domReadyMs": 57,
+          "submitHandlerMs": 27,
+          "startedAt": 1795079543922,
+          "observedAt": 1795079544733,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 45,
+            "workerMs": 7,
+            "outsideWorkerMs": 38
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 983,
+          "domReadyMs": 68,
+          "submitHandlerMs": 6,
+          "startedAt": 1795079544743,
+          "observedAt": 1795079545726,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 67,
+            "workerMs": 7,
+            "outsideWorkerMs": 60
+          }
+        },
+        {
+          "loaded": 24,
+          "visible": 0,
+          "wallMs": 988,
+          "domReadyMs": 15,
+          "submitHandlerMs": 4,
+          "startedAt": 1795079545738,
+          "observedAt": 1795079546726,
+          "visibility": "hidden",
+          "window": "2026-11-15 18:00 \u2192 20:00",
+          "boundary": {
+            "totalMs": 14,
+            "workerMs": 2,
+            "outsideWorkerMs": 12
+          }
+        }
+      ],
+      "nativeActivityState": {
+        "ends": 7,
+        "mode": "native",
+        "active": 0,
+        "starts": 7,
+        "peak": 2,
+        "errors": 0,
+        "pending": 0
+      },
+      "warnings": [],
+      "activity": {
+        "mode": "native",
+        "pending": 0,
+        "starts": 7,
+        "active": 0,
+        "ends": 7,
+        "peak": 2,
+        "errors": 0
+      }
+    },
+    "valid": true
+  },
+  {
+    "case": "zero",
+    "round": 3,
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/Shared/code/applications/trie-trunk/desktop/tests/test_search.py",
+      "/Users/Shared/code/applications/trie-trunk/desktop/dist/Snoot.app",
+      "--socket",
+      "/Users/Shared/code/applications/trie-trunk/caches/.trunk/search.sock",
+      "--direct-socket",
+      "--fresh-replica",
+      "--scope",
+      "demo/lab/indexed/sample",
+      "--from",
+      "2026-11-15T18:00:00Z",
+      "--to",
+      "2026-11-15T20:00:00Z",
+      "--query",
+      "events | where duration > \"20000\"",
+      "--repeat",
+      "3",
+      "--activity-check",
+      "--output",
+      "research/verification/2026-11-19-native-onboarding-baseline/3-zero.json",
+      "--expect-summary-pruned"
+    ],
+    "result": {
+      "ok": true,
+      "summaryPruned": true,
+      "previewWaitMs": 803,
+      "query": "events | where duration > \"20000\"",
+      "screen": "Local Trunk\nSearch\nDashboards\nAlerts\nCollections\nModels\nTrunks\nSearch Guide\nDemo User\nLog Out\n\u2014 Search\nQuick Guide\nLight\nDark\nAuto\ndemo\n/\nlab\n/\nindexed\nPipeline\nBuilder\nSQL\nDrag tabs to reorder, or use Alt and Left or Right Arrow. The first tab is the default for new queries.\nDeep\nLive\nSearch Query\nAdd a clause, or press Enter to search.\n+ Filter\n+ Text\n+ Sort\n+ Page Size\nText Mode\n2026-11-15 18:00 \u2192 20:00\nSearch\nNo Matches In This Time Window\nEvents\nCharts\nEvent Activity\nQuery Preview\n0 Events\nEvents\n0"
+    },
+    "valid": true
+  }
+]

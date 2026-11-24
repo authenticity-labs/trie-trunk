@@ -1,0 +1,11 @@
+{
+  "description": "Warm local Chrome dashboard refresh, click until Refresh enabled; rolling Last 30 Days, same occupied periods and 22 events",
+  "beforeMs": [64.29999995231628, 55.30000019073486, 54.59999990463257, 54.89999985694885, 50.700000047683716],
+  "afterMs": [63.90000009536743, 72.20000004768372, 49.700000047683716, 51.700000047683716, 38.39999985694885],
+  "beforeMedianMs": 54.89999985694885,
+  "afterMedianMs": 51.700000047683716,
+  "events": 22,
+  "averageDurationMs": 101.25,
+  "p95PeriodMeanMs": 121.47,
+  "limitations": ["Warm refresh only", "No completed-paint measurement", "Rolling endpoints advanced between runs", "No Safari measurement"]
+}

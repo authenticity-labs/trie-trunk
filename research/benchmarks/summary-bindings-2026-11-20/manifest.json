@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-11-20T01:51:52-0500",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "scope": "Native release Rust; resident bytes; no disk/network/UI; 9 alternating pairs per case. Both harnesses encode actual typed input. Summary and registered read harnesses unchanged.",
+  "binaries": {
+    "results": {
+      "before": "cd74071a442d3a106fc8bcc36af504e7da5691438fce7e4c6febbefc5cad95c0",
+      "after": "356cb7bcaf9e2a1768c200c52781262bcf5704f18d9ff4bccff847cf6b49a1d7"
+    },
+    "registered": {
+      "before": "ceb8c3772ff4c3b6570b943736ffeff9bc6aae3db68025f3842d1c9a8e5f6409",
+      "after": "9677e5d6e76ca4a55f8c673a6b7f158d21bfa10f1f3b285f33bfdfd8ccbcbdb5"
+    }
+  }
+}

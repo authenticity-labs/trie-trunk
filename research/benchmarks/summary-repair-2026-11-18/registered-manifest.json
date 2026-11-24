@@ -1,0 +1,8 @@
+{
+  "binaries": {
+    "baseline": "ceb8c3772ff4c3b6570b943736ffeff9bc6aae3db68025f3842d1c9a8e5f6409",
+    "cleanup": "7738709266540fe71d2eaff0c0f17be04caa13ddc77f2a732e8cef0c375b964b"
+  },
+  "baseline_source": "research/benchmarks/summary-completion-2026-11-17/source.tar.gz",
+  "scope": "Native release resident daily PAC open/preview. Typed event ingestion creates the fixture outside read timings. The only expected encoded PAC size change is removal of the 29-byte summary.definitions application header. Dataset, coverage and exact zero result are checked in both executables. No disk/network/worker/UI timings."
+}

@@ -58,7 +58,7 @@ func TestEventsMaturityLateArrivalAndRecovery(t *testing.T) {
 		t.Fatal(scopes, err)
 	}
 	dir := filepath.Join(versionDir(c.Root, m.config.Tap, rev.Version), scopes[0].Dir)
-	before, err := os.ReadFile(filepath.Join(dir, "events.pods"))
+	before, err := os.ReadFile(filepath.Join(dir, "events.packs"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,7 +82,7 @@ func TestEventsMaturityLateArrivalAndRecovery(t *testing.T) {
 	if old.Size()-next.Size() != 8 {
 		t.Fatal(old.Size(), next.Size())
 	}
-	after, _ := os.ReadFile(filepath.Join(dir, "events.pods"))
+	after, _ := os.ReadFile(filepath.Join(dir, "events.packs"))
 	if !bytes.Equal(before, after) {
 		t.Fatal("payload rewritten")
 	}

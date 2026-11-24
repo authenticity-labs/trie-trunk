@@ -38,7 +38,7 @@ func (s *Store) frame(b *branchStore, number uint64, dst []byte) ([]byte, error)
 	if raw := b.live.row(b.rowTime(number), number, s.config.Now()); raw != nil {
 		return append(dst[:0], raw...), nil
 	}
-	reader := podsReader{point: true}
+	reader := packsReader{point: true}
 	raw, e := reader.read(b, number, s.row)
 	if e != nil {
 		return nil, e
@@ -91,7 +91,7 @@ func (s *Store) Search(ctx context.Context, q Query, visit func(uint64, []byte) 
 	return s.search(ctx, q, visit, s.assembledReader(point))
 }
 func (s *Store) assembledReader(point ...bool) func(*branchStore, uint64, []byte) ([]byte, error) {
-	reader := podsReader{point: len(point) > 0 && point[0]}
+	reader := packsReader{point: len(point) > 0 && point[0]}
 	assembler := frameAssembler{layout: s.layout, trie: &s.trie}
 	return func(b *branchStore, number uint64, dst []byte) ([]byte, error) {
 		id := b.assemblyRow(number)
@@ -150,7 +150,7 @@ func (s *Store) searchView(ctx context.Context, q Query, visit func(uint64, []by
 			return ErrObjectIndexDisabled
 		}
 		if q.Branch != Write {
-			return fmt.Errorf("collection.idx supports object lookup on writes only")
+			return fmt.Errorf("collection.indx supports object lookup on writes only")
 		}
 		if e := s.validateObject(objectID); e != nil {
 			return e

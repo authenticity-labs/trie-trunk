@@ -1,0 +1,23 @@
+{
+  "/tmp/snoot-query-trace2/Snoot.app/Contents/Resources/web": {
+    "index.html": "c5eb02cfec49fb76c732c64114ca7ba15ae2556c144cfae74c0185a1e8c2db1c",
+    "assets/index-nfREDs_K.css": "bf35f0fbbec5d0a414ababbc48eaef8e03cc6d7ff3bda3a3b89164e6764219c9",
+    "assets/data-seeds-CGqNGOnI.wasm": "f97f875974d0b50ec68e153cdfdc4c7ddbeece529515fcccf1ba5ba1fbb0e834",
+    "assets/node-worker-DU2caKBc.js": "98f83d6dc7c7e987b97d36ae4f27b8712949e819a61a93e1968504e3af06404c",
+    "assets/index-atUnfuMK.js": "98ef30356f4a91260536117ae4c1652af89daee1f1171fcc240fe96d9586cc67"
+  },
+  "/tmp/snoot-query-fixed/Snoot.app/Contents/Resources/web": {
+    "index.html": "f6a481965edce4a8d37e76be6e5c3eb59d940262086446d24c2354f15e335315",
+    "assets/index-nfREDs_K.css": "bf35f0fbbec5d0a414ababbc48eaef8e03cc6d7ff3bda3a3b89164e6764219c9",
+    "assets/data-seeds-CGqNGOnI.wasm": "f97f875974d0b50ec68e153cdfdc4c7ddbeece529515fcccf1ba5ba1fbb0e834",
+    "assets/index-r4uIG-dg.js": "1d910d64c5323aa84111da120f5740829507f7d9d8b43660e8366a9cac4bc306",
+    "assets/node-worker-P3jXbiBZ.js": "ad7d162befe98f260ed0f90fc7cdf3bea4adb993278cf44a0b11c789d67c0b7c"
+  },
+  "/tmp/snoot-query-audit-final/Snoot.app/Contents/Resources/web": {
+    "index.html": "4c991c761c7acd6bcfd0f02839d58f888ab6eb58cbd4a72d6218bb2e73c53b65",
+    "assets/index-nfREDs_K.css": "bf35f0fbbec5d0a414ababbc48eaef8e03cc6d7ff3bda3a3b89164e6764219c9",
+    "assets/index-CGiZC8bu.js": "6a856965704bd87a54bd22c40954d13b7cc11a8455774e6fc34f4e3d8fa66b08",
+    "assets/data-seeds-Bvni3xZZ.wasm": "ddf1c7182a0d9f60b43deb59613375aa746a06d1f6c69f37f4f49d0a8a418fe4",
+    "assets/node-worker-81UTnYTo.js": "d9dd24a88ad985834d3455551ae647d4870bd3371e32da9c015df4745b0dafd1"
+  }
+}

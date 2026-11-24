@@ -1,0 +1,215 @@
+{
+  "fixed_strings": {},
+  "identity": "log-db_opentelemetry",
+  "root": "log-db_opentelemetry",
+  "types": {
+    "log-db_opentelemetry": {
+      "fields": [
+        {
+          "name": "Timestamp",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "SeverityNumber",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "Body",
+          "optional": true,
+          "value": {
+            "type": "any"
+          }
+        },
+        {
+          "name": "EventName",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "TraceId",
+          "optional": true,
+          "value": {
+            "max": 16,
+            "min": 16,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "SpanId",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "TraceFlags",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "SeverityText",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "Attributes",
+          "optional": true,
+          "value": {
+            "fields": [
+              {
+                "name": "error.type",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "exception.message",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "exception.stacktrace",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.system.name",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.namespace",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.collection.name",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.operation.name",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.query.summary",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.query.text",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.response.status_code",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "db.response.returned_rows",
+                "optional": true,
+                "value": {
+                  "max": 8,
+                  "min": 8,
+                  "type": "size",
+                  "value": {
+                    "type": "uint"
+                  }
+                }
+              },
+              {
+                "name": "db.operation.batch.size",
+                "optional": true,
+                "value": {
+                  "max": 8,
+                  "min": 8,
+                  "type": "size",
+                  "value": {
+                    "type": "uint"
+                  }
+                }
+              },
+              {
+                "name": "server.address",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "server.port",
+                "optional": true,
+                "value": {
+                  "max": 8,
+                  "min": 8,
+                  "type": "size",
+                  "value": {
+                    "type": "uint"
+                  }
+                }
+              }
+            ],
+            "type": "open_record"
+          }
+        }
+      ],
+      "type": "open_record"
+    }
+  }
+}

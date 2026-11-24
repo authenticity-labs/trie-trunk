@@ -1,0 +1,36 @@
+[
+  {
+    "width": 1440,
+    "ok": true,
+    "checks": [
+      "Review Format",
+      "Quoted CSV Newlines",
+      "Delimiter Correction",
+      "Saved Profile",
+      "Loaded Profile",
+      "Invalid Profile Blocks Progress",
+      "XML Events And Arrays",
+      "Multiline Log Boundaries",
+      "Explicit Legacy Syslog Time",
+      "Fixed Columns",
+      "Bounded Phone Layout"
+    ]
+  },
+  {
+    "width": 390,
+    "ok": true,
+    "checks": [
+      "Review Format",
+      "Quoted CSV Newlines",
+      "Delimiter Correction",
+      "Saved Profile",
+      "Loaded Profile",
+      "Invalid Profile Blocks Progress",
+      "XML Events And Arrays",
+      "Multiline Log Boundaries",
+      "Explicit Legacy Syslog Time",
+      "Fixed Columns",
+      "Bounded Phone Layout"
+    ]
+  }
+]

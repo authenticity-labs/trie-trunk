@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package main
 
 import (
@@ -8,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"time"
 	"trie-trunk/go/server/cache"
 )
@@ -24,7 +27,8 @@ func runCache(ctx context.Context, args []string, input io.Reader, output io.Wri
 	root := flags.String("dir", "./caches", "cache storage root")
 	name := flags.String("cache", "", "registered cache key")
 	tenant := flags.String("tenant", "", "registered owner")
-	definition := flags.String("definition", "", "unified resource.rx or JSON definition")
+	definition := flags.String("definition", "", "PIL .rx or JSON definition")
+	resourceType := flags.String("resource-type", "", "explicit taxonomy classification at registration")
 	branch := flags.String("branch", "write", "read, write, error, debug or trace")
 	from := flags.String("from", "", "inclusive RFC3339 time")
 	to := flags.String("to", "", "exclusive RFC3339 time")
@@ -38,6 +42,15 @@ func runCache(ctx context.Context, args []string, input io.Reader, output io.Wri
 	}
 	if *apply && command != "cleanup" {
 		return fmt.Errorf("--apply is only valid for cleanup")
+	}
+	if command == "init" {
+		executable, e := os.Executable()
+		if e != nil {
+			return e
+		}
+		if e = cache.InstallDefinitionTools(*root, filepath.Dir(executable)); e != nil {
+			return e
+		}
 	}
 	if command == "cleanup" {
 		report, err := cache.Cleanup(ctx, cache.Config{Root: *root, Cache: *name, Tenant: *tenant}, *apply)
@@ -92,7 +105,7 @@ func runCache(ctx context.Context, args []string, input io.Reader, output io.Wri
 	if e != nil {
 		return e
 	}
-	store, e := cache.Open(cache.Config{Root: *root, Cache: *name, Tenant: *tenant, Layout: layout, ObjectIndex: *objects})
+	store, e := cache.Open(cache.Config{Root: *root, Cache: *name, Tenant: *tenant, Layout: layout, ObjectIndex: *objects, ResourceType: *resourceType})
 	if e != nil {
 		return e
 	}

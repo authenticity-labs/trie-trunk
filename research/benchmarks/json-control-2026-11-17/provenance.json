@@ -1,0 +1,24 @@
+{
+  "dataset": {
+    "records": 20000,
+    "matched": 9408,
+    "jsonBytes": 1673900,
+    "sha256": "465a858f18b8a62167b958a45e25d52c89f2d2b8eaf273b194a7a1fd5c8cef1d"
+  },
+  "origin": {
+    "caches/demo/lab/indexed/sample.packs": "a5267bbd7a87c31844711ead3c0b9917082d5aa267054482b2bab740c3051cd3",
+    "caches/demo/lab/indexed/sample.time": "12fd4e11f65372f5e997ee0ef53d4111242b06a67e1c7862f302eff052e9ed85",
+    "caches/demo/lab/indexed/sample.indx": "b0654ccebdd9fa94f48f3ec6ce31d143c2d2150901b8c5d95998a71b186c183a",
+    "caches/demo/lab/indexed/sample.leaf": "947135c0f4298263a76b86deba8f598b983c7dc85c8707e57d401255517f0dd8"
+  },
+  "bundle": {
+    "node-worker-Dpv4arUh.js": "89d8f20b52f19e1ecee5d38aac0b53db6f8b6059e149e7bb27f2917191e99c61"
+  },
+  "exportSetupLogs": [
+    "json-export-run.log",
+    "json-export-run-2.log",
+    "json-export-run-3.log",
+    "json-export-run-4.log",
+    "json-export-run-5.log"
+  ]
+}

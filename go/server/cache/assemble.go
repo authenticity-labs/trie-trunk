@@ -13,16 +13,16 @@ type frameAssembler struct {
 // Reconstruct standalone event identity from the indexed timestamp and stored
 // record number, then resolve index-bound shared fields. Native replication transfers the sealed
 // index and PAC unchanged and does not invoke this materialization path.
-func (a *frameAssembler) assemble(row, pods, dst []byte, leaf uint16) ([]byte, error) {
+func (a *frameAssembler) assemble(row, packs, dst []byte, leaf uint16) ([]byte, error) {
 	if len(row) != 16 {
 		return nil, fmt.Errorf("short row")
 	}
 	l := a.layout
 	f := &a.identity
-	if err := l.Scan(pods, f); err != nil {
+	if err := l.Scan(packs, f); err != nil {
 		return nil, err
 	}
-	if f.Values[l.Event].State != Absent || f.Values[l.Time].State != Absent {
+	if !l.logStrategy() && f.Values[l.Event].State != Absent || f.Values[l.Time].State != Absent {
 		return nil, fmt.Errorf("payload shadows indexed identity")
 	}
 	if f.Values[l.Record].State != Direct || len(f.Values[l.Record].Bytes) != 3 {
@@ -36,11 +36,14 @@ func (a *frameAssembler) assemble(row, pods, dst []byte, leaf uint16) ([]byte, e
 		return nil, err
 	}
 	f.Values[l.Leaf] = Uint(uint64(leaf), 2)
-	f.Values[l.Event] = Value{Direct, id[:]}
+	if !l.logStrategy() {
+		f.Values[l.Event] = Value{Direct, id[:]}
+	}
+	f.Values[l.Time] = Uint(uint64(eventTime(row)), 8)
 	return l.Encode(dst, f.Values)
 }
 
-func (s *Store) assemble(row, pods, dst []byte, leaf uint16) ([]byte, error) {
+func (s *Store) assemble(row, packs, dst []byte, leaf uint16) ([]byte, error) {
 	a := frameAssembler{layout: s.layout, trie: &s.trie}
-	return a.assemble(row, pods, dst, leaf)
+	return a.assemble(row, packs, dst, leaf)
 }

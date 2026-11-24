@@ -1,0 +1,34 @@
+{
+  "scope": "HTTP field metadata lookup only; repeated decoding is an intentionally naive comparison, not the previous Snoot implementation. Excludes event decoding, DOM rendering, network and WASM initialization.",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "node": "v26.5.0",
+  "metadata_pac_bytes": 5698,
+  "field_count": 26,
+  "first_prepare_ms": 1.9655829999999952,
+  "retained_js_heap_bytes_per_definition": 26828.24,
+  "results": {
+    "prepared": {
+      "lookups": 200000,
+      "median_ms": 2.143540999999999,
+      "min_ms": 2.138458000000014,
+      "max_ms": 2.5758749999999964,
+      "ns_per_lookup": 10.717704999999995
+    },
+    "directMap": {
+      "lookups": 200000,
+      "median_ms": 1.7917500000000075,
+      "min_ms": 1.70720799999998,
+      "max_ms": 2.714540999999997,
+      "ns_per_lookup": 8.958750000000038
+    },
+    "decodePerCell": {
+      "lookups": 10000,
+      "median_ms": 288.0939169999999,
+      "min_ms": 283.89779099999987,
+      "max_ms": 290.29075000000006,
+      "ns_per_lookup": 28809.391699999993
+    }
+  },
+  "checksum": 21547526
+}

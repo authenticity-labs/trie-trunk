@@ -8,6 +8,7 @@ trunk-definition = {
 }
 trunk-resource = {
   format: 6,
+  ? strategy: "log",
   service: tstr,
   resource: tstr,
   major: 1..4095,

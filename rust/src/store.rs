@@ -484,8 +484,8 @@ struct Run {
     width: usize,
     count: usize,
     buffer: Mutex<RowBuffer>,
-    pods_start: u64,
-    pods_end: u64,
+    packs_start: u64,
+    packs_end: u64,
     validated: AtomicBool,
 }
 
@@ -522,7 +522,7 @@ impl Run {
                 let base = if self.width == 34 {
                     0
                 } else if buffer.first == 0 {
-                    self.pods_start
+                    self.packs_start
                 } else {
                     let mut b = [0; 8];
                     file.read_exact_at(&mut b, offset - 8)?;
@@ -548,9 +548,9 @@ impl Cursor {
         crate::runtime::check()?;
         if !self.run.validated.load(AtomicOrdering::Relaxed) {
             check_payload(
-                &source.pods,
-                self.run.pods_start,
-                self.run.pods_end,
+                &source.packs,
+                self.run.packs_start,
+                self.run.packs_end,
                 scratch,
             )?;
             self.run.validated.store(true, AtomicOrdering::Relaxed);
@@ -616,7 +616,7 @@ impl Eq for Cursor {}
 
 pub(crate) struct Source {
     idx: Snapshot,
-    pods: Snapshot,
+    packs: Snapshot,
     pub catalog: Arc<RwLock<Catalog>>,
 }
 
@@ -661,7 +661,7 @@ impl Source {
     fn payload(&self, cursor: &Cursor, buffer: &mut [u8]) -> io::Result<BTreeMap<u16, Value>> {
         let row = &cursor.row;
         let data = &mut buffer[..(row.end - row.start) as usize];
-        self.pods.file.read_exact_at(data, row.start)?;
+        self.packs.file.read_exact_at(data, row.start)?;
         let mut fields = schema::record(schema::decode(data)?)?;
         fields.insert(
             self.catalog.read().unwrap().schema.id,
@@ -701,7 +701,7 @@ impl Source {
         cursor.validate(self, buffer)?;
         let row = &cursor.row;
         let data = &mut buffer[..(row.end - row.start) as usize];
-        self.pods.file.read_exact_at(data, row.start)?;
+        self.packs.file.read_exact_at(data, row.start)?;
         // Payload predicates retain the existing evaluator. Unfiltered and
         // trie-only searches never construct payload objects on the PIL path.
         if decision == Decision::Payload {
@@ -794,12 +794,12 @@ impl Source {
     }
 }
 
-fn check_payload(pods: &Snapshot, start: u64, end: u64, buffer: &mut [u8]) -> io::Result<()> {
-    if end <= start || end - start > MAX_BLOCK || end > pods.size {
+fn check_payload(packs: &Snapshot, start: u64, end: u64, buffer: &mut [u8]) -> io::Result<()> {
+    if end <= start || end - start > MAX_BLOCK || end > packs.size {
         return Err(invalid("invalid payload block range"));
     }
     let mut header = [0; 8];
-    pods.file.read_exact_at(&mut header, start - 8)?;
+    packs.file.read_exact_at(&mut header, start - 8)?;
     if u64::from(u32be(&header)) != end - start {
         return Err(invalid("payload length mismatch"));
     }
@@ -808,7 +808,7 @@ fn check_payload(pods: &Snapshot, start: u64, end: u64, buffer: &mut [u8]) -> io
     while offset < end {
         crate::runtime::check()?;
         let size = buffer.len().min((end - offset) as usize);
-        pods.file.read_exact_at(&mut buffer[..size], offset)?;
+        packs.file.read_exact_at(&mut buffer[..size], offset)?;
         checksum = crc32c::crc32c_append(checksum, &buffer[..size]);
         offset += size as u64;
     }
@@ -820,7 +820,7 @@ fn check_payload(pods: &Snapshot, start: u64, end: u64, buffer: &mut [u8]) -> io
 
 pub(crate) struct Progress {
     offset: u64,
-    pods_end: u64,
+    packs_end: u64,
     identity: Option<(u64, u64)>,
     compact: bool,
     digest: u32,
@@ -829,7 +829,7 @@ impl Default for Progress {
     fn default() -> Self {
         Self {
             offset: 8,
-            pods_end: 8,
+            packs_end: 8,
             identity: None,
             compact: false,
             digest: 0,
@@ -996,7 +996,7 @@ impl Reader {
             if !matches!(idx.format, 3 | 4) || !idx.compact || progress.compact {
                 return Err(invalid("unexpected index replacement"));
             }
-            progress.pods_end
+            progress.packs_end
         } else {
             0
         };
@@ -1033,12 +1033,12 @@ impl Reader {
                 return Ok(None);
             }
         }
-        let mut pods = None;
+        let mut packs = None;
         let mut cursors = Vec::new();
-        let mut pods_end = if converted {
+        let mut packs_end = if converted {
             8
         } else {
-            progress.pods_end
+            progress.packs_end
         };
         let next = idx
             .scan(scan_start, &mut self.buffer, |offset, data, cached| {
@@ -1054,10 +1054,10 @@ impl Reader {
                 }
                 let rows = Rows::parse(data, idx.compact, idx.format == 4)?;
                 if cached && !self.follow {
-                    if u64be(&rows.row(0)[20..]) != pods_end + 8 {
+                    if u64be(&rows.row(0)[20..]) != packs_end + 8 {
                         return Err(invalid("noncontiguous payload block"));
                     }
-                    pods_end = rows.end(rows.len() - 1);
+                    packs_end = rows.end(rows.len() - 1);
                 }
                 let mut previous: Option<[u8; 16]> = None;
                 for i in 0..if cached && !self.follow {
@@ -1080,21 +1080,21 @@ impl Reader {
                         }
                     }
                     if let Some(previous) = previous {
-                        if row.start != pods_end || previous.as_slice() >= rows.uuid(i) {
+                        if row.start != packs_end || previous.as_slice() >= rows.uuid(i) {
                             return Err(invalid("unordered or noncontiguous index run"));
                         }
-                    } else if row.start != pods_end + 8 {
+                    } else if row.start != packs_end + 8 {
                         return Err(invalid("noncontiguous payload block"));
                     }
                     previous = Some(bytes[..16].try_into().unwrap());
-                    pods_end = row.end;
+                    packs_end = row.end;
                     if self.follow {
                         digest = crc32c::crc32c_append(digest, &bytes[..20]);
                         digest = crc32c::crc32c_append(digest, &bytes[28..]);
                     }
                 }
-                if converted && pods_end <= consumed {
-                    if pods_end == consumed {
+                if converted && packs_end <= consumed {
+                    if packs_end == consumed {
                         if digest != expected_digest {
                             return Err(invalid("converted index changed consumed rows"));
                         }
@@ -1136,16 +1136,16 @@ impl Reader {
                         first: 0,
                         rows: Vec::new(),
                     }),
-                    pods_start: u64be(&rows.row(0)[20..]),
-                    pods_end,
+                    packs_start: u64be(&rows.row(0)[20..]),
+                    packs_end,
                     validated: AtomicBool::new(false),
                 };
-                if pods.is_none() {
-                    pods = Some(Snapshot::open(
+                if packs.is_none() {
+                    packs = Some(Snapshot::open(
                         &dir.join(if matches!(idx.format, 3 | 4) {
-                            "events.pods"
+                            "events.packs"
                         } else {
-                            "log.pods"
+                            "log.packs"
                         }),
                         b"TPOD",
                     )?);
@@ -1180,16 +1180,16 @@ impl Reader {
         progress.compact = idx.compact;
         progress.digest = digest;
         progress.offset = next;
-        progress.pods_end = pods_end;
+        progress.packs_end = packs_end;
         progress.identity = Some(idx.identity);
-        let Some(pods) = pods else {
+        let Some(packs) = packs else {
             return Ok(None);
         };
         let catalog = match catalog {
             Some(catalog) => catalog,
             None => load_catalog(&mut self.catalogs, version, &self.filter, self.compact)?,
         };
-        Ok(Some((Source { idx, pods, catalog }, cursors)))
+        Ok(Some((Source { idx, packs, catalog }, cursors)))
     }
 }
 

@@ -5,7 +5,8 @@ package cache
 import (
 	"crypto/sha256"
 	"fmt"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	"strings"
 	"time"
 )
 
@@ -35,6 +36,9 @@ func (b Branch) Name() string {
 	}
 	return [...]string{"read", "write", "error", "debug", "trace"}[b]
 }
+
+// Operational rollups retain their existing branch scope. Field accumulators
+// and five-minute summary PACs are maintained for every valid branch.
 func (b Branch) Aggregates() bool { return b <= Error }
 func ParseBranch(s string) (Branch, error) {
 	for b := Read; b <= Trace; b++ {
@@ -54,6 +58,7 @@ type Roles struct {
 	Duration string `json:"duration,omitempty" pil:"duration,omitempty"`
 }
 type Binding struct {
+	Strategy     string                 `json:"strategy,omitempty" pil:"strategy,omitempty"`
 	Format       uint32                 `json:"format" pil:"format"`
 	Service      string                 `json:"service" pil:"service"`
 	Resource     string                 `json:"resource" pil:"resource"`
@@ -69,15 +74,17 @@ type Binding struct {
 // The standard PIL definition is also the storage map. Its resource section supplies
 // storage roles and projections; PIL clients can read the same definition bytes.
 type Definition struct {
-	PIL              uint32  `json:"pil" pil:"pil"`
-	AdaptiveIntegers string  `json:"adaptive_integers,omitempty" pil:"adaptive_integers,omitempty"`
-	Identity         string  `json:"definition" pil:"definition"`
-	Version          uint64  `json:"version" pil:"version"`
-	Fields           []Field `json:"fields" pil:"fields"`
-	Resource         Binding `json:"resource" pil:"resource"`
+	CDDL             pil.RawObject `json:"cddl,omitempty" pil:"cddl,omitempty"`
+	PIL              uint32        `json:"pil" pil:"pil"`
+	AdaptiveIntegers string        `json:"adaptive_integers,omitempty" pil:"adaptive_integers,omitempty"`
+	Identity         string        `json:"definition" pil:"definition"`
+	Version          uint64        `json:"version" pil:"version"`
+	Fields           []Field       `json:"fields" pil:"fields"`
+	Resource         Binding       `json:"resource" pil:"resource"`
 }
 type Layout struct {
 	statistics *statisticsLayout
+	aggregates *aggregatePlan
 	*pil.Layout
 	Definition                                Definition
 	Event, Object, Revision, Duration, Shared int
@@ -116,7 +123,11 @@ func Compile(d Definition) (*Layout, error) {
 	d.Resource.Path = append([]string(nil), d.Resource.Path...)
 	d.Resource.Aggregations = append([]string(nil), d.Resource.Aggregations...)
 	d.Resource.References = cloneReferences(d.Resource.References)
-	for _, intrinsic := range []Field{{Name: "@event_id", Type: "U24"}, {Name: "@time", Type: "TIMESTAMP_MS"}, {Name: "@leaf", Type: "REF16"}} {
+	intrinsics := []Field{{Name: "@event_id", Type: "U24"}, {Name: "@time", Type: "TIMESTAMP_MS"}, {Name: "@leaf", Type: "REF16"}}
+	if d.Resource.Strategy == "log" {
+		intrinsics = []Field{{Name: "@record", Type: "U24"}, {Name: "@time", Type: "U64"}, {Name: "@leaf", Type: "U16"}}
+	}
+	for _, intrinsic := range intrinsics {
 		found := false
 		for _, f := range d.Fields {
 			if f.Name == intrinsic.Name {
@@ -166,13 +177,17 @@ func Compile(d Definition) (*Layout, error) {
 		}
 		return i, nil
 	}
-	l.Record = byName["@event_id"]
+	l.Record = byName[intrinsics[0].Name]
 	l.Leaf = byName["@leaf"]
 	l.Time = byName["@time"]
 	if l.Event, err = role(n.Roles.Event, true); err != nil {
 		return nil, err
 	}
-	if d.Fields[l.Event].Type != "UUID" {
+	if d.Resource.Strategy == "log" {
+		if n.Roles.Event != "@id" || d.Fields[l.Event].Type != "BYTES" {
+			return nil, fmt.Errorf("log strategy requires @id bytes")
+		}
+	} else if d.Fields[l.Event].Type != "UUID" {
 		return nil, fmt.Errorf("event_id role must be UUID")
 	}
 	if l.Object, err = role(n.Roles.Object, false); err != nil {
@@ -222,15 +237,30 @@ func Compile(d Definition) (*Layout, error) {
 			return nil, fmt.Errorf("duration role cannot be mapped")
 		}
 	}
-	wanted := []string{"count", "duration.count", "duration.sum", "duration.min", "duration.max"}
-	if len(n.Aggregations) > 0 {
-		if l.Duration < 0 || len(n.Aggregations) != len(wanted) {
-			return nil, fmt.Errorf("unsupported aggregations")
+	// Aggregatable operations are derived from all Definition fields. The
+	// resource's declared projections remain validated, without a duration-only
+	// vocabulary. Blank declarations do not disable type-driven accumulators.
+	for _, a := range n.Aggregations {
+		if a == "count" {
+			continue
 		}
-		for i, a := range n.Aggregations {
-			if a != wanted[i] {
-				return nil, fmt.Errorf("unsupported aggregations")
+		at := strings.LastIndexByte(a, '.')
+		if at < 1 {
+			return nil, fmt.Errorf("invalid aggregation %q", a)
+		}
+		ordinal, ok := byName[a[:at]]
+		if !ok {
+			return nil, fmt.Errorf("unknown aggregate field %q", a[:at])
+		}
+		kind := d.Fields[ordinal].Type
+		switch a[at+1:] {
+		case "count", "nulls":
+		case "sum", "min", "max":
+			if len(d.Fields[ordinal].Values) > 0 || !(strings.HasPrefix(kind, "U") && kind != "UUID" || strings.HasPrefix(kind, "I") || kind == "F32" || kind == "F64" || kind == "BOOL" || strings.HasPrefix(kind, "TIMESTAMP_") && a[at+1:] != "sum") {
+				return nil, fmt.Errorf("unsupported aggregation %q", a)
 			}
+		default:
+			return nil, fmt.Errorf("unsupported aggregation %q", a)
 		}
 	}
 	seen := map[int]bool{}
@@ -242,8 +272,12 @@ func Compile(d Definition) (*Layout, error) {
 		seen[i] = true
 		l.Path = append(l.Path, i)
 	}
-	l.Layout.Identity = pil.IdentityProfile{Primary: l.Event, Fields: map[int]bool{l.Object: true, l.Revision: true}, Validate: func(v pil.Value) error { _, err := eventID(v); return err }}
+	l.Layout.Identity = pil.IdentityProfile{Primary: l.Event, Fields: map[int]bool{l.Object: true, l.Revision: true}, Validate: l.validateIdentity}
 	l.statistics = compileStatistics(l)
+	l.aggregates, err = compileAggregates(l)
+	if err != nil {
+		return nil, err
+	}
 	return l, nil
 }
 func ParseDefinition(raw []byte) (*Layout, error) {
@@ -282,7 +316,7 @@ func (l *Layout) ProducerValues(values []Value) []Value {
 
 func (l *Layout) Encode(dst []byte, values []Value) ([]byte, error) {
 	values = l.ProducerValues(values)
-	if len(values) == len(l.Definition.Fields) && values[l.Event].State != Absent && values[l.Event].State != Null {
+	if !l.logStrategy() && len(values) == len(l.Definition.Fields) && values[l.Event].State != Absent && values[l.Event].State != Null {
 		id, err := eventID(values[l.Event])
 		if err != nil {
 			return nil, err

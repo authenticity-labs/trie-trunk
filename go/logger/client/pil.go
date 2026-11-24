@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sort"
 
-	pilcodec "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"trie-trunk/go/codec"
 	Keys "trie-trunk/go/logger/client/keys"
 	"trie-trunk/go/logger/pil"
@@ -125,19 +125,24 @@ func NewPIL(ctx context.Context, transport pil.Config, config Config) (*Logger, 
 }
 
 type pilEntryPlan struct {
-	scratch    []pil.Value
-	numeric    [26]byte
-	core       [22]int
-	access     string
-	owned      map[string]bool
-	layout     *cache.Layout
-	slots      map[string]int
-	refs       []map[uint16]pil.Value
-	texts      []map[string]pil.Value
-	dictionary *codec.Dictionary
+	logResourceKey string
+	logResource    pil.Value
+	scratch        []pil.Value
+	numeric        [26]byte
+	core           [22]int
+	access         string
+	owned          map[string]bool
+	layout         *cache.Layout
+	slots          map[string]int
+	refs           []map[uint16]pil.Value
+	texts          []map[string]pil.Value
+	dictionary     *codec.Dictionary
 }
 
 func compilePILEntry(l *cache.Layout, dictionary *codec.Dictionary) (*pilEntryPlan, error) {
+	if l.Definition.Resource.Strategy == "log" {
+		return compileLogEntry(l, dictionary)
+	}
 	if l.Definition.Resource.Roles.Event != "event_id" || l.Definition.Resource.Roles.Duration != "duration" || l.Object >= 0 || l.Revision >= 0 {
 		return nil, fmt.Errorf("request logger requires event_id/duration roles; use generic PIL logger for object mutations")
 	}
@@ -203,6 +208,9 @@ func (p *pilEntryPlan) accessFor(e *Entry) string {
 }
 
 func (p *pilEntryPlan) values(e *Entry) ([]pil.Value, error) {
+	if p.layout.Definition.Resource.Strategy == "log" {
+		return p.logValues(e)
+	}
 	values := p.scratch
 	clear(values)
 	put := func(slot int, v pil.Value) { values[p.core[slot]] = v }

@@ -17,15 +17,15 @@ func TestObsoleteSharedTrieNameCannotSilentlyResetReferences(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	dir, root := s.dir, s.root
+	dir, root := s.dir, c.Root
 	if err := s.Close(); err != nil {
 		t.Fatal(err)
 	}
-	before, err := os.ReadFile(filepath.Join(root, "registry.map"))
+	before, err := os.ReadFile(filepath.Join(root, "trunk.trie"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Rename(filepath.Join(dir, "state.tri"), filepath.Join(dir, "resource.tri")); err != nil {
+	if err := os.Rename(filepath.Join(dir, "leaf.trie"), filepath.Join(dir, "resource.tri")); err != nil {
 		t.Fatal(err)
 	}
 	if s, err := Open(c); err == nil {
@@ -34,10 +34,10 @@ func TestObsoleteSharedTrieNameCannotSilentlyResetReferences(t *testing.T) {
 	} else if !strings.Contains(err.Error(), "recreate the cache") {
 		t.Fatal(err)
 	}
-	if _, err := os.Stat(filepath.Join(dir, "state.tri")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(dir, "leaf.trie")); !os.IsNotExist(err) {
 		t.Fatal("created a replacement state trie", err)
 	}
-	after, err := os.ReadFile(filepath.Join(root, "registry.map"))
+	after, err := os.ReadFile(filepath.Join(root, "trunk.trie"))
 	if err != nil || !bytes.Equal(before, after) {
 		t.Fatal("failed open changed the catalog", err)
 	}
@@ -72,16 +72,19 @@ func TestResourceLayoutAndLocalLoss(t *testing.T) {
 	if _, err = s.Append(Write, lost); !errors.As(err, &late) {
 		t.Fatal(err)
 	}
-	paths := []string{"registry.cfg", "registry.map", "resource.tri", "payment/transactions.v1/collection.idx", "payment/transactions.v1/collection.state"}
-	for _, name := range []string{"resource.rx", "state.tri", "resource.stats", "lost.log"} {
+	if _, err := os.Stat(filepath.Join(c.Root, "trunk.trie")); err != nil {
+		t.Fatal(err)
+	}
+	paths := []string{"payment/transactions.v1/collection.indx", "payment/transactions.v1/collection.state"}
+	for _, name := range []string{"leaf.trie", "lost.seeds"} {
 		paths = append(paths, "payment/transactions.v1/0/"+name)
 	}
 	for b := Read; b <= Trace; b++ {
-		for _, ext := range []string{"idx", "pods", "tri", "seed"} {
+		for _, ext := range []string{"indx", "packs", "time", "seeds"} {
 			paths = append(paths, "payment/transactions.v1/0/"+b.Name()+"."+ext)
 		}
 		if b.Aggregates() {
-			paths = append(paths, "payment/transactions.v1/0/"+b.Name()+".sum")
+			paths = append(paths, "payment/transactions.v1/0/"+b.Name()+".summ")
 		}
 	}
 	// stats are published on Close, then read back with all other metadata.
@@ -93,7 +96,7 @@ func TestResourceLayoutAndLocalLoss(t *testing.T) {
 			t.Fatal(path, err)
 		}
 	}
-	if _, err = os.Stat(filepath.Join(s.root, "lost.log")); !os.IsNotExist(err) {
+	if _, err = os.Stat(filepath.Join(s.root, "lost.seeds")); !os.IsNotExist(err) {
 		t.Fatal("loss file escaped the resource minor")
 	}
 	s, err = Open(c)

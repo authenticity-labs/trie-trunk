@@ -104,7 +104,7 @@ func TestStoreLateSparseBranchesAndRecovery(t *testing.T) {
 				if dup, e := s.Append(b, late); e == nil || dup {
 					t.Fatalf("recovered duplicate: %v %v", dup, e)
 				}
-				path := filepath.Join(s.dir, b.Prefix()+".sum")
+				path := filepath.Join(s.dir, b.Prefix()+".summ")
 				_, e := os.Stat(path)
 				if b.Aggregates() {
 					if e != nil {
@@ -126,8 +126,8 @@ func TestStoreLateSparseBranchesAndRecovery(t *testing.T) {
 						t.Fatalf("aggregate %+v", a)
 					}
 				} else {
-					if !os.IsNotExist(e) {
-						t.Fatalf("unexpected diagnostic aggregate: %v", e)
+					if e != nil {
+						t.Fatalf("missing diagnostic field summaries: %v", e)
 					}
 					if _, e = s.Summaries(b, start, now); e == nil {
 						t.Fatal("diagnostic summary accepted")
@@ -163,7 +163,7 @@ func TestRecoveryDiscardUncommittedTails(t *testing.T) {
 	if e = s.Close(); e != nil {
 		t.Fatal(e)
 	}
-	for _, ext := range []string{"idx", "pods", "sum", "tri"} {
+	for _, ext := range []string{"indx", "packs", "summ", "time"} {
 		f, e := os.OpenFile(filepath.Join(dir, "write."+ext), os.O_WRONLY|os.O_APPEND, 0)
 		if e != nil {
 			t.Fatal(e)
@@ -181,7 +181,7 @@ func TestRecoveryDiscardUncommittedTails(t *testing.T) {
 		t.Fatal("recovery lost data")
 	}
 	s.Close()
-	f, e := os.OpenFile(filepath.Join(dir, "write.pods"), os.O_RDWR, 0)
+	f, e := os.OpenFile(filepath.Join(dir, "write.packs"), os.O_RDWR, 0)
 	if e != nil {
 		t.Fatal(e)
 	}

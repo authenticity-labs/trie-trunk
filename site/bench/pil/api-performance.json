@@ -1,0 +1,421 @@
+{
+  "scope": "Pill Packer API performance; no network, disk writes, rendering, or Snoot query timings. Before is the aligned API before this optimization pass, not an older production release.",
+  "date": "2026-10-30",
+  "machine": "Apple M1 Max (reported by Go benchmark)",
+  "method": "Chrome: foreground, alternating before/after, 2 warmups and median of 5 samples. Rust: release build with counting allocator, 2 warmups and median of 5 samples. Go: benchmem, three 200ms samples. Allocation bytes are cumulative, not peak residency.",
+  "browser": {
+    "initial": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "rows": 100000,
+      "pacBytes": 10406553,
+      "warmups": 2,
+      "samples": 5,
+      "sink": 332588186,
+      "results": [
+        {
+          "name": "100k records: batch pack",
+          "beforeMs": 40.80000000447035,
+          "afterMs": 40.600000001490116
+        },
+        {
+          "name": "100k records: full open",
+          "beforeMs": 31.200000002980232,
+          "afterMs": 31.30000000447035
+        },
+        {
+          "name": "100k records: get + field",
+          "beforeMs": 10.799999997019768,
+          "afterMs": 10.800000004470348
+        },
+        {
+          "name": "100 random offsets in 100k records",
+          "beforeMs": 170,
+          "afterMs": 0.09999999403953552
+        },
+        {
+          "name": "100 hourly packs: unseal, validate, read 100 records each",
+          "beforeMs": 69.60000000149012,
+          "afterMs": 67.89999999850988
+        }
+      ]
+    },
+    "background": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "rows": 100000,
+      "pacBytes": 10406553,
+      "warmups": 2,
+      "samples": 5,
+      "sink": 478279928,
+      "results": [
+        {
+          "name": "100k records: supplied directory + bytes",
+          "beforeMs": 541.2999999970198,
+          "afterMs": 283.6000000014901
+        },
+        {
+          "name": "100k records: batch pack",
+          "beforeMs": 710.5,
+          "afterMs": 463.70000000298023
+        },
+        {
+          "name": "100k records: full open",
+          "beforeMs": 33,
+          "afterMs": 33.100000001490116
+        },
+        {
+          "name": "100k records: get + field",
+          "beforeMs": 11.600000001490116,
+          "afterMs": 11.700000002980232
+        },
+        {
+          "name": "100 random offsets in 100k records",
+          "beforeMs": 178.80000000447035,
+          "afterMs": 0.10000000149011612
+        },
+        {
+          "name": "100 hourly packs: unseal, validate, read 100 records each",
+          "beforeMs": 544.7999999970198,
+          "afterMs": 424.70000000298023
+        }
+      ]
+    },
+    "foreground": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "rows": 100000,
+      "pacBytes": 10406553,
+      "warmups": 2,
+      "samples": 5,
+      "sink": 478279928,
+      "results": [
+        {
+          "name": "100k records: supplied directory + bytes",
+          "beforeMs": 77.69999999552965,
+          "afterMs": 42.600000001490116
+        },
+        {
+          "name": "100k records: batch pack",
+          "beforeMs": 36.899999998509884,
+          "afterMs": 38.100000001490116
+        },
+        {
+          "name": "100k records: full open",
+          "beforeMs": 31.19999999552965,
+          "afterMs": 31.299999997019768
+        },
+        {
+          "name": "100k records: get + field",
+          "beforeMs": 10.799999997019768,
+          "afterMs": 10.799999997019768
+        },
+        {
+          "name": "100 random offsets in 100k records",
+          "beforeMs": 166.60000000149012,
+          "afterMs": 0.10000000149011612
+        },
+        {
+          "name": "100 hourly packs: unseal, validate, read 100 records each",
+          "beforeMs": 66.70000000298023,
+          "afterMs": 64
+        }
+      ]
+    },
+    "foregroundRebuiltWasm": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "rows": 100000,
+      "pacBytes": 10406553,
+      "warmups": 2,
+      "samples": 5,
+      "sink": 478279928,
+      "results": [
+        {
+          "name": "100k records: supplied directory + bytes",
+          "beforeMs": 79.20000000298023,
+          "afterMs": 41.29999999701977
+        },
+        {
+          "name": "100k records: batch pack",
+          "beforeMs": 37.600000001490116,
+          "afterMs": 37.20000000298023
+        },
+        {
+          "name": "100k records: full open",
+          "beforeMs": 31.19999999552965,
+          "afterMs": 31.299999997019768
+        },
+        {
+          "name": "100k records: get + field",
+          "beforeMs": 10.799999997019768,
+          "afterMs": 11
+        },
+        {
+          "name": "100 random offsets in 100k records",
+          "beforeMs": 166.19999999552965,
+          "afterMs": 0.10000000149011612
+        },
+        {
+          "name": "100 hourly packs: unseal, validate, read 100 records each",
+          "beforeMs": 66,
+          "afterMs": 63.400000005960464
+        }
+      ]
+    }
+  },
+  "jsNodeBefore": {
+    "runtime": "v26.5.0",
+    "description": "Same source records and validation, warmup 2, measured 5; offsets=100 random lookups; no I/O in timing; WASM uploads counted, not heap allocations.",
+    "sink": 360155054,
+    "results": [
+      {
+        "name": "10000/pack/core",
+        "medianMs": 2.6310000000000002,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/pack/api",
+        "medianMs": 2.7234579999999937,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/open/core/full",
+        "medianMs": 2.0896670000000057,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/open/api/full",
+        "medianMs": 1.8322089999999918,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/get-field/core",
+        "medianMs": 0.9672920000000005,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "10000/get-field/api",
+        "medianMs": 1.240791999999999,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "10000/offset/api/100",
+        "medianMs": 17.857917000000015,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "10000/seal/core",
+        "medianMs": 1.9446249999999736,
+        "wasmUploadBytes": 1040375,
+        "wasmUploadCalls": 1
+      },
+      {
+        "name": "10000/seal/api",
+        "medianMs": 1.8972090000000321,
+        "wasmUploadBytes": 1040375,
+        "wasmUploadCalls": 1
+      },
+      {
+        "name": "10000/unseal/api/full",
+        "medianMs": 3.9280840000000126,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "100000/pack/core",
+        "medianMs": 22.995875000000012,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/pack/api",
+        "medianMs": 26.74762499999997,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/open/core/full",
+        "medianMs": 18.198792000000026,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/open/api/full",
+        "medianMs": 18.312999999999988,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/get-field/core",
+        "medianMs": 9.287124999999833,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "100000/get-field/api",
+        "medianMs": 12.39474999999993,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "100000/offset/api/100",
+        "medianMs": 178.316458,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "fixed-common/append-100-to-1000",
+        "medianMs": 243.48149999999987,
+        "wasmUploadBytes": 4776750,
+        "wasmUploadCalls": 106150
+      }
+    ]
+  },
+  "jsNodeAfterOffsetFix": {
+    "runtime": "v26.5.0",
+    "description": "Same source records and validation, warmup 2, measured 5; offsets=100 random lookups; no I/O in timing; WASM uploads counted, not heap allocations.",
+    "sink": 360155054,
+    "results": [
+      {
+        "name": "10000/pack/core",
+        "medianMs": 2.474375000000002,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/pack/api",
+        "medianMs": 2.7787079999999946,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/open/core/full",
+        "medianMs": 1.9897500000000008,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/open/api/full",
+        "medianMs": 1.795125000000013,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "10000/get-field/core",
+        "medianMs": 0.9393340000000023,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "10000/get-field/api",
+        "medianMs": 1.2312089999999927,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "10000/offset/api/100",
+        "medianMs": 0.09837500000000432,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "10000/seal/core",
+        "medianMs": 1.872792000000004,
+        "wasmUploadBytes": 1040375,
+        "wasmUploadCalls": 1
+      },
+      {
+        "name": "10000/seal/api",
+        "medianMs": 1.839874999999978,
+        "wasmUploadBytes": 1040375,
+        "wasmUploadCalls": 1
+      },
+      {
+        "name": "10000/unseal/api/full",
+        "medianMs": 4.125292000000002,
+        "wasmUploadBytes": 1010300,
+        "wasmUploadCalls": 10000
+      },
+      {
+        "name": "100000/pack/core",
+        "medianMs": 19.99716699999999,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/pack/api",
+        "medianMs": 26.448208999999963,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/open/core/full",
+        "medianMs": 17.732834000000025,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/open/api/full",
+        "medianMs": 17.727540999999974,
+        "wasmUploadBytes": 10106478,
+        "wasmUploadCalls": 100000
+      },
+      {
+        "name": "100000/get-field/core",
+        "medianMs": 8.949458999999933,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "100000/get-field/api",
+        "medianMs": 11.990749999999935,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "100000/offset/api/100",
+        "medianMs": 0.0967080000000351,
+        "wasmUploadBytes": 0,
+        "wasmUploadCalls": 0
+      },
+      {
+        "name": "fixed-common/append-100-to-1000",
+        "medianMs": 4.617458000000056,
+        "wasmUploadBytes": 54000,
+        "wasmUploadCalls": 1200
+      }
+    ]
+  },
+  "nativeRustOffsetBefore": "   Compiling version_check v0.9.5\n   Compiling typenum v1.20.1\n   Compiling cpufeatures v0.2.17\n   Compiling unicode-width v0.2.0\n   Compiling codespan-reporting v0.13.1\n   Compiling generic-array v0.14.7\n   Compiling block-buffer v0.10.4\n   Compiling crypto-common v0.1.7\n   Compiling digest v0.10.7\n   Compiling cddl v0.10.7\n   Compiling sha2 v0.10.9\n   Compiling pill-packer v0.1.0 (/Users/Shared/code/applications/pill-packer/rust)\n    Finished `bench` profile [optimized] target(s) in 6.39s\n     Running benches/api_performance.rs (target/release/deps/api_performance-e4bb95bb76955361)\n10000/get-field: 0.2708 ms; 1 allocations; 32 allocated bytes\n10000/offset-100: 7.0633 ms; 1300 allocations; 26211200 allocated bytes\n100000/get-field: 2.7794 ms; 1 allocations; 32 allocated bytes\n100000/offset-100: 68.1121 ms; 1600 allocations; 209712000 allocated bytes\n",
+  "nativeRustAllocationBefore": "   Compiling pill-packer v0.1.0 (/Users/Shared/code/applications/pill-packer/rust)\n    Finished `bench` profile [optimized] target(s) in 1.06s\n     Running benches/api_performance.rs (rust/target/release/deps/api_performance-e4bb95bb76955361)\nPill view size: 528 bytes\n10000/build-push-and-serialize: 1.4403 ms; 10042 allocations; 20662816 allocated bytes\n10000/bulk-fixed-and-serialize: 1.4801 ms; 10055 allocations; 20924928 allocated bytes\n10000/get-field: 0.2601 ms; 1 allocations; 32 allocated bytes\n10000/offset-100: 0.0027 ms; 0 allocations; 0 allocated bytes\n100000/build-push-and-serialize: 16.9682 ms; 100051 allocations; 166278432 allocated bytes\n100000/bulk-fixed-and-serialize: 18.2243 ms; 100067 allocations; 168375552 allocated bytes\n100000/get-field: 2.7059 ms; 1 allocations; 32 allocated bytes\n100000/offset-100: 0.0036 ms; 0 allocations; 0 allocated bytes\n",
+  "nativeRustAfter": "   Compiling pill-packer v0.1.0 (/Users/Shared/code/applications/pill-packer/rust)\n    Finished `bench` profile [optimized] target(s) in 7.08s\n     Running benches/api_performance.rs (target/release/deps/api_performance-e4bb95bb76955361)\nPill view size: 64 bytes\n10000/build-push-and-serialize: 0.5773 ms; 39 allocations; 3688811 allocated bytes\n10000/bulk-fixed-and-serialize: 0.5311 ms; 19 allocations; 2136635 allocated bytes\n10000/get-field: 0.1892 ms; 1 allocations; 32 allocated bytes\n10000/offset-100: 0.0017 ms; 0 allocations; 0 allocated bytes\n100000/build-push-and-serialize: 6.0980 ms; 49 allocations; 31516939 allocated bytes\n100000/bulk-fixed-and-serialize: 5.6498 ms; 22 allocations; 19791659 allocated bytes\n100000/get-field: 1.9298 ms; 1 allocations; 32 allocated bytes\n100000/offset-100: 0.0022 ms; 0 allocations; 0 allocated bytes\n",
+  "goBefore": "goos: darwin\ngoarch: arm64\npkg: github.com/AuthenticityLabs/pill-packer/go/api\ncpu: Apple M1 Max\nBenchmarkRetrieval/10000/CoreField-10         \t 6984304\t        33.77 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/CoreField-10         \t 7121467\t        36.02 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/CoreField-10         \t 6737748\t        37.23 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIField-10          \t 1462021\t       161.9 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/10000/APIField-10          \t 1580416\t       152.5 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/10000/APIField-10          \t 1649635\t       153.7 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/10000/APIOffset-10         \t   75478\t      3183 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/10000/APIOffset-10         \t   75541\t      3222 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/10000/APIOffset-10         \t   75094\t      4247 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/100000/CoreField-10        \t 2414400\t       128.1 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/CoreField-10        \t 1808482\t       170.4 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/CoreField-10        \t 1435285\t       170.7 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIField-10         \t 1233097\t       330.7 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/100000/APIField-10         \t 1332555\t       183.9 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/100000/APIField-10         \t 1293946\t       186.3 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/100000/APIOffset-10        \t    7923\t     30809 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/100000/APIOffset-10        \t    7836\t     30910 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/100000/APIOffset-10        \t    7960\t     30692 ns/op\t      80 B/op\t       1 allocs/op\nPASS\nok  \tgithub.com/AuthenticityLabs/pill-packer/go/api\t7.871s\n",
+  "goAfter": "goos: darwin\ngoarch: arm64\npkg: github.com/AuthenticityLabs/pill-packer/go/api\ncpu: Apple M1 Max\nBenchmarkRetrieval/10000/CoreField-10         \t 6138885\t        34.08 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/CoreField-10         \t 7129736\t        33.81 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/CoreField-10         \t 7027474\t        33.88 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIField-10          \t 1774546\t       133.3 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/10000/APIField-10          \t 1817510\t       133.5 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/10000/APIField-10          \t 1817500\t       136.0 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/10000/APIFieldReusable-10  \t 5522731\t        43.31 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIFieldReusable-10  \t 5531950\t        43.50 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIFieldReusable-10  \t 5535001\t        43.39 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIOffsetReusable-10 \t 2450941\t        97.65 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIOffsetReusable-10 \t 2470845\t        98.53 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIOffsetReusable-10 \t 2445624\t        99.36 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/10000/APIOffset-10         \t 1890384\t       130.2 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/10000/APIOffset-10         \t 1854547\t       130.7 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/10000/APIOffset-10         \t 1851566\t       130.3 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/100000/CoreField-10        \t 3323565\t        76.28 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/CoreField-10        \t 3060217\t        76.86 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/CoreField-10        \t 4394952\t        51.41 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIField-10         \t 1468764\t       160.8 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/100000/APIField-10         \t 1507090\t       160.9 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/100000/APIField-10         \t 1502811\t       158.8 ns/op\t     256 B/op\t       4 allocs/op\nBenchmarkRetrieval/100000/APIFieldReusable-10 \t 4666581\t        51.48 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIFieldReusable-10 \t 4737858\t        52.04 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIFieldReusable-10 \t 4593850\t        50.39 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIOffsetReusable-10         \t 1828369\t       142.3 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIOffsetReusable-10         \t 1828934\t       130.6 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIOffsetReusable-10         \t 1838719\t       132.8 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkRetrieval/100000/APIOffset-10                 \t 1317338\t       184.1 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/100000/APIOffset-10                 \t 1273285\t       182.1 ns/op\t      80 B/op\t       1 allocs/op\nBenchmarkRetrieval/100000/APIOffset-10                 \t 1283217\t       178.7 ns/op\t      80 B/op\t       1 allocs/op\nPASS\nok  \tgithub.com/AuthenticityLabs/pill-packer/go/api\t10.978s\n",
+  "baselineSources": {
+    "api.before.rs": "63ca2e072f1bfb294f62157d58ab01e51da60dff32e479658814c984fc139242",
+    "api.before.go": "a27d0c1e1542406397205a1ad6f864bd22852c222d1f40e74997d34f8631e9be",
+    "pack.before.ts": "8b0523dac8aa6f441491e74f0b0a8dd661eacca2a2406838a529d7e9eff14ec0",
+    "prescription.before.ts": "cb037ade27eb8129d3a7d9d1c0df96fc28c1aef371df1098372a65e688b7f5f3"
+  },
+  "limitations": [
+    "Synthetic codec workloads, not an application latency promise.",
+    "Automatic discovery of common fields during each fixed-width push still requires whole-pack checks; a prepared fixed common prefix takes the optimized single-record path.",
+    "Go convenience Get/Field still allocate; GetInto/FieldWith and OffsetInto reuse caller-owned scratch/views.",
+    "Background Chrome runs are retained for transparency and are excluded from foreground conclusions."
+  ],
+  "wasm": {
+    "before": "3d04da1078e3cde4108325c98c7b859ce9c73c0643d6671a28a510f618c46f5f",
+    "after": "2ff4ed5ef25e841c7db8dd21ebfd02ca2871769fed0f22780eec3fd369270340"
+  },
+  "verification": {
+    "rustTests": 85,
+    "jsWasmTests": 47,
+    "snootIntegrationTests": 6,
+    "goRaceTests": "all packages passed",
+    "snootTypes": "passed"
+  }
+}

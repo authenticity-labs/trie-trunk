@@ -127,7 +127,7 @@ func TestRoundTripDedupRecoveryAndLateCorrections(t *testing.T) {
 		t.Fatal(len(sums), e)
 	}
 	path := filepath.Join(versionDir(c.Root, "0", rev.Version), dayPath(dayOf(id)))
-	for _, name := range []string{"log.idx", "log.pods", "log.sum"} {
+	for _, name := range []string{"log.idx", "log.packs", "log.sum"} {
 		if _, e = os.Stat(filepath.Join(path, name)); e != nil {
 			t.Fatal(e)
 		}

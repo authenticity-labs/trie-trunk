@@ -74,7 +74,7 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 	}
 	loadedObjects := false
 	if branch == Write && s.objects == nil {
-		if _, e := os.Stat(filepath.Join(s.collection, "collection.idx")); e == nil {
+		if _, e := os.Stat(filepath.Join(s.collection, "collection.indx")); e == nil {
 			enabled := s.config.ObjectIndex
 			s.config.ObjectIndex = true
 			err = s.openObjects()
@@ -93,11 +93,11 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 	}()
 	last := old.runs[count-1]
 	baseRows := last.End
-	podsRetired := last.PodsEnd - headerSize
+	packsRetired := last.PacksEnd - headerSize
 	memberEnd := last.PAC.Placement.MemberStart + last.PAC.Placement.MemberBytes
 	blockBase := last.PAC.Placement.Block + 1
 	base := filepath.Join(s.dir, fmt.Sprintf("%s.r%d", branch.Prefix(), baseRows))
-	next := &branchStore{branch: branch, layout: s.layout, generation: old.generation, baseRows: baseRows, podsRetired: podsRetired, memberEnd: memberEnd, blockBase: blockBase, podsEnd: headerSize + podsRetired, sumEnd: headerSize, time: timeDirectory{}}
+	next := &branchStore{branch: branch, layout: s.layout, generation: old.generation, baseRows: baseRows, packsRetired: packsRetired, memberEnd: memberEnd, blockBase: blockBase, packsEnd: headerSize + packsRetired, sumEnd: headerSize, time: timeDirectory{}}
 	var created []string
 	published := false
 	defer func() {
@@ -116,24 +116,21 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 		}
 		return openFile(p, magic, s.layout.Digest, old.generation, width)
 	}
-	if next.idx, err = create(".idx", "NUTSIDX6", IndexRowSize); err != nil {
+	if next.idx, err = create(".indx", "NUTSIDX6", IndexRowSize); err != nil {
 		return err
 	}
-	if next.pods, err = create(".pods", "PILPOD00", 0); err != nil {
-		return err
-	}
-	if next.journal, err = create(".journal", "TTCOMM00", IndexRowSize); err != nil {
+	if next.packs, err = create(".packs", "PILPOD00", 0); err != nil {
 		return err
 	}
 	if old.sum != nil {
-		if next.sum, err = create(".sum", "NUTSSUM6", 0); err != nil {
+		if next.sum, err = create(".summ", "NUTSSUM6", 0); err != nil {
 			return err
 		}
 	}
 	if err = setRetiredBytes(next.idx, baseRows*IndexRowSize); err != nil {
 		return err
 	}
-	if err = setRetiredBytes(next.pods, podsRetired); err != nil {
+	if err = setRetiredBytes(next.packs, packsRetired); err != nil {
 		return err
 	}
 	first := min(utcHour(cutoff.UnixMilli()), utcHour(old.finalizedBefore))
@@ -142,17 +139,9 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 	}
 	anchor := &TimeAnchor{First: first, Origin: old.time.origin()}
 	next.timeAnchor = anchor
-	retirement := Retirement{Time: anchor, Rows: baseRows, Members: memberEnd, Block: blockBase, Cutoff: old.finalizedBefore}
-	raw, e := encoder.Marshal(Commit{Retired: &retirement})
-	if e != nil {
-		return e
-	}
-	if err = appendRecord(next.journal, raw); err != nil {
-		return err
-	}
 	for i, run := range old.runs[count:] {
 		idx := old.rows[(run.Start-old.baseRows)*IndexRowSize : (run.End-old.baseRows)*IndexRowSize]
-		pods, e := readBytes(old.pods, run.PodsStart-old.podsRetired, run.PodsEnd-old.podsRetired)
+		packs, e := readBytes(old.packs, run.PacksStart-old.packsRetired, run.PacksEnd-old.packsRetired)
 		if e != nil {
 			return e
 		}
@@ -162,7 +151,7 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 		if _, err = next.idx.WriteAt(idx, headerSize+int64((run.Start-baseRows)*IndexRowSize)); err != nil {
 			return err
 		}
-		if _, err = next.pods.WriteAt(pods, int64(run.PodsStart-podsRetired)); err != nil {
+		if _, err = next.packs.WriteAt(packs, int64(run.PacksStart-packsRetired)); err != nil {
 			return err
 		}
 		if next.sum != nil {
@@ -181,17 +170,10 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 			next.sumEnd = uint64(stat.Size())
 			next.summaries = append(next.summaries, summary)
 		}
-		raw, e := encoder.Marshal(Commit{Run: run})
-		if e != nil {
-			return e
-		}
-		if err = appendRecord(next.journal, raw); err != nil {
-			return err
-		}
 		next.runs = append(next.runs, run)
-		next.podsEnd = run.PodsEnd
+		next.packsEnd = run.PacksEnd
 	}
-	for _, f := range []*os.File{next.idx, next.pods, next.journal, next.sum} {
+	for _, f := range []*os.File{next.idx, next.packs, next.sum} {
 		if f != nil {
 			if err = f.Sync(); err != nil {
 				return err
@@ -214,8 +196,12 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 	if err != nil {
 		return err
 	}
-	created = append(created, base+".tri")
-	if err = replace(base+".tri", next.time.raw); err != nil {
+	created = append(created, base+".time")
+	next.time.raw[47] = byte(int8(s.policyFor(branch).summaryOffsetHours()))
+	if err = replace(base+".time", next.time.raw); err != nil {
+		return err
+	}
+	if err = next.openResidentFile(); err != nil {
 		return err
 	}
 	// Publish physical filenames atomically; the source identity does not change.
@@ -232,16 +218,12 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 		catalog.RetiredRows[s.binding] = map[Branch]uint64{}
 	}
 	catalog.RetiredRows[s.binding][branch] = baseRows
-	raw, e = encoder.Marshal(catalog)
-	if e != nil {
-		return e
-	}
 	if branch == Write {
 		if err = s.invalidate(nil, true); err != nil {
 			return err
 		}
 	}
-	if err = replace(filepath.Join(s.root, "registry.map"), raw); err != nil {
+	if err = saveCatalog(s.config.Root, catalog); err != nil {
 		return err
 	}
 	published = true
@@ -250,13 +232,20 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 		g.catalog(catalog)
 	}
 	next.swap, old.swap = old.swap, nil
+	next.seedHour = old.seedHour
+	next.ingressDirty, old.ingressDirty = old.ingressDirty, nil
+	next.stagingPacks, old.stagingPacks = old.stagingPacks, nil
 	next.live, old.live = old.live, nil
-	next.accumulators, old.accumulators = old.accumulators, nil
+	next.accumulators, old.accumulators = old.accumulators, summaryRing{}
 	next.pendingBytes, next.pendingVersion = old.pendingBytes, old.pendingVersion
 	next.finalizedBefore = old.finalizedBefore
 	next.memory, old.memory = old.memory, nil
+	next.sealedMemory, old.sealedMemory = old.sealedMemory, nil
+	next.ingressPages, old.ingressPages = old.ingressPages, nil
+	next.ingressTail, old.ingressTail = old.ingressTail, nil
 	next.live.prune(s.config.Now())
 	s.branches[branch] = next
+	s.publishResident(next)
 	s.queueSearch(branch)
 	defer old.close() // also release old mappings if derived-index maintenance fails
 	if branch == Write && s.objects != nil {
@@ -264,7 +253,7 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 			return err
 		}
 	}
-	paths := []string{old.idx.Name(), old.pods.Name(), old.journal.Name(), strings.TrimSuffix(old.journal.Name(), ".journal") + ".tri"}
+	paths := []string{old.idx.Name(), old.packs.Name(), strings.TrimSuffix(old.idx.Name(), ".indx") + ".time"}
 	if old.sum != nil {
 		paths = append(paths, old.sum.Name())
 	}
@@ -280,7 +269,7 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 }
 
 func (s *Store) compactObjects() error {
-	path := filepath.Join(s.collection, "collection.idx")
+	path := filepath.Join(s.collection, "collection.indx")
 	f, e := os.CreateTemp(s.collection, ".collection-index-")
 	if e != nil {
 		return e

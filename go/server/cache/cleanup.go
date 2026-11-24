@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"hash/crc32"
 	"io"
 	"os"
 	"path/filepath"
@@ -31,7 +30,7 @@ type CleanupReport struct {
 	Bytes int64         `json:"bytes"`
 }
 
-var generationFile = regexp.MustCompile(`^(read|write|error|debug|trace)(?:\.([gr][0-9a-f]+))?\.(idx|pods|tri|journal|sum|365|[wmy][0-9]{2})$`)
+var generationFile = regexp.MustCompile(`^(read|write|error|debug|trace)(?:\.([gr][0-9a-f]+))?\.(indx|packs|time|summ|365|[wmy][0-9]{2})$`)
 
 func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, err error) {
 	if !name(c.Cache) || c.Root == "" || c.Tenant == "" {
@@ -50,25 +49,21 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 		return report, err
 	}
 	defer lock.Close()
-	raw, err := os.ReadFile(filepath.Join(root, "registry.map"))
+	catalog, err := readCatalog(c.Root, c.Cache)
 	if err != nil {
 		return report, err
 	}
-	var catalog Catalog
-	if err = decoder.Unmarshal(raw, &catalog); err != nil {
-		return report, err
-	}
+
 	if catalog.Format != Format || catalog.Cache != c.Cache || catalog.Tenant != c.Tenant || catalog.Definitions == nil {
 		return report, fmt.Errorf("catalog ownership mismatch")
 	}
 	report.Cache = c.Cache
 	layouts := map[string]*Layout{}
-	reachable := map[string]bool{}
 	for binding, digest := range catalog.Definitions {
 		if splitBinding(binding) == nil {
 			return report, fmt.Errorf("invalid catalog binding")
 		}
-		data, e := os.ReadFile(filepath.Join(root, binding, "resource.rx"))
+		data, e := os.ReadFile(definitionPath(c.Root, digest))
 		if e != nil {
 			return report, e
 		}
@@ -81,7 +76,6 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 			return report, fmt.Errorf("catalog definition mismatch")
 		}
 		layouts[binding] = l
-		reachable[fmt.Sprintf("%x", digest)] = true
 	}
 	for key, digest := range catalog.Preferred {
 		found := false
@@ -105,8 +99,8 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 			}
 		}
 	}
-	// Inspect the entire tree before unlinking anything, including symlinks. Maps
-	// referenced by explicit REF16 translations remain reachable even if not installed.
+	// Inspect the cache tree before unlinking anything, including symlinks.
+	// Shared Definitions are outside this cache and are never cleanup candidates.
 	verified := map[string]bool{}
 	var paths []string
 	err = filepath.WalkDir(root, func(path string, d os.DirEntry, e error) error {
@@ -126,22 +120,7 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 			return fmt.Errorf("cleanup refuses non-regular file: %s", path)
 		}
 		paths = append(paths, path)
-		if d.Name() == "resource.rx" || strings.HasPrefix(d.Name(), "producer-") && strings.HasSuffix(d.Name(), ".rx") {
-			data, e := os.ReadFile(path)
-			if e != nil {
-				return e
-			}
-			l, e := ParseDefinition(data)
-			if e != nil {
-				return e
-			}
-			if strings.HasPrefix(d.Name(), "producer-") {
-				reachable[fmt.Sprintf("%x", l.Digest)] = true
-			}
-			for _, r := range l.Definition.Resource.References {
-				reachable[r.Source] = true
-			}
-		}
+
 		return nil
 	})
 	if err != nil {
@@ -172,33 +151,7 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 		binding := strings.Join(parts[:3], "/")
 		l := layouts[binding]
 		if l == nil {
-			// A crash between ensureMap and catalog publication can leave just this
-			// definition. Never infer that an unregistered data directory is disposable.
-			if len(parts) != 4 || parts[3] != "resource.rx" || splitBinding(binding) == nil {
-				continue
-			}
-			data, e := os.ReadFile(path)
-			if e != nil {
-				return report, e
-			}
-			orphan, e := ParseDefinition(data)
-			if e != nil {
-				return report, e
-			}
-			n := orphan.Definition.Resource
-			if fmt.Sprintf("%s/%s.v%d/%d", n.Service, n.Resource, n.Major, n.Minor) != binding || reachable[fmt.Sprintf("%x", orphan.Digest)] {
-				continue
-			}
-			siblings, e := os.ReadDir(filepath.Dir(path))
-			if e != nil {
-				return report, e
-			}
-			if len(siblings) != 1 {
-				continue
-			}
-			if err = add(path, "unpublished definition without data or references"); err != nil {
-				return report, err
-			}
+			// Cache maintenance never owns root Definitions or unknown data.
 			continue
 		}
 		match := generationFile.FindStringSubmatch(filepath.Base(path))
@@ -235,7 +188,7 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 		if !verified[validationKey] {
 			base := filepath.Join(root, binding, active)
 			if catalog.RetiredRows[binding][branch] > 0 {
-				if _, e := os.Stat(base + ".journal"); e != nil {
+				if _, e := os.Stat(base + ".packs"); e != nil {
 					return report, fmt.Errorf("missing retained branch: %w", e)
 				}
 			}
@@ -244,7 +197,7 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 			}
 			verified[validationKey] = true
 		}
-		if match[3] == "tri" {
+		if match[3] == "time" {
 			raw, e := os.ReadFile(path)
 			if e != nil {
 				return report, e
@@ -260,7 +213,7 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 			if strings.HasPrefix(match[2], "g") && hex.EncodeToString(source[:]) != match[2][1:] {
 				return report, fmt.Errorf("orphan time trie source mismatch")
 			}
-			if err = add(path, "generation not selected by registry.map"); err != nil {
+			if err = add(path, "generation not selected by trunk.trie"); err != nil {
 				return report, err
 			}
 			continue
@@ -280,15 +233,12 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 		magic := "NUTSAGG6"
 		width := uint32(0)
 		switch match[3] {
-		case "idx":
+		case "indx":
 			magic = "NUTSIDX6"
 			width = uint32(l.RowLayout().Width)
-		case "pods":
+		case "packs":
 			magic = "PILPOD00"
-		case "journal":
-			magic = "TTCOMM00"
-			width = uint32(l.RowLayout().Width)
-		case "sum":
+		case "summ":
 			magic = "NUTSSUM6"
 		}
 		if string(h[:8]) != magic || !bytes.Equal(h[8:40], l.Digest[:]) || order.Uint32(h[56:60]) != width || order.Uint32(h[60:]) != Format {
@@ -297,7 +247,7 @@ func Cleanup(ctx context.Context, c Config, apply bool) (report CleanupReport, e
 		if strings.HasPrefix(match[2], "g") && hex.EncodeToString(h[40:56]) != match[2][1:] {
 			return report, fmt.Errorf("orphan generation mismatch: %s", rel)
 		}
-		if err = add(path, "generation not selected by registry.map"); err != nil {
+		if err = add(path, "generation not selected by trunk.trie"); err != nil {
 			return report, err
 		}
 	}
@@ -344,13 +294,11 @@ func cleanupHash(path string) (int64, [32]byte, error) {
 	return n, result, e
 }
 
-// A corrupt/missing selected replacement must never make its predecessor garbage.
-// Validate committed index/payload checksums without recovering or truncating
-// source files. Incomplete active journals require normal recovery before cleanup.
+// Verify a replacement from its PACs and index without modifying either file.
 func verifyCleanupGeneration(ctx context.Context, base string, l *Layout, generation [16]byte, explicit bool) error {
-	tri, e := os.Open(base + ".journal")
+	packs, e := os.Open(base + ".packs")
 	if os.IsNotExist(e) && !explicit {
-		for _, ext := range []string{".idx", ".pods", ".sum"} {
+		for _, ext := range []string{".indx", ".summ"} {
 			if _, err := os.Stat(base + ext); !os.IsNotExist(err) {
 				return fmt.Errorf("incomplete active generation: %s", base)
 			}
@@ -360,23 +308,18 @@ func verifyCleanupGeneration(ctx context.Context, base string, l *Layout, genera
 	if e != nil {
 		return e
 	}
-	defer tri.Close()
-	idx, e := os.Open(base + ".idx")
+	defer packs.Close()
+	idx, e := os.Open(base + ".indx")
 	if e != nil {
 		return e
 	}
 	defer idx.Close()
-	pods, e := os.Open(base + ".pods")
-	if e != nil {
-		return e
-	}
-	defer pods.Close()
 	var actualGeneration []byte
 	for _, item := range []struct {
 		f     *os.File
 		magic string
 		width uint32
-	}{{tri, "TTCOMM00", IndexRowSize}, {idx, "NUTSIDX6", IndexRowSize}, {pods, "PILPOD00", 0}} {
+	}{{idx, "NUTSIDX6", IndexRowSize}, {packs, "PILPOD00", 0}} {
 		var h [headerSize]byte
 		if _, e = io.ReadFull(item.f, h[:]); e != nil {
 			return e
@@ -393,62 +336,44 @@ func verifyCleanupGeneration(ctx context.Context, base string, l *Layout, genera
 			return fmt.Errorf("active file generation mismatch")
 		}
 	}
-	podsRetired, e := retiredBytes(pods)
+	copy(generation[:], actualGeneration)
+	retired, e := retiredBytes(packs)
 	if e != nil {
 		return e
 	}
-	baseRows := uint64(0)
-	tail, podsEnd := uint64(0), uint64(headerSize)+podsRetired
-	for {
+	indexRetired, e := retiredBytes(idx)
+	if e != nil {
+		return e
+	}
+	if indexRetired%IndexRowSize != 0 {
+		return fmt.Errorf("invalid index retirement")
+	}
+	baseRows := indexRetired / IndexRowSize
+	tail := baseRows
+	info, e := packs.Stat()
+	if e != nil {
+		return e
+	}
+	for at := uint64(headerSize); at < uint64(info.Size()); {
 		if e = ctx.Err(); e != nil {
 			return e
 		}
-		var header [8]byte
-		n, err := io.ReadFull(tri, header[:])
-		if err == io.EOF && n == 0 {
-			return nil
-		}
-		if err != nil {
-			return fmt.Errorf("active journal requires recovery: %w", err)
-		}
-		size := order.Uint32(header[:4])
-		if size == 0 || size > MaxFrame {
-			return fmt.Errorf("invalid active commit size")
-		}
-		raw := make([]byte, size)
-		if _, e = io.ReadFull(tri, raw); e != nil {
+		run, e := readStoredRun(l, idx, packs, generation, baseRows, retired, at)
+		if e != nil {
 			return e
 		}
-		if crc32.Checksum(raw, checksum) != order.Uint32(header[4:]) {
-			return fmt.Errorf("active commit checksum mismatch")
+		if run.Start != tail+IndexHeaderSlots {
+			return fmt.Errorf("invalid active index bounds")
 		}
-		var commit Commit
-		if e = decoder.Unmarshal(raw, &commit); e != nil {
-			return e
-		}
-		if commit.Retired != nil {
-			baseRows = commit.Retired.Rows
-			tail = baseRows
-			continue
-		}
-		r := commit.Run
-		if r.Start != tail+IndexHeaderSlots || r.End <= r.Start || r.End > IndexCapacity || r.End-r.Start > uint64(PACMaximumMembers) || r.End > (1<<63-1-headerSize)/IndexRowSize || r.PodsStart != podsEnd || r.PodsEnd < r.PodsStart || r.PodsEnd > 1<<63-1 {
-			return fmt.Errorf("invalid active commit bounds")
-		}
-		for _, part := range []struct {
-			f        *os.File
-			from, to uint64
-			crc      uint32
-		}{{idx, headerSize + IndexRowSize*(r.Start-baseRows), headerSize + IndexRowSize*(r.End-baseRows), r.IndexCRC}, {pods, r.PodsStart - podsRetired, r.PodsEnd - podsRetired, r.PodsCRC}} {
-			h := crc32.New(checksum)
-			n, e := io.Copy(h, io.NewSectionReader(part.f, int64(part.from), int64(part.to-part.from)))
-			if e != nil {
-				return e
-			}
-			if uint64(n) != part.to-part.from || h.Sum32() != part.crc {
-				return fmt.Errorf("active committed data checksum mismatch")
-			}
-		}
-		tail, podsEnd = r.End, r.PodsEnd
+		tail = run.End
+		at = run.PacksEnd - retired
 	}
+	info, e = idx.Stat()
+	if e != nil {
+		return e
+	}
+	if uint64(info.Size()) != headerSize+(tail-baseRows)*IndexRowSize {
+		return fmt.Errorf("active index requires recovery")
+	}
+	return nil
 }

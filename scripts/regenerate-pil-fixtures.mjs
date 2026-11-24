@@ -4,7 +4,7 @@ import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {mkdirSync} from 'node:fs';
 const root = new URL('../', import.meta.url);
-const fixture = name => fileURLToPath(new URL(`client/services/fixtures/${name}`, root));
+const fixture = name => fileURLToPath(new URL(`testdata/${name}`, root));
 const pac = fileURLToPath(new URL('../pill-packer/rust/tests/fixtures/pac', root));
 const env = {...process.env,
   PIL_NATIVE_FIXTURE_DIR:fixture('native-pil'),

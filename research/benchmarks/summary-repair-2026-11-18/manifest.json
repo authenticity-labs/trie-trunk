@@ -1,0 +1,17 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "timestamp": "2026-11-18T17:08:18-0500",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+  "binaries": {
+    "baseline": "67848ba08cab325ec2e9784e6facbe9df346886fb947de877e2c133c8e756a19",
+    "cleanup": "cd74071a442d3a106fc8bcc36af504e7da5691438fce7e4c6febbefc5cad95c0"
+  },
+  "scope": "Native release Rust summary APIs on resident byte buffers. No disk/network/UI, SQL parsing or cross-worker transfer. Mixed-definition exception behavior excluded.",
+  "heap": "Separate untimed allocation pass. Incremental live requested heap, not RSS; existing input/Definition allocations excluded. Cold reader includes copying Box input.",
+  "baseline": "Preserved optimized array-summary executable from 2026-11-17; source archived in summary-arrays-optimized-2026-11-17/current-source.tar.gz. Cleanup removes obsolete generator/preview dispatch and redundant PAC references; width-specific class matrix remains. This is not certification of the planned schema replacement.",
+  "pairs": 9,
+  "warmups_per_case_per_binary": 1,
+  "source_archive_sha256": "14f390981639df7f798615c041dc7a72669863160a889d5b9786271fd2b23d6b",
+  "retired_source_archive_sha256": "11f13d3bb3e8038b1ff54e5297864054c1080028c0b8d77555ef27d7cc82f8a5"
+}

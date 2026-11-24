@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/pelletier/go-toml/v2"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 )
@@ -48,51 +47,88 @@ type ReplicationPolicy struct {
 	ProvisionalTail string `toml:"provisional_tail"`
 }
 type PACPolicy struct {
-	GzipLevel *int `toml:"gzip_level"`
+	Algorithm string `toml:"algorithm"`
+	Level     *int   `toml:"level"`
 }
 
+func (p PACPolicy) algorithm() string {
+	if p.Algorithm != "" {
+		return p.Algorithm
+	}
+	return "zstd"
+}
 func (p PACPolicy) level() int {
-	if p.GzipLevel != nil {
-		return *p.GzipLevel
+	if p.Level != nil {
+		return *p.Level
 	}
 	return 1
 }
-
-// SummaryPolicy applies to completed daily aggregate packets, independently of event PACs.
-type SummaryPolicy struct {
-	GzipLevel *int `toml:"gzip_level"`
-}
-
-func (p SummaryPolicy) level() int {
-	if p.GzipLevel != nil {
-		return *p.GzipLevel
+func (p PACPolicy) algorithmCode() uint32 {
+	switch p.algorithm() {
+	case "gzip":
+		return 2
+	case "brotli":
+		return 3
+	default:
+		return 1
 	}
-	return 6
 }
+func (p PACPolicy) validate() error {
+	min, max := 1, 22
+	switch p.algorithm() {
+	case "zstd":
+	case "gzip":
+		min, max = 0, 9
+	case "brotli":
+		min, max = 0, 11
+	default:
+		return fmt.Errorf("unsupported compression algorithm")
+	}
+	if p.level() < min || p.level() > max {
+		return fmt.Errorf("%s level must be between %d and %d", p.algorithm(), min, max)
+	}
+	return nil
+}
+
+// Summary compression is configured independently of event packs.
+type SummaryPolicy = PACPolicy
 
 type Policy struct {
-	SearchIndex       *bool             `toml:"search_index"`
-	Staging           *StagingLimits    `toml:"staging"`
-	ObjectIndex       *bool             `toml:"object_index"`
-	CacheInvalidation *bool             `toml:"cache_invalidation"`
-	Retention         Retention         `toml:"retention"`
-	Replication       ReplicationPolicy `toml:"replication"`
-	PAC               PACPolicy         `toml:"pac"`
-	Summary           SummaryPolicy     `toml:"summary"`
+	SummaryUTCOffsetHours *int              `toml:"summary_utc_offset_hours"`
+	SearchIndex           *bool             `toml:"search_index"`
+	Staging               *StagingLimits    `toml:"staging"`
+	ObjectIndex           *bool             `toml:"object_index"`
+	CacheInvalidation     *bool             `toml:"cache_invalidation"`
+	Retention             Retention         `toml:"retention"`
+	Replication           ReplicationPolicy `toml:"replication"`
+	PAC                   PACPolicy         `toml:"pac"`
+	Summary               SummaryPolicy     `toml:"summary"`
 }
 type Configuration struct {
-	Version   uint32            `toml:"version"`
-	Timezone  string            `toml:"timezone"`
-	Defaults  Policy            `toml:"defaults"`
-	Resources map[string]Policy `toml:"resources"`
+	Quota     *quotaConfiguration `toml:"quota"`
+	Inherit   *bool               `toml:"inherit"`
+	Policy    Policy              `toml:"policy"`
+	Version   uint32              `toml:"version"`
+	Timezone  string              `toml:"timezone"`
+	Defaults  Policy              `toml:"defaults"`
+	Resources map[string]Policy   `toml:"resources"`
 }
 
-func (p Policy) validate() error {
-	if p.Summary.level() < 1 || p.Summary.level() > 9 {
-		return fmt.Errorf("summary.gzip_level must be between 1 and 9")
+func (p Policy) summaryOffsetHours() int {
+	if p.SummaryUTCOffsetHours != nil {
+		return *p.SummaryUTCOffsetHours
 	}
-	if p.PAC.level() < 1 || p.PAC.level() > 9 {
-		return fmt.Errorf("pac.gzip_level must be between 1 and 9")
+	return 0
+}
+func (p Policy) validate() error {
+	if h := p.summaryOffsetHours(); h < -12 || h > 14 {
+		return fmt.Errorf("summary UTC offset must be -12..14 whole hours")
+	}
+	if err := p.Summary.validate(); err != nil {
+		return fmt.Errorf("summary: %w", err)
+	}
+	if err := p.PAC.validate(); err != nil {
+		return fmt.Errorf("pac: %w", err)
 	}
 	if p.Staging != nil {
 		if e := p.Staging.validate(); e != nil {
@@ -129,6 +165,9 @@ func ParseConfiguration(raw []byte) (Configuration, error) {
 	if _, e = time.LoadLocation(c.Timezone); e != nil {
 		return c, e
 	}
+	if e = c.Policy.validate(); e != nil {
+		return c, e
+	}
 	if e = c.Defaults.validate(); e != nil {
 		return c, e
 	}
@@ -147,14 +186,23 @@ func (c Configuration) Resolve(key string) Policy {
 }
 
 func mergePolicy(p, q Policy) Policy {
-	if q.Summary.GzipLevel != nil {
-		p.Summary.GzipLevel = q.Summary.GzipLevel
+	if q.SummaryUTCOffsetHours != nil {
+		p.SummaryUTCOffsetHours = q.SummaryUTCOffsetHours
+	}
+	if q.Summary.Algorithm != "" {
+		p.Summary.Algorithm = q.Summary.Algorithm
+	}
+	if q.PAC.Algorithm != "" {
+		p.PAC.Algorithm = q.PAC.Algorithm
+	}
+	if q.Summary.Level != nil {
+		p.Summary.Level = q.Summary.Level
 	}
 	if q.SearchIndex != nil {
 		p.SearchIndex = q.SearchIndex
 	}
-	if q.PAC.GzipLevel != nil {
-		p.PAC.GzipLevel = q.PAC.GzipLevel
+	if q.PAC.Level != nil {
+		p.PAC.Level = q.PAC.Level
 	}
 	if q.Staging != nil {
 		p.Staging = q.Staging
@@ -184,7 +232,7 @@ func mergePolicy(p, q Policy) Policy {
 	return p
 }
 func (s *Store) loadPolicy() error {
-	path := filepath.Join(s.root, "registry.cfg")
+	path := configurationPath(s.config.Root, []string{s.config.Cache})
 	raw, e := os.ReadFile(path)
 	if os.IsNotExist(e) {
 		// Keep built-in defaults implicit so a newly created cache does not
@@ -195,8 +243,12 @@ func (s *Store) loadPolicy() error {
 			key := fmt.Sprintf("%s/%s.v%d", n.Service, n.Resource, n.Major)
 			raw = append(raw, []byte(fmt.Sprintf("\n[resources.%q]\nobject_index = true\n", key))...)
 		}
-		if e = replace(path, raw); e != nil {
-			return e
+		// An explicit Open option is configuration. Otherwise leave inherited
+		// caches without a file; root policy is the default authority.
+		if s.config.ObjectIndex {
+			if e = replace(path, raw); e != nil {
+				return e
+			}
 		}
 	} else if e != nil {
 		return e
@@ -227,6 +279,7 @@ func (s *Store) ReloadPolicy() error {
 	if e := s.check(); e != nil {
 		return e
 	}
+	s.waitSealing()
 	old, oldBranches, enabled := s.policy, s.branchPolicies, s.config.ObjectIndex
 	if e := s.loadPolicy(); e != nil {
 		return e
@@ -242,6 +295,25 @@ func (s *Store) ReloadPolicy() error {
 			if e := s.indexObjects(b); e != nil {
 				return s.fail(e)
 			}
+		}
+	}
+
+	for branch, b := range s.branches {
+		prior := old
+		if v, ok := oldBranches[branch]; ok {
+			prior = v
+		}
+		if prior.summaryOffsetHours() != s.policyFor(branch).summaryOffsetHours() {
+			b.summaryDays = map[int64]summaryDayLocation{}
+			b.summaryPackedThrough = -1
+			b.calendarRollups = nil
+			if e := s.packSummaryDays(b); e != nil {
+				return s.fail(e)
+			}
+			if e := s.publishTime(b); e != nil {
+				return s.fail(e)
+			}
+			s.publishResident(b)
 		}
 	}
 

@@ -1,0 +1,42 @@
+(node:77341) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ registered daily rows feed histogram and margin statistics through Rust (20.899042ms)
+✔ summary cache keeps separate resource fetches, authorization partitions and content checks (7.059375ms)
+✔ Rust report keeps interval percentiles distinct from event percentiles (1.346792ms)
+✔ data routing preserves existing requests and verifies exact Branch ID (17.4ms)
+✔ definition downloads remain independent and have no branch/version selector (0.136458ms)
+✔ ambiguous branches require an explicit selector and cannot accept a misbound response (0.632292ms)
+✔ state requests retain their resource URL while selecting the exact type (0.67925ms)
+✔ queries use a staged registered trie before any durable publication exists (58.565833ms)
+✔ incomplete registry staging fails without displacing the usable snapshot (0.370042ms)
+✔ sealed preview and execution share a reader; active leases survive eviction (5.655959ms)
+✔ live readers require fresh bytes and equal counts cannot hide changed content (1.142167ms)
+✔ duplicate opens and cancelling one borrower cannot invalidate another reader (0.823792ms)
+✔ budget eviction releases oversized readers after their query completes (0.560792ms)
+✔ period pruning reuses the preview only for the same immutable reader and predicate (0.226208ms)
+✔ a reader opened across cache invalidation stays usable but cannot repopulate it (1.399917ms)
+(node:77345) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ a zero preview cannot hide new live values with unchanged count or newly ingested events (48.52075ms)
+✔ an incomplete live period remains eligible even when its current preview is zero (9.278042ms)
+✔ SQL not-null guards preserve matching summary periods and reach the event reader (24.622833ms)
+✔ collection retains branch history across registry refresh and local daily Pack reads (119.01875ms)
+✔ PAC envelopes retain arbitrary network boundaries and per-Pack backpressure (96.145583ms)
+✔ PAC stream rejects truncation, extra members, count mismatch and oversized input (3.938833ms)
+✔ abort cancels a blocked stream (0.384208ms)
+✔ day batches coalesce adjacency and bound sparse directory requests (0.78025ms)
+✔ HTTP-ingested live summaries support wider plain PAC envelopes (3.561167ms)
+✔ unreadable registry cache is replaced from origin without exposing it (2.368667ms)
+✔ durable metadata is usable while validity and publication remain pending (1.593375ms)
+✔ concurrent tabs share validation and cancel independently (0.942833ms)
+✔ offline validation retains the last snapshot and can retry (0.317375ms)
+✔ canceling the last subscriber aborts validation without poisoning retry (3.220583ms)
+✔ failed durable publication retries unchanged metadata without blocking registry readiness (0.925792ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 284.284042

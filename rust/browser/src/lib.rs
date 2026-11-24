@@ -11,7 +11,7 @@ fn bad<T>(s: &str) -> Result<T> {
     Err(s.into())
 }
 pub const TRI: u32 = 0;
-pub const SODS: u32 = 1;
+pub const BEDS: u32 = 1;
 /// UUID (16), REF16 (2), payload start/end/block (8 each), all big endian.
 /// Existing 44-byte U32 pointers remain readable; new pointers are 42 bytes.
 pub const ROW_SIZE: usize = 42;
@@ -104,7 +104,7 @@ pub struct Store {
 impl Store {
     pub fn open(schema: &[u8], pil: &[u8], day: u64, f: &mut impl Files) -> Result<Self> {
         let mapping = Mapping::new(schema, pil)?;
-        for id in [TRI, SODS] {
+        for id in [TRI, BEDS] {
             init(f, id)?;
         }
         let mut s = Self {
@@ -126,7 +126,7 @@ impl Store {
     pub fn reload(&mut self, f: &mut impl Files) -> Result<()> {
         // Reopen only when another tab/worker changed a file. The browser holds
         // an origin-wide Web Lock throughout every call and flush sequence.
-        if self.ends == [f.size(TRI)?, f.size(SODS)?] && !self.nodes.is_empty() {
+        if self.ends == [f.size(TRI)?, f.size(BEDS)?] && !self.nodes.is_empty() {
             return Ok(());
         }
         self.payload = None;
@@ -169,7 +169,7 @@ impl Store {
         self.ends[TRI as usize] = at;
         // The host first recovers both files to IndexedDB's committed ends.
         // Payload CRCs are checked lazily, once per block actually read.
-        self.ends[SODS as usize] = f.size(SODS)?;
+        self.ends[BEDS as usize] = f.size(BEDS)?;
         Ok(())
     }
     pub fn put(&mut self, frame: &[u8]) -> Result<()> {
@@ -261,7 +261,7 @@ impl Store {
             }
             let mut payload = Vec::with_capacity(size);
             for r in &self.pending[offset..finish] {
-                let start = self.ends[SODS as usize] + 8 + payload.len() as u64;
+                let start = self.ends[BEDS as usize] + 8 + payload.len() as u64;
                 payload.extend_from_slice(&r.payload);
                 rows.extend_from_slice(&r.uuid);
                 rows.extend_from_slice(
@@ -271,11 +271,11 @@ impl Store {
                 );
                 rows.extend_from_slice(&start.to_be_bytes());
                 rows.extend_from_slice(&(start + r.payload.len() as u64).to_be_bytes());
-                rows.extend_from_slice(&self.ends[SODS as usize].to_be_bytes());
+                rows.extend_from_slice(&self.ends[BEDS as usize].to_be_bytes());
             }
-            f.write(SODS, self.ends[SODS as usize], &block(&payload)?)?;
-            f.flush(SODS)?;
-            self.ends[SODS as usize] += 8 + payload.len() as u64;
+            f.write(BEDS, self.ends[BEDS as usize], &block(&payload)?)?;
+            f.flush(BEDS)?;
+            self.ends[BEDS as usize] += 8 + payload.len() as u64;
             offset = finish;
         }
         self.pending.clear();
@@ -305,7 +305,7 @@ impl Store {
         }
         let ref_width = if row.len() == ROW_SIZE { 2 } else { 4 };
         let offsets = 16 + ref_width;
-        let sods_at = u64::from_be_bytes(row[offsets + 16..offsets + 24].try_into().unwrap());
+        let beds_at = u64::from_be_bytes(row[offsets + 16..offsets + 24].try_into().unwrap());
         let mut leaf = if ref_width == 2 {
             u32::from(u16::from_be_bytes(row[16..18].try_into().unwrap()))
         } else {
@@ -323,23 +323,23 @@ impl Store {
         chain.reverse();
         let start = u64::from_be_bytes(row[offsets..offsets + 8].try_into().unwrap());
         let end = u64::from_be_bytes(row[offsets + 8..offsets + 16].try_into().unwrap());
-        if sods_at < 8
-            || start < sods_at.checked_add(8).ok_or("invalid block offset")?
+        if beds_at < 8
+            || start < beds_at.checked_add(8).ok_or("invalid block offset")?
             || end <= start
             || end - start > 65535
-            || end > self.ends[SODS as usize]
+            || end > self.ends[BEDS as usize]
         {
             return bad("invalid payload range");
         }
-        if self.payload.as_ref().map(|(at, _)| *at) != Some(sods_at) {
+        if self.payload.as_ref().map(|(at, _)| *at) != Some(beds_at) {
             self.payload = Some((
-                sods_at,
-                read_block(f, SODS, sods_at)?.ok_or("missing payload block")?,
+                beds_at,
+                read_block(f, BEDS, beds_at)?.ok_or("missing payload block")?,
             ));
         }
         let payload = &self.payload.as_ref().unwrap().1;
-        let start = usize::try_from(start - sods_at - 8).map_err(|_| "invalid payload range")?;
-        let end = usize::try_from(end - sods_at - 8).map_err(|_| "invalid payload range")?;
+        let start = usize::try_from(start - beds_at - 8).map_err(|_| "invalid payload range")?;
+        let end = usize::try_from(end - beds_at - 8).map_err(|_| "invalid payload range")?;
         self.mapping.join(
             uuid,
             &chain,

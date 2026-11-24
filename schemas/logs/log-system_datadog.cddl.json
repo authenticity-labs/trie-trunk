@@ -1,0 +1,135 @@
+{
+  "fixed_strings": {},
+  "identity": "log-system_datadog",
+  "root": "log-system_datadog",
+  "types": {
+    "log-system_datadog": {
+      "fields": [
+        {
+          "name": "timestamp",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "duration",
+          "optional": true,
+          "value": {
+            "choices": [
+              {
+                "max": 9223372036854775807,
+                "min": -9223372036854775808,
+                "type": "integer"
+              },
+              {
+                "max": 8,
+                "min": 8,
+                "type": "size",
+                "value": {
+                  "type": "uint"
+                }
+              },
+              {
+                "type": "float"
+              }
+            ],
+            "type": "choice"
+          }
+        },
+        {
+          "name": "message",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.kind",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.message",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.stack",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "action",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "pid",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "parent",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "executable",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "exit",
+          "optional": true,
+          "value": {
+            "max": 9223372036854775807,
+            "min": -9223372036854775808,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "signal",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "host",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "component",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        }
+      ],
+      "type": "open_record"
+    }
+  }
+}

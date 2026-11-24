@@ -7,13 +7,12 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	pilcodec "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"github.com/quic-go/quic-go/http3"
 	"io"
 	"net"
 	"net/http"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 	"trie-trunk/go/codec"
@@ -88,8 +87,8 @@ func TestObjectHistoryHTTP2HTTP3AndSocket(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			client := &http.Client{Transport: tc.transport, Timeout: 10 * time.Second}
-			query := fmt.Sprintf("branch=customer%%2Faccounts.v1%%2Fwrite&id=%x-%x-%x-%x-%x", id[:4], id[4:6], id[6:8], id[8:10], id[10:])
-			r, _ := http.NewRequest("GET", tc.origin+"/demo/collections?"+query+"&beginTime=1788220800000&endTime=1788307200000", nil)
+			query := fmt.Sprintf("id=%x-%x-%x-%x-%x", id[:4], id[4:6], id[6:8], id[8:10], id[10:])
+			r, _ := http.NewRequest("GET", tc.origin+"/demo/customer/accounts.v1/collections?"+query+"&beginTime=1788220800000&endTime=1788307200000", nil)
 			r.Header.Set("Authorization", "Bearer secret")
 			r.Header.Set("Accept", "application/pil")
 			r.Header.Set("PIL-Version", "2")
@@ -103,7 +102,7 @@ func TestObjectHistoryHTTP2HTTP3AndSocket(t *testing.T) {
 				t.Fatalf("history: %v %v %x", res, err, body)
 			}
 			token := res.Header.Get("Trunk-State")
-			r, _ = http.NewRequest("GET", tc.origin+"/demo/collections?kind=state&"+query+"&token="+token, nil)
+			r, _ = http.NewRequest("GET", tc.origin+"/demo/customer/accounts.v1/collections?kind=state&"+query+"&token="+token, nil)
 			r.Header.Set("Authorization", "Bearer secret")
 			res, err = client.Do(r)
 			if err != nil {
@@ -186,7 +185,7 @@ func TestNativeCacheHTTP2HTTP3AndSocket(t *testing.T) {
 			if e != nil || res.StatusCode != 200 || res.ProtoMajor != tc.major || res.Header.Get("Trunk-Acknowledgement") != "durable-staging" {
 				t.Fatalf("PIL ingress %v %v %s", res, e, body)
 			}
-			req, _ = http.NewRequest("GET", tc.url+"/demo/indexes?mode=search&page=50&branch=payment/transactions.v1/write&beginTime="+fmt.Sprint(current.Add(-time.Minute).UnixMilli())+"&endTime="+fmt.Sprint(current.Add(time.Minute).UnixMilli()), nil)
+			req, _ = http.NewRequest("GET", tc.url+"/demo/payment/transactions.v1/write/indexes?mode=search&page=50&beginTime="+fmt.Sprint(current.Add(-time.Minute).UnixMilli())+"&endTime="+fmt.Sprint(current.Add(time.Minute).UnixMilli()), nil)
 			req.Header.Set("Accept", "application/pil")
 			req.Header.Set("PIL-Version", "2")
 			req.Header.Set("PIL-Features", "adaptive-integers,pac-arrays,native-ranges")
@@ -199,7 +198,7 @@ func TestNativeCacheHTTP2HTTP3AndSocket(t *testing.T) {
 			if e != nil || res.StatusCode != 200 || !viewContainsFrame(t, l, body, recent) {
 				t.Fatalf("staged collection %v %s", e, body)
 			}
-			r, _ := http.NewRequest("GET", tc.url+"/demo/seeds?branch=payment/transactions.v1/write&beginTime=1788220800000&endTime=1788307200000", nil)
+			r, _ := http.NewRequest("GET", tc.url+"/demo/payment/transactions.v1/write/packs?beginTime=1788220800000&endTime=1788307200000", nil)
 			r.Header.Set("Accept", "application/pil")
 			r.Header.Set("Accept-Encoding", "gzip")
 			r.Header.Set("PIL-Version", "2")
@@ -213,12 +212,56 @@ func TestNativeCacheHTTP2HTTP3AndSocket(t *testing.T) {
 			if e != nil || response.StatusCode != 200 || response.ProtoMajor != tc.major {
 				t.Fatalf("%v %v %s", response, e, body)
 			}
-			pacs := responsePACs(t, l, body)
-			if len(pacs) != 1 || len(pacs[0].Members) != 1 || response.Trailer.Get("Trunk-Status") != "ok" {
-				t.Fatal("missing complete native output")
+			packs, e := pilcodec.OpenNestedPack(body)
+			if e != nil || packs.Count() != 1 || response.Header.Get("Trunk-Format") != "seed-packs/0" || response.Header.Get("Content-Encoding") != "" {
+				t.Fatal("invalid seed transport", e, response.Header)
 			}
+			raw, e := packs.Get(0)
+			if e != nil {
+				t.Fatal(e)
+			}
+			unpacked, e := pilcodec.ExpandPAC(raw)
+			if e != nil {
+				t.Fatal(e)
+			}
+			p, e := pilcodec.ParsePAC(l.Layout, unpacked, map[uint32]bool{1: true, 0x5454524b: true})
+			if e != nil || len(p.Members) != 1 {
+				t.Fatal("invalid seed member", e)
+			}
+
 		})
 	}
+	t.Run("parallel-branch-streams", func(t *testing.T) {
+		failures := make(chan error, 5)
+		for _, branch := range []string{"read", "write", "error", "debug", "trace"} {
+			go func(branch string) {
+				url := "https://" + address + "/demo/payment/transactions.v1/" + branch + "/packs?range=1788220800000,1788307200000"
+				response, e := (&http.Client{Transport: h3, Timeout: 10 * time.Second}).Get(url)
+				if e != nil {
+					failures <- e
+					return
+				}
+				defer response.Body.Close()
+				raw, e := io.ReadAll(response.Body)
+				if e != nil {
+					failures <- e
+					return
+				}
+				if response.StatusCode != 200 || response.ProtoMajor != 3 || response.Header.Get("Trunk-Source") != "demo/payment/transactions.v1/"+branch {
+					failures <- fmt.Errorf("branch %s: %d %s", branch, response.StatusCode, string(raw))
+					return
+				}
+				_, e = pilcodec.OpenNestedPack(raw)
+				failures <- e
+			}(branch)
+		}
+		for i := 0; i < 5; i++ {
+			if e := <-failures; e != nil {
+				t.Error(e)
+			}
+		}
+	})
+
 }
 
 func TestPILLoggerRegistrationTransports(t *testing.T) {
@@ -268,7 +311,7 @@ func TestPILLoggerRegistrationTransports(t *testing.T) {
 			if e = logger.WriteValues(context.Background(), values); e != nil {
 				t.Fatal(e)
 			}
-			request, _ := http.NewRequest("GET", origin+"/demo/indexes?mode=search&page=50&branch=payment/transactions.v1/write&beginTime="+fmt.Sprint(time.Now().Add(-time.Hour).UnixMilli())+"&endTime="+fmt.Sprint(time.Now().Add(time.Hour).UnixMilli()), nil)
+			request, _ := http.NewRequest("GET", origin+"/demo/payment/transactions.v1/write/indexes?mode=search&page=50&beginTime="+fmt.Sprint(time.Now().Add(-time.Hour).UnixMilli())+"&endTime="+fmt.Sprint(time.Now().Add(time.Hour).UnixMilli()), nil)
 			request.Header.Set("Authorization", "Bearer secret")
 			request.Header.Set("Accept", "application/pil")
 			request.Header.Set("PIL-Version", "2")
@@ -411,26 +454,61 @@ func viewContainsFrame(t *testing.T, l *cache.Layout, body, want []byte) bool {
 
 func TestSummariesNativeRoute(t *testing.T) {
 	root := shortDirectory(t)
-	serverTLS, clientTLS := credentials(t)
-	api := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/summaries" {
-			http.NotFound(w, r)
-			return
+	at := time.Date(2026, 10, 20, 0, 0, 0, 0, time.UTC)
+	l, e := cache.Compile(cache.Definition{PIL: 0, Identity: "payment/transactions", Version: 1 << 20, Fields: []cache.Field{{Name: "event_id", Type: "UUID"}, {Name: "duration", Type: "U64"}}, Resource: cache.Binding{Format: cache.Format, Service: "payment", Resource: "transactions", Major: 1, Timezone: "UTC", Roles: cache.Roles{Event: "event_id", Duration: "duration"}, Aggregations: []string{"count", "duration.count", "duration.sum", "duration.min", "duration.max"}}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	s, e := cache.Open(cache.Config{Root: root, Cache: "demo", Tenant: "test", Layout: l, Now: func() time.Time { return at.Add(73 * time.Hour) }})
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer s.Close()
+	for i := 0; i < 3; i++ {
+		id, e := codec.NewUUIDv7(at.Add(time.Duration(i) * 24 * time.Hour))
+		if e != nil {
+			t.Fatal(e)
 		}
-		w.Header().Set("Content-Type", "application/cbor")
-		w.Write([]byte("summary packet"))
-	})
-	address, stop := start(t, Config{Root: root, Socket: filepath.Join(root, "summary.sock"), Address: "127.0.0.1:0", TLS: serverTLS, API: api})
+		frame, e := l.Encode(nil, []cache.Value{{State: cache.Direct, Bytes: id[:]}, cache.Uint(100, 8)})
+		if e != nil {
+			t.Fatal(e)
+		}
+		if _, e = s.Append(cache.Read, frame); e != nil {
+			t.Fatal(e)
+		}
+	}
+	if e = s.Flush(); e != nil {
+		t.Fatal(e)
+	}
+	serverTLS, clientTLS := credentials(t)
+	address, stop := start(t, Config{Root: root, Socket: filepath.Join(root, "summary.sock"), Address: "127.0.0.1:0", TLS: serverTLS, API: &cache.HTTP{Store: s}})
 	defer stop()
-	transport := &http.Transport{TLSClientConfig: clientTLS, ForceAttemptHTTP2: true}
-	defer transport.CloseIdleConnections()
-	response, e := (&http.Client{Transport: transport, Timeout: 10 * time.Second}).Post("https://"+address+"/summaries", "application/json", strings.NewReader(`{"packs":[]}`))
+	transport := &http3.Transport{TLSClientConfig: clientTLS}
+	defer transport.Close()
+	url := fmt.Sprintf("https://%s/demo/payment/transactions.v1/read/summaries?definition=%x&range=%d,%d&range=%d,%d", address, l.Digest, at.UnixMilli(), at.Add(24*time.Hour).UnixMilli(), at.Add(48*time.Hour).UnixMilli(), at.Add(72*time.Hour).UnixMilli())
+	response, e := (&http.Client{Transport: transport, Timeout: 10 * time.Second}).Get(url)
 	if e != nil {
 		t.Fatal(e)
 	}
 	defer response.Body.Close()
 	raw, e := io.ReadAll(response.Body)
-	if e != nil || response.StatusCode != 200 || string(raw) != "summary packet" {
-		t.Fatal(response.StatusCode, string(raw), e)
+	if e != nil || response.StatusCode != 200 || response.ProtoMajor != 3 {
+		t.Fatal(response.StatusCode, response.Proto, string(raw), e)
+	}
+	pack, e := pilcodec.OpenNestedPack(raw)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if pack.Count() != 2 || response.ContentLength != int64(len(raw)) || response.Header.Get("Content-Type") != "application/pil" {
+		t.Fatal("invalid summary PAC response", pack.Count(), response.ContentLength, len(raw), response.Header)
+	}
+	for i := 0; i < pack.Count(); i++ {
+		child, e := pack.Get(i)
+		if e != nil {
+			t.Fatal(e)
+		}
+		if _, e = pilcodec.ExpandPAC(child); e != nil {
+			t.Fatal(e)
+		}
 	}
 }

@@ -1,0 +1,2 @@
+{"input_records":100000,"mapped_median_ms":4.993958,"matches":16664,"physical_median_ms":4.985542,"query":"level = ERROR","trials":40}
+{"input_records":100000,"mapped_median_ms":14.819959,"matches":25000,"physical_median_ms":14.798542,"query":"severity = 4","trials":40}

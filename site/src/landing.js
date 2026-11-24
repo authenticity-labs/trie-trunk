@@ -63,8 +63,6 @@ if(pageSections.length){
    if(link.dataset.pageLink===active.dataset.pageSection)link.setAttribute('aria-current','page');
    else link.removeAttribute('aria-current');
   });
-  const hash=active.id==='trunk'?'':`#${active.id}`;
-  if(location.hash!==hash)history.replaceState(null,'',`${location.pathname}${location.search}${hash}`);
  };
  const scheduleActivePage=()=>{
   if(!framePending){framePending=true;requestAnimationFrame(updateActivePage)}
@@ -80,17 +78,23 @@ if(pageSections.length){
    event.preventDefault();
    revealBenchPanel(target);
    target.scrollIntoView({block:'start',behavior:'instant'});
+   clearSectionHash();
    updateActivePage();
   });
  });
- // Apply an incoming section link before tracking scroll position; the initial
- // Trunk view can erase the hash before the browser scrolls to it.
- const initialHash=location.hash;
+ const followFragment=()=>{
+  const target=sectionFromHash();
+  if(target){
+   revealBenchPanel(target);
+   target.scrollIntoView({block:'start',behavior:'instant'});
+  }
+  clearSectionHash();
+ };
  const initialize=async()=>{
   await document.fonts.ready;
   await new Promise(requestAnimationFrame);
-  const target=document.getElementById(initialHash.slice(1));
-  if(target){revealBenchPanel(target);target.scrollIntoView({block:'start',behavior:'instant'})}
+  followFragment();
+  window.addEventListener('hashchange',followFragment);
   window.addEventListener('scroll',scheduleActivePage,{passive:true});
   window.addEventListener('resize',scheduleActivePage);
   requestAnimationFrame(updateActivePage);

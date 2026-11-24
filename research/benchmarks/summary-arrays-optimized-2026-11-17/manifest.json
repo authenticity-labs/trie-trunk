@@ -1,0 +1,45 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "timestamp": "2026-11-17T11:50:48-0500",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+  "binaries": {
+    "prior": "8c3a70e803a6f76ee026f785163d02879ba76f774f008c8bed0f9bb9a9ba7996",
+    "current": "67848ba08cab325ec2e9784e6facbe9df346886fb947de877e2c133c8e756a19"
+  },
+  "scope": "Native release Rust summary APIs on resident byte buffers. No disk/network/UI, SQL parsing or cross-worker transfer. Mixed-definition exception behavior excluded.",
+  "heap": "Separate untimed allocation pass. Incremental live requested heap, not RSS; existing input/Definition allocations excluded. Cold reader includes copying Box input.",
+  "prior": "Saved pre-generic-array summary source, rebuilt with the same current codec and registry as the optimized generic-array implementation.",
+  "pairs": 9,
+  "warmups_per_case_per_binary": 1,
+  "methodology": {
+    "input": "Deterministic varied values generated inside the timed Rust SummaryAccumulator::ingest closure. Typed setters, cap/observation, event Pack load, and event Pack seal are timed. Encoded event Packs are retained, not immediately overwritten.",
+    "common_setup": "DOC authoring and event Definition prescription are outside timing in both versions. Summary prescription is timed independently and included in total build.",
+    "cases": "narrow: 1 numeric + category + bool, 1 day; typical: 8 numeric + category + bool, 7 days; wide: 32 numeric + category + bool, 7 days; quiet: typical shape, 1/24 periods active. Eight events per active period; every day retains all 288 summary rows.",
+    "validation": "Each paired run has identical encoded-event SHA-256 and identical CBOR-serialized decoded-summary SHA-256, including every field in every period. Counts and category proofs asserted. Hashes also identical across repetitions. Full dashboard result JSON SHA-256 also matches in every pair.",
+    "zero_query": "duration > 10000; generated duration values range 0\u20139000. All periods proven empty after sealing.",
+    "cold": "Fresh SummaryReader over resident Box bytes, including owned input clone and first preview. Not OS disk-cache cold; template initialization occurred during ingestion.",
+    "warm": "Ten actual preview evaluations on the same prepared reader, divided by ten. No cached result returned by the harness.",
+    "dashboard": "One SummaryReport column collection plus ten finish() reductions; only duration metric. Not ten independent arbitrary SQL queries.",
+    "memory": "Instrumentation disabled during timing; allocation metrics gathered in a separate pass. Requested allocation sizes, not allocator reserved memory or process RSS. Signed retained delta and peak additional live bytes exclude already-live input/source Definitions. initial-cache.json additionally measures shared schema initialization in a separate process, including the retained cache after dropping the first plan.",
+    "storage": "Box byte count includes its catalog/footer and stored Packs. Current class library is larger; category counters shrink from 8 bytes to 3 and stored mode is removed. These numbers compare the entire current refactor, not array layout alone.",
+    "limits": "No network, filesystem I/O, UI rendering, worker transfer or full query-planner dispatch measured. Ordinary single-shape days only; unresolved mixed-summary semantics are not exercised.",
+    "baseline": "Prior summaries were rebuilt with the same optimized DOC/RX dependency as current summaries. Consequently these prior timings differ from the earlier frozen-binary report. Both received the codec setup improvements.",
+    "process": "No test/build jobs were run alongside the final paired benchmark.",
+    "harness_change": "The original harness was extended identically for both versions to hash the last complete dashboard result, outside timing. A separate environment-controlled mode measures initialization heap; normal timing mode is unchanged otherwise."
+  },
+  "source_archives": {
+    "prior-source.tar.gz": "8b9744f09f5548567f7a97e994c0d4636fba34d5f68908ac95b473cec27a00c6",
+    "current-source.tar.gz": "d90df1fe009dbba78585feeb5ad1673ddea5985e5383792066b99d020db638c2",
+    "shared-codec-source.tar.gz": "85bbb2b89d24454fdc0457ced269ddb87e4a6c00fd3e6e7f894d354c7c375f9f"
+  },
+  "harness_sha256": "7256224a0926432f38a5671fd027880f8d2045d7820bebf8a856a355df476ba7",
+  "verification": {
+    "seed_tests": 40,
+    "codec_tests": 46,
+    "native_http": "TestRegisteredHTTPIngestionSummaries and TestSummaryAnnotationRegistration passed",
+    "wasm": "Actual HTTP-ingested Pack fixtures passed live/recovered/hourly/daily/checkpoint queries and raw event reads",
+    "deployment": "Not deployed; mixed-summary exception policy remains outside this benchmark and unresolved."
+  },
+  "remaining_cost": "Narrow first-ever summary prescription is still slower (0.837 vs 0.571 ms); total narrow build is lower by 3.4%. Typical shared schema cache retains 907138 bytes once per process; per-plan heap excludes it and is reported separately."
+}

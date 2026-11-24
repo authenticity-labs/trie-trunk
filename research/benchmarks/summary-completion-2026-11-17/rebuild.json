@@ -1,0 +1,20 @@
+[
+  {
+    "branch": 1,
+    "bytes": 70521,
+    "days": 2,
+    "end": 1794873600000,
+    "events": 20000,
+    "first": 1794700800000,
+    "source": "demo/lab/indexed/sample"
+  },
+  {
+    "branch": 3,
+    "bytes": 1195,
+    "days": 0,
+    "end": 1794873600000,
+    "events": 0,
+    "first": 1794873600000,
+    "source": "demo/trie-trunk/queries/query"
+  }
+]

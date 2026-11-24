@@ -1,0 +1,133 @@
+{
+  "fixed_strings": {},
+  "identity": "log_trietrunk",
+  "root": "log_trietrunk",
+  "types": {
+    "log_trietrunk": {
+      "fields": [
+        {
+          "name": "@id",
+          "optional": true,
+          "value": {
+            "choices": [
+              {
+                "max": 10,
+                "min": 1,
+                "type": "size",
+                "value": {
+                  "type": "bytes"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "type": "choice"
+          }
+        },
+        {
+          "name": "@time",
+          "optional": false,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "@duration",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "level",
+          "optional": true,
+          "value": {
+            "max": 24,
+            "min": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "message",
+          "optional": true,
+          "value": {
+            "type": "any"
+          }
+        },
+        {
+          "name": "name",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "trace",
+          "optional": true,
+          "value": {
+            "max": 16,
+            "min": 16,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "span",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "flags",
+          "optional": true,
+          "value": {
+            "max": 255,
+            "min": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "error",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "detail",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "stack",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        }
+      ],
+      "type": "open_record"
+    }
+  }
+}

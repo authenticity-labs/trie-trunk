@@ -1,0 +1,193 @@
+{
+  "fixed_strings": {},
+  "identity": "log-job_opentelemetry",
+  "root": "log-job_opentelemetry",
+  "types": {
+    "log-job_opentelemetry": {
+      "fields": [
+        {
+          "name": "Timestamp",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "SeverityNumber",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "Body",
+          "optional": true,
+          "value": {
+            "type": "any"
+          }
+        },
+        {
+          "name": "EventName",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "TraceId",
+          "optional": true,
+          "value": {
+            "max": 16,
+            "min": 16,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "SpanId",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "TraceFlags",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "SeverityText",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "Attributes",
+          "optional": true,
+          "value": {
+            "fields": [
+              {
+                "name": "error.type",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "exception.message",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "exception.stacktrace",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "job",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "run",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "status",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "attempt",
+                "optional": true,
+                "value": {
+                  "type": "uint"
+                }
+              },
+              {
+                "name": "reason",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "schedule",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "queue",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "worker",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "task",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              },
+              {
+                "name": "workflow",
+                "optional": true,
+                "value": {
+                  "type": "text"
+                }
+              }
+            ],
+            "type": "open_record"
+          }
+        }
+      ],
+      "type": "open_record"
+    }
+  }
+}

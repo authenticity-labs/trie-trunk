@@ -1,0 +1,14 @@
+{
+  "client/services/store/atomic-file.ts": "02a92cf442a60e57b715bdf35f6e9ce23b4f39defbaa9f3b094e9a0e46555f22",
+  "client/services/store/native-files.ts": "110b6aa63c762c9f1208afb21ed332a5b96e2a614ea3b2e9aa69c965648d65ff",
+  "client/services/store/runtime.ts": "5a542b689641ed566a9f6692f68ecbe8c504223cd0fb01eb68de60b249ed4599",
+  "client/services/store/archive.ts": "9f5229710d64addfaa7e75ecf029d590ba9b822cf4a4040856657ee9a51acf88",
+  "client/services/store/resident.ts": "a9a9100729d97d154b7a790deae6560e050f6247c2b00db3f3409662be4987ad",
+  "client/services/store/timing.ts": "1cb75a9332b75c0aa5e3558c8c03e0a0e66d56f5b8393fabd5ea6ac715a703f3",
+  "client/components/events.tsx": "60c3d5d247a3d2be05f71265025fb9b1be544b96c9d498a38ccf1d4f7e323485",
+  "client/components/fast-dashboard.tsx": "d6aabf73da6866a23a669ff5dc454b8ee569219afc8b2b716eee51c5ab540a57",
+  "client/dist/index.html": "efe564dd8a179582fa4c67fa82e340cd3608781041f1a38db1b53893136e6d9e",
+  "web/index.html": "efe564dd8a179582fa4c67fa82e340cd3608781041f1a38db1b53893136e6d9e",
+  "desktop/dist/Snoot.app/Contents/Resources/web/index.html": "efe564dd8a179582fa4c67fa82e340cd3608781041f1a38db1b53893136e6d9e",
+  "desktop/dist/Snoot.app/Contents/MacOS/snoot": "902cbcc217a73b36bef73b991d894436e1803b1b7f51890688240d7e6def2b1e"
+}

@@ -64,12 +64,12 @@ type ViewResult struct {
 type viewSource struct {
 	context       recordContext
 	indexing      bool
-	reader        podsReader
+	reader        packsReader
 	api           *HTTP
 	branch        Branch
 	binding       viewBinding
 	rows          []byte
-	pods          *os.File
+	packs          *os.File
 	release       func()
 	memoryRelease func()
 	ranges        []cursor
@@ -87,8 +87,8 @@ func (s *viewSource) close() {
 		s.memoryRelease()
 		s.memoryRelease = nil
 	}
-	if s.pods != nil {
-		s.pods.Close()
+	if s.packs != nil {
+		s.packs.Close()
 	}
 	if s.release != nil {
 		s.release()
@@ -153,7 +153,7 @@ func (s *Store) captureView(branch Branch, from, to time.Time, prior *viewBindin
 	v.summaries = append([]Summary(nil), b.summaries...)
 	v.hasSummaries = b.sum != nil
 	if v.hasSummaries && prior == nil && finalize {
-		for _, acc := range b.accumulators {
+		for _, acc := range b.accumulators.all {
 			var count uint64
 			for _, n := range acc.columns.Count {
 				count += n
@@ -169,7 +169,8 @@ func (s *Store) captureView(branch Branch, from, to time.Time, prior *viewBindin
 		}
 	}
 
-	v.snap = branchStore{baseRows: b.baseRows, podsRetired: b.podsRetired, blockBase: b.blockBase, layout: s.layout, runs: append([]Run(nil), b.runs...), rows: v.rows, podsEnd: b.podsEnd, generation: b.generation}
+	v.snap = branchStore{baseRows: b.baseRows, packsRetired: b.packsRetired, blockBase: b.blockBase, layout: s.layout, runs: append([]Run(nil), b.runs...), rows: v.rows, packsEnd: b.packsEnd, generation: b.generation}
+	v.snap.sealedMemory = cloneArenas(b.sealedMemory)
 	v.snap.time = b.time
 	v.snap.timeAnchor = b.timeAnchor
 	if !finalize && len(v.snap.runs) > 0 {
@@ -180,12 +181,13 @@ func (s *Store) captureView(branch Branch, from, to time.Time, prior *viewBindin
 			return nil, err
 		}
 	}
+	v.assembler = frameAssembler{layout: s.layout, trie: &sharedTrie{nodes: append([]sharedNode(nil), s.trie.nodes...)}}
 	if payload {
-		v.pods, err = os.Open(b.pods.Name())
+		v.packs, err = os.Open(b.packs.Name())
 		if err != nil {
 			return nil, err
 		}
-		v.snap.pods = v.pods
+		v.snap.packs = v.packs
 		v.assembler = frameAssembler{layout: s.layout, trie: &sharedTrie{nodes: append([]sharedNode(nil), s.trie.nodes...)}}
 	}
 	for _, c := range b.candidates(from, to, IndexRowSize) {
@@ -215,7 +217,7 @@ func (s *Store) captureView(branch Branch, from, to time.Time, prior *viewBindin
 			}
 		}
 		// Scan .sum once. Partial bins and groups beyond the captured tail fall
-		// back to index counts; no .pods bytes or event objects are needed.
+		// back to index counts; no .packs bytes or event objects are needed.
 		if branch.Aggregates() && summary.From%300000 == 0 && summary.Step%300000 == 0 {
 			for _, batch := range b.summaries {
 				if batch.Through > binding.Tail {

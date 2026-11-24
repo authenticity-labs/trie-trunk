@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"bytes"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"mime"
 	"trie-trunk/go/codec"
 	"unicode/utf8"

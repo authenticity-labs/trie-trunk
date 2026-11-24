@@ -1,0 +1,12 @@
+{
+  "client/services/pil/node-connection.ts": "4ae66128859783d9f37dc8a6afc3ba82aea01153a85b3808aa89a07c991533b4",
+  "client/services/pil/node-worker.ts": "1da8d88b39c69e216888f5dea2018a7f57f038048cba239b42d86e8df3455451",
+  "client/services/pil/node-host.ts": "b700135c8293c8d275ae506f6ef8476d2d8ee977e389e37e248443f1ed0df632",
+  "client/services/pil/node-broker.ts": "b0f24a705974b61a19316544dbd09f7d198e676d6c7981b4c3f16083991ec880",
+  "client/services/pil/connection-worker.ts": "65b4be442801d2b987d2dfef9a2a8fc87cce7dbb8b2711c105750c1e9de634bf",
+  "client/services/pil/worker-runtime.ts": "b7d6fd3e7836e83fc1121ea66fb76e13ce838bcd9bcacab9fce2a558097a3f05",
+  "client/services/pil/client.ts": "04d38c30487f7646045a8ce2a84290f4c8bc69630cdd781bd306e66c59fcc92f",
+  "client/services/pil/protocol.ts": "e6dd3182da15ea8c857562ed9f6efd8990a2b4625f1917f0f91296c89c2fe3ca",
+  "client/services/search/boundaries.ts": "6a798d4bcc8c2530f3465afd28fb9150d5c68634311226839b4579b82516632f",
+  "desktop/tests/test_search.py": "4adde4a9fc88f299b83e7887ea45f5e572eed37a9da2caf69beda4b38594a889"
+}

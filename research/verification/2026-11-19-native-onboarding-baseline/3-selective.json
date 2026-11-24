@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"loaded\":2,\"visible\":0,\"wallMs\":790,\"domReadyMs\":97,\"submitHandlerMs\":9,\"startedAt\":1795079525403,\"observedAt\":1795079526193,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":96,\"workerMs\":79,\"outsideWorkerMs\":17,\"steps\":{\"startedAt\":1795079525419,\"beforeReplicationMs\":13,\"replicationMs\":49,\"afterReplicationMs\":17,\"lastSeed\":{\"tap\":\"demo/lab/indexed/sample\",\"dispatchOffsetMs\":2,\"responseWaitMs\":6,\"dependencyWaitMs\":10,\"bodyAndImportMs\":31,\"finalDependenciesMs\":0}}},\"startup\":{\"navigationStartAt\":1795079522796,\"driverMs\":17,\"controlsReadyMs\":549,\"submitMs\":2607,\"replicaReset\":{\"removed\":false,\"ms\":1}},\"runs\":[{\"loaded\":2,\"visible\":0,\"wallMs\":790,\"domReadyMs\":97,\"submitHandlerMs\":9,\"startedAt\":1795079525403,\"observedAt\":1795079526193,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":96,\"workerMs\":79,\"outsideWorkerMs\":17,\"steps\":{\"startedAt\":1795079525419,\"beforeReplicationMs\":13,\"replicationMs\":49,\"afterReplicationMs\":17,\"lastSeed\":{\"tap\":\"demo/lab/indexed/sample\",\"dispatchOffsetMs\":2,\"responseWaitMs\":6,\"dependencyWaitMs\":10,\"bodyAndImportMs\":31,\"finalDependenciesMs\":0}}}},{\"loaded\":2,\"visible\":0,\"wallMs\":985,\"domReadyMs\":89,\"submitHandlerMs\":7,\"startedAt\":1795079526204,\"observedAt\":1795079527189,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":88,\"workerMs\":32,\"outsideWorkerMs\":56,\"steps\":{\"startedAt\":1795079526258,\"beforeReplicationMs\":10,\"replicationMs\":0,\"afterReplicationMs\":22}}},{\"loaded\":2,\"visible\":0,\"wallMs\":992,\"domReadyMs\":35,\"submitHandlerMs\":4,\"startedAt\":1795079527196,\"observedAt\":1795079528188,\"visibility\":\"hidden\",\"window\":\"2026-11-15 18:00 \u2192 20:00\",\"boundary\":{\"totalMs\":34,\"workerMs\":26,\"outsideWorkerMs\":8,\"steps\":{\"startedAt\":1795079527204,\"beforeReplicationMs\":3,\"replicationMs\":0,\"afterReplicationMs\":23}}}],\"nativeActivityState\":{\"ends\":7,\"mode\":\"native\",\"active\":0,\"starts\":7,\"peak\":2,\"errors\":0,\"pending\":0},\"warnings\":[],\"activity\":{\"mode\":\"native\",\"pending\":0,\"starts\":7,\"active\":0,\"ends\":7,\"peak\":2,\"errors\":0}}",
+  "nativeStderr": "2026/11/19 04:12:02 Snoot listening on http://127.0.0.1:60584 using Unix Socket\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "query": "SELECT CAST(duration AS BIGINT) AS time FROM events WHERE sequence = 1",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      4.36083984375,
+      3.65673828125,
+      3.62890625
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "96bc5e609ac2211f964db5b70a3f74df18e18416dcb93e6356ae37057b1f912d",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": true,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795079522251.571,
+    "processMs": 6001.321124989772,
+    "loadAfter": [
+      4.09130859375,
+      3.6123046875,
+      3.61328125
+    ]
+  }
+}

@@ -10,7 +10,8 @@ import (
 	"testing"
 	"time"
 
-	pilcodec "github.com/AuthenticityLabs/pill-packer/go/codec"
+	native "github.com/authenticity-labs/pill-packer/go"
+	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"trie-trunk/go/codec"
 	Keys "trie-trunk/go/logger/client/keys"
 	"trie-trunk/go/logger/pil"
@@ -70,7 +71,23 @@ func TestPILBuilderNegotiatedCompletion(t *testing.T) {
 			if e != nil {
 				return nil, e
 			}
-			frames = append(frames, body)
+			decoded := body
+			if encoding := r.Header.Get("Content-Encoding"); encoding != "" {
+				flags, err := pilcodec.CompressionFlags(encoding)
+				if err != nil {
+					t.Fatal(err)
+				}
+				reader, err := native.NewDecoder(bytes.NewReader(body), flags)
+				if err != nil {
+					t.Fatal(err)
+				}
+				decoded, err = io.ReadAll(reader)
+				reader.Close()
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			frames = append(frames, decoded)
 			branches = append(branches, r.URL.Query().Get("tap"))
 			r.Body = io.NopCloser(bytes.NewReader(body))
 		}

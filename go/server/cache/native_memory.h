@@ -14,4 +14,7 @@ void *trunk_arena_new(void);
 void *trunk_arena_pin(const void *);
 void trunk_arena_free(void *);
 bool trunk_arena_adopt(const void *, const void *);
+void *trunk_buffer_seal(const void *, const uint8_t *, size_t, uint32_t, uint32_t);
+uint8_t *trunk_buffer_data(const void *);
+size_t trunk_buffer_len(const void *);
 #endif

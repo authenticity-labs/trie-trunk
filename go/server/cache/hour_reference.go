@@ -55,7 +55,7 @@ func (s *Store) collectionDirectory(k objectBinding) (timeDirectory, error) {
 	} else if gen, ok := s.catalog.Generations[binding][Write]; ok {
 		prefix += ".g" + hex.EncodeToString(gen[:])
 	}
-	raw, err := os.ReadFile(filepath.Join(s.root, binding, prefix+".tri"))
+	raw, err := os.ReadFile(filepath.Join(s.root, binding, prefix+".time"))
 	if err != nil {
 		return timeDirectory{}, err
 	}

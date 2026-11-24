@@ -1,0 +1,9 @@
+{
+  "name": "@trie-trunk/data-seeds",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": { "types": "./seeds.d.ts", "import": "./seeds.mjs" }, "./wasm": "./data-seeds.wasm" },
+  "files": ["seeds.mjs", "seeds.d.ts", "data-seeds.wasm"],
+  "scripts": { "build": "node build.mjs" }
+}

@@ -19,7 +19,7 @@ func TestPromotionValidatesRegisteredProducerTranslations(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer p.Close()
-	path := filepath.Join(p.api.Store.collection, fmt.Sprintf("producer-%x.rx", producer.Digest))
+	path := filepath.Join(p.config.Root, "definitions", fmt.Sprintf("producer-%x.rx", producer.Digest))
 	if err = ensureMap(path, producer.Bytes); err != nil {
 		t.Fatal(err)
 	}
@@ -144,7 +144,7 @@ func TestFailedPreferencePublishKeepsPreviousSelection(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	path := filepath.Join(cfg.Root, cfg.Cache, "registry.map")
+	path := filepath.Join(cfg.Root, "trunk.trie")
 	prior, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
@@ -201,26 +201,19 @@ func TestLegacyCatalogPreferenceUpgradeAndCorruption(t *testing.T) {
 		t.Fatal("legacy catalog lost newest-minor default")
 	}
 	p.Close()
-	path := filepath.Join(cfg.Root, cfg.Cache, "registry.map")
-	raw, err := os.ReadFile(path)
+	c, err := readCatalog(cfg.Root, cfg.Cache)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var c Catalog
-	if err = decoder.Unmarshal(raw, &c); err != nil {
-		t.Fatal(err)
-	}
+
 	if c.Preferred[collectionKey(base)] != next.Digest {
 		t.Fatal("legacy upgrade not durable")
 	}
 	c.Preferred[collectionKey(base)] = [32]byte{123}
-	raw, err = encoder.Marshal(c)
-	if err != nil {
+	if err = saveCatalog(cfg.Root, c); err != nil {
 		t.Fatal(err)
 	}
-	if err = replace(path, raw); err != nil {
-		t.Fatal(err)
-	}
+
 	if p, err = OpenEndpoint(cfg); err == nil {
 		p.Close()
 		t.Fatal("unknown preferred map accepted")

@@ -3,11 +3,10 @@ package cache
 // Open, validate and recover canonical files before publishing the store.
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"fmt"
-	"hash/crc32"
 	"os"
 	"path/filepath"
-	"sort"
 	"sync"
 	"time"
 )
@@ -46,10 +45,11 @@ func Open(c Config) (s *Store, err error) {
 	if c.NativeMemoryBytes == 0 {
 		c.NativeMemoryBytes = 1 << 30
 	}
-	if c.Sealer == nil {
-		c.Sealer = defaultSealScheduler
+	if c.CommitScheduler == nil {
+		c.CommitScheduler = defaultCommitScheduler
 	}
 	s = &Store{mu: &sync.Mutex{}, config: c, requestedObjectIndex: c.ObjectIndex, layout: l, row: l.RowLayout(), trie: newTrie(), branches: map[Branch]*branchStore{}}
+	s.ingress = trunkIngress(c.Root)
 	s.location = time.UTC
 	s.root = filepath.Join(c.Root, c.Cache)
 	n := l.Definition.Resource
@@ -76,20 +76,20 @@ func Open(c Config) (s *Store, err error) {
 	// Never open an empty signature trie beside an old one: index references
 	// would silently lose their meaning.
 	if _, e := os.Stat(filepath.Join(s.dir, "resource.tri")); e == nil {
-		return nil, fmt.Errorf("obsolete version-zero resource.tri in %s; recreate the cache using state.tri", s.dir)
+		return nil, fmt.Errorf("obsolete version-zero resource.tri in %s; recreate the cache using leaf.trie", s.dir)
 	} else if !os.IsNotExist(e) {
 		return nil, e
 	}
 	if err = s.removeSwapTemps(); err != nil {
 		return nil, err
 	}
+	if err = initializeTrunkConfig(c.Root); err != nil {
+		return nil, err
+	}
 	s.memory = newNativeMemory(c.NativeMemoryBytes)
-	path := filepath.Join(s.root, "registry.map")
 	catalog := Catalog{Format: Format, Cache: c.Cache, Tenant: c.Tenant, Definitions: map[string][32]byte{}}
-	if raw, e := os.ReadFile(path); e == nil {
-		if e = decoder.Unmarshal(raw, &catalog); e != nil {
-			return nil, e
-		}
+	if stored, e := readCatalog(c.Root, c.Cache); e == nil {
+		catalog = stored
 		if catalog.Format != Format || catalog.Cache != c.Cache || catalog.Tenant != c.Tenant {
 			return nil, fmt.Errorf("catalog ownership mismatch")
 		}
@@ -121,7 +121,7 @@ func Open(c Config) (s *Store, err error) {
 		if p.domain != n.Service || p.collection != n.Resource || p.major != n.Major || p.minor == n.Minor {
 			continue
 		}
-		raw, e := os.ReadFile(filepath.Join(s.root, binding, "resource.rx"))
+		raw, e := os.ReadFile(definitionPath(c.Root, catalog.Definitions[binding]))
 		if e != nil {
 			return nil, e
 		}
@@ -139,7 +139,7 @@ func Open(c Config) (s *Store, err error) {
 			}
 		}
 	}
-	if err = ensureMap(filepath.Join(s.dir, "resource.rx"), l.Bytes); err != nil {
+	if err = installDefinition(c.Root, l); err != nil {
 		return nil, err
 	}
 	catalog.Definitions[key] = l.Digest
@@ -147,51 +147,28 @@ func Open(c Config) (s *Store, err error) {
 		catalog.Generations = map[string]map[Branch][16]byte{}
 	}
 	s.catalog = catalog
-	b, e := encoder.Marshal(catalog)
-	if e != nil {
-		return nil, e
-	}
-	if err = replace(path, b); err != nil {
+	if err = s.registerTaxonomy(); err != nil {
 		return nil, err
 	}
-	// The taxonomy is small and compiled once, separate from event classifications.
-	taxonomy := map[string]map[string][]uint32{}
-	for key := range catalog.Definitions {
-		var domain, collection string
-		var major, minor uint32
-		// Parse registered paths rather than infer names from filesystem enumeration.
-		parts := splitBinding(key)
-		if parts == nil {
-			return nil, fmt.Errorf("invalid catalog binding")
-		}
-		domain = parts.domain
-		collection = parts.collection
-		major = parts.major
-		minor = parts.minor
-		if taxonomy[domain] == nil {
-			taxonomy[domain] = map[string][]uint32{}
-		}
-		k := fmt.Sprintf("%s.v%d", collection, major)
-		taxonomy[domain][k] = append(taxonomy[domain][k], minor)
-	}
-	for _, collections := range taxonomy {
-		for k, minors := range collections {
-			sort.Slice(minors, func(i, j int) bool { return minors[i] < minors[j] })
-			collections[k] = minors
-		}
-	}
-	b, e = encoder.Marshal(taxonomy)
-	if e != nil {
-		return nil, e
-	}
-	if err = replace(filepath.Join(s.root, "resource.tri"), b); err != nil {
-		return nil, err
-	}
-	s.shared, err = openFile(filepath.Join(s.dir, "state.tri"), "NUTSTRI6", l.Digest, [16]byte{}, 0)
+
+	s.shared, err = openFile(filepath.Join(s.dir, "leaf.trie"), "NUTSTRI6", l.Digest, [16]byte{}, 0)
 	if err != nil {
 		return nil, err
 	}
-	err = records(s.shared, func(raw []byte) error {
+	s.trieSizes = map[[32]byte]int{}
+	rememberTrie := func() error {
+		raw, e := encoder.Marshal(s.trie.nodes)
+		if e != nil {
+			return e
+		}
+		s.trieSizes[sha256.Sum256(raw)] = len(s.trie.nodes)
+		return nil
+	}
+	if err = rememberTrie(); err != nil {
+		return nil, err
+	}
+	var statistics []byte
+	s.trie.fileEnd, statistics, err = readLeafFile(s.shared, func(raw []byte) error {
 		var nodes []sharedNode
 		if e := decoder.Unmarshal(raw, &nodes); e != nil {
 			return e
@@ -201,11 +178,15 @@ func Open(c Config) (s *Store, err error) {
 				return e
 			}
 		}
-		return nil
+		return rememberTrie()
 	})
 	if err != nil {
 		return nil, err
 	}
+	if err = validateLeafStatistics(statistics, len(s.trie.nodes)); err != nil {
+		return nil, err
+	}
+	s.trie.footer = len(statistics) != 0
 	s.trie.persisted = len(s.trie.nodes)
 	if err = s.openObjects(); err != nil {
 		return nil, err
@@ -214,24 +195,28 @@ func Open(c Config) (s *Store, err error) {
 		return nil, err
 	}
 	for branch := Read; branch <= Trace; branch++ {
-		if _, e = os.Stat(filepath.Join(s.dir, s.prefix(branch)+".journal")); e == nil {
+		exists := false
+		for _, ext := range []string{".indx", ".packs", ".seeds", ".pack"} {
+			prefix := s.prefix(branch)
+			if ext == ".seeds" || ext == ".pack" {
+				prefix = branch.Prefix()
+			}
+			if _, e = os.Stat(filepath.Join(s.dir, prefix+ext)); e == nil {
+				exists = true
+			} else if !os.IsNotExist(e) {
+				return nil, e
+			}
+		}
+		if exists {
 			if _, err = s.openBranch(branch); err != nil {
 				return nil, err
 			}
-		} else if !os.IsNotExist(e) {
-			return nil, e
 		} else if _, required := s.catalog.Generations[s.binding][branch]; required || s.catalog.RetiredRows[s.binding][branch] > 0 {
 			return nil, fmt.Errorf("catalog-selected branch is missing")
-		} else {
-			// Version-zero data is regenerated, never silently ignored or migrated.
-			for _, ext := range []string{".idx", ".pods", ".tri"} {
-				if _, err := os.Stat(filepath.Join(s.dir, s.prefix(branch)+ext)); err == nil {
-					return nil, fmt.Errorf("branch %s has data without its commit journal; regenerate version-zero fixtures", branch.Name())
-				} else if !os.IsNotExist(err) {
-					return nil, err
-				}
-			}
 		}
+	}
+	if err = s.publishStates(); err != nil {
+		return nil, err
 	}
 	if b := s.branches[Write]; b != nil {
 		if err = s.indexObjects(b); err != nil {
@@ -247,9 +232,9 @@ func (s *Store) openBranch(branch Branch) (b *branchStore, err error) {
 	if b = s.branches[branch]; b != nil {
 		return b, nil
 	}
-	b = &branchStore{branch: branch, layout: s.layout, podsEnd: headerSize, sumEnd: headerSize}
+	b = &branchStore{branch: branch, layout: s.layout, packsEnd: headerSize, sumEnd: headerSize}
 	base := filepath.Join(s.dir, s.prefix(branch))
-	raw, e := os.ReadFile(base + ".journal")
+	raw, e := os.ReadFile(base + ".packs")
 	if e == nil {
 		if len(raw) < headerSize {
 			return nil, fmt.Errorf("short branch header")
@@ -262,6 +247,13 @@ func (s *Store) openBranch(branch Branch) (b *branchStore, err error) {
 	} else {
 		return nil, e
 	}
+	if s.catalog.RetiredRows[s.binding][branch] > 0 {
+		for _, ext := range []string{".indx", ".packs", ".time"} {
+			if _, e := os.Stat(base + ext); e != nil {
+				return nil, fmt.Errorf("missing retained branch: %w", e)
+			}
+		}
+	}
 	cleanup := b
 	defer func() {
 		if err != nil {
@@ -269,109 +261,26 @@ func (s *Store) openBranch(branch Branch) (b *branchStore, err error) {
 		}
 	}()
 	b.live = newNativeLive(s.config.LiveIndexRecords)
-	if b.journal, err = openFile(base+".journal", "TTCOMM00", s.layout.Digest, b.generation, s.row.Width); err != nil {
+	if b.idx, err = openFile(base+".indx", "NUTSIDX6", s.layout.Digest, b.generation, s.row.Width); err != nil {
 		return nil, err
 	}
-	if b.idx, err = openFile(base+".idx", "NUTSIDX6", s.layout.Digest, b.generation, s.row.Width); err != nil {
+	if b.packs, err = openFile(base+".packs", "PILPOD00", s.layout.Digest, b.generation, 0); err != nil {
 		return nil, err
 	}
-	if b.pods, err = openFile(base+".pods", "PILPOD00", s.layout.Digest, b.generation, 0); err != nil {
-		return nil, err
-	}
-	if branch.Aggregates() && len(s.layout.Definition.Resource.Aggregations) > 0 {
-		if b.sum, err = openFile(base+".sum", "NUTSSUM6", s.layout.Digest, b.generation, 0); err != nil {
+	if branch.Valid() && s.layout.aggregates != nil {
+		if b.sum, err = openFile(base+".summ", "NUTSSUM6", s.layout.Digest, b.generation, 0); err != nil {
 			return nil, err
 		}
 	}
-	b.podsRetired, err = retiredBytes(b.pods)
+	b.packsRetired, err = retiredBytes(b.packs)
 	if err != nil {
 		return nil, err
 	}
-	b.podsEnd += b.podsRetired
-	var lastMS int64 = -1
-	err = records(b.journal, func(raw []byte) error {
-		var commit Commit
-		if e := decoder.Unmarshal(raw, &commit); e != nil {
-			return e
-		}
-		if commit.Retired != nil {
-			if len(b.runs) > 0 || b.baseRows != 0 {
-				return fmt.Errorf("misplaced retirement record")
-			}
-			r := commit.Retired
-			b.baseRows = r.Rows
-			b.blockBase = r.Block
-			b.memberEnd = r.Members
-			b.finalizedBefore = r.Cutoff
-			b.timeAnchor = r.Time
-			return nil
-		}
-		run := commit.Run
-		tail := b.baseRows
-		if len(b.runs) > 0 {
-			tail = b.runs[len(b.runs)-1].End
-		}
-		if run.Start != tail+IndexHeaderSlots || run.End <= run.Start || run.End > IndexCapacity || run.End-run.Start > uint64(PACMaximumMembers) || run.PodsStart != b.podsEnd || run.PodsEnd < run.PodsStart || run.TrieSize > len(s.trie.nodes) || run.TrieSize < 1 {
-			return fmt.Errorf("invalid committed run")
-		}
-		idx, e := readBytes(b.idx, headerSize+(run.Start-b.baseRows)*uint64(s.row.Width), headerSize+(run.End-b.baseRows)*uint64(s.row.Width))
-		if e != nil {
-			return e
-		}
-		pods, e := readBytes(b.pods, run.PodsStart-b.podsRetired, run.PodsEnd-b.podsRetired)
-		if e != nil {
-			return e
-		}
-		if crc32.Checksum(idx, checksum) != run.IndexCRC || crc32.Checksum(pods, checksum) != run.PodsCRC {
-			return fmt.Errorf("committed data checksum mismatch")
-		}
-		memberStart := b.memberEnd
-		if len(b.runs) > 0 {
-			prior := b.runs[len(b.runs)-1].PAC.Placement
-			memberStart = prior.MemberStart + prior.MemberBytes
-		}
-		if run.PAC == nil || run.PAC.Placement.MemberStart != memberStart+4+4*(run.End-run.Start) || run.PAC.Placement.Block != b.blockBase+uint32(len(b.runs)) {
-			return fmt.Errorf("noncontiguous PAC block directory")
-		}
-		head, e := readBytes(b.idx, headerSize+(run.Start-IndexHeaderSlots-b.baseRows)*IndexRowSize, headerSize+(run.Start-b.baseRows)*IndexRowSize)
-		if e != nil {
-			return e
-		}
-		if e = validateIndexHeader(head, run); e != nil {
-			return e
-		}
-		firstMS := indexTime(idx, run.PAC.Placement.From)
-		if lastMS >= firstMS {
-			return fmt.Errorf("unordered committed hours")
-		}
-		lastMS = indexTime(idx[len(idx)-s.row.Width:], run.PAC.Placement.From)
-
-		if e := validateBlock(run, idx, s.row, b.generation); e != nil {
-			return e
-		}
-
-		b.podsEnd = run.PodsEnd
-		b.runs = append(b.runs, run)
-		return nil
-	})
-	if err != nil {
+	b.packsEnd += b.packsRetired
+	if err = s.openStaging(b); err != nil {
 		return nil, err
 	}
-	tail := b.baseRows
-	if len(b.runs) > 0 {
-		tail = b.runs[len(b.runs)-1].End
-	}
-	indexRetired, e := retiredBytes(b.idx)
-	if e != nil {
-		return nil, e
-	}
-	if b.baseRows != s.catalog.RetiredRows[s.binding][branch] || indexRetired != b.baseRows*IndexRowSize {
-		return nil, fmt.Errorf("index retirement boundary mismatch")
-	}
-	if err = b.idx.Truncate(headerSize + int64(tail-b.baseRows)*int64(s.row.Width)); err != nil {
-		return nil, err
-	}
-	if err = b.pods.Truncate(int64(b.podsEnd - b.podsRetired)); err != nil {
+	if err = s.recoverSealed(b); err != nil {
 		return nil, err
 	}
 	if err = s.loadSummaries(b); err != nil {
@@ -387,13 +296,26 @@ func (s *Store) openBranch(branch Branch) (b *branchStore, err error) {
 	if err = s.openSwap(b); err != nil {
 		return nil, err
 	}
+	if raw, e := os.ReadFile(filepath.Join(s.dir, s.prefix(branch)+".time")); e == nil && len(raw) >= TimeTrieHeader && int(int8(raw[47])) != s.policyFor(branch).summaryOffsetHours() {
+		b.summaryDays = map[int64]summaryDayLocation{}
+		b.summaryPackedThrough = -1
+		b.calendarRollups = nil
+		if err = s.packSummaryDays(b); err != nil {
+			return nil, err
+		}
+	}
+
 	if b.summaryPackedThrough > b.finalizedBefore {
 		return nil, fmt.Errorf("calendar coverage exceeds finalized data")
 	}
 	if err = s.publishTime(b); err != nil {
 		return nil, err
 	}
+	if err = b.openResidentFile(); err != nil {
+		return nil, err
+	}
 	s.branches[branch] = b
+	s.publishResident(b)
 	return b, syncDir(s.dir)
 }
 

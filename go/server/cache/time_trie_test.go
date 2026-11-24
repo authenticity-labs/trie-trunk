@@ -40,7 +40,7 @@ func TestPositionalTimeTrieNullZeroAndHourlySegments(t *testing.T) {
 		t.Fatal("server time trie contains a client status tail")
 	}
 	if os.Getenv("UPDATE_TIME_TRIE_FIXTURE") == "1" {
-		dir := "../../../client/services/fixtures/time-trie"
+		dir := "../../../testdata/time-trie"
 		if e := os.MkdirAll(dir, 0755); e != nil {
 			t.Fatal(e)
 		}
@@ -48,7 +48,7 @@ func TestPositionalTimeTrieNullZeroAndHourlySegments(t *testing.T) {
 		if e != nil {
 			t.Fatal(e)
 		}
-		for n, raw := range map[string][]byte{"server.tri": tree.raw, "window.bin": patch} {
+		for n, raw := range map[string][]byte{"server.time": tree.raw, "window.bin": patch} {
 			if e = os.WriteFile(filepath.Join(dir, n), raw, 0644); e != nil {
 				t.Fatal(e)
 			}
@@ -128,22 +128,22 @@ func TestPositionalTimeTrieRestartRecoveryAndUnchangedPayloads(t *testing.T) {
 		t.Fatal(leaf)
 	}
 	files := map[string][]byte{}
-	for _, ext := range []string{".idx", ".pods"} {
+	for _, ext := range []string{".indx", ".packs"} {
 		raw, e := os.ReadFile(filepath.Join(s.dir, "write"+ext))
 		if e != nil {
 			t.Fatal(e)
 		}
 		files[ext] = raw
 	}
-	triPath := filepath.Join(s.dir, "write.tri")
+	triPath := filepath.Join(s.dir, "write.time")
 	want := append([]byte(nil), b.time.raw...)
-	if _, e = os.Stat(filepath.Join(s.dir, "write.journal")); e != nil {
+	if _, e = os.Stat(filepath.Join(s.dir, "write.journal")); !os.IsNotExist(e) {
 		t.Fatal(e)
 	}
 	if e = s.Close(); e != nil {
 		t.Fatal(e)
 	}
-	// Crash/torn derived publication: recover only from the separate journal.
+	// Crash/torn derived publication: recover from PAC placement and index headers.
 	if e = os.WriteFile(triPath, []byte("torn"), 0600); e != nil {
 		t.Fatal(e)
 	}
@@ -229,7 +229,7 @@ func TestPositionalTimeTrieRetentionRecovery(t *testing.T) {
 		t.Fatal(e)
 	}
 	want := append([]byte(nil), s.branches[Write].time.raw...)
-	path := filepath.Join(s.dir, s.prefix(Write)+".tri")
+	path := filepath.Join(s.dir, s.prefix(Write)+".time")
 	if e = s.Close(); e != nil {
 		t.Fatal(e)
 	}

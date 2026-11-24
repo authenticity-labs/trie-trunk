@@ -3,6 +3,7 @@ package cache
 import (
 	"bytes"
 	"compress/gzip"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"testing"
 	"time"
@@ -12,7 +13,7 @@ func TestHourDirectoryIndependentWidening(t *testing.T) {
 	origin := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC).UnixMilli()
 	first := origin + 65536*TimeHourMS
 	r := timeRun(first, 1<<32, 65536)
-	r.PodsStart = 1<<40 + 72
+	r.PacksStart = 1<<40 + 72
 	r.PAC.Placement.MemberStart = 1<<40 + 4
 	d, err := buildHourDirectory([]Run{r}, first, first+TimeHourMS, r.End, [16]byte{1}, origin, [6]byte{})
 	if err != nil {
@@ -22,7 +23,7 @@ func TestHourDirectoryIndependentWidening(t *testing.T) {
 		t.Fatal("widths", d.raw[40:46])
 	}
 	leaf, ok := d.leaf(first)
-	if !ok || leaf.Start != r.Start-1 || leaf.Pods != r.PodsStart || leaf.Sods != r.PAC.Placement.MemberStart-4-4*(r.End-r.Start) || leaf.End != r.End {
+	if !ok || leaf.Start != r.Start-1 || leaf.Packs != r.PacksStart || leaf.Beds != r.PAC.Placement.MemberStart-4-4*(r.End-r.Start) || leaf.End != r.End {
 		t.Fatal(leaf)
 	}
 	address := collectionAddress{65536, 65536}
@@ -82,7 +83,7 @@ func TestPACCompressionWrapperBoundaries(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	compressed, err := compressPAC(p.Bytes, 9)
+	compressed, err := pil.CompressPACAlgorithm(p.Bytes, "gzip", 9, false)
 	if err != nil {
 		t.Fatal(err)
 	}

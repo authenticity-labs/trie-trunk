@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// CalendarRollup describes the retained, sealed portion of a UTC calendar period.
+// CalendarRollup describes the retained, sealed portion of a fixed-offset calendar period.
 // Totals are never clipped to a query: callers must use five-minute columns at
 // mismatched boundaries and for filters, labels, or percentile distributions.
 type CalendarRollup struct {
@@ -25,8 +25,12 @@ type CalendarRollup struct {
 	Errors             uint64     `json:"errors,string"`
 }
 
-func calendarPeriod(res Resolution, ms int64) (int64, int64) {
-	t := time.UnixMilli(ms).UTC()
+func calendarPeriod(res Resolution, ms int64, offsets ...int) (int64, int64) {
+	offset := int64(0)
+	if len(offsets) > 0 {
+		offset = int64(offsets[0]) * TimeHourMS
+	}
+	t := time.UnixMilli(ms + offset).UTC()
 	var start, end time.Time
 	switch res {
 	case Weekly:
@@ -40,7 +44,7 @@ func calendarPeriod(res Resolution, ms int64) (int64, int64) {
 		start = time.Date(t.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
 		end = start.AddDate(1, 0, 0)
 	}
-	return start.UnixMilli(), end.UnixMilli()
+	return start.UnixMilli() - offset, end.UnixMilli() - offset
 }
 
 func dailyRollup(sums []Summary) (CalendarRollup, error) {
@@ -56,7 +60,7 @@ func dailyRollup(sums []Summary) (CalendarRollup, error) {
 
 // Only one cached daily total per populated day is visited for each resolution.
 // Empty days inside certified coverage contribute zero; outside it is unknown.
-func calendarRollups(days map[int64]summaryDayLocation, from, to int64) ([]CalendarRollup, error) {
+func calendarRollups(days map[int64]summaryDayLocation, from, to int64, offsets ...int) ([]CalendarRollup, error) {
 	if from >= to {
 		return nil, nil
 	}
@@ -69,7 +73,7 @@ func calendarRollups(days map[int64]summaryDayLocation, from, to int64) ([]Calen
 	for _, res := range []Resolution{Weekly, Monthly, Yearly} {
 		n := 0
 		for at := from; at < to; {
-			start, end := calendarPeriod(res, at)
+			start, end := calendarPeriod(res, at, offsets...)
 			r := CalendarRollup{Resolution: res, From: start, To: end, CoveredFrom: max(start, from), CoveredTo: min(end, to), StatisticsComplete: true}
 			var a Aggregate
 			for n < len(dates) && dates[n] < r.CoveredTo {

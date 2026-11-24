@@ -1,0 +1,226 @@
+{
+  "captured_utc": "2026-11-18T22:21:20.105221+00:00",
+  "scope": "Working-tree source and audit evidence, not deployed artifacts",
+  "files": [
+    {
+      "path": "/Users/Shared/code/applications/pill-packer/rust/examples/builder_load_bench.rs",
+      "bytes": 5483,
+      "sha256": "a58d7132bf8d46c4a344f11b140966d33a810e9eb6ca07ba93bde6ab3a0951d6"
+    },
+    {
+      "path": "/Users/Shared/code/applications/pill-packer/rust/examples/pac_audit_bench.rs",
+      "bytes": 2078,
+      "sha256": "62581f26000cec816710526728809d22b60863f7ed57e6dbb435babc48ffedd2"
+    },
+    {
+      "path": "/Users/Shared/code/applications/pill-packer/rust/examples/pac_header_bench.rs",
+      "bytes": 1709,
+      "sha256": "62ac3578e599610d530ff8c9acdb92cc65af6068b84f58a21ba3712320872b31"
+    },
+    {
+      "path": "/Users/Shared/code/applications/pill-packer/rust/src/api/arrays.rs",
+      "bytes": 4410,
+      "sha256": "eb28bdc381e30b2c4a5d74e81b156a44d861ee1ad292444e2a04359b7a1fd6fe"
+    },
+    {
+      "path": "/Users/Shared/code/applications/pill-packer/rust/src/api/pack.rs",
+      "bytes": 73805,
+      "sha256": "4d64a8b262139f2ae4876200d1486525c049c1a6773a676af55882e33479ce81"
+    },
+    {
+      "path": "/Users/Shared/code/applications/pill-packer/rust/src/api.rs",
+      "bytes": 41600,
+      "sha256": "95475417284ffebd83f78fd7d571ada43dda50e1e73f9d07f1ecc8c8fe7f448c"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/client/services/pil/client.ts",
+      "bytes": 20168,
+      "sha256": "ea2ec8aba840f97c0b573284e0bea3542316c5aa375e0611fe261ce2f0d5c66f"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/client/services/pil/connection-worker.ts",
+      "bytes": 5504,
+      "sha256": "41ab67f22a0b08028da4251e333f8f8efa4947bd8519c2812be0d3a6a38d328f"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/client/services/pil/node-worker.ts",
+      "bytes": 1546,
+      "sha256": "1da8d88b39c69e216888f5dea2018a7f57f038048cba239b42d86e8df3455451"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/client/services/search/calendar-plan.ts",
+      "bytes": 11231,
+      "sha256": "ba528cdaa83ec9c75003a2731f10e23dcd38b705c390e91ac56e116bdf49e951"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/client/services/search/execute.ts",
+      "bytes": 23787,
+      "sha256": "4c500fc2b064f51344a47b0839cf7b9e1532d5a255aa7b5f3863b6d612cf7cb1"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/client/services/search/registered.ts",
+      "bytes": 11546,
+      "sha256": "9786f2cb8a96226e8e31c328c06923e323847b3cc43801a322870926439c0217"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/client/services/store/resident.ts",
+      "bytes": 28333,
+      "sha256": "a9a9100729d97d154b7a790deae6560e050f6247c2b00db3f3409662be4987ad"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/cmd/trunk/cache.go",
+      "bytes": 4818,
+      "sha256": "c0873f74a170b97e283f254d9f44194da09c38f1e11698951a0a005c2e59c643"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/cmd/trunk/main.go",
+      "bytes": 6035,
+      "sha256": "d5d11df3d6137f2efca35178e36e172061dc3c6f6af4aa3ced41fdf0afd648f3"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/pac_storage.go",
+      "bytes": 4671,
+      "sha256": "54cca89601d04b3970172f969b500ba90af74f2c070b3a32942fd519e0f9d095"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/registered_ingress.go",
+      "bytes": 19141,
+      "sha256": "cb2e62b31e440570c6e8571402fdbfbe2a09ccf67dc6a6edf98dae66108a659b"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/registered_leaf_commit.go",
+      "bytes": 3907,
+      "sha256": "608b448e32faeb5dfda8eb3ed67edc5a5f5c48afa3ee96ca5b87b771d73e9f22"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/registered_leaf_commit_test.go",
+      "bytes": 4549,
+      "sha256": "8507260007962b23a133939ba8055ba9c6b1c699dbe0d1c8e2122268bd406599"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/registered_read.go",
+      "bytes": 17426,
+      "sha256": "8d348c8285d47d6cb1fefbeb3dd4bdc653d3da25615aca4d53c07cf4774370d4"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/resource_http.go",
+      "bytes": 9392,
+      "sha256": "b27aba95968daa25003a1b56557035dcfa2bb1cce7ad8b8f72c6bfaac9c65bec"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/store_open.go",
+      "bytes": 9221,
+      "sha256": "a2cc22fe3406730625bf5174db214c4f13735dee7069be90d5643d807c5f70cc"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/go/server/cache/summary_columns.go",
+      "bytes": 10420,
+      "sha256": "3df7e65eecbec1074856105313d2b0ed90493a7c561328f66eee8cf1516faada"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/research/audits/2026-11-18-design-conformance/probe/Cargo.lock",
+      "bytes": 13217,
+      "sha256": "bcdba63d3537ebd928bc1a7e5a6173d03940320abe485d2d2ca57c3f9eabd1cc"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/research/audits/2026-11-18-design-conformance/probe/Cargo.toml",
+      "bytes": 216,
+      "sha256": "e9041e7227cf18b1dcfafd501003d169fb32276e5ac05108e23de640760f2d2e"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/research/audits/2026-11-18-design-conformance/probe/build.log",
+      "bytes": 1481,
+      "sha256": "8905284fea03da7a1a581025b06114b7031c3018adf98a2d957178b28922bd89"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/research/audits/2026-11-18-design-conformance/probe/results.json",
+      "bytes": 1233,
+      "sha256": "4cc96ad90ce1b8fac7086a18fc97123191177441efdbdcee3fc26baefdad8a22"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/research/audits/2026-11-18-design-conformance/probe/src/main.rs",
+      "bytes": 2869,
+      "sha256": "e4fa234a558f63aa379941a112584b302712484520cced4e37cebd79ce4e7938"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/research/benchmarks/summary-repair-2026-11-18/README.md",
+      "bytes": 4240,
+      "sha256": "ba0357786a6e1e514ca6e05df4de7848c6f48e128b9f29b4c4a1d2600fd4b80f"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/integrity.rs",
+      "bytes": 2043,
+      "sha256": "e7b0cdc98658c2855276e9e49c1559a42bb8dc6cec59eb0a388fc851105eefd0"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/language.rs",
+      "bytes": 15485,
+      "sha256": "3538acf7ad4ccec12e85f45bdd31db551e837fc58080877939c0786973707b6f"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/reader.rs",
+      "bytes": 28816,
+      "sha256": "32040f0913426d60978f2fd1c6bb9126ba47abe8ab119e911f4439cd455e587b"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/registration/ingress.rs",
+      "bytes": 10826,
+      "sha256": "0f595d7bc0cca63b29e4cfb10a1e5bf174fbbc846a8e50db6791c6a4ae95ce8a"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/relational.rs",
+      "bytes": 19345,
+      "sha256": "38960758bf95c3c31f2a64292052d990388396455f365c53054f5df14bc1d66b"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/storage/index.rs",
+      "bytes": 8048,
+      "sha256": "2bd9c9287e6b48e4346f431089d242ea033f37e75e67abeb964fac32cbffcc5d"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/summaries/annotated.rs",
+      "bytes": 53354,
+      "sha256": "3f9b6555b3943ffb55349eb60157d12bcdd78ae12d10cd94178323f5414c9ba8"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/summaries/bindings.rs",
+      "bytes": 5491,
+      "sha256": "8c03b47e6706105bc4a9526c3317985e88557428448d79be358ba6c85ceb805b"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/summaries/definitions.rs",
+      "bytes": 4335,
+      "sha256": "8d6f60a6857d724c4c7f283e9bb9e252c06af38777da777fcf3553ab53deaf60"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/summaries/table.rs",
+      "bytes": 9238,
+      "sha256": "2c6c8a4a33ef03c13d6031e5503dbee240b708ff36ffbc583db3ba3b7a597144"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/summaries/template.rs",
+      "bytes": 2379,
+      "sha256": "e73ba5725c00fdabfedf913af9b1d984c7fef90e7dd80cbc728313f5b1f80d95"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/src/summaries.rs",
+      "bytes": 31114,
+      "sha256": "80ae6aa4a6723e47ad9c4e87d4d894d00b34943310f6a7d1837af70278e68a95"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/seeds/tests/summary_definitions.rs",
+      "bytes": 17083,
+      "sha256": "023ad13aa91a49a15d854075e033d7a3ec886bfa83e341dd47055b1f4e5d3eca"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/src/seed_native/ingress.rs",
+      "bytes": 25287,
+      "sha256": "55922cdca7ba4eeb0a02a694ae431913ec1d180337684dd6749dbf26c1fa19e0"
+    },
+    {
+      "path": "/Users/Shared/code/applications/trie-trunk/rust/trunk/src/registration.rs",
+      "bytes": 40236,
+      "sha256": "ac9507a7323d6161fcdef6470096aee02127b73f6c3d347a49ee908c31d2cd59"
+    }
+  ]
+}

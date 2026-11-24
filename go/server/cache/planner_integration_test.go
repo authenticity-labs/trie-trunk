@@ -55,9 +55,12 @@ func TestSearchPlannerWorkerAgainstHTTP(t *testing.T) {
 			}
 		}
 	}
-	script, err := filepath.Abs("../../../client/scripts/test-planner-server.mjs")
+	script, err := filepath.Abs("../../../../snoot/client/scripts/test-planner-server.mjs")
 	if err != nil {
 		t.Fatal(err)
+	}
+	if _, err := os.Stat(script); os.IsNotExist(err) {
+		t.Skip("cross-project test requires the Snoot checkout")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 45*time.Second)
 	defer cancel()

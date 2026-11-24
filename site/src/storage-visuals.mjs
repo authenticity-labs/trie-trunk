@@ -1,4 +1,4 @@
-import {quotaRings} from '../../shared/quota-rings.mjs';
+import {quotaRings} from '../../../snoot/shared/quota-rings.mjs';
 const periods = ['Yearly','Monthly','Daily','Hourly','15-Minute','5-Minute'];
 const bars = Array.from({length:12},(_,i)=>{
  const height=25+((i*31+17)%68);

@@ -1,0 +1,121 @@
+#ifndef TRUNK_SEED_NATIVE_H
+#define TRUNK_SEED_NATIVE_H
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+typedef struct { const uint8_t *data; size_t len; } TTSeedSlice;
+typedef struct { int32_t status; void *output; } TTSeedExpansion;
+typedef struct { uint64_t hour, start, end, packs, beds, count; } TTTimeLeaf;
+typedef struct { const TTTimeLeaf *data; size_t len; } TTTimeLeaves;
+typedef struct {
+    size_t ordinal;
+    uint32_t kind;
+    uint64_t low, high;
+    double real;
+    TTSeedSlice bytes;
+} TTSeedValue;
+void *trunk_seed_document(TTSeedSlice);
+void *trunk_seed_ingress_inspect(void *, uint16_t, TTSeedSlice, uint64_t);
+void *trunk_seed_ingress_persist(void *, uint16_t, TTSeedSlice, uint64_t, int32_t);
+void *trunk_seed_ingress_publish(const void *, TTSeedSlice, bool, size_t);
+void *trunk_seed_summary_publish(const void *, TTSeedSlice, size_t);
+TTSeedSlice trunk_seed_summary_error(const void *);
+TTSeedSlice trunk_seed_summary_bytes(const void *, uint32_t, uint64_t *, uint64_t *);
+void trunk_seed_summary_free(void *);
+void *trunk_seed_summary_restore(TTSeedSlice);
+void *trunk_seed_time_open(TTSeedSlice);
+TTSeedSlice trunk_seed_time_error(const void *);
+void trunk_seed_time_free(void *);
+void *trunk_seed_time_select(const void *, uint64_t, uint64_t);
+TTTimeLeaves trunk_seed_time_leaves(const void *);
+TTSeedSlice trunk_seed_time_selection_error(const void *);
+void trunk_seed_time_selection_free(void *);
+void *trunk_seed_time_info(const void *);
+void *trunk_seed_summary_index(TTSeedSlice, uint64_t);
+TTSeedSlice trunk_seed_summary_index_error(const void *);
+void trunk_seed_summary_index_free(void *);
+void *trunk_seed_summary_spans(const void *, const void *, TTSeedSlice);
+TTSeedSlice trunk_seed_time_bytes(const void *);
+void *trunk_seed_time_spans(const void *, uint64_t, uint64_t);
+void *trunk_seed_time_index_spans(const void *, TTSeedSlice, uint64_t);
+void *trunk_register_resource(TTSeedSlice, TTSeedSlice, TTSeedSlice);
+void *trunk_prepare_summaries(TTSeedSlice, TTSeedSlice, TTSeedSlice, TTSeedSlice);
+void *trunk_resource_binding(TTSeedSlice, uint16_t);
+void *trunk_definition_file(TTSeedSlice, TTSeedSlice);
+void *trunk_definition_file_matches(TTSeedSlice, TTSeedSlice);
+void *trunk_definition_replacement(TTSeedSlice, TTSeedSlice);
+void *trunk_seed_register(TTSeedSlice);
+void *trunk_seed_register_member(TTSeedSlice, size_t);
+void *trunk_seed_trie_open(TTSeedSlice);
+TTSeedSlice trunk_seed_trie_error(const void *);
+void trunk_seed_trie_free(void *);
+void *trunk_seed_trie_route(const void *, uint16_t);
+void *trunk_seed_trie_routes(const void *, TTSeedSlice);
+void *trunk_seed_trie_state_path(const void *, TTSeedSlice, TTSeedSlice, uint16_t);
+void *trunk_seed_trie_leaves(const void *, TTSeedSlice, TTSeedSlice);
+void *trunk_seed_leaf_writer(const void *, uint16_t, TTSeedSlice);
+TTSeedSlice trunk_seed_leaf_writer_error(const void *);
+void trunk_seed_leaf_writer_free(void *);
+void *trunk_seed_leaf_prepare(void *, uint16_t, size_t, TTSeedSlice);
+TTSeedSlice trunk_seed_leaf_tail(const void *, size_t *);
+void *trunk_seed_leaf_finish(void *, bool);
+void *trunk_seed_trie_catalog(const void *, TTSeedSlice, TTSeedSlice, uint32_t);
+void *trunk_seed_trie_prescribe_file(const void *, TTSeedSlice, TTSeedSlice);
+void *trunk_seed_trie_definition_file(const void *, uint32_t);
+void *trunk_seed_trie_prescribe(const void *, uint32_t, TTSeedSlice);
+TTSeedSlice trunk_seed_register_error(const void *);
+void trunk_seed_register_free(void *);
+void *trunk_seed_ingest(const void *, const TTSeedValue *, size_t, bool);
+void *trunk_seed_ingress_open(const void *, uint16_t, size_t, size_t, uint64_t);
+void *trunk_seed_ingress_enabled(const void *, uint16_t);
+void *trunk_seed_ingress_bootstrap(const void *, uint16_t, uint64_t, TTSeedSlice, uint32_t);
+typedef struct { uint64_t offset, length, beds, index, hour, count; } TTSeedPublicationPlan;
+void *trunk_seed_ingress_prepare(const void *, TTSeedSlice, TTSeedSlice, uint64_t, bool);
+void *trunk_seed_storage(TTSeedSlice);
+TTSeedSlice trunk_seed_ingress_prepare_error(const void *);
+TTSeedSlice trunk_seed_ingress_prepare_bytes(const void *, uint32_t, TTSeedPublicationPlan *);
+void trunk_seed_ingress_prepare_free(void *);
+void *trunk_seed_ingress_checkpoint(const void *);
+void *trunk_seed_ingress_checkpoint_open(TTSeedSlice);
+TTSeedSlice trunk_seed_ingress_error(const void *);
+void trunk_seed_ingress_free(void *);
+void *trunk_seed_ingress_load(void *, uint16_t, TTSeedSlice, uint64_t, bool);
+void *trunk_seed_ingress_snapshot(void *, uint64_t);
+void *trunk_seed_ingress_hours(void *);
+void *trunk_seed_ingress_commits(void *, uint64_t);
+void *trunk_seed_ingress_published(void *, uint64_t, uint64_t);
+void *trunk_seed_ingress_seal(void *, uint64_t, uint64_t);
+TTSeedSlice trunk_seed_ingress_seal_error(const void *);
+TTSeedSlice trunk_seed_ingress_seal_bytes(const void *, bool);
+void trunk_seed_ingress_seal_free(void *);
+void *trunk_seed_spool_prefix(uint16_t, TTSeedSlice);
+int32_t trunk_seed_spool_read(TTSeedSlice, size_t, uint16_t *, size_t *);
+void *trunk_seed_pack(const void *, const TTSeedSlice *, size_t, uint64_t, bool, uint32_t, uint32_t);
+void *trunk_seed_compress(TTSeedSlice, uint32_t, uint32_t);
+/* 0 = borrow original plain input; 1 = expanded output; -1 = error output. */
+TTSeedExpansion trunk_seed_expand(TTSeedSlice);
+/* 0 = complete prefix, 1 = more prefix bytes needed, -1 = malformed. */
+int32_t trunk_seed_envelope(TTSeedSlice, uint64_t *);
+typedef struct { uint64_t length, count; } TTSeedBoxPublication;
+int32_t trunk_seed_box_footer(TTSeedSlice, uint64_t, uint64_t *);
+void *trunk_seed_strings_open(TTSeedSlice,uint64_t,TTSeedBoxPublication *);
+void trunk_seed_strings_free(void *);
+void *trunk_seed_strings(const void *, const uint32_t *, size_t);
+int32_t trunk_seed_packs_publication(TTSeedSlice, uint64_t, TTSeedBoxPublication *);
+TTSeedSlice trunk_seed_output_bytes(const void *);
+TTSeedSlice trunk_seed_output_error(const void *);
+void trunk_seed_output_free(void *);
+void *trunk_seed_output_adopt(void *, const void *);
+#endif
+void *trunk_seed_ingress_complete(void *, TTSeedSlice, uint64_t);
+
+void *trunk_seed_query_definition(void);
+void *trunk_seed_ingress_summary_start(void *, const void *, TTSeedSlice, TTSeedSlice, TTSeedSlice, uint64_t);
+void *trunk_seed_ingress_summary_restore(void *, TTSeedSlice);
+void *trunk_seed_ingress_summary_snapshot(void *, TTSeedSlice, uint64_t);
+void *trunk_seed_ingress_summary(void *, TTSeedSlice, uint64_t, uint64_t, TTSeedSlice, uint64_t, bool);
+void *trunk_seed_ingress_summary_published(void *, uint64_t);
+void *trunk_seed_summary_checkpoint(const void *);
+void *trunk_seed_leaf_labels(const void *, uint16_t, TTSeedSlice);
+void *trunk_seed_leaf_label(const void *, uint16_t, TTSeedSlice, uint16_t, TTSeedSlice);

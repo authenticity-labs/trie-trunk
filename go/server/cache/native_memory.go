@@ -7,6 +7,7 @@ import "C"
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -62,19 +63,21 @@ type nativeBuffer struct {
 	frozen bool
 }
 
-func (m *nativeMemory) buffer() *nativeBuffer { return &nativeBuffer{ptr: C.trunk_buffer_new(m.ptr)} }
-func (b *nativeBuffer) resize(n int) ([]byte, error) {
+func (m *nativeMemory) buffer() *nativeBuffer           { return &nativeBuffer{ptr: C.trunk_buffer_new(m.ptr)} }
+func (b *nativeBuffer) resize(n int) ([]byte, error)    { return b.resizeLimit(n, MaxFrame*8) }
+func (b *nativeBuffer) resizePAC(n int) ([]byte, error) { return b.resizeLimit(n, int(PACMaximum)) }
+func (b *nativeBuffer) resizeLimit(n, maximum int) ([]byte, error) {
 	if b.frozen || b.ptr == nil {
 		return nil, fmt.Errorf("native buffer is not writable")
 	}
-	if n < 0 || n > MaxFrame*8 {
+	if n < 0 || n > maximum {
 		return nil, fmt.Errorf("native buffer exceeds frame capacity")
 	}
 	if n <= cap(b.bytes) {
 		b.bytes = b.bytes[:n]
 		return b.bytes, nil
 	}
-	capacity := max(n, min(max(32, cap(b.bytes)*2), MaxFrame*8))
+	capacity := max(n, min(max(32, cap(b.bytes)*2), maximum))
 	p := C.trunk_buffer_resize(b.ptr, C.size_t(capacity))
 	if p == nil {
 		return nil, fmt.Errorf("%w: native buffer budget exhausted", ErrStagingFull)
@@ -98,7 +101,17 @@ func (b *nativeBuffer) matches(raw []byte) bool {
 	return at >= start && at-start <= uintptr(len(b.bytes)) && uintptr(len(raw)) <= uintptr(len(b.bytes))-(at-start)
 }
 
+func newArena() unsafe.Pointer { return C.trunk_arena_new() }
+func (a *nativeArena) adopt(b *nativeBuffer) error {
+	if !bool(C.trunk_arena_adopt(a.ptr, b.ptr)) {
+		return fmt.Errorf("native arena allocation failed")
+	}
+	b.frozen = true
+	return nil
+}
+
 type nativeArena struct {
+	packs   map[uint64][][]byte // immutable PAC bytes owned by this same hour arena
 	ptr     unsafe.Pointer
 	adopted map[unsafe.Pointer]struct{}
 }
@@ -145,8 +158,10 @@ func (b *branchStore) own(s *Store, id [16]byte, raw []byte, input *nativeBuffer
 // not once per record. No finalizer participates in buffer lifetime correctness.
 func (b *branchStore) pinMemory() func() {
 	pins := make([]unsafe.Pointer, 0, len(b.memory))
-	for _, a := range b.memory {
-		pins = append(pins, C.trunk_arena_pin(a.ptr))
+	for _, arenaMap := range []map[int64]*nativeArena{b.memory, b.sealedMemory} {
+		for _, a := range arenaMap {
+			pins = append(pins, C.trunk_arena_pin(a.ptr))
+		}
 	}
 	return func() {
 		for _, p := range pins {
@@ -157,14 +172,20 @@ func (b *branchStore) pinMemory() func() {
 }
 func (b *branchStore) pruneMemory(now time.Time) {
 	cutoff := now.Add(-HotWindow).UnixMilli() / TimeHourMS
-	cutoff = min(cutoff, b.live.firstPending()/TimeHourMS)
+	for hour, a := range b.sealedMemory {
+		if hour < cutoff {
+			a.close()
+			delete(b.sealedMemory, hour)
+		}
+	}
+	cutoff = b.live.firstPending() / TimeHourMS
 	for key, v := range b.liveViews {
 		if !time.Now().Before(v.expires) {
+			if v.release != nil {
+				v.release()
+			}
 			delete(b.liveViews, key)
 			continue
-		}
-		if len(v.events) > 0 {
-			cutoff = min(cutoff, eventTime(v.events[0].id[:])/TimeHourMS)
 		}
 	}
 	for hour, a := range b.memory {
@@ -185,4 +206,54 @@ func (b *nativeBuffer) readAt(f *os.File, start, end uint64) ([]byte, error) {
 	}
 	_, e = f.ReadAt(raw, int64(start))
 	return raw, e
+}
+
+// sealPAC borrows the input only for the call. Returned bytes are Rust-owned
+// until close or arena adoption; no C.GoBytes or Go payload allocation occurs.
+func (m *nativeMemory) sealPAC(raw []byte, algorithm uint32, level int) (*nativeBuffer, error) {
+	if len(raw) == 0 || level < 0 || uint64(level) > uint64(^uint32(0)) {
+		return nil, fmt.Errorf("invalid PAC input")
+	}
+	p := C.trunk_buffer_seal(m.ptr, (*C.uint8_t)(unsafe.Pointer(&raw[0])), C.size_t(len(raw)), C.uint32_t(algorithm), C.uint32_t(level))
+	runtime.KeepAlive(raw)
+	if p == nil {
+		return nil, fmt.Errorf("native PAC sealing failed or memory budget exhausted")
+	}
+	n := int(C.trunk_buffer_len(p))
+	data := C.trunk_buffer_data(p)
+	return &nativeBuffer{ptr: p, bytes: unsafe.Slice((*byte)(unsafe.Pointer(data)), n)}, nil
+}
+
+// nativeScratch owns transient payload buffers for a sealing operation. Small
+// fields and descriptors remain Go values; their byte spans reference Rust.
+type nativeScratch struct {
+	memory  *nativeMemory
+	buffers []*nativeBuffer
+	tail    []byte
+}
+
+func (s *nativeScratch) allocate(n int) ([]byte, error) {
+	if n < 0 {
+		return nil, fmt.Errorf("invalid native allocation")
+	}
+	if len(s.tail) < n {
+		b := s.memory.buffer()
+		raw, e := b.resizePAC(max(n, 64<<10))
+		if e != nil {
+			b.close()
+			return nil, e
+		}
+		s.buffers = append(s.buffers, b)
+		s.tail = raw
+	}
+	raw := s.tail[:n:n]
+	s.tail = s.tail[n:]
+	return raw, nil
+}
+func (s *nativeScratch) close() {
+	for _, b := range s.buffers {
+		b.close()
+	}
+	s.buffers = nil
+	s.tail = nil
 }

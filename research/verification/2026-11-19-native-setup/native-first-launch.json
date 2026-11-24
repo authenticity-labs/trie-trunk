@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"firstLaunchChoices\":true,\"noImplicitOrigin\":true,\"localInstallation\":true,\"nativeOwnership\":true,\"localCandidate\":true,\"nativeSocket\":true,\"noBrowserDatabase\":true},\"installed\":{\"directory\":\"/var/folders/85/cj8xpvmj32jfrbhxvj3f44jh0000gn/T/snoot-search-test-38qe48kc/profile/Trunks/13cb5ebd470b15ca\",\"kind\":\"local\",\"name\":\"Personal Test\",\"transport\":\"Native\"}}",
+  "nativeStderr": "2026/11/19 23:51:57 Snoot listening on http://127.0.0.1:64812 using Setup\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": false,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      2.0634765625,
+      3.78564453125,
+      3.52099609375
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "dde275b3dd64332af85f2c17e647812cec93ffe68a4e8499f64f8834bcecc41f",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795150317761.614,
+    "processMs": 938.170125009492,
+    "loadAfter": [
+      2.0634765625,
+      3.78564453125,
+      3.52099609375
+    ]
+  }
+}

@@ -13,10 +13,10 @@ func TestPACCompressionPolicy(t *testing.T) {
 	if (Policy{}).PAC.level() != 1 {
 		t.Fatal("default must remain fast")
 	}
-	for _, level := range []int{-1, 0, 1, 6, 9, 10} {
-		raw := fmt.Sprintf("version=1\ntimezone='UTC'\n[defaults.pac]\ngzip_level=%d\n", level)
+	for _, level := range []int{-1, 0, 1, 6, 9, 22, 23} {
+		raw := fmt.Sprintf("version=1\ntimezone='UTC'\n[defaults.pac]\nlevel=%d\n", level)
 		c, err := ParseConfiguration([]byte(raw))
-		if level < 1 || level > 9 {
+		if level < 1 || level > 22 {
 			if err == nil {
 				t.Fatalf("accepted level %d", level)
 			}
@@ -24,11 +24,11 @@ func TestPACCompressionPolicy(t *testing.T) {
 			t.Fatalf("level %d: %v", level, err)
 		}
 	}
-	c, err := ParseConfiguration([]byte("version=1\ntimezone='UTC'\n[defaults.pac]\ngzip_level=9\n[resources.'payment/transactions.v1'.pac]\ngzip_level=3\n"))
+	c, err := ParseConfiguration([]byte("version=1\ntimezone='UTC'\n[defaults.pac]\nlevel=9\n[resources.'payment/transactions.v1'.pac]\nlevel=3\n"))
 	if err != nil || c.Resolve("payment/transactions.v1").PAC.level() != 3 || c.Resolve("other/resource.v1").PAC.level() != 9 {
 		t.Fatal("registry inheritance", err)
 	}
-	path := filepath.Join(t.TempDir(), "debug.cfg")
+	path := filepath.Join(t.TempDir(), "debug.conf")
 	for _, inherit := range []bool{true, false} {
 		if err := os.WriteFile(path, []byte(fmt.Sprintf("version=1\ninherit=%t\n", inherit)), 0600); err != nil {
 			t.Fatal(err)
@@ -64,8 +64,8 @@ func TestWritePacksRemainUncompressed(t *testing.T) {
 			if err := s.Flush(); err != nil {
 				t.Fatal(err)
 			}
-			if s.branches[Write].runs[0].PAC.Gzip {
-				t.Fatalf("compressed=%t with collections=%t", s.branches[Write].runs[0].PAC.Gzip, indexed)
+			if s.branches[Write].runs[0].PAC.Compressed {
+				t.Fatalf("compressed=%t with collections=%t", s.branches[Write].runs[0].PAC.Compressed, indexed)
 			}
 			if err := s.Close(); err != nil {
 				t.Fatal(err)
@@ -94,8 +94,15 @@ func TestPACCompressionReloadAndStoredBytes(t *testing.T) {
 	defer func() { s.Close() }()
 	writePolicy := func(name string, level int) {
 		t.Helper()
-		if err := os.WriteFile(filepath.Join(s.collection, name+".cfg"),
-			[]byte(fmt.Sprintf("version=1\n[policy.pac]\ngzip_level=%d\n", level)), 0600); err != nil {
+		path := filepath.Join(s.collection, filepath.Base(s.collection)+".conf")
+		if name != "resource" {
+			path = filepath.Join(s.collection, name, name+".conf")
+		}
+		if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path,
+			[]byte(fmt.Sprintf("version=1\n[policy.pac]\nlevel=%d\n", level)), 0600); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -125,7 +132,7 @@ func TestPACCompressionReloadAndStoredBytes(t *testing.T) {
 		}
 		b := s.branches[Error]
 		run := b.runs[i]
-		raw, err := readBytes(b.pods, run.PodsStart, run.PodsEnd)
+		raw, err := readBytes(b.packs, run.PacksStart, run.PacksEnd)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -142,7 +149,7 @@ func TestPACCompressionReloadAndStoredBytes(t *testing.T) {
 			original = append([]byte(nil), raw...)
 		}
 	}
-	writePolicy("error", 10)
+	writePolicy("error", 23)
 	if err := s.ReloadPolicy(); err == nil || s.policyFor(Error).PAC.level() != 3 {
 		t.Fatal("invalid reload changed active compression policy")
 	}
@@ -153,7 +160,7 @@ func TestPACCompressionReloadAndStoredBytes(t *testing.T) {
 	if err := s.Flush(); err != nil {
 		t.Fatal(err)
 	}
-	if s.branches[Write].runs[0].PAC.Gzip {
+	if s.branches[Write].runs[0].PAC.Compressed {
 		t.Fatal("write packs must remain uncompressed after policy reload")
 	}
 	if err := s.Close(); err != nil {
@@ -164,7 +171,7 @@ func TestPACCompressionReloadAndStoredBytes(t *testing.T) {
 		t.Fatal(err)
 	}
 	b := s.branches[Error]
-	raw, err := readBytes(b.pods, b.runs[0].PodsStart, b.runs[0].PodsEnd)
+	raw, err := readBytes(b.packs, b.runs[0].PacksStart, b.runs[0].PacksEnd)
 	if err != nil || !bytes.Equal(raw, original) {
 		t.Fatal("old PAC changed after reload/recovery", err)
 	}

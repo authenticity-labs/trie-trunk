@@ -42,7 +42,7 @@ func branchFilePath(path string) (branchFile, bool) {
 		return branchFile{}, false
 	}
 	switch file[1] {
-	case "tri", "sum", "idx", "tvy", "pods":
+	case "time", "summ", "indx", "tvy", "packs":
 	default:
 		return branchFile{}, false
 	}
@@ -106,15 +106,29 @@ func (h *HTTP) branchFileHTTP(w http.ResponseWriter, r *http.Request, file branc
 		http.Error(w, "invalid catalog resource path", 400)
 		return
 	}
-	if file.extension != "tri" && file.extension != "idx" && file.extension != "pods" && file.extension != "sum" {
+	if file.extension != "time" && file.extension != "indx" && file.extension != "packs" && file.extension != "summ" {
 		http.Error(w, "branch artifact replication is not implemented yet", 501)
 		return
 	}
 	allowed := []string{}
-	if file.extension == "idx" || file.extension == "pods" {
+	if file.extension == "indx" || file.extension == "packs" {
 		allowed = append(allowed, "states")
 	}
-	from, to, err := branchWindow(r, file.extension != "sum", allowed...)
+	var from, to time.Time
+	var err error
+	if file.extension == "summ" && (r.URL.Query().Has("range") || r.URL.Query().Has("live")) {
+		for k := range r.URL.Query() {
+			if k != "range" && k != "live" && k != "checkpoint" {
+				http.Error(w, "unsupported summary parameter", 400)
+				return
+			}
+		}
+		if r.URL.Query().Has("range") {
+			_, err = summaryRanges(r.URL.Query())
+		}
+	} else {
+		from, to, err = branchWindow(r, file.extension != "summ", allowed...)
+	}
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
@@ -138,15 +152,15 @@ func (h *HTTP) branchFileHTTP(w http.ResponseWriter, r *http.Request, file branc
 		http.NotFound(w, r)
 		return
 	}
-	if file.extension == "sum" {
+	if file.extension == "summ" {
 		selected.branchSummaries(w, r, file, from, to)
 		return
 	}
-	if file.extension == "idx" || file.extension == "pods" {
+	if file.extension == "indx" || file.extension == "packs" {
 		// State selection is carried by the client plan. Compressed hour packs
 		// are copied whole; no per-event server traversal is performed here.
 		query := url.Values{"format": {"native"}, "tap": {selected.tap(file.branch)}, "definition": {fmtDigestNative(selected.Store.layout.Digest)}, "from": {from.Format(time.RFC3339)}, "to": {to.Format(time.RFC3339)}}
-		if file.extension == "idx" {
+		if file.extension == "indx" {
 			query.Set("data", "none")
 		}
 		copy := r.Clone(r.Context())

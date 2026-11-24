@@ -1,0 +1,129 @@
+; Authoritative Trie-Trunk schemas. Standard CDDL group composition.
+log-base = (
+  ? "@id": bstr .size (1..10) / null,
+  "@time": uint .size 8,
+  ? "@duration": uint .size 8,
+  ? "level": 0..24,
+  ? "message": any,
+  ? "name": tstr,
+  ? "trace": bstr .size 16,
+  ? "span": bstr .size 8,
+  ? "flags": 0..255,
+  ? "error": tstr,
+  ? "detail": tstr,
+  ? "stack": tstr
+)
+
+log_trietrunk = { log-base, * tstr => any }
+
+log-http_trietrunk = { log-base, log-http-fields, * tstr => any }
+log-http-fields = (
+  "method": tstr,
+  ? "status": 100..599,
+  ? "uri": tstr,
+  ? "path": tstr,
+  ? "route": tstr,
+  ? "scheme": tstr,
+  ? "protocol": tstr,
+  ? "host": tstr,
+  ? "port": 0..65535,
+  ? "client": tstr,
+  ? "agent": tstr,
+  ? "response_size": uint,
+  ? "request_size": uint
+)
+
+log-db_trietrunk = { log-base, log-db-fields, * tstr => any }
+log-db-fields = (
+  "system": tstr,
+  ? "namespace": tstr,
+  ? "collection": tstr,
+  ? "operation": tstr,
+  ? "summary": tstr,
+  ? "statement": tstr,
+  ? "status": tstr,
+  ? "rows": uint,
+  ? "batch": uint,
+  ? "host": tstr,
+  ? "port": 0..65535
+)
+
+log-messaging_trietrunk = { log-base, log-messaging-fields, * tstr => any }
+log-messaging-fields = (
+  "system": tstr,
+  ? "destination": tstr,
+  ? "operation": tstr,
+  ? "kind": tstr,
+  ? "message_id": tstr,
+  ? "group": tstr,
+  ? "batch": uint,
+  ? "partition": tstr,
+  ? "host": tstr,
+  ? "port": 0..65535
+)
+
+log-security_trietrunk = { log-base, log-security-fields, * tstr => any }
+log-security-fields = (
+  "action": tstr,
+  ? "outcome": tstr,
+  ? "decision": tstr,
+  ? "actor": tstr,
+  ? "target": tstr,
+  ? "reason": tstr,
+  ? "method": tstr,
+  ? "policy": tstr,
+  ? "session": tstr,
+  ? "client": tstr
+)
+
+log-job_trietrunk = { log-base, log-job-fields, * tstr => any }
+log-job-fields = (
+  "job": tstr,
+  ? "run": tstr,
+  ? "status": tstr,
+  ? "attempt": uint,
+  ? "reason": tstr,
+  ? "schedule": tstr,
+  ? "queue": tstr,
+  ? "worker": tstr,
+  ? "task": tstr,
+  ? "workflow": tstr
+)
+
+log-task_trietrunk = { log-base, log-task-fields, * tstr => any }
+log-task-fields = (
+  "task": tstr,
+  ? "run": tstr,
+  ? "status": tstr,
+  ? "attempt": uint,
+  ? "reason": tstr,
+  ? "job": tstr,
+  ? "workflow": tstr,
+  ? "step": tstr,
+  ? "worker": tstr
+)
+
+log-workflow_trietrunk = { log-base, log-workflow-fields, * tstr => any }
+log-workflow-fields = (
+  "workflow": tstr,
+  ? "run": tstr,
+  ? "status": tstr,
+  ? "attempt": uint,
+  ? "reason": tstr,
+  ? "step": tstr,
+  ? "parent": tstr,
+  ? "object": tstr / uint / bstr
+)
+
+log-system_trietrunk = { log-base, log-system-fields, * tstr => any }
+log-system-fields = (
+  "action": tstr,
+  ? "pid": uint,
+  ? "parent": uint,
+  ? "executable": tstr,
+  ? "exit": -9223372036854775808..9223372036854775807,
+  ? "signal": tstr,
+  ? "host": tstr,
+  ? "component": tstr
+)
+

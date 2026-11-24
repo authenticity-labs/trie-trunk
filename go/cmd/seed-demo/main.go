@@ -89,7 +89,7 @@ func seedWithStorageProfile(root string, count, days int, end time.Time, clock f
 	if e = os.MkdirAll(filepath.Join(stage, r.Cache), 0700); e != nil {
 		return r, e
 	}
-	if e = os.WriteFile(filepath.Join(stage, r.Cache, "registry.cfg"), []byte(policy), 0600); e != nil {
+	if e = os.WriteFile(filepath.Join(stage, r.Cache, r.Cache+".conf"), []byte(policy), 0600); e != nil {
 		return r, e
 	}
 	for n, spec := range scenarios {

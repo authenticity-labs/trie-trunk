@@ -1,0 +1,9 @@
+[package]
+name = "trunk-units-probe"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+iridium-units = { version = "=0.2.1", default-features = false }
+fend-core = "=1.5.9"
+runits = "=0.2.0"

@@ -1,0 +1,14 @@
+import {ViewCache as Base} from './pil/view.ts';
+import {replicationArchive,replicationResponse} from './replication-archive-fixture.mjs';
+export class ViewCache extends Base {
+ constructor(fetcher,folder='pac-view') {
+  const resources=replicationResponse(folder),storage=replicationArchive();
+  super(async(url,opts)=>{
+   const u=new URL(url,'https://test');
+   if(u.searchParams.get('mode')==='search')return fetcher(url,opts);
+   return (await resources(url))??fetcher(url,opts);
+  });
+  this.storage=storage;this.archive=storage.archive;
+ }
+ query(q,token,signal,codec,definitions,archive=this.archive){return super.query(q,token,signal,codec,definitions,archive)}
+}

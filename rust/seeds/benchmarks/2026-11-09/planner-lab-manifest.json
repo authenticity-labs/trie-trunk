@@ -1,0 +1,27 @@
+{
+  "recorded_utc": "2026-11-10T03:01:24.328430+00:00",
+  "purpose": "Development query-plan comparison; not promotion or production certification",
+  "report_sha256": "20a8ecee7f44605973c36c73d50d42f3bb5d0305c6b651054a568cedcc963bc4",
+  "sources": {
+    "data-seeds": {
+      "sha256": "49b18ea2b3c96c89fc509d07a6214c3dce3df24fb2a385ffcbcce8a2b69629cd",
+      "files": 13,
+      "scope": "Rust source and Cargo manifest/lock; excludes generated build artifacts"
+    },
+    "pill-packer": {
+      "sha256": "c4c8c9a35b389397c31cf829d6921dc96c1c0602a9904bcb3e71f1c30698a653",
+      "files": 157,
+      "scope": "Rust source and Cargo manifest/lock; excludes generated build artifacts"
+    }
+  },
+  "executable_sha256": "200311a5d10d3ed426ea4188665f67e3c781fc0449837ddc7c13710dc7a8f9ad",
+  "host": {
+    "platform": "Darwin arm64",
+    "cpu": null,
+    "cpu_note": "CPU model sysctl unavailable within sandbox",
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)"
+  },
+  "command": "CARGO_TARGET_DIR=/tmp/pil-middle-target CARGO_INCREMENTAL=0 cargo run --manifest-path rust/seeds/Cargo.toml --offline --release --features planner-lab --example planner_lab -- rust/seeds/benchmarks/2026-11-09/planner-lab.json",
+  "interpretation": "Same query, immutable ingested fixture, and full native object consumption. Full sort is the lab reference; top-K already exists in the query engine. No automatic plan selection or codec changes.",
+  "reproduction_limit": "Source fingerprints identify current working-tree contents, not an archived revision; preserve the reviewed source revision before promotion."
+}

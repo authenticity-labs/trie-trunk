@@ -33,7 +33,7 @@ func TestStagingHoldbackLiveSearchAndLateAudit(t *testing.T) {
 		t.Fatal(e)
 	}
 	b := s.branches[Write]
-	if len(b.rows) != 0 || b.podsEnd != headerSize {
+	if len(b.rows) != 0 || b.packsEnd != headerSize {
 		t.Fatal("young records finalized")
 	}
 	q := Query{Branch: Write, From: at.Add(-time.Hour), To: now}
@@ -209,7 +209,10 @@ func TestStagingRecoveryAfterCommitBeforeCleanup(t *testing.T) {
 	}
 	defer s.Close()
 	if s.branches[Write].live.count(0) != 0 {
-		t.Fatal("committed hour replayed")
+		t.Fatal("complete PAC was replayed despite matching index")
+	}
+	if e = s.Flush(); e != nil {
+		t.Fatal(e)
 	}
 	if _, e = os.Stat(filepath.Join(s.dir, ".seed-interrupted")); !os.IsNotExist(e) {
 		t.Fatal("orphan replacement not cleaned", e)

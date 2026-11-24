@@ -1,0 +1,212 @@
+{
+  "fixed_strings": {},
+  "identity": "log-db_trietrunk",
+  "root": "log-db_trietrunk",
+  "types": {
+    "log-db_trietrunk": {
+      "fields": [
+        {
+          "name": "@id",
+          "optional": true,
+          "value": {
+            "choices": [
+              {
+                "max": 10,
+                "min": 1,
+                "type": "size",
+                "value": {
+                  "type": "bytes"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "type": "choice"
+          }
+        },
+        {
+          "name": "@time",
+          "optional": false,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "@duration",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "level",
+          "optional": true,
+          "value": {
+            "max": 24,
+            "min": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "message",
+          "optional": true,
+          "value": {
+            "type": "any"
+          }
+        },
+        {
+          "name": "name",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "trace",
+          "optional": true,
+          "value": {
+            "max": 16,
+            "min": 16,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "span",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "bytes"
+            }
+          }
+        },
+        {
+          "name": "flags",
+          "optional": true,
+          "value": {
+            "max": 255,
+            "min": 0,
+            "type": "integer"
+          }
+        },
+        {
+          "name": "error",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "detail",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "stack",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "system",
+          "optional": false,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "namespace",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "collection",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "operation",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "summary",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "statement",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "status",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "rows",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "batch",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "host",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "port",
+          "optional": true,
+          "value": {
+            "max": 65535,
+            "min": 0,
+            "type": "integer"
+          }
+        }
+      ],
+      "type": "open_record"
+    }
+  }
+}

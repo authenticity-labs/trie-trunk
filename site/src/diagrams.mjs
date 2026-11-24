@@ -1,4 +1,4 @@
-import paths from '../../client/assets/icons.json' with {type: 'json'};
+import paths from '../../../snoot/client/assets/icons.json' with {type: 'json'};
 
 // The website and Snoot use the same UI icon geometry.
 export function icon(name) {

@@ -1,0 +1,12 @@
+log = {
+  ; @id
+  ? id: bstr .size 10,
+  ; @time
+  time: uint .size 8,
+  ; @p95, @p98
+  ? duration: uint .size 4,
+  ? message: tstr,
+  ? status: "STARTED" / "PAUSED" / "STOPPED",
+  ; @fields
+  ? fields: { * tstr => any }
+}

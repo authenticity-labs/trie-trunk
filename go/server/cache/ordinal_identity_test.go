@@ -95,7 +95,7 @@ func TestOrdinalIngressSealRestartAndIndexOnlyLeaf(t *testing.T) {
 			t.Fatal("hour count", len(b.runs))
 		}
 		run := b.runs[0]
-		raw, e := readBytes(b.pods, run.PodsStart-b.podsRetired, run.PodsEnd-b.podsRetired)
+		raw, e := readBytes(b.packs, run.PacksStart-b.packsRetired, run.PacksEnd-b.packsRetired)
 		if e != nil {
 			t.Fatal(e)
 		}

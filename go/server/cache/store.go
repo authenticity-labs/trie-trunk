@@ -8,7 +8,10 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"sync/atomic"
 	"time"
+	"trie-trunk/go/internal/definitionmeta"
+	"trie-trunk/go/internal/seedtransform"
 )
 
 type Config struct {
@@ -16,16 +19,19 @@ type Config struct {
 	indexCapacity       uint64             // test-only capacity boundary; production uses all U32 slots
 	group               *storeGroup
 	Root, Cache, Tenant string
+	Storage             string // pack or browse; interpreted by the shared Rust storage policy.
+	ResourceType        string // Explicit taxonomy classification, independent of the Definition.
 	Layout              *Layout
 	ObjectIndex         bool
 	BatchRecords        int
 	BatchBytes          int
-	Sealer              *SealScheduler // nil shares the process-wide single worker
-	LiveIndexRecords    int            // maximum resident/staged identities per branch; default 1 million
-	NativeMemoryBytes   uint64         // native payload budget per definition; default 1 GiB
+	CommitScheduler     *CommitScheduler // nil shares the process-wide single worker
+	LiveIndexRecords    int              // maximum resident/staged identities per branch; default 1 million
+	NativeMemoryBytes   uint64           // native payload budget per definition; default 1 GiB
 	Now                 func() time.Time
 }
 type Catalog struct {
+	ResourceTypes       map[string]string            `pil:",omitempty"`
 	RetiredRows         map[string]map[Branch]uint64 `pil:",omitempty"`
 	Format              uint32
 	Cache, Tenant       string
@@ -33,20 +39,32 @@ type Catalog struct {
 	Generations         map[string]map[Branch][16]byte
 	GenerationSequences map[string]map[Branch]uint64 `pil:",omitempty"`
 	Preferred           map[string][32]byte          `pil:",omitempty"`
+	// Exact Definition digest -> PAC ranges in definition.meta and synonym.map.
+	// Optional presentation/translation resources do not change event storage.
+	DefinitionResources map[string]definitionmeta.Resources `pil:",omitempty"`
 }
 type pending struct {
 	id    [16]byte
 	frame []byte
 }
 type branchStore struct {
+	readerIndex                      *residentMapping
+	readerSummary                    *residentFile
+	readerFile                       *residentFile
+	sealedMemory                     map[int64]*nativeArena // immutable PACs only
+	ingressPages                     map[int64]*ingressPage
+	ingressTail                      []pending
 	memory                           map[int64]*nativeArena
-	baseRows, podsRetired, memberEnd uint64
+	baseRows, packsRetired, memberEnd uint64
 	blockBase                        uint32
 	branch                           Branch
 	layout                           *Layout
 	generation                       [16]byte
-	idx, pods, journal, sum          *os.File
+	idx, packs, sum                   *os.File
 	swap                             *os.File
+	seedHour                         int64
+	stagingPacks                            map[int64]*os.File
+	ingressDirty                     map[*os.File]bool
 	sealingBefore                    int64
 	finalizedBefore                  int64
 	rows                             []byte
@@ -60,14 +78,19 @@ type branchStore struct {
 	pendingVersion                   uint64
 	provisionalRecords               map[int64]uint32
 	pendingBytes                     int
-	podsEnd, sumEnd                  uint64
+	packsEnd, sumEnd                  uint64
 	summaries                        []Summary
-	accumulators                     map[int64]*summaryAccumulator
+	accumulators                     summaryRing
 	summaryDays                      map[int64]summaryDayLocation
 	summaryPackedThrough             int64
 	calendarRollups                  []CalendarRollup
 }
 type Store struct {
+	ingress            *ingressMeter
+	identityScratch    [10]byte // writer-owned, rebound to native output before publication
+	taxonomyBranches   map[Branch]uint16
+	publishedStates    atomic.Pointer[[]byte]
+	published          [5]atomic.Pointer[residentSnapshot]
 	summaryExports     map[string][]byte
 	summaryExportOrder []string
 	summaryExportBytes int
@@ -75,6 +98,7 @@ type Store struct {
 	memory             *nativeMemory
 	capacityClosed     bool
 	transforms         *TransformConfig
+	providers          map[string]*seedtransform.Plan
 	searchContext      context.Context
 	searchCancel       context.CancelFunc
 	searchWG           sync.WaitGroup
@@ -92,6 +116,7 @@ type Store struct {
 	lock, shared          *os.File
 	audit                 *os.File
 	trie                  sharedTrie
+	trieSizes             map[[32]byte]int
 	branches              map[Branch]*branchStore
 	location              *time.Location
 	scratch               Frame
@@ -137,6 +162,19 @@ func (s *Store) Flush() error {
 	return nil
 }
 func (b *branchStore) close() error {
+	b.readerSummary.release()
+	b.readerSummary = nil
+	b.readerFile.release()
+	b.readerFile = nil
+	for _, a := range b.sealedMemory {
+		a.close()
+	}
+	b.sealedMemory = nil
+	for _, v := range b.liveViews {
+		if v.release != nil {
+			v.release()
+		}
+	}
 	for _, a := range b.memory {
 		a.close()
 	}
@@ -145,7 +183,11 @@ func (b *branchStore) close() error {
 	b.live = nil
 	b.liveViews = nil
 	e := b.unmapIndex()
-	for _, f := range []*os.File{b.idx, b.pods, b.journal, b.sum, b.swap} {
+	for _, f := range b.stagingPacks {
+		e = errors.Join(e, f.Close())
+	}
+	b.stagingPacks = nil
+	for _, f := range []*os.File{b.idx, b.packs, b.sum, b.swap} {
 		if f != nil {
 			e = errors.Join(e, f.Close())
 		}
@@ -153,6 +195,16 @@ func (b *branchStore) close() error {
 	return e
 }
 func (s *Store) release() error {
+	for _, p := range s.providers {
+		p.Close()
+		p.Source.Close()
+	}
+	s.providers = nil
+	for i := range s.published {
+		if old := s.published[i].Swap(nil); old != nil {
+			old.release()
+		}
+	}
 	defer s.memory.close()
 	var e error
 	for _, b := range s.branches {

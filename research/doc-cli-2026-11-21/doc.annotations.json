@@ -1,0 +1,187 @@
+[
+  {
+    "value": "@unit(ns)",
+    "description": "Measurement unit used by query comparisons and conversion.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@unit(us)",
+    "description": "Measurement unit used by query comparisons and conversion.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@unit(ms)",
+    "description": "Measurement unit used by query comparisons and conversion.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@unit(s)",
+    "description": "Measurement unit used by query comparisons and conversion.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@unit(m)",
+    "description": "Measurement unit used by query comparisons and conversion.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@unit(kg)",
+    "description": "Measurement unit used by query comparisons and conversion.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@unit(K)",
+    "description": "Measurement unit used by query comparisons and conversion.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "#summ(numeric)",
+    "description": "Numeric count, extrema and additive statistics.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "#summ(temporal)",
+    "description": "Temporal statistics for an integer measurement.",
+    "kinds": [
+      "uint",
+      "int"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "#summ(boolean)",
+    "description": "Boolean counts.",
+    "kinds": [
+      "bool"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "#summ(categorical)",
+    "description": "Counts for each explicitly declared enum value.",
+    "kinds": [
+      "uint",
+      "int",
+      "bool",
+      "tstr"
+    ],
+    "enumeration": true
+  },
+  {
+    "value": "#summ(ordinal)",
+    "description": "Ordered categories in the declared enum order.",
+    "kinds": [
+      "uint",
+      "int",
+      "bool",
+      "tstr"
+    ],
+    "enumeration": true
+  },
+  {
+    "value": "#percentile(95)",
+    "description": "Requested percentile over summary-period aggregates; does not retain event distributions.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@min(0)",
+    "description": "Inclusive minimum, checked during file import.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@max(100)",
+    "description": "Inclusive maximum, checked during file import.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@range(0,100)",
+    "description": "Inclusive minimum and maximum, checked during file import.",
+    "kinds": [
+      "uint",
+      "int",
+      "float"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@otel(SeverityNumber)",
+    "description": "log.level",
+    "kinds": [
+      "uint",
+      "int"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@otel(http.response.status_code)",
+    "description": "log.http.status",
+    "kinds": [
+      "uint",
+      "int"
+    ],
+    "enumeration": false
+  },
+  {
+    "value": "@otel(http.request.method)",
+    "description": "log.http.method",
+    "kinds": [
+      "tstr"
+    ],
+    "enumeration": false
+  }
+]

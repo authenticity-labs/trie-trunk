@@ -94,12 +94,12 @@ func (h *HTTP) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		h.storageHTTP(w, r)
 		return
 	}
-	if r.URL.Path == "/summaries" {
-		h.summariesHTTP(w, r)
-		return
-	}
 	if r.URL.Path == "/events" {
 		h.viewHTTP(w, r)
+		return
+	}
+	if r.URL.Path == "/seed-packs" {
+		h.seedPacks(w, r)
 		return
 	}
 	if r.URL.Path == "/collect" {
@@ -118,7 +118,11 @@ func (h *HTTP) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		kind, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
 		switch strings.ToLower(kind) {
 		case "application/cbor", "application/json", "application/jsonl", "application/x-ndjson", "text/plain", "application/syslog":
-			h.genericIngress(w, r)
+			if provider := h.Store.providers[r.Header.Get("Definition-Version")]; provider != nil {
+				h.providerIngress(w, r, strings.ToLower(kind), provider)
+			} else {
+				h.genericIngress(w, r)
+			}
 			return
 		case "application/pil":
 		default:
@@ -214,13 +218,14 @@ func (h *HTTP) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		_ = controller.SetWriteDeadline(time.Now().Add(5 * time.Minute))
 		defer controller.SetReadDeadline(time.Time{})
 		defer controller.SetWriteDeadline(time.Time{})
-		if len(branches) != 1 || r.Header.Get("Definition-Version") != digest {
+		provider := h.Store.providers[r.Header.Get("Definition-Version")]
+		if len(branches) != 1 || (r.Header.Get("Definition-Version") != digest && provider == nil) {
 			http.Error(w, "ingest requires a branch, application/pil and matching Definition-Version", 412)
 			return
 		}
 		encoding := strings.ToLower(strings.TrimSpace(r.Header.Get("Content-Encoding")))
-		if encoding != "" && encoding != "identity" && encoding != "gzip" {
-			w.Header().Set("Accept-Encoding", "gzip, identity")
+		if encoding != "" && encoding != "identity" && encoding != "gzip" && encoding != "zstd" && encoding != "br" {
+			w.Header().Set("Accept-Encoding", "zstd, gzip, br, identity")
 			http.Error(w, "unsupported Content-Encoding", http.StatusUnsupportedMediaType)
 			return
 		}
@@ -243,7 +248,7 @@ func (h *HTTP) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		var batch []nativeInput
 		size := 0
 		stage := func() error {
-			n, e := h.Store.appendNativeBatch(branches[0], batch)
+			n, e := h.Store.appendProviderBatch(branches[0], batch, provider)
 			stream.staged()
 			clear(batch)
 			count += n
@@ -283,7 +288,11 @@ func (h *HTTP) serveHTTP(w http.ResponseWriter, r *http.Request) {
 			if e = r.Context().Err(); e != nil {
 				return
 			}
-			frame, readErr := stream.read(l, input)
+			readLayout := l.Layout
+			if provider != nil {
+				readLayout = provider.Source
+			}
+			frame, readErr := stream.readProvider(readLayout, input)
 			if readErr != nil {
 				// Even a malformed final frame does not discard the valid prefix.
 				if e = stage(); e != nil {

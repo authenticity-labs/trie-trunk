@@ -1,0 +1,535 @@
+{
+  "durationUnit": "microseconds",
+  "hour": "2026-01-01T00:00:00Z",
+  "periodMinutes": 5,
+  "periods": [
+    {
+      "count": 3,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 3,
+          "max": 200,
+          "mean": 150.0,
+          "min": 100,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 450
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 3,
+          "distinct": 3,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            },
+            "500": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 3,
+          "earliest": 1767225600000,
+          "latest": 1767225602000,
+          "null_count": 0
+        }
+      },
+      "start": "00:00"
+    },
+    {
+      "count": 2,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 2,
+          "max": 250,
+          "mean": 225.0,
+          "min": 200,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 450
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 2,
+          "distinct": 2,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "500": {
+              "count": 0,
+              "proportion": 0.0
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 2,
+          "earliest": 1767225900000,
+          "latest": 1767225901000,
+          "null_count": 0
+        }
+      },
+      "start": "00:05"
+    },
+    {
+      "count": 0,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 0,
+          "max": null,
+          "mean": null,
+          "min": null,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": null
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 0,
+          "distinct": 0,
+          "mode": null,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 0,
+              "proportion": null
+            },
+            "400": {
+              "count": 0,
+              "proportion": null
+            },
+            "500": {
+              "count": 0,
+              "proportion": null
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 0,
+          "earliest": null,
+          "latest": null,
+          "null_count": 0
+        }
+      },
+      "start": "00:10"
+    },
+    {
+      "count": 4,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 4,
+          "max": 550,
+          "mean": 475.0,
+          "min": 400,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 1900
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 4,
+          "distinct": 3,
+          "mode": 500,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.25
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.25
+            },
+            "500": {
+              "count": 2,
+              "proportion": 0.5
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 4,
+          "earliest": 1767226500000,
+          "latest": 1767226503000,
+          "null_count": 0
+        }
+      },
+      "start": "00:15"
+    },
+    {
+      "count": 1,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 1,
+          "max": 500,
+          "mean": 500.0,
+          "min": 500,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 500
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 1,
+          "distinct": 1,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 1.0
+            },
+            "400": {
+              "count": 0,
+              "proportion": 0.0
+            },
+            "500": {
+              "count": 0,
+              "proportion": 0.0
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 1,
+          "earliest": 1767226800000,
+          "latest": 1767226800000,
+          "null_count": 0
+        }
+      },
+      "start": "00:20"
+    },
+    {
+      "count": 2,
+      "fields": {
+        "duration": {
+          "absent_count": 1,
+          "count": 0,
+          "max": null,
+          "mean": null,
+          "min": null,
+          "nonfinite_count": 0,
+          "null_count": 1,
+          "sum": null
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 2,
+          "distinct": 2,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "500": {
+              "count": 0,
+              "proportion": 0.0
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 2,
+          "earliest": 1767227100000,
+          "latest": 1767227101000,
+          "null_count": 0
+        }
+      },
+      "start": "00:25"
+    },
+    {
+      "count": 3,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 3,
+          "max": 800,
+          "mean": 750.0,
+          "min": 700,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 2250
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 3,
+          "distinct": 3,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            },
+            "500": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 3,
+          "earliest": 1767227400000,
+          "latest": 1767227402000,
+          "null_count": 0
+        }
+      },
+      "start": "00:30"
+    },
+    {
+      "count": 2,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 2,
+          "max": 850,
+          "mean": 825.0,
+          "min": 800,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 1650
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 2,
+          "distinct": 2,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "500": {
+              "count": 0,
+              "proportion": 0.0
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 2,
+          "earliest": 1767227700000,
+          "latest": 1767227701000,
+          "null_count": 0
+        }
+      },
+      "start": "00:35"
+    },
+    {
+      "count": 4,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 4,
+          "max": 1050,
+          "mean": 975.0,
+          "min": 900,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 3900
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 4,
+          "distinct": 3,
+          "mode": 500,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.25
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.25
+            },
+            "500": {
+              "count": 2,
+              "proportion": 0.5
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 4,
+          "earliest": 1767228000000,
+          "latest": 1767228003000,
+          "null_count": 0
+        }
+      },
+      "start": "00:40"
+    },
+    {
+      "count": 1,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 1,
+          "max": 1000,
+          "mean": 1000.0,
+          "min": 1000,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 1000
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 1,
+          "distinct": 1,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 1.0
+            },
+            "400": {
+              "count": 0,
+              "proportion": 0.0
+            },
+            "500": {
+              "count": 0,
+              "proportion": 0.0
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 1,
+          "earliest": 1767228300000,
+          "latest": 1767228300000,
+          "null_count": 0
+        }
+      },
+      "start": "00:45"
+    },
+    {
+      "count": 2,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 2,
+          "max": 1150,
+          "mean": 1125.0,
+          "min": 1100,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 2250
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 2,
+          "distinct": 2,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.5
+            },
+            "500": {
+              "count": 0,
+              "proportion": 0.0
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 2,
+          "earliest": 1767228600000,
+          "latest": 1767228601000,
+          "null_count": 0
+        }
+      },
+      "start": "00:50"
+    },
+    {
+      "count": 3,
+      "fields": {
+        "duration": {
+          "absent_count": 0,
+          "count": 3,
+          "max": 1300,
+          "mean": 1250.0,
+          "min": 1200,
+          "nonfinite_count": 0,
+          "null_count": 0,
+          "sum": 3750
+        },
+        "status": {
+          "absent_count": 0,
+          "count": 3,
+          "distinct": 3,
+          "mode": 200,
+          "null_count": 0,
+          "values": {
+            "200": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            },
+            "400": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            },
+            "500": {
+              "count": 1,
+              "proportion": 0.3333333333333333
+            }
+          }
+        },
+        "time": {
+          "absent_count": 0,
+          "count": 3,
+          "earliest": 1767228900000,
+          "latest": 1767228902000,
+          "null_count": 0
+        }
+      },
+      "start": "00:55"
+    }
+  ]
+}

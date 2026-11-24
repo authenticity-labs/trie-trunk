@@ -1,0 +1,236 @@
+{
+  "date": "2026-11-06T00:19:23.409Z",
+  "runtime": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+  "method": "WebKit; 10,000 objects; 3 warmups; median of 7 batches, repeated 5 times per batch (1000 for materialized field access) to resolve the browser timer. Registration and PAC opening excluded; encoding includes owned serialized output and validation. Materialization and field access timed separately.",
+  "reports": [
+    {
+      "scenario": "dense-numeric",
+      "count": 10000,
+      "fields": 32,
+      "pac_bytes": 1389538,
+      "json_utf8_bytes": 3968891,
+      "operations": [
+        {
+          "name": "objects -> rx.pack(objects).bytes",
+          "median_ms": 27,
+          "ns_per_object": 2700,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            29.6,
+            27.6,
+            26.8,
+            27,
+            26.6,
+            27,
+            26.6
+          ]
+        },
+        {
+          "name": "objects -> JSON.stringify",
+          "median_ms": 3,
+          "ns_per_object": 300,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            3,
+            3.2,
+            3,
+            3,
+            2.8,
+            3,
+            3
+          ]
+        },
+        {
+          "name": "pack -> object array",
+          "median_ms": 31.4,
+          "ns_per_object": 3140,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            35,
+            31.6,
+            31.4,
+            31.2,
+            31.4,
+            31.4,
+            31
+          ]
+        },
+        {
+          "name": "JSON text -> object array",
+          "median_ms": 7.6,
+          "ns_per_object": 760,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            7.6,
+            7.6,
+            7.6,
+            7.6,
+            7.8,
+            7.8,
+            8
+          ]
+        },
+        {
+          "name": "Pill selected field -> value",
+          "median_ms": 6.2,
+          "ns_per_object": 620,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            6.6,
+            6.4,
+            6.4,
+            6.2,
+            6,
+            6.2,
+            6
+          ]
+        },
+        {
+          "name": "materialized object field -> value",
+          "median_ms": 0.016,
+          "ns_per_object": 1.6,
+          "batch_repetitions": 1000,
+          "samples_ms": [
+            0.017,
+            0.016,
+            0.016,
+            0.016,
+            0.016,
+            0.016,
+            0.017
+          ]
+        },
+        {
+          "name": "JSON parse + field access",
+          "median_ms": 7.8,
+          "ns_per_object": 780,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            7.6,
+            8.4,
+            7.8,
+            7.8,
+            7.8,
+            7.8,
+            7.8
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": "mixed-sparse",
+      "count": 10000,
+      "fields": 12,
+      "pac_bytes": 620938,
+      "json_utf8_bytes": 1219865,
+      "operations": [
+        {
+          "name": "objects -> rx.pack(objects).bytes",
+          "median_ms": 22.6,
+          "ns_per_object": 2260,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            23.6,
+            20.4,
+            23,
+            22.4,
+            20.2,
+            22.6,
+            22.6
+          ]
+        },
+        {
+          "name": "objects -> JSON.stringify",
+          "median_ms": 1,
+          "ns_per_object": 100,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            1,
+            1.2,
+            1,
+            1.2,
+            1,
+            1,
+            1.2
+          ]
+        },
+        {
+          "name": "pack -> object array",
+          "median_ms": 12.8,
+          "ns_per_object": 1280,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            14.8,
+            16.8,
+            12.4,
+            12.8,
+            14.4,
+            12.6,
+            12.6
+          ]
+        },
+        {
+          "name": "JSON text -> object array",
+          "median_ms": 3,
+          "ns_per_object": 300,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            3.4,
+            3.2,
+            3,
+            3,
+            3,
+            3,
+            2.8
+          ]
+        },
+        {
+          "name": "Pill selected field -> value",
+          "median_ms": 2.6,
+          "ns_per_object": 260,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            2.8,
+            2.6,
+            2.6,
+            2.6,
+            2.8,
+            2.6,
+            3.2
+          ]
+        },
+        {
+          "name": "materialized object field -> value",
+          "median_ms": 0.039,
+          "ns_per_object": 3.9,
+          "batch_repetitions": 1000,
+          "samples_ms": [
+            0.042,
+            0.038,
+            0.039,
+            0.039,
+            0.038,
+            0.039,
+            0.039
+          ]
+        },
+        {
+          "name": "JSON parse + field access",
+          "median_ms": 3,
+          "ns_per_object": 300,
+          "batch_repetitions": 5,
+          "samples_ms": [
+            3,
+            2.8,
+            3,
+            3,
+            3,
+            3,
+            2.8
+          ]
+        }
+      ]
+    }
+  ],
+  "sink": 20465229326952
+}

@@ -1,6 +1,6 @@
-import {compileFields, type Dictionary, type LogEvent} from '../../client/services/dictionary';
-import type {FastRequest, FastResult, Metrics} from '../../client/services/fast-dashboard';
-import type {QueryField} from '../../client/services/query';
+import {compileFields, type Dictionary, type LogEvent} from '../../../snoot/client/services/dictionary';
+import type {FastRequest, FastResult, Metrics} from '../../../snoot/client/services/fast-dashboard';
+import type {QueryField} from '../../../snoot/client/services/query';
 
 export const fixedNow = Date.UTC(2026, 9, 28);
 const services = [

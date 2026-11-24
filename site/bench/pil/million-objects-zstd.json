@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-05",
+  "count": 1000000,
+  "batch_size": 1000,
+  "batches": 1000,
+  "dataset": "Deterministic synthetic orders: twelve fields, varied numbers and strings, optional and null notes. Not a timing benchmark.",
+  "definition": {
+    "pil": 0,
+    "definition": "example/orders",
+    "version": 0,
+    "fields": [
+      {
+        "name": "id",
+        "type": "U32"
+      },
+      {
+        "name": "created",
+        "type": "U64"
+      },
+      {
+        "name": "customer",
+        "type": "U32"
+      },
+      {
+        "name": "product",
+        "type": "U32"
+      },
+      {
+        "name": "quantity",
+        "type": "U16"
+      },
+      {
+        "name": "price",
+        "type": "U32"
+      },
+      {
+        "name": "status",
+        "type": "STRING",
+        "values": [
+          "pending",
+          "paid",
+          "shipped",
+          "returned"
+        ]
+      },
+      {
+        "name": "currency",
+        "type": "STRING",
+        "values": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "region",
+        "type": "STRING",
+        "values": [
+          "north",
+          "south",
+          "east",
+          "west"
+        ]
+      },
+      {
+        "name": "reference",
+        "type": "STRING"
+      },
+      {
+        "name": "message",
+        "type": "STRING"
+      },
+      {
+        "name": "note",
+        "type": "STRING"
+      }
+    ]
+  },
+  "definition_bytes": 915,
+  "totals": {
+    "json": 210987877,
+    "json_zstd1": 33053303,
+    "pills": 65348919,
+    "pil": 67364919,
+    "pil_zstd1": 30569585
+  },
+  "source_sha256": "b843bcb269d025e853a3ca4ae88e6fa0e89634f5eac81c602993d59172ba4243",
+  "verification": "Every Pill decoded and compared to its source object; every JSON and PAC compression batch decompressed and compared byte-for-byte.",
+  "accounting": "PIL includes PAC framing and one shared Definition. JSON is compact JSONL. Both formats use identical groups. No external indexes or payload data omitted.",
+  "compression": {
+    "level": 1,
+    "json": "Node v26.5.0, Zstd 1.5.7",
+    "pil": "Existing Pill Packer Rust/WASM PAC sealer; Zstd level 1"
+  },
+  "wasm_sha256": "2e7c0440a35b0683d3d89c0112febe53375c6b97038bb84484b4854b9e9e97c6",
+  "script_sha256": "bf2c2eb03e5e85f74dac7a32dcdb9252bf172eab2b77cdce429bfca1769b2cd2"
+}

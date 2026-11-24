@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createSeeds} from './seeds.mjs';
+const [wasm, directory] = process.argv.slice(2);
+const runtime = await createSeeds(await readFile(wasm));
+const definition = runtime.prescribe(await readFile(`${directory}/wide.rx`));
+const pack = definition.open(await readFile(`${directory}/wide.pac`));
+const packs = runtime.packs().pack(pack);
+const batch = packs.query().orderBy('wide','desc').limit(3).fetch(3);
+const objects = batch.objects(), views = batch.views();
+for (let i=0;i<3;i++) {
+  const n=2-i;
+  assert.equal(objects[i].time,1700000000000+n);
+  assert.equal(objects[i].signed,-(1n<<127n)+BigInt(n));
+  assert.equal(objects[i].wide,(1n<<120n)+BigInt(n));
+  assert.deepEqual(objects[i].array,[(1n<<100n)+BigInt(n)]);
+  assert.equal(objects[i].map.key,objects[i].wide);
+  assert.deepEqual({...views[i]},objects[i]);
+}
+batch.dispose();
+assert.equal(packs.query().filter('signed','>',-(1n<<127n)).objects().length,2);
+assert.equal(packs.query().orderBy('signed','asc').limit(3).objects()[0].signed,-(1n<<127n));
+packs.dispose();
+const index=await readFile(`${directory}/wide.indx`);
+const indexed=pack.withIndex(index,Math.floor(1700000000000/3600000)*3600000);
+pack.dispose();definition.dispose();
+const indexedPacks=runtime.packs().pack(indexed);
+assert.equal(indexedPacks.query().filter('time','>=',1700000000001).limit(10).objects().length,2);
+assert.throws(()=>indexed.withIndex(index.subarray(0,index.length-6),Math.floor(1700000000000/3600000)*3600000),/row count/);
+indexedPacks.dispose();indexed.dispose();
+console.log('Seed WASM: uint(6), uint(16), int(16), exact ordering, arrays/maps, lazy/eager parity passed');

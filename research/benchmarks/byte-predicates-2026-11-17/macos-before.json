@@ -1,0 +1,110 @@
+{
+  "native": "{\"ok\":true,\"loaded\":3,\"visible\":3,\"wallMs\":2950,\"submitHandlerMs\":26,\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"totalMs\":2090,\"workerMs\":662,\"outsideWorkerMs\":1428,\"steps\":{\"startedAt\":1794948735650,\"beforeReplicationMs\":76,\"replicationMs\":485,\"afterReplicationMs\":101,\"lastSeed\":{\"tap\":\"demo/trie-trunk/queries/query\",\"dispatchOffsetMs\":16,\"responseWaitMs\":215,\"bodyAndImportMs\":254,\"finalDependenciesMs\":0}}},\"runs\":[{\"loaded\":3,\"visible\":3,\"wallMs\":2950,\"submitHandlerMs\":26,\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"totalMs\":2090,\"workerMs\":662,\"outsideWorkerMs\":1428,\"steps\":{\"startedAt\":1794948735650,\"beforeReplicationMs\":76,\"replicationMs\":485,\"afterReplicationMs\":101,\"lastSeed\":{\"tap\":\"demo/trie-trunk/queries/query\",\"dispatchOffsetMs\":16,\"responseWaitMs\":215,\"bodyAndImportMs\":254,\"finalDependenciesMs\":0}}}},{\"loaded\":3,\"visible\":3,\"wallMs\":1020,\"submitHandlerMs\":36,\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"totalMs\":369,\"workerMs\":217,\"outsideWorkerMs\":152,\"steps\":{\"startedAt\":1794948737611,\"beforeReplicationMs\":3,\"replicationMs\":0,\"afterReplicationMs\":214}}},{\"loaded\":3,\"visible\":3,\"wallMs\":847,\"submitHandlerMs\":24,\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"totalMs\":440,\"workerMs\":189,\"outsideWorkerMs\":251,\"steps\":{\"startedAt\":1794948738631,\"beforeReplicationMs\":8,\"replicationMs\":0,\"afterReplicationMs\":181}}}]}",
+  "requests": [
+    {
+      "path": "/caches",
+      "bytes": 116,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "bytes": 146117,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "bytes": 13976,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "bytes": 3912,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/leaves",
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/timelines",
+      "bytes": 288,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/indexes",
+      "bytes": 30,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/packs",
+      "bytes": 856,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/leaves",
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "bytes": 0,
+      "status": 204
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "bytes": 0,
+      "status": 204
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "bytes": 0,
+      "status": 204
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": "2026-11-17T00:00:00Z",
+  "to": "2026-11-17T20:00:00Z",
+  "query": "events | where level = INFO and severity = 1"
+}

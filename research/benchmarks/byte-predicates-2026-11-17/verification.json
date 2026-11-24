@@ -1,0 +1,28 @@
+{
+  "rust": {
+    "passed": 214,
+    "failed": 0,
+    "ignored": 3
+  },
+  "client": {
+    "passed": 26,
+    "failed": 0
+  },
+  "modes": [
+    "fixed_full",
+    "fixed_sparse",
+    "variable_fast",
+    "variable_concise"
+  ],
+  "types": [
+    "uint(1)",
+    "int(1)"
+  ],
+  "storage_layout_changed": false,
+  "data_reset": false,
+  "deployed": [
+    "local server",
+    "web",
+    "macOS"
+  ]
+}

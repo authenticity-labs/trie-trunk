@@ -136,7 +136,7 @@ func TestTrunkBootstrapIncludesEveryDefinitionAndActualFolderPaths(t *testing.T)
 			}
 		}
 	}
-	for _, name := range []string{"demo/resource.tri", "demo/payment/transactions.v1/0/resource.rx", "demo/payment/transactions.v1/1/resource.rx", "demo/payment/transactions.v1/0/state.tri", "demo/payment/transactions.v1/1/state.tri", "demo/payment/transactions.v1/0/write.tri"} {
+	for _, name := range []string{"trunk.trie", fmt.Sprintf("definitions/%x.rx", l.Digest), fmt.Sprintf("definitions/%x.rx", newer.Digest), "demo/payment/transactions.v1/0/leaf.trie", "demo/payment/transactions.v1/1/leaf.trie", "demo/payment/transactions.v1/0/write.time"} {
 		if _, ok := seen[name]; !ok {
 			t.Fatal("missing registered path", name)
 		}
@@ -144,11 +144,11 @@ func TestTrunkBootstrapIncludesEveryDefinitionAndActualFolderPaths(t *testing.T)
 	if _, ok := seen["demo/registry.tri"]; ok {
 		t.Fatal("obsolete hierarchy name")
 	}
-	rawState := get("GET", "/demo/payment/transactions.v1/0/state.tri", "application/octet-stream", "secret")
-	if rawState.Code != 200 || !bytes.Equal(rawState.Body.Bytes(), files["demo/payment/transactions.v1/0/state.tri"]) {
+	rawState := get("GET", "/demo/payment/transactions.v1/0/leaf.trie", "application/octet-stream", "secret")
+	if rawState.Code != 200 || !bytes.Equal(rawState.Body.Bytes(), files["demo/payment/transactions.v1/0/leaf.trie"]) {
 		t.Fatal("state file traversal changed bytes")
 	}
-	definition := get("GET", "/demo/payment/transactions.v1/1/resource.rx", "application/pil", "secret")
+	definition := get("GET", fmt.Sprintf("/definitions/%x.rx", newer.Digest), "application/pil", "secret")
 	if definition.Code != 200 || !bytes.Equal(definition.Body.Bytes(), newer.Bytes) {
 		t.Fatal("minor path returned the wrong definition")
 	}
@@ -161,7 +161,7 @@ func TestTrunkBootstrapIncludesEveryDefinitionAndActualFolderPaths(t *testing.T)
 		t.Fatal(count, minor)
 	}
 	for _, f := range minor.Files {
-		if !strings.HasPrefix(f.Path, minor.Scope+"/") {
+		if f.Kind != "definition" && !strings.HasPrefix(f.Path, minor.Scope+"/") {
 			t.Fatal("folder traversal escaped its scope", f)
 		}
 	}
@@ -174,6 +174,33 @@ func TestTrunkBootstrapIncludesEveryDefinitionAndActualFolderPaths(t *testing.T)
 		}
 	}
 	if dir := os.Getenv("PIL_TRUNK_FIXTURE_DIR"); dir != "" {
+		snapshot, e := (&HTTP{sources: p.sources()}).trunkSnapshot("demo")
+		if e != nil {
+			t.Fatal(e)
+		}
+		for path, body := range snapshot.data {
+			path = filepath.Join(dir, path)
+			if e = os.MkdirAll(filepath.Dir(path), 0755); e != nil {
+				t.Fatal(e)
+			}
+			if e = os.WriteFile(path, body, 0644); e != nil {
+				t.Fatal(e)
+			}
+		}
+		inventory, e := encoder.Marshal(snapshot.catalog)
+		if e != nil {
+			t.Fatal(e)
+		}
+		if e = os.WriteFile(filepath.Join(dir, "inventory.pil"), inventory, 0644); e != nil {
+			t.Fatal(e)
+		}
+		caches, e := encoder.Marshal(map[string]any{"caches": snapshot.catalog.Sources, "collections": snapshot.catalog.Collections})
+		if e != nil {
+			t.Fatal(e)
+		}
+		if e = os.WriteFile(filepath.Join(dir, "caches.pil"), caches, 0644); e != nil {
+			t.Fatal(e)
+		}
 		if err = os.MkdirAll(dir, 0755); err != nil {
 			t.Fatal(err)
 		}

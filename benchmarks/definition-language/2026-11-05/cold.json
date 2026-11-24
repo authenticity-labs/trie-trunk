@@ -1,0 +1,578 @@
+[
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 94458,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 75208,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 70125,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 77250,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 88541,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 71583,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 73584,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 77542,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 77375,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 75250,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 81000,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 91416,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 81000,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 92875,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 76959,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 79042,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 96917,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 81084,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 70541,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 97417,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 84750,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 78000,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "off",
+    "cold_read_ns": 73542,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_6",
+    "mode": "on",
+    "cold_read_ns": 79750,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 97250,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 91500,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 84417,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 95792,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 96417,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 80417,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 85875,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 93792,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 98375,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 80625,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 81333,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 98791,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 136959,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 88333,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 80375,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 96583,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 93334,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 79959,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 86167,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 95083,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 95375,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 81709,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "off",
+    "cold_read_ns": 78583,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_32",
+    "mode": "on",
+    "cold_read_ns": 95000,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 414667,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 225167,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 228541,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 404166,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 404667,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 221584,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 220500,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 406375,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 405916,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 225417,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 222709,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 411625,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 411459,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 221584,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 219333,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 403542,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 405791,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 233709,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 236375,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 405750,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 409833,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 221667,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "off",
+    "cold_read_ns": 250541,
+    "definitions": 1
+  },
+  {
+    "case": "scalar_512",
+    "mode": "on",
+    "cold_read_ns": 405833,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1728916,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 948584,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 960125,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1801250,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1752959,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 965625,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 965167,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1731292,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1756917,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 958750,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 957125,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1730959,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1746167,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 962833,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 960000,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1723667,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1723333,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 958208,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 952458,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1733125,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1736375,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 959000,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "off",
+    "cold_read_ns": 957917,
+    "definitions": 1
+  },
+  {
+    "case": "enums64_32",
+    "mode": "on",
+    "cold_read_ns": 1759916,
+    "definitions": 1
+  }
+]

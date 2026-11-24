@@ -130,14 +130,14 @@ func BenchmarkSummaryHourBuild(b *testing.B) {
 						sum.Statistics, e = sealedStatistics(s.layout, Write, frames)
 					} else {
 						if mode == "ingress-plus-seal" {
-							branch.accumulators = nil
+							branch.accumulators = summaryRing{}
 							for i, p := range frames {
 								if e = s.accumulate(branch, p.id, decoded[i].Values); e != nil {
 									b.Fatal(e)
 								}
 							}
 						}
-						for _, a := range branch.accumulators {
+						for _, a := range branch.accumulators.all {
 							sum, e = a.snapshot(run, s.layout, &s.trie)
 						}
 					}
@@ -160,7 +160,7 @@ func summaryBenchDay(b *testing.B) (time.Time, []Summary) {
 		}
 	}
 	var source Summary
-	for _, a := range branch.accumulators {
+	for _, a := range branch.accumulators.all {
 		var e error
 		source, e = a.snapshot(Run{Start: 1, End: 10001}, s.layout, &s.trie)
 		if e != nil {

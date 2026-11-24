@@ -113,7 +113,7 @@ func (h *HTTP) nativeCollect(w http.ResponseWriter, r *http.Request) {
 			if live {
 				// Match the physical branches advertised by the trunk catalog.
 				// A wildcard read must not create empty branches as a side effect.
-				if _, err := os.Stat(filepath.Join(api.Store.dir, b.Name()+".tri")); os.IsNotExist(err) {
+				if _, err := os.Stat(filepath.Join(api.Store.dir, b.Name()+".time")); os.IsNotExist(err) {
 					continue
 				} else if err != nil {
 					http.Error(w, err.Error(), 500)
@@ -137,6 +137,9 @@ func (h *HTTP) nativeCollect(w http.ResponseWriter, r *http.Request) {
 			var pending *liveWindow
 			if live {
 				pending, e = api.Store.liveWindow(b, from, to)
+				if pending != nil {
+					defer pending.close()
+				}
 				if e != nil {
 					http.Error(w, e.Error(), 500)
 					return

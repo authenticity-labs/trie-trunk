@@ -1,0 +1,42 @@
+[
+  {
+    "name": "indexed",
+    "file": "indexed.rx"
+  },
+  {
+    "name": "indexed",
+    "file": "indexed.rx"
+  },
+  {
+    "name": "query",
+    "file": "log-query.rx"
+  },
+  {
+    "name": "checkpoint",
+    "file": "log-query.rx"
+  },
+  {
+    "name": "summary",
+    "file": "summary.rx"
+  },
+  {
+    "name": "numeric",
+    "file": "summary.rx"
+  },
+  {
+    "name": "real",
+    "file": "summary.rx"
+  },
+  {
+    "name": "temporal",
+    "file": "summary.rx"
+  },
+  {
+    "name": "boolean",
+    "file": "summary.rx"
+  },
+  {
+    "name": "categories",
+    "file": "summary.rx"
+  }
+]

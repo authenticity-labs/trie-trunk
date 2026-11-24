@@ -1,0 +1,235 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "scope": "demo/lab/indexed/sample",
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "dataset": {
+    "caches/demo/lab/indexed/sample.v0.indx": {
+      "bytes": 120012,
+      "sha256": "b0654ccebdd9fa94f48f3ec6ce31d143c2d2150901b8c5d95998a71b186c183a"
+    },
+    "caches/demo/lab/indexed/sample.v0.leaf": {
+      "bytes": 714,
+      "sha256": "947135c0f4298263a76b86deba8f598b983c7dc85c8707e57d401255517f0dd8"
+    },
+    "caches/demo/lab/indexed/sample.v0.packs": {
+      "bytes": 392288,
+      "sha256": "a5267bbd7a87c31844711ead3c0b9917082d5aa267054482b2bab740c3051cd3"
+    },
+    "caches/demo/lab/indexed/sample.v0.summ": {
+      "bytes": 133277,
+      "sha256": "f78fa22943e804d2a958a2293c13f8513bfdc404476d9af0cfa31a884ab33b5c"
+    },
+    "caches/demo/lab/indexed/sample.v0.time": {
+      "bytes": 140608,
+      "sha256": "d415ac2b873363e3afbde061cf6a6fee9e3bc7ab9b3e296a1eeea0e238c7b7de"
+    }
+  },
+  "artifacts": {
+    "desktop/dist/Snoot.app/Contents/MacOS/neutralino": {
+      "bytes": 5916400,
+      "sha256": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e"
+    },
+    "desktop/dist/Snoot.app/Contents/MacOS/snoot": {
+      "bytes": 14033936,
+      "sha256": "8b111bbf835b3ea8de51791cf4e2e2f710dbffce1d00c8cc8e80190e976200fc"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/SymbolDraw-1Nqr03wZ.js": {
+      "bytes": 2861,
+      "sha256": "049a02f9d7bc387c81a0b52e58f0821a5ed9f9b294f46109aacca6dcf7323a57"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/an-array-of-english-words-fJL19bjB.js": {
+      "bytes": 3362603,
+      "sha256": "22e4fae086b8d8cf5565d51c293fb150021bff87c7db6126056006f07cab2bab"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/barGrid-BNVDJsRz.js": {
+      "bytes": 11044,
+      "sha256": "288e3caac4c554e2818c640dbf9214aacb6073a2294066d9d7eac34169df16c9"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/cache-quotas-NoO7sJjt.js": {
+      "bytes": 18577,
+      "sha256": "afc335d0ec60b7d85ff6f25d8f50672a394148813beb19aa277be767e7ea6c1b"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/calendar-iXJpdWCK.js": {
+      "bytes": 138898,
+      "sha256": "8de489831357ec396f09f59eb85344583cc4fee522df8f25dad75f410118f2f5"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/cleanup-worker-DF_kTKmg.js": {
+      "bytes": 37077,
+      "sha256": "ee860b13d13dee0fc2a4f74c14444a79682b36940ff0faf3e843cd9aa4864da5"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/codec-BH__CsbO.wasm": {
+      "bytes": 2313419,
+      "sha256": "fb093d3512127276990a571c4b69819df81663f8fe885795e52ab4b2920c2c2f"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/configuration-settings-GpzqQtOV.js": {
+      "bytes": 5474,
+      "sha256": "8b65344f994c1e889f74b0d0ad2e5686529f71a7ae209d23ffeb5ca8889dcdce"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/createGraphFromNodeEdge-DIBvVdi9.js": {
+      "bytes": 28226,
+      "sha256": "a07aed03a5c8fad0d59a5ab7f7c467a74307ecd400b89e75e982b3f89771db77"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/dashboard-BM3ENbRH.js": {
+      "bytes": 61921,
+      "sha256": "3300f47b7a858c2fbe61401d47ffe62856655e567eecd9774a3fad80acb8816f"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/dashboard-workspace-B0czH-F5.js": {
+      "bytes": 89511,
+      "sha256": "0cac2df7b592cb2514d87ca057b01f99ec3710e1ad1d67eed78a77f948575d1d"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/data-seeds-CNxN11Sn.wasm": {
+      "bytes": 5330356,
+      "sha256": "29b9a41dcd697ebe3a53184e3c214ef7ed5b01b1bd96f03dea744ac198822aa6"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/diagnostics-MVD4BQDQ.js": {
+      "bytes": 3189,
+      "sha256": "9ea8cdff56678d994548904064edaf31c73df7a0bb2384faaf7622925b825679"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/index-ClQLZVfG.css": {
+      "bytes": 109861,
+      "sha256": "3f8f903c9a0cce7203e7a0a67f19d711907d80ba0d5be760d8d49956f8209b4b"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/index-DaUWUY_m.js": {
+      "bytes": 445460,
+      "sha256": "6727acacb26628d5695e83b28286bf84da700f02fe51eb27504ff9dbd3f1d15b"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/installSVGRenderer-DVYAwJWL.js": {
+      "bytes": 457940,
+      "sha256": "615c2091c897730c41bffb71bbdb1734224e5c96366dfdf4f303244075bd5ba5"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/models-BjH3kiyt.js": {
+      "bytes": 56624,
+      "sha256": "fce79ffd855978f5d4640b435bc730782159adf1b2ecedde0e82db22c8c3ad0e"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/node-worker-zyCj8A-V.js": {
+      "bytes": 382042,
+      "sha256": "4022c28ef230f680959c5f73223ce9c574b279819745334019f623ecb4dc100d"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/pac-BGdv-oKK.js": {
+      "bytes": 21303,
+      "sha256": "2f9647f2784822db77d75805b22b72bbe12b661286cb980c3a92a9ae0c4d3de4"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/pack-BWpAIjBP.js": {
+      "bytes": 25674,
+      "sha256": "a631a20ecb82685081493f4923d596e6390b7a5771bea5572f9952fe4cd72b60"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/pil-BH__CsbO.wasm": {
+      "bytes": 2313419,
+      "sha256": "fb093d3512127276990a571c4b69819df81663f8fe885795e52ab4b2920c2c2f"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/preload-helper-BZ1Pz5am.js": {
+      "bytes": 1218,
+      "sha256": "8820987e6a8afb54d776f21e305917e1ecf83cef678b4db38c2e5a405d04a8bf"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/profile-D4XGSYKc.js": {
+      "bytes": 29110,
+      "sha256": "f84ce1db79f4cf10a71e635e261cac285ee675b25668c9cd6c3bb871b412823f"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/query-CytgW3Tk.wasm": {
+      "bytes": 3905092,
+      "sha256": "2b8acb2ef1e023c1eeda51316c8d96b3068169477048c4a2624855fae55ec126"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/research-Bq5qn0Y5.js": {
+      "bytes": 16392,
+      "sha256": "a688a5653f9706feeae777c4c2321bc39d83b8e912937815842ae86247081ccb"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/rolldown-runtime-DK3Fl9T5.js": {
+      "bytes": 158,
+      "sha256": "a526d1bb3288ef04d001028843220a24b0867a4edf8c685b69506d6525af36ff"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/runtime-DaZuBq3j.js": {
+      "bytes": 4026,
+      "sha256": "0ee33f799c219d011883106868cefff081d47a0f1356f8c732f94cc333239d3a"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/snoot-forward-ChEmVSeb.png": {
+      "bytes": 862963,
+      "sha256": "1f5c7d27fdf20fa4cfa83859288ec452ecc03019e1cdc1cf9fc3ed3cb4851d09"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/snoot-portrait-TmF0sb38.png": {
+      "bytes": 1059816,
+      "sha256": "0b9f80a3d9867c368894501d8c0cbb3b8441fa2845b7d4f84930c96b07e7faeb"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/snoot-wordmark-DeRMuDdQ.png": {
+      "bytes": 431051,
+      "sha256": "9a7282d11a35f21b7f78eb0f580f48d3cadf9b8d9325e037a4c04148d0a2b4d4"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/trunks-bgJSqKJQ.js": {
+      "bytes": 82039,
+      "sha256": "fe95398b53d76f7b6b4482aa192ff4c9314e12e9880ef2c1591b6e1ab99617b2"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/web-kreVqAnE.js": {
+      "bytes": 26641,
+      "sha256": "7b2439230294183cb293121824b0a98e73e7909ce7e09d74b4f97bc1058b51b2"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/assets/worker-DbxevxNx.js": {
+      "bytes": 2189,
+      "sha256": "83605b3768a746cde8b8da519dd2f87275756122e172720349896641c188bf82"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/english-words-license.txt": {
+      "bytes": 1100,
+      "sha256": "c602aae873f403fa2e3643b5cec05d1354284f67c46caa9a693042fa7f5ebeb1"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/index.html": {
+      "bytes": 1058,
+      "sha256": "96bc5e609ac2211f964db5b70a3f74df18e18416dcb93e6356ae37057b1f912d"
+    },
+    "desktop/dist/Snoot.app/Contents/Resources/web/lucide-license.txt": {
+      "bytes": 3208,
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    "trunk": {
+      "bytes": 47101970,
+      "sha256": "43967ea6d5edfae09ef84f5ee4125bf9596b39df29cf12f3afe7d31ac170d22f"
+    },
+    "trunk-search": {
+      "bytes": 1698720,
+      "sha256": "b46654707c2f40881467db95e0b80e1fd8028f6b9f0b3133082aa2c7a80b0836"
+    }
+  },
+  "cases": [
+    [
+      "selective",
+      "SELECT CAST(duration AS BIGINT) AS time FROM events WHERE sequence = 1",
+      [
+        "--expect-table-total",
+        "34"
+      ],
+      2
+    ],
+    [
+      "events",
+      "events | where duration >= \"10000\"",
+      [
+        "--expect-min-matches",
+        "100"
+      ],
+      100
+    ],
+    [
+      "counts",
+      "SELECT bucket, SUM(count) AS total FROM summaries GROUP BY bucket",
+      [
+        "--expect-table-total",
+        "20000"
+      ],
+      24
+    ],
+    [
+      "members",
+      "SELECT MIN(\"duration.min\") AS minimum, MAX(\"duration.max\") AS maximum FROM summaries GROUP BY bucket",
+      [],
+      24
+    ],
+    [
+      "zero",
+      "events | where duration > \"20000\"",
+      [
+        "--expect-summary-pruned"
+      ],
+      null
+    ]
+  ],
+  "rounds": 3,
+  "method": "Fresh disposable replica each session, three submissions; OS caches not evicted. Serial sessions. No dispatch overrides, delays, keepalive, or trace instrumentation."
+}

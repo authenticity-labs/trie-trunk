@@ -69,9 +69,11 @@ func TestPACStatePreservationAndExtensions(t *testing.T) {
 				}
 			}
 			damaged := append([]byte(nil), p.Bytes...)
-			damaged[32] ^= 1
+			// The former digest is not part of PACs. Reserved structural flags
+			// remain invalid independently of the application headers.
+			damaged[7] |= 0x80
 			if _, err = ParsePAC(l, damaged, nil); err == nil {
-				t.Fatal("definition mismatch accepted")
+				t.Fatal("reserved PAC flag accepted")
 			}
 			// A common field cannot appear again in a member, even with equal bytes.
 			broken := *p

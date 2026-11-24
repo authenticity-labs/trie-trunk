@@ -1,0 +1,363 @@
+{
+  "cpu": "Apple M1 Max",
+  "ram_bytes": 34359738368,
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0.1\nBuildVersion:\t\t26A434",
+  "rust": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "source_sha256": {
+    "rust/src/fx.rs": "614467ca754a950f86f1e70d0edd81242e553ef08463c1fc9b289af3dbe634d5",
+    "rust/src/bin/fx.rs": "fb0b1709fd4ab3bc2a0547539e3b6c3fea1b86e1d299a25d7f9c6f698814f13b",
+    "rust/benches/fx.rs": "d6f439afd8353d64cdba9b0418b3d4143bda105833e2fce421987cf151fabb05",
+    "rust/src/frame.rs": "101499806cc0f6dcddd42337fcfa9dcfaca569d6fa5d23db924d0a44a6e46539",
+    "rust/src/index.rs": "a2704b58a1789dcb6aaaae8aa9ada6cdd9ea540b3c3d3cf1150ec3b5918ae306",
+    "rust/src/pac.rs": "053264c78980dec5c267805d16dfe739f98fde02b9ab9add3f2065450bf1da50",
+    "rust/src/api.rs": "a8d67ef1b2e3f1be6aaaeba0846d444194d89b9c76a22a3f6a48e1cd54d96a8d",
+    "rust/src/array.rs": "f60db4601217e091a0c804b6894bd24ae107355220e4c727e17c14b524e8cba1",
+    "rust/src/authoring_language/wire.rs": "962590bb49fa79915d8b7ef2def48458b2844c4293245481f24397eca3c59c87"
+  },
+  "build": "release; isolated copy matches installed Rust source exactly",
+  "methodology": "release; 1024 varying records; warm 1024 operations; nine timed batches; allocation counts measured separately; digests verified only at registration; required scalar bytes asserted identical to existing PIL",
+  "repeats": "Three sequential runs, each reporting median of nine batches; table is median of the three medians. Allocation measurements separate from timing. No concurrent builds/tests during benchmark.",
+  "boundaries": [
+    "Trusted FX fill checks record extent and trusts the registered layout contract; validate scans all field states and values. Compare these separately.",
+    "PIL comparison retains FrameEncoder and FrameIndex buffer reuse; no fresh buffer allocation in those baselines.",
+    "32-field record is 264 bytes in both all-present implementations. Optional FX records retain that width.",
+    "Numeric tests measure one requested field, not JSON conversion or complete object rendering.",
+    "Registration includes existing native RX digest verification and FX plan compilation; no digest verification is removed.",
+    "FX permits unaligned numeric loads through safe byte access; no unsafe native struct casting is used.",
+    "CLI JSON materialization is an explicit boundary, not part of hot-path results."
+  ],
+  "cases": [
+    {
+      "fields": 6,
+      "record_bytes": 50,
+      "operations": [
+        {
+          "operation": "fx/fill-and-last-field",
+          "median_ns": 9.071875,
+          "run_medians_ns": [
+            10.21,
+            9.071875,
+            9.068125
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/validate-and-last-field",
+          "median_ns": 29.19583,
+          "run_medians_ns": [
+            29.99625,
+            29.19583,
+            29.16042
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/reused-structural-index-and-last-field",
+          "median_ns": 34.6625,
+          "run_medians_ns": [
+            35.65208,
+            34.6625,
+            34.65042
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/reused-validated-index-and-last-field",
+          "median_ns": 61.19584,
+          "run_medians_ns": [
+            61.38292,
+            60.2375,
+            61.19584
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/encode-reused-buffer",
+          "median_ns": 29.25583,
+          "run_medians_ns": [
+            29.44792,
+            29.19166,
+            29.25583
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/encode-reused-buffer",
+          "median_ns": 36.33667,
+          "run_medians_ns": [
+            36.33667,
+            36.29833,
+            36.38834
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/open-pack-and-get-record",
+          "median_ns": 15.33146,
+          "run_medians_ns": [
+            15.33146,
+            15.311875,
+            15.34479
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/push-pop-reused-capacity",
+          "median_ns": 9.53104,
+          "run_medians_ns": [
+            9.53125,
+            9.53104,
+            9.24333
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/registration-verified",
+          "median_ns": 20971.125,
+          "run_medians_ns": [
+            21131.791,
+            20950.709,
+            20971.125
+          ],
+          "allocations_per_op": 497.0,
+          "allocated_bytes_per_op": 41263.0
+        }
+      ]
+    },
+    {
+      "fields": 32,
+      "record_bytes": 264,
+      "operations": [
+        {
+          "operation": "fx/fill-and-last-field",
+          "median_ns": 9.935,
+          "run_medians_ns": [
+            9.947915,
+            9.935,
+            9.935
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/validate-and-last-field",
+          "median_ns": 108.75,
+          "run_medians_ns": [
+            108.75,
+            108.66792,
+            109.0725
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/reused-structural-index-and-last-field",
+          "median_ns": 183.33291,
+          "run_medians_ns": [
+            183.79,
+            183.06167,
+            183.33291
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/reused-validated-index-and-last-field",
+          "median_ns": 290.07792,
+          "run_medians_ns": [
+            290.07792,
+            290.30333,
+            289.86167
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/encode-reused-buffer",
+          "median_ns": 141.03667,
+          "run_medians_ns": [
+            143.34166,
+            140.75416,
+            141.03667
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/encode-reused-buffer",
+          "median_ns": 166.13209,
+          "run_medians_ns": [
+            167.43541,
+            166.13209,
+            165.97958
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/open-pack-and-get-record",
+          "median_ns": 15.35521,
+          "run_medians_ns": [
+            15.54375,
+            15.304165,
+            15.35521
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/push-pop-reused-capacity",
+          "median_ns": 14.388335,
+          "run_medians_ns": [
+            15.33396,
+            14.339165,
+            14.388335
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/registration-verified",
+          "median_ns": 39108.875,
+          "run_medians_ns": [
+            39729.084,
+            39108.875,
+            38943.625
+          ],
+          "allocations_per_op": 922.0,
+          "allocated_bytes_per_op": 78664.0
+        }
+      ]
+    },
+    {
+      "fields": 128,
+      "record_bytes": 1056,
+      "operations": [
+        {
+          "operation": "fx/fill-and-last-field",
+          "median_ns": 9.655205,
+          "run_medians_ns": [
+            10.232295,
+            9.630625,
+            9.655205
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/validate-and-last-field",
+          "median_ns": 386.84792,
+          "run_medians_ns": [
+            387.42209,
+            386.84792,
+            386.37709
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/reused-structural-index-and-last-field",
+          "median_ns": 812.84667,
+          "run_medians_ns": [
+            810.69417,
+            814.35167,
+            812.84667
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/reused-validated-index-and-last-field",
+          "median_ns": 1237.25167,
+          "run_medians_ns": [
+            1237.25167,
+            1237.49125,
+            1236.66834
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/encode-reused-buffer",
+          "median_ns": 530.41375,
+          "run_medians_ns": [
+            530.28167,
+            530.41375,
+            531.48625
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "pil/encode-reused-buffer",
+          "median_ns": 625.35292,
+          "run_medians_ns": [
+            625.35292,
+            622.77333,
+            625.77625
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/open-pack-and-get-record",
+          "median_ns": 15.548545,
+          "run_medians_ns": [
+            15.58,
+            15.54854,
+            15.548545
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/push-pop-reused-capacity",
+          "median_ns": 43.521875,
+          "run_medians_ns": [
+            43.14771,
+            45.502915,
+            43.521875
+          ],
+          "allocations_per_op": 0.0,
+          "allocated_bytes_per_op": 0.0
+        },
+        {
+          "operation": "fx/registration-verified",
+          "median_ns": 103103.416,
+          "run_medians_ns": [
+            103382.458,
+            103103.416,
+            103015.0
+          ],
+          "allocations_per_op": 2466.0,
+          "allocated_bytes_per_op": 218706.0
+        }
+      ]
+    }
+  ],
+  "optional": {
+    "fields": 32,
+    "record_bytes": 264,
+    "median_ns": 5.591045,
+    "allocations_per_op": 0,
+    "pattern": "Field zero always present, remaining fields rotate absent/null/present independently across 1024 records."
+  },
+  "verification": {
+    "fx_tests": 12,
+    "rust_passed": 142,
+    "rust_failed": 1,
+    "known_baseline_failure": "cddl_document::tests::syntax_tree_preserves_numeric_and_byte_literals; reproduced against untouched checkout",
+    "js_wasm_passed": 71,
+    "go": "passed",
+    "full_build": "passed including FX CLI and existing RX/JS/WASM interoperability",
+    "existing_codec_sources": "unchanged"
+  }
+}

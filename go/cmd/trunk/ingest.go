@@ -25,9 +25,9 @@ func runIngestContext(ctx context.Context, args []string) error {
 	flags := flag.NewFlagSet("ingest", flag.ContinueOnError)
 	flags.String("env", ".env", "environment file; empty disables file loading")
 	root := flags.String("dir", "./caches", "cache root")
+	storage := flags.String("storage", "pack", "storage representation: pack or browse")
 	cacheName := flags.String("cache", "", "registered cache")
 	tenant := flags.String("tenant", "", "cache tenant owner")
-	definition := flags.String("definition", "", "optional unified PIL/resource definition; otherwise accept client registration or blind CBOR")
 	cert := flags.String("cert", "", "TLS certificate")
 	key := flags.String("key", "", "TLS private key")
 	ca := flags.String("client-ca", "", "client certificate CA (TLS requires this or TRUNK_TOKEN)")
@@ -41,7 +41,7 @@ func runIngestContext(ctx context.Context, args []string) error {
 	if flags.NArg() != 0 {
 		return fmt.Errorf("unexpected arguments")
 	}
-	env, e := applyEnvironment(flags, "dir", "cert", "key", "client-ca", "host", "network", "transport", "flush", "cache", "tenant", "definition")
+	env, e := applyEnvironment(flags, "dir", "storage", "cert", "key", "client-ca", "host", "network", "transport", "flush", "cache", "tenant")
 	if e != nil {
 		return e
 	}
@@ -87,7 +87,7 @@ func runIngestContext(ctx context.Context, args []string) error {
 			return e
 		}
 	}
-	native, release, e := openNative(ctx, *root, *cacheName, *tenant, *definition)
+	native, release, e := openNative(ctx, *root, *cacheName, *tenant, *storage)
 	if e != nil {
 		return e
 	}

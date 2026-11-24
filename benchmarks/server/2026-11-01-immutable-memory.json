@@ -1,0 +1,316 @@
+{
+  "fixture": "10,000 varied-field events in one recent sealed hour; history uses 1/9/61 revisions",
+  "scope": "Local Go HTTP handler or history API, excluding fixture setup and network. resident-B is native buffer capacity, not RSS or total heap.",
+  "baseline": "Saved working tree before immutable-memory edits, /tmp/trunk-memory-before/cache, applied with Go overlay",
+  "command": "go test ./server/cache -run ^$ -bench BenchmarkImmutableSeedDelivery|BenchmarkResidentObjectHistory -benchtime=200ms -count=3",
+  "results": {
+    "before": {
+      "BenchmarkResidentObjectHistory/1/pending-10": {
+        "samples_ns": [
+          952.0,
+          945.6,
+          943.7
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/1/pending-10         \t  227857\t       952.0 ns/op\t        90.00 PIL-B/op\t    1040 B/op\t      12 allocs/op",
+          "BenchmarkResidentObjectHistory/1/pending-10         \t  251950\t       945.6 ns/op\t        90.00 PIL-B/op\t    1040 B/op\t      12 allocs/op",
+          "BenchmarkResidentObjectHistory/1/pending-10         \t  240144\t       943.7 ns/op\t        90.00 PIL-B/op\t    1040 B/op\t      12 allocs/op"
+        ],
+        "median_ns": 945.6
+      },
+      "BenchmarkResidentObjectHistory/1/sealed-resident-10": {
+        "samples_ns": [
+          1003.0,
+          991.6,
+          995.9
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/1/sealed-resident-10 \t  211282\t      1003 ns/op\t        92.00 PIL-B/op\t    1120 B/op\t      13 allocs/op",
+          "BenchmarkResidentObjectHistory/1/sealed-resident-10 \t  239814\t       991.6 ns/op\t        92.00 PIL-B/op\t    1120 B/op\t      13 allocs/op",
+          "BenchmarkResidentObjectHistory/1/sealed-resident-10 \t  240682\t       995.9 ns/op\t        92.00 PIL-B/op\t    1120 B/op\t      13 allocs/op"
+        ],
+        "median_ns": 995.9
+      },
+      "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10": {
+        "samples_ns": [
+          27575.0,
+          27752.0,
+          28210.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10         \t    7888\t     27575 ns/op\t        92.00 PIL-B/op\t    5295 B/op\t      56 allocs/op",
+          "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10         \t    7872\t     27752 ns/op\t        92.00 PIL-B/op\t    5297 B/op\t      56 allocs/op",
+          "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10         \t    8599\t     28210 ns/op\t        92.00 PIL-B/op\t    5297 B/op\t      56 allocs/op"
+        ],
+        "median_ns": 27752.0
+      },
+      "BenchmarkResidentObjectHistory/9/pending-10": {
+        "samples_ns": [
+          1452.0,
+          1466.0,
+          1455.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/9/pending-10                            \t  162566\t      1452 ns/op\t       642.0 PIL-B/op\t    1792 B/op\t      14 allocs/op",
+          "BenchmarkResidentObjectHistory/9/pending-10                            \t  165396\t      1466 ns/op\t       642.0 PIL-B/op\t    1792 B/op\t      14 allocs/op",
+          "BenchmarkResidentObjectHistory/9/pending-10                            \t  165697\t      1455 ns/op\t       642.0 PIL-B/op\t    1792 B/op\t      14 allocs/op"
+        ],
+        "median_ns": 1455.0
+      },
+      "BenchmarkResidentObjectHistory/9/sealed-resident-10": {
+        "samples_ns": [
+          1497.0,
+          1508.0,
+          1501.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/9/sealed-resident-10                    \t  144508\t      1497 ns/op\t       660.0 PIL-B/op\t    1872 B/op\t      15 allocs/op",
+          "BenchmarkResidentObjectHistory/9/sealed-resident-10                    \t  159766\t      1508 ns/op\t       660.0 PIL-B/op\t    1872 B/op\t      15 allocs/op",
+          "BenchmarkResidentObjectHistory/9/sealed-resident-10                    \t  157166\t      1501 ns/op\t       660.0 PIL-B/op\t    1872 B/op\t      15 allocs/op"
+        ],
+        "median_ns": 1501.0
+      },
+      "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10": {
+        "samples_ns": [
+          44839.0,
+          44729.0,
+          45227.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10         \t    5090\t     44839 ns/op\t       660.0 PIL-B/op\t   35793 B/op\t     267 allocs/op",
+          "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10         \t    5302\t     44729 ns/op\t       660.0 PIL-B/op\t   35797 B/op\t     267 allocs/op",
+          "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10         \t    5376\t     45227 ns/op\t       660.0 PIL-B/op\t   35798 B/op\t     267 allocs/op"
+        ],
+        "median_ns": 44839.0
+      },
+      "BenchmarkResidentObjectHistory/61/pending-10": {
+        "samples_ns": [
+          4022.0,
+          4055.0,
+          4046.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/61/pending-10                           \t   49797\t      4022 ns/op\t      4370 PIL-B/op\t    5952 B/op\t      14 allocs/op",
+          "BenchmarkResidentObjectHistory/61/pending-10                           \t   58880\t      4055 ns/op\t      4370 PIL-B/op\t    5952 B/op\t      14 allocs/op",
+          "BenchmarkResidentObjectHistory/61/pending-10                           \t   59877\t      4046 ns/op\t      4370 PIL-B/op\t    5952 B/op\t      14 allocs/op"
+        ],
+        "median_ns": 4046.0
+      },
+      "BenchmarkResidentObjectHistory/61/sealed-resident-10": {
+        "samples_ns": [
+          4178.0,
+          4196.0,
+          4161.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/61/sealed-resident-10                   \t   54020\t      4178 ns/op\t      4492 PIL-B/op\t    6032 B/op\t      15 allocs/op",
+          "BenchmarkResidentObjectHistory/61/sealed-resident-10                   \t   56888\t      4196 ns/op\t      4492 PIL-B/op\t    6032 B/op\t      15 allocs/op",
+          "BenchmarkResidentObjectHistory/61/sealed-resident-10                   \t   57903\t      4161 ns/op\t      4492 PIL-B/op\t    6032 B/op\t      15 allocs/op"
+        ],
+        "median_ns": 4178.0
+      },
+      "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10": {
+        "samples_ns": [
+          133953.0,
+          133331.0,
+          134384.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10        \t    1732\t    133953 ns/op\t      4492 PIL-B/op\t  205874 B/op\t    1451 allocs/op",
+          "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10        \t    1696\t    133331 ns/op\t      4492 PIL-B/op\t  205877 B/op\t    1451 allocs/op",
+          "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10        \t    1822\t    134384 ns/op\t      4492 PIL-B/op\t  205840 B/op\t    1451 allocs/op"
+        ],
+        "median_ns": 133953.0
+      },
+      "BenchmarkImmutableSeedDelivery/Serial-10": {
+        "samples_ns": [
+          8809.0,
+          9073.0,
+          8925.0
+        ],
+        "raw": [
+          "BenchmarkImmutableSeedDelivery/Serial-10                               \t   27004\t      8809 ns/op\t   1547430 resident-B\t   38349 B/op\t      91 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Serial-10                               \t   26754\t      9073 ns/op\t   1547430 resident-B\t   38349 B/op\t      91 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Serial-10                               \t   26511\t      8925 ns/op\t   1547430 resident-B\t   38349 B/op\t      91 allocs/op"
+        ],
+        "median_ns": 8925.0
+      },
+      "BenchmarkImmutableSeedDelivery/Parallel-10": {
+        "samples_ns": [
+          10023.0,
+          10100.0,
+          10185.0
+        ],
+        "raw": [
+          "BenchmarkImmutableSeedDelivery/Parallel-10                             \t   23965\t     10023 ns/op\t   1547430 resident-B\t   38369 B/op\t      91 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Parallel-10                             \t   23593\t     10100 ns/op\t   1547430 resident-B\t   38369 B/op\t      91 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Parallel-10                             \t   23614\t     10185 ns/op\t   1547430 resident-B\t   38370 B/op\t      91 allocs/op"
+        ],
+        "median_ns": 10100.0
+      }
+    },
+    "after": {
+      "BenchmarkResidentObjectHistory/1/pending-10": {
+        "samples_ns": [
+          990.2,
+          988.0,
+          1002.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/1/pending-10         \t  220561\t       990.2 ns/op\t        90.00 PIL-B/op\t    1168 B/op\t      14 allocs/op",
+          "BenchmarkResidentObjectHistory/1/pending-10         \t  243777\t       988.0 ns/op\t        90.00 PIL-B/op\t    1168 B/op\t      14 allocs/op",
+          "BenchmarkResidentObjectHistory/1/pending-10         \t  231124\t      1002 ns/op\t        90.00 PIL-B/op\t    1168 B/op\t      14 allocs/op"
+        ],
+        "median_ns": 990.2
+      },
+      "BenchmarkResidentObjectHistory/1/sealed-resident-10": {
+        "samples_ns": [
+          2500.0,
+          2509.0,
+          2450.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/1/sealed-resident-10 \t   89250\t      2500 ns/op\t        92.00 PIL-B/op\t    3472 B/op\t      40 allocs/op",
+          "BenchmarkResidentObjectHistory/1/sealed-resident-10 \t   96273\t      2509 ns/op\t        92.00 PIL-B/op\t    3472 B/op\t      40 allocs/op",
+          "BenchmarkResidentObjectHistory/1/sealed-resident-10 \t   96572\t      2450 ns/op\t        92.00 PIL-B/op\t    3472 B/op\t      40 allocs/op"
+        ],
+        "median_ns": 2500.0
+      },
+      "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10": {
+        "samples_ns": [
+          20425.0,
+          20663.0,
+          20357.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10         \t   10000\t     20425 ns/op\t        92.00 PIL-B/op\t    3871 B/op\t      43 allocs/op",
+          "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10         \t   10000\t     20663 ns/op\t        92.00 PIL-B/op\t    3871 B/op\t      43 allocs/op",
+          "BenchmarkResidentObjectHistory/1/expired-resident-warm-disk-10         \t   10000\t     20357 ns/op\t        92.00 PIL-B/op\t    3871 B/op\t      43 allocs/op"
+        ],
+        "median_ns": 20425.0
+      },
+      "BenchmarkResidentObjectHistory/9/pending-10": {
+        "samples_ns": [
+          1502.0,
+          1496.0,
+          1501.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/9/pending-10                            \t  157066\t      1502 ns/op\t       642.0 PIL-B/op\t    1920 B/op\t      16 allocs/op",
+          "BenchmarkResidentObjectHistory/9/pending-10                            \t  161292\t      1496 ns/op\t       642.0 PIL-B/op\t    1920 B/op\t      16 allocs/op",
+          "BenchmarkResidentObjectHistory/9/pending-10                            \t  154908\t      1501 ns/op\t       642.0 PIL-B/op\t    1920 B/op\t      16 allocs/op"
+        ],
+        "median_ns": 1501.0
+      },
+      "BenchmarkResidentObjectHistory/9/sealed-resident-10": {
+        "samples_ns": [
+          10976.0,
+          11057.0,
+          11017.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/9/sealed-resident-10                    \t   21465\t     10976 ns/op\t       660.0 PIL-B/op\t   19448 B/op\t     159 allocs/op",
+          "BenchmarkResidentObjectHistory/9/sealed-resident-10                    \t   22040\t     11057 ns/op\t       660.0 PIL-B/op\t   19448 B/op\t     159 allocs/op",
+          "BenchmarkResidentObjectHistory/9/sealed-resident-10                    \t   21606\t     11017 ns/op\t       660.0 PIL-B/op\t   19448 B/op\t     159 allocs/op"
+        ],
+        "median_ns": 11017.0
+      },
+      "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10": {
+        "samples_ns": [
+          30214.0,
+          30298.0,
+          30317.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10         \t    7664\t     30214 ns/op\t       660.0 PIL-B/op\t   20100 B/op\t     162 allocs/op",
+          "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10         \t    7852\t     30298 ns/op\t       660.0 PIL-B/op\t   20101 B/op\t     162 allocs/op",
+          "BenchmarkResidentObjectHistory/9/expired-resident-warm-disk-10         \t    7963\t     30317 ns/op\t       660.0 PIL-B/op\t   20102 B/op\t     162 allocs/op"
+        ],
+        "median_ns": 30298.0
+      },
+      "BenchmarkResidentObjectHistory/61/pending-10": {
+        "samples_ns": [
+          4065.0,
+          4054.0,
+          4054.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/61/pending-10                           \t   54846\t      4065 ns/op\t      4370 PIL-B/op\t    6080 B/op\t      16 allocs/op",
+          "BenchmarkResidentObjectHistory/61/pending-10                           \t   58612\t      4054 ns/op\t      4370 PIL-B/op\t    6080 B/op\t      16 allocs/op",
+          "BenchmarkResidentObjectHistory/61/pending-10                           \t   59644\t      4054 ns/op\t      4370 PIL-B/op\t    6080 B/op\t      16 allocs/op"
+        ],
+        "median_ns": 4054.0
+      },
+      "BenchmarkResidentObjectHistory/61/sealed-resident-10": {
+        "samples_ns": [
+          57672.0,
+          56826.0,
+          57111.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/61/sealed-resident-10                   \t    3519\t     57672 ns/op\t      4492 PIL-B/op\t  104538 B/op\t     805 allocs/op",
+          "BenchmarkResidentObjectHistory/61/sealed-resident-10                   \t    4356\t     56826 ns/op\t      4492 PIL-B/op\t  104537 B/op\t     805 allocs/op",
+          "BenchmarkResidentObjectHistory/61/sealed-resident-10                   \t    4159\t     57111 ns/op\t      4492 PIL-B/op\t  104536 B/op\t     805 allocs/op"
+        ],
+        "median_ns": 57111.0
+      },
+      "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10": {
+        "samples_ns": [
+          78744.0,
+          79616.0,
+          79021.0
+        ],
+        "raw": [
+          "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10        \t    2974\t     78744 ns/op\t      4492 PIL-B/op\t  107136 B/op\t     808 allocs/op",
+          "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10        \t    3055\t     79616 ns/op\t      4492 PIL-B/op\t  107138 B/op\t     808 allocs/op",
+          "BenchmarkResidentObjectHistory/61/expired-resident-warm-disk-10        \t    3069\t     79021 ns/op\t      4492 PIL-B/op\t  107140 B/op\t     808 allocs/op"
+        ],
+        "median_ns": 79021.0
+      },
+      "BenchmarkImmutableSeedDelivery/Serial-10": {
+        "samples_ns": [
+          8324.0,
+          8553.0,
+          8443.0
+        ],
+        "raw": [
+          "BenchmarkImmutableSeedDelivery/Serial-10                               \t   28989\t      8324 ns/op\t    105640 resident-B\t   38237 B/op\t      86 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Serial-10                               \t   28648\t      8553 ns/op\t    105640 resident-B\t   38238 B/op\t      86 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Serial-10                               \t   28827\t      8443 ns/op\t    105640 resident-B\t   38238 B/op\t      86 allocs/op"
+        ],
+        "median_ns": 8443.0
+      },
+      "BenchmarkImmutableSeedDelivery/Parallel-10": {
+        "samples_ns": [
+          9075.0,
+          8995.0,
+          9119.0
+        ],
+        "raw": [
+          "BenchmarkImmutableSeedDelivery/Parallel-10                             \t   26655\t      9075 ns/op\t    105640 resident-B\t   38254 B/op\t      86 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Parallel-10                             \t   26218\t      8995 ns/op\t    105640 resident-B\t   38255 B/op\t      86 allocs/op",
+          "BenchmarkImmutableSeedDelivery/Parallel-10                             \t   26594\t      9119 ns/op\t    105640 resident-B\t   38257 B/op\t      86 allocs/op"
+        ],
+        "median_ns": 9075.0
+      }
+    }
+  },
+  "baseline_cache_source_sha256": "57b5eb0146146bc9546eb98dbe1c4ae7aee31c425e9be2c78e4864371386d32a",
+  "deployed_verification": {
+    "public_webkit_h3": {
+      "result_ready_ms": 140,
+      "matched": 0,
+      "requests": 31,
+      "server_to_headers_median_ms": 0.035888671875,
+      "server_to_headers_max_ms": 0.260986328125,
+      "endpoint_lock_ms": 0,
+      "store_lock_ms": 0
+    },
+    "local_h2_proxy_webkit": {
+      "first_ms": 64,
+      "repeat_ms": 28,
+      "repeat_timeline_and_index_requests": 0
+    },
+    "scope": "Single end-to-end smoke runs, not a statistically controlled old/new browser benchmark."
+  }
+}

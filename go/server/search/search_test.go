@@ -266,7 +266,7 @@ func TestSearchPartialTailAndCorruption(t *testing.T) {
 			case "partial_trie", "bad_trie":
 				path = filepath.Join(version, "log.tri")
 			default:
-				path = filepath.Join(day, "log.pods")
+				path = filepath.Join(day, "log.packs")
 			}
 			if damage == "missing_pop" {
 				if err := os.Remove(path); err != nil {

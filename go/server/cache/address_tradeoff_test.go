@@ -150,15 +150,15 @@ func TestAddressTradeoffFixture(t *testing.T) {
 					t.Fatal("UUID round trip")
 				}
 			}
-			mustAddress(t, os.WriteFile(filepath.Join(dir, "compact.idx"), compact, 0644))
-			mustAddress(t, os.WriteFile(filepath.Join(dir, "full.idx"), full, 0644))
+			mustAddress(t, os.WriteFile(filepath.Join(dir, "compact.indx"), compact, 0644))
+			mustAddress(t, os.WriteFile(filepath.Join(dir, "full.indx"), full, 0644))
 			raw, e := encoder.Marshal(fixture)
 			mustAddress(t, e)
 			mustAddress(t, os.WriteFile(filepath.Join(dir, "fixture.cbor"), raw, 0644))
 			collectionBytes := []int64{}
 			buildMillis := []float64{}
 			for variant, posts := range collectionPosts {
-				f, e := os.Create(filepath.Join(dir, fmt.Sprintf("collection%d.idx", variant)))
+				f, e := os.Create(filepath.Join(dir, fmt.Sprintf("collection%d.indx", variant)))
 				mustAddress(t, e)
 				idx := newObjectIndex(f)
 				begin := time.Now()
@@ -326,7 +326,7 @@ func TestAddressTradeoffPackedCollection(t *testing.T) {
 				o.tuples = append(o.tuples, h<<24|(uint64(d.Row)-h))
 			}
 			sort.Slice(objects, func(i, j int) bool { return bytes.Compare(objects[i].id[:], objects[j].id[:]) < 0 })
-			file, e := os.Open(filepath.Join(dir, "collection0.idx"))
+			file, e := os.Open(filepath.Join(dir, "collection0.indx"))
 			mustAddress(t, e)
 			current, e := loadObjectIndex(file)
 			mustAddress(t, e)
@@ -427,14 +427,14 @@ func BenchmarkAddressCollectionLookup(b *testing.B) {
 	dir := filepath.Join(root, "dense250k")
 	for variant, mode := range []string{"compact_tuple", "full_direct"} {
 		b.Run(mode, func(b *testing.B) {
-			file, e := os.Open(filepath.Join(dir, fmt.Sprintf("collection%d.idx", variant)))
+			file, e := os.Open(filepath.Join(dir, fmt.Sprintf("collection%d.indx", variant)))
 			mustAddress(b, e)
 			defer file.Close()
 			idx, e := loadObjectIndex(file)
 			mustAddress(b, e)
-			filename := "compact.idx"
+			filename := "compact.indx"
 			if variant == 1 {
-				filename = "full.idx"
+				filename = "full.indx"
 			}
 			rows, e := os.ReadFile(filepath.Join(dir, filename))
 			mustAddress(b, e)

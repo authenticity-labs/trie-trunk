@@ -42,11 +42,11 @@ func TestSharedTrieAndPayloadLayout(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		pods, err := p.readPodsRun(rows)
+		packs, err := p.readPacksRun(rows)
 		if err != nil {
 			t.Fatal(err)
 		}
-		fields, err := codec.Decode(pods, codec.PIL)
+		fields, err := codec.Decode(packs, codec.PIL)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -55,7 +55,7 @@ func TestSharedTrieAndPayloadLayout(t *testing.T) {
 		}
 		for _, key := range []codec.Key{8, 3, 14, 2} {
 			if _, ok := fields[key]; ok {
-				t.Fatalf("shared or uuid field %d repeated in pods", key)
+				t.Fatalf("shared or uuid field %d repeated in packs", key)
 			}
 		}
 		dir := filepath.Dir(p.idx.Name())
@@ -109,12 +109,12 @@ func TestPayloadRecovery(t *testing.T) {
 				t.Fatal(err)
 			}
 			dir := filepath.Join(versionDir(c.Root, "0", rev.Version), dayPath(*now))
-			podsPath := filepath.Join(dir, "log.pods")
-			stat, err := os.Stat(podsPath)
+			packsPath := filepath.Join(dir, "log.packs")
+			stat, err := os.Stat(packsPath)
 			if err != nil {
 				t.Fatal(err)
 			}
-			f, err := os.OpenFile(podsPath, os.O_RDWR, 0600)
+			f, err := os.OpenFile(packsPath, os.O_RDWR, 0600)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -149,7 +149,7 @@ func TestPayloadRecovery(t *testing.T) {
 					t.Fatal(err)
 				}
 				opened.Close()
-				after, _ := os.Stat(podsPath)
+				after, _ := os.Stat(packsPath)
 				if after.Size() != stat.Size() {
 					t.Fatal("unreferenced payload bytes retained")
 				}

@@ -1,0 +1,174 @@
+{
+  "scope": "Existing native ingress encode handoff before and after provider ingress changes, not end-to-end ingress or search. Both samples use the optimized /after benchmark case.",
+  "iterations_per_run": 100,
+  "runs": {
+    "before": {
+      "78": [
+        {
+          "ns": 421.7,
+          "go_bytes": 5,
+          "go_allocations": 0
+        },
+        {
+          "ns": 264.6,
+          "go_bytes": 5,
+          "go_allocations": 0
+        },
+        {
+          "ns": 255.8,
+          "go_bytes": 5,
+          "go_allocations": 0
+        }
+      ],
+      "4096": [
+        {
+          "ns": 1017.0,
+          "go_bytes": 42,
+          "go_allocations": 0
+        },
+        {
+          "ns": 1057.0,
+          "go_bytes": 42,
+          "go_allocations": 0
+        },
+        {
+          "ns": 914.6,
+          "go_bytes": 42,
+          "go_allocations": 0
+        }
+      ],
+      "65536": [
+        {
+          "ns": 7199.0,
+          "go_bytes": 116,
+          "go_allocations": 2
+        },
+        {
+          "ns": 7029.0,
+          "go_bytes": 116,
+          "go_allocations": 2
+        },
+        {
+          "ns": 7128.0,
+          "go_bytes": 116,
+          "go_allocations": 2
+        }
+      ]
+    },
+    "after": {
+      "78": [
+        {
+          "ns": 222.1,
+          "go_bytes": 5,
+          "go_allocations": 0
+        },
+        {
+          "ns": 230.4,
+          "go_bytes": 6,
+          "go_allocations": 0
+        },
+        {
+          "ns": 212.9,
+          "go_bytes": 5,
+          "go_allocations": 0
+        }
+      ],
+      "4096": [
+        {
+          "ns": 586.7,
+          "go_bytes": 42,
+          "go_allocations": 0
+        },
+        {
+          "ns": 598.8,
+          "go_bytes": 42,
+          "go_allocations": 0
+        },
+        {
+          "ns": 607.1,
+          "go_bytes": 42,
+          "go_allocations": 0
+        }
+      ],
+      "65536": [
+        {
+          "ns": 5476.0,
+          "go_bytes": 116,
+          "go_allocations": 2
+        },
+        {
+          "ns": 5335.0,
+          "go_bytes": 116,
+          "go_allocations": 2
+        },
+        {
+          "ns": 5267.0,
+          "go_bytes": 116,
+          "go_allocations": 2
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Short sequential samples, not a statistically controlled speedup comparison. Existing buffer/allocator implementation unchanged.",
+    "Go allocation counters exclude native memory. No claim of lower native memory consumption.",
+    "Provider transform CPU costs are additional to the existing destination encoding."
+  ],
+  "provider_transform": {
+    "scope": "OTel HTTP PIL validation plus mapping only. Excludes destination encode, persistence and HTTP.",
+    "iterations_per_run": 1000,
+    "runs": {
+      "64": [
+        {
+          "ns": 1146.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        },
+        {
+          "ns": 1092.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        },
+        {
+          "ns": 1124.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        }
+      ],
+      "4096": [
+        {
+          "ns": 1740.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        },
+        {
+          "ns": 1768.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        },
+        {
+          "ns": 1698.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        }
+      ],
+      "65536": [
+        {
+          "ns": 15909.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        },
+        {
+          "ns": 16209.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        },
+        {
+          "ns": 15828.0,
+          "go_bytes": 24,
+          "go_allocations": 3
+        }
+      ]
+    }
+  }
+}

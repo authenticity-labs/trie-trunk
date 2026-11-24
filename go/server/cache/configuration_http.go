@@ -16,10 +16,10 @@ import (
 )
 
 var configurationGroups = map[string][]string{
-	"compression": {"pac.gzip_level", "summary.gzip_level"},
+	"compression": {"pac.algorithm", "pac.level", "summary.algorithm", "summary.level"},
 	"staging":     {"staging.max_bytes", "staging.max_records", "staging.max_disk_bytes"},
 	"indexing":    {"search_index", "object_index", "cache_invalidation"},
-	"replication": {"replication.index_period", "replication.data", "replication.provisional_tail"},
+	"replication": {"summary_utc_offset_hours", "replication.index_period", "replication.data", "replication.provisional_tail"},
 }
 
 type configurationView struct {
@@ -89,8 +89,8 @@ func (p *Endpoint) configurationHTTP(w http.ResponseWriter, r *http.Request, sou
 		http.Error(w, "scope is not in the storage catalog", 400)
 		return
 	}
-	// The Trunk config may be shared by caches in different roots.
-	lock, err := os.OpenFile(filepath.Join(filepath.Dir(p.config.Root), ".configurations.lock"), os.O_CREATE|os.O_RDWR, 0600)
+	// Configuration and quota editors share this administrative publication lease.
+	lock, err := os.OpenFile(filepath.Join(p.config.Root, ".configurations.lock"), os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -212,7 +212,7 @@ func (p *Endpoint) configurationHTTP(w http.ResponseWriter, r *http.Request, sou
 	}
 	var config Configuration
 	if len(scope) > 0 {
-		registry, e := readConfiguration(filepath.Join(p.config.Root, scope[0], "registry.cfg"))
+		registry, e := readConfiguration(configurationPath(p.config.Root, scope[:1]))
 		if e != nil {
 			http.Error(w, e.Error(), 500)
 			return

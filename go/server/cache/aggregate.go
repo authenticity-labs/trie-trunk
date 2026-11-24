@@ -59,7 +59,8 @@ type Group struct {
 	Aggregate Aggregate `pil:"2"`
 }
 type Summary struct {
-	DurationWidth byte // Definition storage width; zero when no duration role is bound.
+	Fields        []byte // Twelve prepared five-minute PILs and an ingress-maintained hour rollup.
+	DurationWidth byte   // Definition storage width; zero when no duration role is bound.
 	From, Through uint64
 	Columns       AggregateColumns
 	Statistics    []statisticsGroup
@@ -109,7 +110,7 @@ func makeSummary(run Run, groups map[aggregateKey]Aggregate) Summary {
 	return s
 }
 
-// Hourly sealing publishes five-minute accumulator columns; complete UTC days
+// Hourly sealing publishes five-minute accumulator columns; complete fixed-offset days
 // are subsequently packed. Source-row watermarks prevent replaying a committed
 // hour twice. This API returns only sealed aggregates, unlike live view snapshots.
 func (s *Store) Summaries(branch Branch, from, to time.Time) (map[int64]map[uint16]Aggregate, error) {

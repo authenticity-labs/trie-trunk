@@ -107,7 +107,7 @@ func TestMeasureNativeStorage(t *testing.T) {
 			}); err != nil {
 				t.Fatal(err)
 			}
-			if cached && (bytes[key]["index"] != 0 || bytes[key]["sods"] != 0) {
+			if cached && (bytes[key]["index"] != 0 || bytes[key]["beds"] != 0) {
 				t.Fatal("duplicate native transfer")
 			}
 			native[key] = timed(t, 9, func() error {

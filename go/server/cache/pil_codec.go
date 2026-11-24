@@ -2,7 +2,7 @@ package cache
 
 import (
 	"fmt"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"unicode/utf8"
 )
@@ -48,8 +48,8 @@ func SealGzipLevel(b []byte, level int) (*SealedGzip, error)    { return pil.Sea
 func RestoreSealedGzip(b []byte, n uint64) (*SealedGzip, error) { return pil.RestoreSealedGzip(b, n) }
 func NewGzipPACWriter(w io.Writer) *GzipPACWriter               { return pil.NewGzipPACWriter(w) }
 func combineCRC32(a, b uint32, n uint64) uint32                 { return pil.CombineCRC32(a, b, n) }
-func compressPAC(b []byte, level int) ([]byte, error)           { return pil.CompressPAC(b, level) }
-func expandPAC(b []byte) ([]byte, error)                        { return pil.ExpandPAC(b) }
+func compressPAC(b []byte, level int) ([]byte, error)           { return seedCompressPAC(b, 1, level) }
+func expandPAC(b []byte) ([]byte, error)                        { return seedExpandPAC(b) }
 func validatePlainPACEnvelope(b []byte) error                   { return pil.ValidatePlainPACEnvelope(b) }
 func fieldObject(f Field, v Value) ([]byte, error)              { return pil.FieldObject(f, v) }
 func valueFromObject(f Field, w int, b []byte) (Value, error)   { return pil.ValueFromObject(f, w, b) }
@@ -64,6 +64,11 @@ func ParsePAC(l *Layout, b []byte, s map[uint32]bool) (*PAC, error) {
 	p, err := pil.ParsePAC(l.Layout, b, s)
 	if err != nil {
 		return nil, err
+	}
+	if _, ok := p.Headers[pacChecksumHeader]; ok {
+		if err := verifyPACChecksum(p); err != nil {
+			return nil, err
+		}
 	}
 	for _, e := range p.Extensions {
 		if e.Type == PACSource && !utf8.Valid(e.Data) {

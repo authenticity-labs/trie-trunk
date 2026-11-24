@@ -1,23 +1,12 @@
 package cache
 
-// Publish complete hours in payload → index → summary → journal order.
+// Publish complete hours in payload → index → summary order, protected by .pack.
 import (
 	"bytes"
 	"fmt"
 	"hash/crc32"
 	"time"
 )
-
-type Retirement struct {
-	Time          *TimeAnchor `pil:",omitempty"`
-	Rows, Members uint64
-	Block         uint32
-	Cutoff        int64
-}
-type Commit struct {
-	Retired *Retirement `pil:"2,omitempty"`
-	Run     Run         `pil:"0"`
-}
 
 func (s *Store) commitBatch(b *branchStore, batch []pending) error {
 	if len(batch) == 0 {
@@ -41,40 +30,46 @@ func (s *Store) commitBatch(b *branchStore, batch []pending) error {
 	b.sealingBefore = endHour.UnixMilli()
 	releaseMemory := b.pinMemory()
 	worker := &Store{config: s.config, layout: s.layout, row: s.row, location: s.location,
-		policy: s.policy, branchPolicies: s.branchPolicies, shared: s.shared, trie: s.trie.clone()}
+		memory: s.memory, policy: s.policy, branchPolicies: s.branchPolicies, shared: s.shared, trie: s.trie.clone()}
 	frozen := &branchStore{branch: b.branch, generation: b.generation, baseRows: b.baseRows,
-		podsRetired: b.podsRetired, memberEnd: b.memberEnd, blockBase: b.blockBase,
-		rows: b.rows, runs: append([]Run(nil), b.runs...), podsEnd: b.podsEnd, sumEnd: b.sumEnd,
-		idx: b.idx, pods: b.pods, sum: b.sum, journal: b.journal, accumulators: map[int64]*summaryAccumulator{endHour.UnixMilli() - TimeHourMS: b.accumulators[endHour.UnixMilli()-TimeHourMS]}}
+		packsRetired: b.packsRetired, memberEnd: b.memberEnd, blockBase: b.blockBase,
+		rows: b.rows, runs: append([]Run(nil), b.runs...), packsEnd: b.packsEnd, sumEnd: b.sumEnd,
+		idx: b.idx, packs: b.packs, sum: b.sum, accumulators: b.accumulators.frozen(endHour.UnixMilli() - TimeHourMS)}
 	s.mu.Unlock()
-	releaseSeal := s.config.Sealer.acquire()
+	releaseSeal := s.config.CommitScheduler.acquire()
 	result, err := worker.writeSealedHour(frozen, batch)
 	releaseSeal()
 	waiting := time.Now()
 	s.mu.Lock()
 	publishing := time.Now()
-	defer func() { s.config.Sealer.observePublication(publishing.Sub(waiting), time.Since(publishing)) }()
+	defer func() { s.config.CommitScheduler.observePublication(publishing.Sub(waiting), time.Since(publishing)) }()
 	defer func() { releaseMemory(); b.sealingBefore = 0; s.sealing = nil; close(done) }()
 	if err != nil {
 		return s.fail(err)
 	}
+	defer result.owner.close()
 	if err = s.check(); err != nil {
 		return err
 	}
 	s.trie = worker.trie
 	if result.summary != nil {
 		b.summaries = append(b.summaries, *result.summary)
-		delete(b.accumulators, result.run.PAC.Placement.From)
 	}
 	b.sumEnd = frozen.sumEnd
 	if err = b.mapIndex(); err != nil {
 		return s.fail(err)
 	}
+	if err = s.rememberPackOwned(b, result.run, result.owner); err != nil {
+		return s.fail(err)
+	}
 	b.runs = append(b.runs, result.run)
 	b.timeDirty = true
-	b.podsEnd = result.run.PodsEnd
+	b.packsEnd = result.run.PacksEnd
 	s.queueSearch(b.branch)
 	if err = s.indexSealedObjects(b, result); err != nil {
+		return s.fail(err)
+	}
+	if err = s.sealProbe("collection-published"); err != nil {
 		return s.fail(err)
 	}
 	// Drop provisional identities before publishing the canonical row identities.
@@ -82,42 +77,38 @@ func (s *Store) commitBatch(b *branchStore, batch []pending) error {
 	delete(b.provisionalRecords, endHour.UnixMilli()-TimeHourMS)
 	for n, p := range batch {
 		b.pendingBytes -= len(p.frame)
-		var f Frame
-		if err = s.layout.Scan(p.frame, &f); err != nil {
-			return s.fail(err)
-		}
 		id, e := seedKey(eventTime(p.id[:]), uint32(n))
 		if e != nil {
 			return s.fail(e)
 		}
-		f.Values[s.layout.Event] = Value{Direct, id[:]}
-		f.Values[s.layout.Record] = Uint(uint64(n), 3)
-		f.Values[s.layout.Leaf] = Uint(uint64(b.rowLeaf(result.run.Start+uint64(n))), 2)
-		full, e := s.layout.Encode(nil, f.Values)
-		if e != nil {
-			return s.fail(e)
-		}
-		full, e = b.own(s, id, full, nil)
-		if e != nil {
-			return s.fail(e)
-		}
-		if err = s.rememberSealed(b, id, full, result.run.Start+uint64(n)); err != nil {
+		// Only object/revision metadata is retained. Its original immutable PIL
+		// already contains those fields; do not reconstruct another full record.
+		if err = s.rememberSealed(b, id, p.frame, result.run.Start+uint64(n)); err != nil {
 			return s.fail(err)
 		}
 	}
 	b.pendingVersion++
-	s.config.Sealer.observeWindow(endHour, s.config.Now())
+	delete(b.ingressPages, result.run.PAC.Placement.From/TimeHourMS)
+	if err = s.publishStates(); err != nil {
+		return s.fail(err)
+	}
+	b.accumulators.release(result.run.PAC.Placement.From)
+	s.publishResident(b)
+	b.pruneMemory(s.config.Now())
+	s.config.CommitScheduler.observeWindow(endHour, s.config.Now())
 	return nil
 }
 
 type sealedHour struct {
+	owner    *nativeBuffer
+	packs     []byte
 	run      Run
 	summary  *Summary
 	postings []collectionPosting
 }
 
 // Only this worker touches unpublished file tails. Readers keep their prior
-// ranges/mappings, and ingestion writes solely to .seed and the native live index.
+// ranges/mappings, and ingestion writes solely to .seeds and the native live index.
 func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, error) {
 	if e := s.sealProbe("prepare"); e != nil {
 		return nil, e
@@ -129,6 +120,8 @@ func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, e
 	frames := make([][]byte, 0, len(batch))
 	var frame Frame
 	var encoded []byte
+	scratch := nativeScratch{memory: s.memory}
+	defer scratch.close()
 	startRow := b.tail() + IndexHeaderSlots
 	if startRow+uint64(len(batch)) > IndexCapacity {
 		return nil, ErrIndexCapacity
@@ -157,7 +150,9 @@ func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, e
 			return nil, e
 		}
 
-		v[s.layout.Event] = Value{}
+		if !s.layout.logStrategy() {
+			v[s.layout.Event] = Value{}
+		}
 		v[s.layout.Time] = Value{}
 		v[s.layout.Record] = Uint(uint64(ordinal), 3)
 		v[s.layout.Leaf] = Value{}
@@ -168,35 +163,46 @@ func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, e
 			v[s.layout.Shared] = Value{}
 		}
 		var e error
-		encoded, e = s.layout.Encode(nil, v)
+		encoded, e = s.layout.Layout.EncodeAllocated(v, scratch.allocate)
 		if e != nil {
 			return nil, e
 		}
 		frames = append(frames, encoded)
 		idx = append(idx, row...)
 	}
-	pods, block, err := s.packBlock(b, startRow, batch, frames, idx)
+	owner, block, err := s.packBlock(b, startRow, batch, frames, idx)
 	if err != nil {
 		return nil, err
 	}
 
+	if e := s.sealProbe("packed"); e != nil {
+		owner.close()
+		return nil, e
+	}
+	packs := owner.bytes
+	transferred := false
+	defer func() {
+		if !transferred {
+			owner.close()
+		}
+	}()
 	if len(s.trie.nodes) > s.trie.persisted {
 		raw, e := encoder.Marshal(s.trie.nodes[s.trie.persisted:])
 		if e != nil {
 			return nil, e
 		}
-		if e = appendRecord(s.shared, raw); e != nil {
-			return nil, e
-		}
-		if e = s.shared.Sync(); e != nil {
+		if e = appendLeafNodes(s.shared, &s.trie, raw); e != nil {
 			return nil, e
 		}
 		s.trie.persisted = len(s.trie.nodes)
 	}
-	if _, e := b.pods.WriteAt(pods, int64(b.podsEnd-b.podsRetired)); e != nil {
+	if _, e := b.packs.WriteAt(packs, int64(b.packsEnd-b.packsRetired)); e != nil {
 		return nil, e
 	}
-	if e := b.pods.Sync(); e != nil {
+	if e := s.sealProbe("payload-written"); e != nil {
+		return nil, e
+	}
+	if e := b.packs.Sync(); e != nil {
 		return nil, e
 	}
 	if e := s.sealProbe("payload"); e != nil {
@@ -205,7 +211,13 @@ func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, e
 	if _, e := b.idx.WriteAt(indexHeader(hourBase, uint64(len(batch))), headerSize+int64(len(b.rows))); e != nil {
 		return nil, e
 	}
+	if e := s.sealProbe("index-header-written"); e != nil {
+		return nil, e
+	}
 	if _, e := b.idx.WriteAt(idx, headerSize+int64(len(b.rows))+IndexRowSize); e != nil {
+		return nil, e
+	}
+	if e := s.sealProbe("index-written"); e != nil {
 		return nil, e
 	}
 	if e := b.idx.Sync(); e != nil {
@@ -214,10 +226,10 @@ func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, e
 	if e := s.sealProbe("index"); e != nil {
 		return nil, e
 	}
-	run := Run{References: refs, Start: startRow, End: startRow + uint64(len(batch)), PodsStart: b.podsEnd, PodsEnd: b.podsEnd + uint64(len(pods)), MinMS: eventTime(batch[0].id[:]), MaxMS: eventTime(batch[len(batch)-1].id[:]), IndexCRC: crc32.Checksum(idx, checksum), PodsCRC: crc32.Checksum(pods, checksum), TrieSize: len(s.trie.nodes), PAC: block}
+	run := Run{References: refs, Start: startRow, End: startRow + uint64(len(batch)), PacksStart: b.packsEnd, PacksEnd: b.packsEnd + uint64(len(packs)), MinMS: eventTime(batch[0].id[:]), MaxMS: eventTime(batch[len(batch)-1].id[:]), IndexCRC: crc32.Checksum(idx, checksum), PacksCRC: crc32.Checksum(packs, checksum), TrieSize: len(s.trie.nodes), PAC: block}
 	var summaryResult *Summary
 	if b.sum != nil {
-		accumulator := b.accumulators[hourBase]
+		accumulator := b.accumulators.get(hourBase)
 		if accumulator == nil {
 			return nil, fmt.Errorf("missing ingress accumulator")
 		}
@@ -232,6 +244,9 @@ func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, e
 		if e = appendRecord(b.sum, raw); e != nil {
 			return nil, e
 		}
+		if e = s.sealProbe("summary-written"); e != nil {
+			return nil, e
+		}
 		if e = b.sum.Sync(); e != nil {
 			return nil, e
 		}
@@ -242,20 +257,11 @@ func (s *Store) writeSealedHour(b *branchStore, batch []pending) (*sealedHour, e
 		b.sumEnd = uint64(stat.Size())
 		summaryResult = &summary
 	}
-	raw, e := encoder.Marshal(Commit{Run: run})
-	if e != nil {
+	if e := s.sealProbe("summary"); e != nil {
 		return nil, e
 	}
-	if e = appendRecord(b.journal, raw); e != nil {
-		return nil, e
-	}
-	if e = b.journal.Sync(); e != nil {
-		return nil, e
-	}
-	if e := s.sealProbe("journal"); e != nil {
-		return nil, e
-	}
-	return &sealedHour{run, summaryResult, postings}, nil
+	transferred = true
+	return &sealedHour{owner: owner, packs: packs, run: run, summary: summaryResult, postings: postings}, nil
 }
 
 func (s *Store) sealProbe(stage string) error {

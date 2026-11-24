@@ -92,7 +92,7 @@ type Manifest struct {
 	TimeRetainedFrom                         int64
 	TimeRetired                              bool   `pil:",omitempty"`
 	TimeTrie                                 []byte `pil:",omitempty"`
-	RetiredRows, RetiredMembers, RetiredPods uint64
+	RetiredRows, RetiredMembers, RetiredPacks uint64
 	Definition                               [32]byte
 	Generation                               [16]byte
 	GenerationSequence                       uint64
@@ -187,7 +187,7 @@ func (s *Store) collectDelivery(ctx context.Context, request CollectionRequest, 
 	m.IndexOnly = request.IndexOnly
 	m.TimeRetainedFrom = b.time.first()
 	m.RetiredRows = b.baseRows
-	m.RetiredPods = b.podsRetired
+	m.RetiredPacks = b.packsRetired
 	m.RetiredMembers = b.memberEnd
 	m.StateEpoch, m.StateSequence = s.state.epoch, s.state.sequence
 	if !m.Provisional {
@@ -245,7 +245,7 @@ func (s *Store) collectDelivery(ctx context.Context, request CollectionRequest, 
 	if e != nil {
 		return e
 	}
-	podsHave, e := Normalize(have.MemberRanges)
+	packsHave, e := Normalize(have.MemberRanges)
 	if e != nil {
 		return e
 	}
@@ -261,8 +261,8 @@ func (s *Store) collectDelivery(ctx context.Context, request CollectionRequest, 
 	for _, run := range m.Blocks {
 		p := run.PAC.Placement
 		indexOK := covered(indexHave, &iIndex, run.Start, run.End)
-		podsOK := covered(podsHave, &iPop, p.MemberStart, p.MemberStart+p.MemberBytes)
-		if !indexOK || (!request.IndexOnly && !podsOK) {
+		packsOK := covered(packsHave, &iPop, p.MemberStart, p.MemberStart+p.MemberBytes)
+		if !indexOK || (!request.IndexOnly && !packsOK) {
 			missingBlocks = append(missingBlocks, run)
 			missingIndex = append(missingIndex, Span{run.Start, run.End})
 		}
@@ -303,7 +303,7 @@ func (s *Store) collectDelivery(ctx context.Context, request CollectionRequest, 
 	}
 	var payload *os.File
 	if len(missingBlocks) > 0 && !request.IndexOnly {
-		payload, e = os.Open(b.pods.Name())
+		payload, e = os.Open(b.packs.Name())
 		if e != nil {
 			return e
 		}
@@ -314,7 +314,7 @@ func (s *Store) collectDelivery(ctx context.Context, request CollectionRequest, 
 		output = s.memory.buffer()
 		defer output.close()
 	}
-	baseRows, podsRetired := b.baseRows, b.podsRetired
+	baseRows, packsRetired := b.baseRows, b.packsRetired
 	directory := b.time
 	s.mu.Unlock()
 	locked = false
@@ -361,24 +361,24 @@ func (s *Store) collectDelivery(ctx context.Context, request CollectionRequest, 
 		}
 		for i := 0; i < len(missingBlocks); {
 			j := i + 1
-			for j < len(missingBlocks) && missingBlocks[j-1].PodsEnd == missingBlocks[j].PodsStart {
+			for j < len(missingBlocks) && missingBlocks[j-1].PacksEnd == missingBlocks[j].PacksStart {
 				j++
 			}
-			start, err := directory.podsBoundary(payload, podsRetired, missingBlocks[i].PAC.Placement.From)
+			start, err := directory.packsBoundary(payload, packsRetired, missingBlocks[i].PAC.Placement.From)
 			if err != nil {
 				return err
 			}
-			end, err := directory.podsBoundary(payload, podsRetired, missingBlocks[j-1].PAC.Placement.To)
+			end, err := directory.packsBoundary(payload, packsRetired, missingBlocks[j-1].PAC.Placement.To)
 			if err != nil {
 				return err
 			}
-			if start != missingBlocks[i].PodsStart || end != missingBlocks[j-1].PodsEnd || end <= start {
+			if start != missingBlocks[i].PacksStart || end != missingBlocks[j-1].PacksEnd || end <= start {
 				return fmt.Errorf("invalid committed PAC range")
 			}
 			if err = ctx.Err(); err != nil {
 				return err
 			}
-			if err = sendRange(payload, start-podsRetired, end-podsRetired); err != nil {
+			if err = sendRange(payload, start-packsRetired, end-packsRetired); err != nil {
 				return err
 			}
 			i = j
@@ -393,11 +393,11 @@ func (s *Store) collectDelivery(ctx context.Context, request CollectionRequest, 
 		if !ok {
 			return fmt.Errorf("missing committed hour address")
 		}
-		start, end, err := storedSegmentRange(payload, podsRetired, leaf.Pods)
+		start, end, err := storedSegmentRange(payload, packsRetired, leaf.Packs)
 		if err != nil {
 			return err
 		}
-		raw, err := output.readAt(payload, start-podsRetired, end-podsRetired)
+		raw, err := output.readAt(payload, start-packsRetired, end-packsRetired)
 		if err != nil {
 			return err
 		}

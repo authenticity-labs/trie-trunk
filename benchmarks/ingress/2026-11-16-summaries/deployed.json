@@ -1,0 +1,25 @@
+{
+  "testedAt": "2026-11-16T16:08:39.849Z",
+  "branch": 3,
+  "before": {
+    "count": 5,
+    "durationSum": 768999.9997615814,
+    "sealed": false
+  },
+  "after": {
+    "count": 6,
+    "durationSum": 781344.9997615814,
+    "sealed": false
+  },
+  "eventVisible": true,
+  "eventDurationMicroseconds": 12345,
+  "snoot": {
+    "currentEventsVisible": true,
+    "summaryInsightsVisible": true,
+    "displayedEventCount": 3,
+    "durationSamples": 3,
+    "minimumMilliseconds": 12.35,
+    "maximumMilliseconds": 468,
+    "averageMilliseconds": 203.45
+  }
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "branch": 1,
+    "bytes": 157544,
+    "days": 5,
+    "end": 1795132800000,
+    "events": 20000,
+    "first": 1794700800000,
+    "source": "demo/lab/indexed/sample",
+    "periods": 1440,
+    "fields": [
+      "duration",
+      "sequence"
+    ]
+  },
+  {
+    "branch": 3,
+    "bytes": 101011,
+    "days": 3,
+    "end": 1795132800000,
+    "events": 635,
+    "first": 1794873600000,
+    "source": "demo/trunk-client/queries/query",
+    "periods": 864,
+    "fields": [
+      "rows",
+      "duration"
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+{
+  "ok": true,
+  "dashboard": "Fast\nDeep\nTime Window\nRefresh\nOct 20 \u2013 Nov 19 \u00b7 UTC \u00b7 Includes Current Summary Period\nPrecomputed Summaries\nSummarized Events\n20,000\n\u2014\nError Rate\n\u2014\n\u2014\nAverage Duration\n9.7 ms\n\u2014\nP95 Period Mean Duration\n9.7 ms\n\u2014\nEvent Activity\nEvents\n0\n5,000\n10,000\n15,000\n20,000\nOct 22\nOct 29\nNov 8\nNov 15\nP95 Period Mean Trend\nms\n0\n2\n4\n6\n8\n10\nOct 22\nOct 29\nNov 8\nNov 15\nTop 10 Resources\ndemo / lab / indexed\n0\n10,000\n20,000\nBottom 10 Active Resources\ndemo / lab / indexed\n0\n10,000\n20,000\nServices With Trends\ndemo / lab\n20,000\nObserved Levels\nResource Summary\nExport CSV\nResource\tEvents\tErrors\tError Rate\tAverage Duration\tP95 Period Mean Duration\ndemo/lab/indexed\t20,000\t\u2014\t\u2014\t9.7 ms\t9.7 ms\nDefault Chart Definition"
+}

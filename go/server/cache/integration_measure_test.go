@@ -114,7 +114,7 @@ func TestMeasureIntegratedCollection(t *testing.T) {
 		t.Fatal(err)
 	}
 	b := s.branches[Write]
-	known := Coverage{Definition: l.Digest, Generation: b.generation, Index: []Span{{0, uint64(n)}}, MemberRanges: []Span{{headerSize, b.podsEnd}}, TrieNodes: len(s.trie.nodes), StateKnown: true, StateEpoch: s.state.epoch, StateSequence: s.state.sequence}
+	known := Coverage{Definition: l.Digest, Generation: b.generation, Index: []Span{{0, uint64(n)}}, MemberRanges: []Span{{headerSize, b.packsEnd}}, TrieNodes: len(s.trie.nodes), StateKnown: true, StateEpoch: s.state.epoch, StateSequence: s.state.sequence}
 	coverage, _ := json.Marshal([]Coverage{known})
 	handler := &HTTP{Store: s}
 	results := map[string]any{}
@@ -177,9 +177,9 @@ func TestMeasureIntegratedCollection(t *testing.T) {
 						if !bytes.Equal(chunk.Data, b.rows[chunk.Start*IndexRowSize:chunk.Start*IndexRowSize+uint64(len(chunk.Data))]) {
 							t.Fatal("index bytes changed")
 						}
-					case "sods":
+					case "beds":
 						want := make([]byte, len(chunk.Data))
-						if _, e := b.pods.ReadAt(want, int64(chunk.Start)); e != nil || !bytes.Equal(chunk.Data, want) {
+						if _, e := b.packs.ReadAt(want, int64(chunk.Start)); e != nil || !bytes.Equal(chunk.Data, want) {
 							t.Fatal("payload bytes changed", e)
 						}
 					}
@@ -187,13 +187,13 @@ func TestMeasureIntegratedCollection(t *testing.T) {
 				if mode != "native-warm" && payload["index"] != queryCount*IndexRowSize {
 					t.Fatal("incomplete hourly index delivery", payload["index"], queryCount)
 				}
-				if mode == "native-cold" && window.name == "all" && uint64(payload["sods"]) != b.podsEnd-headerSize {
+				if mode == "native-cold" && window.name == "all" && uint64(payload["beds"]) != b.packsEnd-headerSize {
 					t.Fatal("incomplete full payload delivery")
 				}
-				if mode == "native-warm" && (payload["index"] != 0 || payload["sods"] != 0 || payload["trie"] != 0) {
+				if mode == "native-warm" && (payload["index"] != 0 || payload["beds"] != 0 || payload["trie"] != 0) {
 					t.Fatal("cached bytes retransmitted")
 				}
-				if mode == "native-index-only" && payload["sods"] != 0 {
+				if mode == "native-index-only" && payload["beds"] != 0 {
 					t.Fatal("eager payload in lazy request")
 				}
 			}

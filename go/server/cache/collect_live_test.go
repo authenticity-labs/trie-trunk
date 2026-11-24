@@ -3,8 +3,10 @@ package cache
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -111,6 +113,7 @@ func TestCollectLiveWindow(t *testing.T) {
 			t.Fatal("incorrect upper bound")
 		}
 		if fixture != "" {
+			saveSeedFixture(t, p, from, "now", fmt.Sprint(number), fixture)
 			if e := os.WriteFile(filepath.Join(fixture, fmt.Sprintf("%d.pil", number)), w.Body.Bytes(), 0644); e != nil {
 				t.Fatal(e)
 			}
@@ -187,6 +190,9 @@ func TestLivePackKeepsProvisionalIdentityAndTime(t *testing.T) {
 		}
 	}
 	live, e := s.liveWindow(Write, at, at.Add(time.Minute))
+	if live != nil {
+		defer live.close()
+	}
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -195,7 +201,10 @@ func TestLivePackKeepsProvisionalIdentityAndTime(t *testing.T) {
 	if e = h.writeLiveWindow(context.Background(), &out, 0, Write, live); e != nil {
 		t.Fatal(e)
 	}
-	p, e := s.livePack(Write, at.UnixMilli(), live.events)
+	p, owner, e := s.livePack(Write, at.UnixMilli(), live.events)
+	if owner != nil {
+		defer owner.close()
+	}
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -249,6 +258,7 @@ func TestCollectLivePromotionBehindStart(t *testing.T) {
 			t.Fatal(w.Code, w.Body.String())
 		}
 		if folder := os.Getenv("TRUNK_COLLECTION_FIXTURES"); folder != "" {
+			saveSeedFixture(t, p, from, to, name, folder)
 			if e = os.WriteFile(filepath.Join(folder, name+".pil"), w.Body.Bytes(), 0644); e != nil {
 				t.Fatal(e)
 			}
@@ -264,5 +274,49 @@ func TestCollectLivePromotionBehindStart(t *testing.T) {
 	}
 	if packs := pull("promotion-2", at, at.Add(time.Hour).Format(time.RFC3339Nano), false); len(packs) != 0 {
 		t.Fatal("sealed promotion must use native PAC ranges")
+	}
+}
+
+func saveSeedFixture(t *testing.T, p *Endpoint, from time.Time, to, name, folder string) {
+	t.Helper()
+	q := url.Values{"branch": {"payment/transactions.v1/write"}, "definition": {fmtDigestNative(p.api.Store.layout.Digest)}, "beginTime": {fmt.Sprint(from.UnixMilli())}}
+	if to != "now" {
+		z, e := time.Parse(time.RFC3339Nano, to)
+		if e != nil {
+			t.Fatal(e)
+		}
+		q.Set("endTime", fmt.Sprint(z.UnixMilli()))
+	}
+	w := httptest.NewRecorder()
+	p.ServeHTTP(w, httptest.NewRequest("GET", "/demo/payment/transactions.v1/write/packs?"+withoutBranch(q), nil))
+	if w.Code != 200 {
+		t.Fatal(w.Code, w.Body.String())
+	}
+	s := p.api.Store
+	b, e := s.openBranch(Write)
+	if e != nil {
+		t.Fatal(e)
+	}
+	states, e := os.ReadFile(s.shared.Name())
+	if e != nil {
+		t.Fatal(e)
+	}
+	patch := append([]byte(nil), b.time.raw[:TimeTrieHeader]...)
+	patch = order.AppendUint64(patch, uint64(b.time.first()))
+	patch = order.AppendUint64(patch, uint64(b.time.sealed()))
+	if b.time.first() < b.time.sealed() {
+		patch, e = b.time.window(b.time.first(), b.time.sealed(), false)
+		if e != nil {
+			t.Fatal(e)
+		}
+	}
+	meta, e := json.Marshal(map[string]string{"Trunk-Source": "demo/payment/transactions.v1/write", "Definition-Version": fmtDigestNative(s.layout.Digest), "Trunk-Generation": fmt.Sprintf("%x", b.generation), "Trunk-Generation-Sequence": fmt.Sprint(s.generationSequence(Write))})
+	if e != nil {
+		t.Fatal(e)
+	}
+	for ext, raw := range map[string][]byte{".pac": w.Body.Bytes(), ".indx": b.rows, ".state": states, ".time": patch, ".headers.json": meta} {
+		if e := os.WriteFile(filepath.Join(folder, name+ext), raw, 0644); e != nil {
+			t.Fatal(e)
+		}
 	}
 }

@@ -1,0 +1,147 @@
+{
+  "fixed_strings": {},
+  "identity": "log-job_datadog",
+  "root": "log-job_datadog",
+  "types": {
+    "log-job_datadog": {
+      "fields": [
+        {
+          "name": "timestamp",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "duration",
+          "optional": true,
+          "value": {
+            "choices": [
+              {
+                "max": 9223372036854775807,
+                "min": -9223372036854775808,
+                "type": "integer"
+              },
+              {
+                "max": 8,
+                "min": 8,
+                "type": "size",
+                "value": {
+                  "type": "uint"
+                }
+              },
+              {
+                "type": "float"
+              }
+            ],
+            "type": "choice"
+          }
+        },
+        {
+          "name": "message",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.kind",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.message",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.stack",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "job",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "run",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "status",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "attempt",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "reason",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "schedule",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "queue",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "worker",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "task",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "workflow",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        }
+      ],
+      "type": "open_record"
+    }
+  }
+}

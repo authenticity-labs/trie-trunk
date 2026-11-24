@@ -236,3 +236,6 @@ mod tantivy_engine;
 mod buffers;
 
 mod live;
+mod seed_native;
+mod trunk_native;
+mod node_native;

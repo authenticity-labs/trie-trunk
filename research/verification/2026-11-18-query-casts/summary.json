@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "loaded": 24,
+  "visible": 0,
+  "wallMs": 804,
+  "domReadyMs": 37,
+  "submitHandlerMs": 11,
+  "startedAt": 1795058222820,
+  "observedAt": 1795058223624,
+  "visibility": "hidden",
+  "window": "2026-11-15 18:00 \u2192 20:00",
+  "boundary": {
+    "totalMs": 35,
+    "workerMs": 6,
+    "outsideWorkerMs": 29
+  },
+  "startup": {
+    "navigationStartAt": 1795058220268,
+    "driverMs": 16,
+    "controlsReadyMs": 519,
+    "submitMs": 2552,
+    "replicaReset": {
+      "removed": false,
+      "ms": 1
+    }
+  },
+  "runs": [
+    {
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 804,
+      "domReadyMs": 37,
+      "submitHandlerMs": 11,
+      "startedAt": 1795058222820,
+      "observedAt": 1795058223624,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "totalMs": 35,
+        "workerMs": 6,
+        "outsideWorkerMs": 29
+      }
+    }
+  ],
+  "nativeActivityState": {
+    "peak": 3,
+    "pending": 0,
+    "starts": 3,
+    "active": 0,
+    "errors": 0,
+    "mode": "native",
+    "ends": 3
+  },
+  "warnings": []
+}

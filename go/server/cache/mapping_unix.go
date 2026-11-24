@@ -5,7 +5,19 @@ package cache
 import (
 	"fmt"
 	"golang.org/x/sys/unix"
+	"sync/atomic"
 )
+
+type residentMapping struct {
+	refs atomic.Int64
+	raw  []byte
+}
+
+func (m *residentMapping) release() {
+	if m != nil && m.refs.Add(-1) == 0 {
+		_ = unix.Munmap(m.raw)
+	}
+}
 
 func (b *branchStore) mapIndex() error {
 	stat, e := b.idx.Stat()
@@ -24,6 +36,8 @@ func (b *branchStore) mapIndex() error {
 		unix.Munmap(mapped)
 		return e
 	}
+	b.readerIndex = &residentMapping{raw: mapped}
+	b.readerIndex.refs.Store(1)
 	b.mapping = mapped
 	b.rows = mapped[headerSize:]
 	return nil
@@ -32,7 +46,9 @@ func (b *branchStore) unmapIndex() error {
 	if b.mapping == nil {
 		return nil
 	}
-	e := unix.Munmap(b.mapping)
+	b.readerIndex.release()
+	b.readerIndex = nil
+	var e error
 	b.mapping = nil
 	b.rows = nil
 	return e

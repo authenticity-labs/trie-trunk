@@ -20,7 +20,7 @@ type LateEventError struct {
 }
 
 func (e *LateEventError) Error() string {
-	return fmt.Sprintf("event %x precedes finalized boundary %s; full event saved in lost.log", e.EventID, time.UnixMilli(e.FinalizedBefore).UTC().Format(time.RFC3339Nano))
+	return fmt.Sprintf("event %x precedes finalized boundary %s; full event saved in lost.seeds", e.EventID, time.UnixMilli(e.FinalizedBefore).UTC().Format(time.RFC3339Nano))
 }
 
 // Rejection retains the exact original PIL bytes with their immutable map
@@ -42,7 +42,7 @@ func (s *Store) rejectionFile() (*os.File, error) {
 	if s.audit != nil {
 		return s.audit, nil
 	}
-	f, e := openFile(filepath.Join(s.dir, "lost.log"), "NUTSREJ6", s.layout.Digest, [16]byte{}, 0)
+	f, e := openFile(filepath.Join(s.dir, "lost.seeds"), "NUTSREJ6", s.layout.Digest, [16]byte{}, 0)
 	if e != nil {
 		return nil, e
 	}
@@ -54,7 +54,10 @@ func (s *Store) rejectionFile() (*os.File, error) {
 	return f, nil
 }
 func (s *Store) rejectLate(b *branchStore, id [16]byte, raw []byte) error {
-	rejection := Rejection{ReceivedAt: s.config.Now().UTC(), Branch: b.branch.Name(), EventID: fmt.Sprintf("%x", id), DefinitionVersion: fmt.Sprintf("%x", s.layout.Digest), FinalizedBefore: time.UnixMilli(b.ingressBoundary()).UTC(), Reason: "arrival_after_finalization", PIL: raw}
+	return s.rejectLateDefinition(b, id, raw, s.layout.Digest, nil)
+}
+func (s *Store) rejectLateDefinition(b *branchStore, id [16]byte, raw []byte, digest [32]byte, transformed []Value) error {
+	rejection := Rejection{ReceivedAt: s.config.Now().UTC(), Branch: b.branch.Name(), EventID: fmt.Sprintf("%x", id), DefinitionVersion: fmt.Sprintf("%x", digest), FinalizedBefore: time.UnixMilli(b.ingressBoundary()).UTC(), Reason: "arrival_after_finalization", PIL: raw}
 	data, e := encoder.Marshal(rejection)
 	if e != nil {
 		return s.fail(e)
@@ -74,7 +77,12 @@ func (s *Store) rejectLate(b *branchStore, id [16]byte, raw []byte) error {
 		return s.fail(fmt.Errorf("could not preserve rejected event: %w", e))
 	}
 	if b.branch == Write || b.branch == Error {
-		if e = s.invalidateReceived(Error, raw); e != nil {
+		if transformed != nil {
+			e = s.invalidateReceivedValues(Error, transformed)
+		} else {
+			e = s.invalidateReceived(Error, raw)
+		}
+		if e != nil {
 			return s.fail(e)
 		}
 	}
@@ -142,7 +150,10 @@ func (s *Store) Rejections(visit func(Rejection) error) error {
 // rejectInput records the original bytes even when no valid UUID can be read.
 // Caller holds the store lock. This audit is independent of branch retention.
 func (s *Store) rejectInput(branch Branch, raw []byte, reason string, cause error) error {
-	rejection := Rejection{ReceivedAt: s.config.Now().UTC(), Branch: branch.Name(), DefinitionVersion: fmtDigestNative(s.layout.Digest), Reason: reason + ": " + cause.Error(), PIL: append([]byte(nil), raw...)}
+	return s.rejectInputDefinition(branch, raw, reason, cause, s.layout.Digest)
+}
+func (s *Store) rejectInputDefinition(branch Branch, raw []byte, reason string, cause error, digest [32]byte) error {
+	rejection := Rejection{ReceivedAt: s.config.Now().UTC(), Branch: branch.Name(), DefinitionVersion: fmtDigestNative(digest), Reason: reason + ": " + cause.Error(), PIL: append([]byte(nil), raw...)}
 	data, e := encoder.Marshal(rejection)
 	if e != nil {
 		return s.fail(e)
@@ -161,7 +172,7 @@ func (s *Store) rejectInput(branch Branch, raw []byte, reason string, cause erro
 		return s.fail(fmt.Errorf("could not preserve rejected input: %w", e))
 	}
 	log.Printf("ALERT trie-trunk cache=%s resource=%s branch=%s lost event: %s", s.config.Cache, s.binding, branch.Name(), rejection.Reason)
-	return fmt.Errorf("%s; original input saved in lost.log", rejection.Reason)
+	return fmt.Errorf("%s; original input saved in lost.seeds", rejection.Reason)
 }
 
 // Expanded only for explicit audit inspection. Stored/transmitted source bytes

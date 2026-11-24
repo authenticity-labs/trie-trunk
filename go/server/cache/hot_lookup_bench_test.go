@@ -50,7 +50,7 @@ func BenchmarkResidentObjectHistory(b *testing.B) {
 					if (v.row == ProvisionalRow) != (mode == "pending") {
 						b.Fatal("wrong pending state")
 					}
-					if (v.raw != nil) != (mode != "expired-resident-warm-disk") {
+					if v.resident() != (mode != "expired-resident-warm-disk") {
 						b.Fatal("wrong resident state")
 					}
 				}

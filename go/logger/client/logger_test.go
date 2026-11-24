@@ -25,6 +25,27 @@ func testLogger(t testing.TB, w io.Writer, config Config) *Logger {
 	return l
 }
 
+func TestDeferredFinishKeepsOperationDuration(t *testing.T) {
+	var out bytes.Buffer
+	l := testLogger(t, &out, Config{Format: codec.CompactJSON})
+	_, b := l.Begin(context.Background())
+	b.state.started = time.Now().Add(-time.Second)
+	completed := b.state.started.Add(10 * time.Millisecond)
+	if err := b.FinishAt(completed); err != nil {
+		t.Fatal(err)
+	}
+	if got := b.Snapshot().Duration; got != 10*time.Millisecond {
+		t.Fatalf("delivery scheduling inflated duration: %s", got)
+	}
+	first := out.String()
+	if err := b.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	if out.String() != first || b.Snapshot().Duration != 10*time.Millisecond {
+		t.Fatal("repeat finish changed completion")
+	}
+}
+
 func TestConcurrentEnrichmentAndFinish(t *testing.T) {
 	var out bytes.Buffer
 	l := testLogger(t, &out, Config{Format: codec.CompactJSON})

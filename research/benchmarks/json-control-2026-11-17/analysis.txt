@@ -1,0 +1,31 @@
+json-comparison
+binary first {'observed': 1987.5, 'total': 1055.5, 'worker': 681.0, 'outside': 404.5, 'request': 86.0, 'forward': 300.5, 'page': 104.0, 'adapt': 19.0, 'collection': 378.0} DOM None
+stages {'control.mode': 0.0, 'json.response': 0.0, 'json.body': 0.0, 'json.parse': 0.0, 'json.filterSort': 0.0, 'readerOpen': 53.5, 'poll': 115.5, 'materialize': 9.5}
+binary repeat {'observed': 994.5, 'total': 659.0, 'worker': 195.5, 'outside': 449.5, 'request': 150.5, 'forward': 192.0, 'page': 99.5, 'adapt': 9.0, 'collection': 0.0} DOM None
+stages {'control.mode': 0.0, 'json.response': 0.0, 'json.body': 0.0, 'json.parse': 0.0, 'json.filterSort': 0.0, 'readerOpen': 103.0, 'poll': 31.5, 'materialize': 10.0}
+json first {'observed': 1030.5, 'total': 639.5, 'worker': 358.5, 'outside': 295.5, 'request': 96.5, 'forward': 157.0, 'page': 80.5, 'adapt': 7.0, 'collection': 269.0} DOM None
+stages {'control.mode': 0.0, 'json.response': 22.0, 'json.body': 182.5, 'json.parse': 16.0, 'json.filterSort': 10.5, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}
+json repeat {'observed': 870.0, 'total': 545.0, 'worker': 236.0, 'outside': 277.5, 'request': 137.0, 'forward': 120.0, 'page': 61.0, 'adapt': 12.5, 'collection': 136.5} DOM None
+stages {'control.mode': 0.0, 'json.response': 22.0, 'json.body': 102.5, 'json.parse': 10.5, 'json.filterSort': 18.0, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}
+json-comparison-dom
+binary first {'observed': 1954.5, 'total': 1110.0, 'worker': 756.0, 'outside': 395.0, 'request': 16.5, 'forward': 267.0, 'page': 131.5, 'adapt': 21.0, 'collection': 355.5} DOM 1119.0
+stages {'control.mode': 0.0, 'json.response': 0.0, 'json.body': 0.0, 'json.parse': 0.0, 'json.filterSort': 0.0, 'readerOpen': 56.5, 'poll': 120.0, 'materialize': 7.5}
+binary repeat {'observed': 931.5, 'total': 665.0, 'worker': 260.0, 'outside': 433.0, 'request': 148.5, 'forward': 221.0, 'page': 95.0, 'adapt': 9.0, 'collection': 0.5} DOM 679.0
+stages {'control.mode': 0.0, 'json.response': 0.0, 'json.body': 0.0, 'json.parse': 0.0, 'json.filterSort': 0.0, 'readerOpen': 126.5, 'poll': 34.5, 'materialize': 5.5}
+json first {'observed': 918.0, 'total': 628.5, 'worker': 348.0, 'outside': 319.0, 'request': 164.0, 'forward': 110.0, 'page': 93.0, 'adapt': 6.5, 'collection': 259.0} DOM 637.0
+stages {'control.mode': 0.0, 'json.response': 35.0, 'json.body': 204.0, 'json.parse': 16.0, 'json.filterSort': 25.5, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}
+json repeat {'observed': 1057.5, 'total': 759.5, 'worker': 331.0, 'outside': 380.5, 'request': 114.5, 'forward': 240.0, 'page': 119.0, 'adapt': 21.5, 'collection': 230.5} DOM 777.5
+stages {'control.mode': 0.0, 'json.response': 23.0, 'json.body': 195.0, 'json.parse': 13.0, 'json.filterSort': 17.5, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}
+json-comparison-http
+binary first {'observed': 2484.5, 'total': 1802.0, 'worker': 898.5, 'outside': 484.5, 'request': 162.0, 'forward': 193.5, 'page': 149.5, 'adapt': 15.0, 'collection': 602.5} DOM 1822.5
+stages {'control.mode': 0.0, 'json.response': 0.0, 'json.body': 0.0, 'json.parse': 0.0, 'json.filterSort': 0.0, 'readerOpen': 87.0, 'poll': 104.5, 'materialize': 14.5}
+binary repeat {'observed': 951.0, 'total': 539.0, 'worker': 243.0, 'outside': 296.0, 'request': 91.5, 'forward': 91.0, 'page': 59.5, 'adapt': 3.5, 'collection': 0.0} DOM 556.5
+stages {'control.mode': 0.0, 'json.response': 0.0, 'json.body': 0.0, 'json.parse': 0.0, 'json.filterSort': 0.0, 'readerOpen': 110.0, 'poll': 30.5, 'materialize': 10.5}
+json first {'observed': 1431.5, 'total': 721.5, 'worker': 350.0, 'outside': 371.5, 'request': 24.0, 'forward': 242.0, 'page': 122.5, 'adapt': 14.5, 'collection': 249.5} DOM 731.5
+stages {'control.mode': 0.0, 'json.response': 26.5, 'json.body': 211.0, 'json.parse': 15.0, 'json.filterSort': 20.0, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}
+json repeat {'observed': 1012.0, 'total': 676.5, 'worker': 290.0, 'outside': 386.5, 'request': 84.0, 'forward': 118.0, 'page': 72.5, 'adapt': 10.0, 'collection': 182.0} DOM 686.5
+stages {'control.mode': 0.0, 'json.response': 46.5, 'json.body': 105.0, 'json.parse': 22.5, 'json.filterSort': 17.0, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}
+json-http first {'observed': 995.5, 'total': 683.5, 'worker': 203.0, 'outside': 489.5, 'request': 213.5, 'forward': 194.5, 'page': 115.5, 'adapt': 15.5, 'collection': 95.0} DOM 695.0
+stages {'control.mode': 0.0, 'json.response': 66.5, 'json.body': 6.0, 'json.parse': 14.5, 'json.filterSort': 20.0, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}
+json-http repeat {'observed': 895.0, 'total': 630.5, 'worker': 152.0, 'outside': 462.0, 'request': 172.5, 'forward': 195.0, 'page': 62.0, 'adapt': 16.0, 'collection': 69.0} DOM 636.0
+stages {'control.mode': 0.0, 'json.response': 38.0, 'json.body': 4.0, 'json.parse': 18.0, 'json.filterSort': 12.0, 'readerOpen': 0.0, 'poll': 0.0, 'materialize': 0.0}

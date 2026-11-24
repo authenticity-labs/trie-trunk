@@ -1,0 +1,59 @@
+   Compiling pill-packer v0.1.0 (/Users/Shared/code/applications/pill-packer/rust)
+   Compiling trie-trunk-taxonomy v0.1.0 (/Users/Shared/code/applications/trie-trunk/rust/trunk)
+   Compiling data-seeds v0.1.0 (/Users/Shared/code/applications/trie-trunk/rust/seeds)
+warning: struct `ObjectRow` is never constructed
+   --> src/query.rs:200:19
+    |
+200 | pub(crate) struct ObjectRow<'a> {
+    |                   ^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `get` is never used
+   --> src/query.rs:205:8
+    |
+204 | impl ObjectRow<'_> {
+    | ------------------ method in this implementation
+205 |     fn get(&self, ordinal: usize) -> Option<&Data> {
+    |        ^^^
+
+warning: method `fields` is never used
+   --> src/query.rs:253:19
+    |
+252 | impl Expression {
+    | --------------- method in this implementation
+253 |     pub(crate) fn fields(&self, out: &mut Vec<usize>) {
+    |                   ^^^^^^
+
+warning: associated function `excluding` is never used
+   --> src/query.rs:479:19
+    |
+478 | impl PackScan {
+    | ------------- associated function in this implementation
+479 |     pub(crate) fn excluding(pack: &SeedPackSnapshot, predicate: Arc<Expression>) -> Self {
+    |                   ^^^^^^^^^
+
+warning: function `compare_object` is never used
+   --> src/value.rs:267:15
+    |
+267 | pub(crate) fn compare_object(value: &Data, rhs: &Operand) -> Result<Option<Ordering>, Error> {
+    |               ^^^^^^^^^^^^^^
+
+warning: `data-seeds` (lib) generated 5 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.28s
+     Running tests/summary_definitions.rs (rust/seeds/target/debug/deps/summary_definitions-6ef3671a49227a95)
+
+running 10 tests
+test prescribing_parsed_doc_matches_loading_signed_bundle ... ok
+test generic_library_is_reproducible_and_classes_are_fixed ... ok
+test prepared_class_plans_share_only_with_their_immutable_source ... ok
+test field_sizes_names_and_annotations_change_bindings_not_definitions ... ok
+test prepared_categories_keep_each_sources_vocabulary_and_predicate ... ok
+test categories_use_uint3_counters_and_seed_owned_vocabularies ... ok
+test annotation_only_field_selection_preserves_historical_meaning ... ok
+test different_day_dimensions_and_names_survive_restart_and_rollup ... ok
+test registered_packs_bind_fields_from_the_selected_taxonomy ... ok
+test source_ordinals_and_field_counts_do_not_change_library ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+

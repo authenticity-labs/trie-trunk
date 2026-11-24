@@ -5,7 +5,7 @@ package cache
 // protocol negotiation, Rust/WASM, arrays and storage bindings are implemented.
 import (
 	"fmt"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"math/bits"
 	"strings"

@@ -104,16 +104,6 @@ func TestMixedAggregateRecoveryAndRollupPublication(t *testing.T) {
 		t.Fatal(e)
 	}
 	b.sumEnd = uint64(headerSize + 8 + len(legacy))
-	commit, e := encoder.Marshal(Commit{Run: b.runs[0]})
-	if e != nil {
-		t.Fatal(e)
-	}
-	if e = b.journal.Truncate(headerSize); e != nil {
-		t.Fatal(e)
-	}
-	if e = appendRecord(b.journal, commit); e != nil {
-		t.Fatal(e)
-	}
 	if e = s.Close(); e != nil {
 		t.Fatal(e)
 	}
@@ -193,8 +183,11 @@ func TestMixedAggregateRecoveryAndRollupPublication(t *testing.T) {
 		if e = s.Flush(); e != nil {
 			t.Fatal(e)
 		}
-		if _, e = os.Stat(filepath.Join(s.dir, branch.Prefix()+".sum")); !os.IsNotExist(e) {
-			t.Fatal("unexpected aggregate file")
+		if _, e = os.Stat(filepath.Join(s.dir, branch.Prefix()+".summ")); e != nil {
+			t.Fatal("missing Definition-driven summary file", e)
+		}
+		if len(s.branches[branch].summaries) == 0 || len(s.branches[branch].summaries[0].Fields) == 0 {
+			t.Fatal("missing field aggregate PAC")
 		}
 	}
 }

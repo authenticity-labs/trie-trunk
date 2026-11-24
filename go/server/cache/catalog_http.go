@@ -1,7 +1,9 @@
 package cache
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sort"
 	"strings"
@@ -24,7 +26,7 @@ func catalogGET(w http.ResponseWriter, r *http.Request) bool {
 		return false
 	}
 	accept := strings.ToLower(strings.TrimSpace(r.Header.Get("Accept")))
-	if accept != "" && accept != "*/*" && accept != "application/json" {
+	if accept != "" && accept != "*/*" && accept != "application/json" && accept != "application/pil" {
 		http.Error(w, "unsupported response format", http.StatusNotAcceptable)
 		return false
 	}
@@ -61,6 +63,33 @@ func writeCatalog(w http.ResponseWriter, r *http.Request, sources, collections [
 	if sources == nil {
 		sources = []string{}
 	}
+	if r.Header.Get("Accept") == "application/pil" {
+		raw, err := encoder.Marshal(map[string][]string{key: sources, "collections": collections})
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		w.Header().Set("Content-Type", "application/pil")
+		if metadataUnchanged(w, r, raw) {
+			return
+		}
+		_, _ = w.Write(raw)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(map[string][]string{key: sources, "collections": collections})
+}
+
+// Metadata is private to credentials and must be revalidated before reuse.
+func metadataUnchanged(w http.ResponseWriter, r *http.Request, raw []byte) bool {
+	w.Header().Set("Cache-Control", "private, no-cache")
+	w.Header().Add("Vary", "Authorization, Accept")
+	sum := sha256.Sum256(raw)
+	tag := fmt.Sprintf("\"%x\"", sum)
+	w.Header().Set("ETag", tag)
+	if r.Header.Get("If-None-Match") == tag {
+		w.WriteHeader(http.StatusNotModified)
+		return true
+	}
+	return false
 }

@@ -10,6 +10,7 @@ import (
 // A bounded, expiring registry prevents abandoned cursors from retaining frames
 // indefinitely. Eviction is an explicit restart, never a drifting page.
 type liveViewSnapshot struct {
+	release func()
 	events  []pending
 	expires time.Time
 }
@@ -20,6 +21,9 @@ func (b *branchStore) captureLive(from, to time.Time, prior *viewBinding) (strin
 	now := time.Now()
 	for key, v := range b.liveViews {
 		if !now.Before(v.expires) {
+			if v.release != nil {
+				v.release()
+			}
 			delete(b.liveViews, key)
 		}
 	}
@@ -59,10 +63,13 @@ func (b *branchStore) captureLive(from, to time.Time, prior *viewBinding) (strin
 				expiry = v.expires
 			}
 		}
+		if v := b.liveViews[oldest]; v.release != nil {
+			v.release()
+		}
 		delete(b.liveViews, oldest)
 	}
 	values = append([]pending(nil), values...)
-	b.liveViews[key] = liveViewSnapshot{values, now.Add(15 * time.Minute)}
+	b.liveViews[key] = liveViewSnapshot{events: values, expires: now.Add(15 * time.Minute), release: b.pinMemory()}
 	return key, values, nil
 }
 func (s *viewSource) orderingKey(row uint64) []byte {
@@ -86,19 +93,24 @@ func (s *viewSource) fullFrame(row uint64) ([]byte, error) {
 }
 
 func (s *viewSource) resident(row uint64) []byte {
-	s.store.mu.Lock()
-	defer s.store.mu.Unlock()
-	b := s.store.branches[s.branch]
-	if b == nil || b.generation != s.snap.generation {
-		return nil
-	}
-	// Background indexing borrows any retained hot frame; age is irrelevant to
-	// its immutable contents. It must not advance or consult the ingestion clock.
-	var now time.Time
+	now := s.store.config.Now()
 	if s.indexing {
 		now = time.UnixMilli(s.snap.rowTime(row))
-	} else {
-		now = s.store.config.Now()
 	}
-	return b.live.row(s.snap.rowTime(row), row, now)
+	run := s.reader.context.segment(&s.snap, row)
+	if len(s.snap.residentPack(*run, now)) == 0 {
+		return nil
+	}
+	raw, err := s.reader.read(&s.snap, row, s.store.row)
+	if err != nil {
+		return nil
+	}
+	if s.assembler.layout == nil {
+		return nil
+	}
+	full, err := s.assembler.assemble(s.snap.assemblyRow(row), raw, nil, s.snap.rowLeaf(row))
+	if err != nil {
+		return nil
+	}
+	return full
 }

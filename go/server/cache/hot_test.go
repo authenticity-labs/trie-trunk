@@ -41,10 +41,10 @@ func TestHotReplayStagingRestartPromotionAndExpiry(t *testing.T) {
 			if (v.row == ProvisionalRow) != provisional {
 				t.Fatal("wrong reference state")
 			}
-			if (v.raw != nil) != resident {
+			if v.resident() != resident {
 				t.Fatal("wrong resident state")
 			}
-			if resident && v.source.branch.pods != nil {
+			if resident && v.source.branch.packs != nil {
 				t.Fatal("resident history opened payload file")
 			}
 			if !resident && !v.source.reader.point {
@@ -239,5 +239,62 @@ func TestLiveHistoryObjectAndTimeBounds(t *testing.T) {
 				t.Fatal("cross-object or equal-time arrival ordering error")
 			}
 		}
+	}
+}
+
+func TestResidentPackRestartAndHour25Eviction(t *testing.T) {
+	l := testLayout(t, false)
+	at := time.Date(2026, 10, 31, 12, 0, 0, 0, time.UTC)
+	now := at.Add(time.Minute)
+	cfg := Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, Now: func() time.Time { return now }}
+	s, e := Open(cfg)
+	if e != nil {
+		t.Fatal(e)
+	}
+	for _, branch := range []Branch{Read, Write} {
+		if _, e = s.Append(branch, testFrame(t, l, at, 1, false)); e != nil {
+			t.Fatal(e)
+		}
+	}
+	now = at.Add(80 * time.Minute)
+	if e = s.Flush(); e != nil {
+		t.Fatal(e)
+	}
+	check := func() {
+		t.Helper()
+		for _, branch := range []Branch{Read, Write} {
+			b := s.branches[branch]
+			run := b.runs[0]
+			parts := b.residentPack(run, now)
+			raw, e := readBytes(b.packs, run.PacksStart-b.packsRetired, run.PacksEnd-b.packsRetired)
+			if e != nil || !bytes.Equal(bytes.Join(parts, nil), raw) {
+				t.Fatal("resident pack differs from stored pack", e)
+			}
+		}
+	}
+	check()
+	if e = s.Close(); e != nil {
+		t.Fatal(e)
+	}
+	s, e = Open(cfg)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer s.Close()
+	check()
+	b := s.branches[Read]
+	run := b.runs[0]
+	parts := b.residentPack(run, now)
+	expected := bytes.Join(parts, nil)
+	release := b.pinMemory()
+	defer release()
+	now = at.Add(25 * time.Hour)
+	b.live.prune(now)
+	b.pruneMemory(now)
+	if b.residentPack(run, now) != nil || b.memory[at.UnixMilli()/TimeHourMS] != nil {
+		t.Fatal("expired pack retained")
+	}
+	if !bytes.Equal(bytes.Join(parts, nil), expected) {
+		t.Fatal("eviction invalidated pinned response")
 	}
 }

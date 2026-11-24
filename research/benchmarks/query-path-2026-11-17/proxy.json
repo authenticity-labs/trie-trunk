@@ -1,0 +1,190 @@
+{
+  "native": "{\"ok\":true,\"loaded\":3,\"visible\":3,\"wallMs\":2204,\"submitHandlerMs\":16,\"startedAt\":1794951987344,\"observedAt\":1794951989550,\"visibility\":\"hidden\",\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"client\":{\"dispatchAt\":1794951987409,\"view-datasetAt\":1794951987787,\"datasetMs\":47,\"view-pageAt\":1794951988449,\"convertMs\":3,\"pageMs\":115,\"view-summaryAt\":1794951988573},\"totalMs\":1228,\"workerMs\":947,\"outsideWorkerMs\":281,\"steps\":{\"trace\":{\"times\":{\"beforeRegistered\":24,\"clone\":34,\"summary\":9,\"selection\":0,\"snapshot\":11,\"readerOpen\":55,\"open.source\":13,\"open.reader\":4,\"open.leaves\":14,\"open.index\":8,\"open.range\":0,\"open.definitions\":5,\"prepare\":1,\"metadata\":1,\"cursorSetup\":0,\"poll\":14,\"materialize\":4},\"counts\":{\"branches\":1,\"calendarHours\":14,\"selectedEvents\":3,\"indexHours\":14,\"emptyIndexHours\":12,\"collectionRanges\":1,\"collectionHours\":14,\"packs\":2,\"prepareCalls\":1,\"metadataBytes\":141,\"pollCalls\":1,\"work\":12,\"scanned\":3,\"matched\":3,\"materialized\":3}},\"finishedAt\":1794951988368,\"startedAt\":1794951987421,\"beforeReplicationMs\":78,\"replicationMs\":767,\"afterReplicationMs\":102,\"lastSeed\":{\"tap\":\"demo/trie-trunk/queries/query\",\"dispatchOffsetMs\":36,\"responseWaitMs\":181,\"bodyAndImportMs\":547,\"finalDependenciesMs\":0}}},\"runs\":[{\"loaded\":3,\"visible\":3,\"wallMs\":2204,\"submitHandlerMs\":16,\"startedAt\":1794951987344,\"observedAt\":1794951989550,\"visibility\":\"hidden\",\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"client\":{\"dispatchAt\":1794951987409,\"view-datasetAt\":1794951987787,\"datasetMs\":47,\"view-pageAt\":1794951988449,\"convertMs\":3,\"pageMs\":115,\"view-summaryAt\":1794951988573},\"totalMs\":1228,\"workerMs\":947,\"outsideWorkerMs\":281,\"steps\":{\"trace\":{\"times\":{\"beforeRegistered\":24,\"clone\":34,\"summary\":9,\"selection\":0,\"snapshot\":11,\"readerOpen\":55,\"open.source\":13,\"open.reader\":4,\"open.leaves\":14,\"open.index\":8,\"open.range\":0,\"open.definitions\":5,\"prepare\":1,\"metadata\":1,\"cursorSetup\":0,\"poll\":14,\"materialize\":4},\"counts\":{\"branches\":1,\"calendarHours\":14,\"selectedEvents\":3,\"indexHours\":14,\"emptyIndexHours\":12,\"collectionRanges\":1,\"collectionHours\":14,\"packs\":2,\"prepareCalls\":1,\"metadataBytes\":141,\"pollCalls\":1,\"work\":12,\"scanned\":3,\"matched\":3,\"materialized\":3}},\"finishedAt\":1794951988368,\"startedAt\":1794951987421,\"beforeReplicationMs\":78,\"replicationMs\":767,\"afterReplicationMs\":102,\"lastSeed\":{\"tap\":\"demo/trie-trunk/queries/query\",\"dispatchOffsetMs\":36,\"responseWaitMs\":181,\"bodyAndImportMs\":547,\"finalDependenciesMs\":0}}}},{\"loaded\":3,\"visible\":3,\"wallMs\":858,\"submitHandlerMs\":46,\"startedAt\":1794951989583,\"observedAt\":1794951990444,\"visibility\":\"hidden\",\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"client\":{\"dispatchAt\":1794951989636,\"view-pageAt\":1794951990104,\"convertMs\":0,\"pageMs\":51,\"view-summaryAt\":1794951990158,\"view-datasetAt\":1794951990160,\"datasetMs\":50},\"totalMs\":569,\"workerMs\":285,\"outsideWorkerMs\":284,\"steps\":{\"trace\":{\"times\":{\"beforeRegistered\":29,\"clone\":0,\"summary\":26,\"selection\":1,\"snapshot\":5,\"readerOpen\":210,\"open.source\":69,\"open.reader\":4,\"open.leaves\":9,\"open.index\":41,\"open.range\":1,\"open.definitions\":12,\"prepare\":0,\"metadata\":0,\"cursorSetup\":0,\"poll\":1,\"materialize\":1},\"counts\":{\"branches\":1,\"calendarHours\":14,\"selectedEvents\":3,\"indexHours\":0,\"emptyIndexHours\":0,\"collectionRanges\":0,\"collectionHours\":0,\"packs\":2,\"prepareCalls\":1,\"metadataBytes\":141,\"pollCalls\":1,\"work\":12,\"scanned\":3,\"matched\":3,\"materialized\":3}},\"finishedAt\":1794951990100,\"startedAt\":1794951989815,\"beforeReplicationMs\":61,\"replicationMs\":0,\"afterReplicationMs\":224}}},{\"loaded\":3,\"visible\":3,\"wallMs\":1058,\"submitHandlerMs\":18,\"startedAt\":1794951990485,\"observedAt\":1794951991544,\"visibility\":\"hidden\",\"window\":\"2026-11-17 00:00 \u2192 20:00\",\"boundary\":{\"client\":{\"dispatchAt\":1794951990508,\"view-pageAt\":1794951990837,\"convertMs\":1,\"pageMs\":45,\"view-summaryAt\":1794951990886,\"view-datasetAt\":1794951990888,\"datasetMs\":17},\"totalMs\":395,\"workerMs\":159,\"outsideWorkerMs\":236,\"steps\":{\"trace\":{\"times\":{\"beforeRegistered\":1,\"clone\":0,\"summary\":1,\"selection\":0,\"snapshot\":3,\"readerOpen\":132,\"open.source\":69,\"open.reader\":11,\"open.leaves\":9,\"open.index\":3,\"open.range\":1,\"open.definitions\":8,\"prepare\":12,\"metadata\":0,\"cursorSetup\":0,\"poll\":1,\"materialize\":1},\"counts\":{\"branches\":1,\"calendarHours\":14,\"selectedEvents\":3,\"indexHours\":0,\"emptyIndexHours\":0,\"collectionRanges\":0,\"collectionHours\":0,\"packs\":2,\"prepareCalls\":1,\"metadataBytes\":141,\"pollCalls\":1,\"work\":12,\"scanned\":3,\"matched\":3,\"materialized\":3}},\"finishedAt\":1794951990677,\"startedAt\":1794951990518,\"beforeReplicationMs\":5,\"replicationMs\":0,\"afterReplicationMs\":154}}}]}",
+  "requests": [
+    {
+      "path": "/caches",
+      "target": "/caches",
+      "startedAt": 1794951985294.719,
+      "headersMs": 0.48750000132713467,
+      "upstreamMs": 0.5019170021114405,
+      "bytes": 116,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=taxonomy",
+      "startedAt": 1794951985298.49,
+      "headersMs": 0.6887919989821967,
+      "upstreamMs": 1.4139170016278513,
+      "bytes": 146239,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=indexed.rx",
+      "startedAt": 1794951985312.646,
+      "headersMs": 21.885500002099434,
+      "upstreamMs": 21.90220800184761,
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=log-query.rx",
+      "startedAt": 1794951985312.223,
+      "headersMs": 23.54025000022375,
+      "upstreamMs": 23.546707998320926,
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=summary.rx",
+      "startedAt": 1794951985312.5652,
+      "headersMs": 26.224749999528285,
+      "upstreamMs": 26.247999998304294,
+      "bytes": 13976,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=inventory",
+      "startedAt": 1794951985353.545,
+      "headersMs": 2.557415999035584,
+      "upstreamMs": 2.573499998106854,
+      "bytes": 3912,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "target": "/demo/lab/indexed/leaves",
+      "startedAt": 1794951985360.095,
+      "headersMs": 0.3676669984997716,
+      "upstreamMs": 0.3778329992201179,
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/leaves",
+      "target": "/demo/trie-trunk/queries/leaves",
+      "startedAt": 1794951985360.138,
+      "headersMs": 0.40337500104214996,
+      "upstreamMs": 0.40966600136016496,
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/timelines",
+      "target": "/demo/trie-trunk/queries/query/timelines?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022&range=1794873600000%2C1794945600000",
+      "startedAt": 1794951985390.817,
+      "headersMs": 9.229667000909103,
+      "upstreamMs": 9.243707998393802,
+      "bytes": 288,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "target": "/demo/trie-trunk/queries/query/summaries?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022&range=1794873600000%2C1794960000000",
+      "startedAt": 1794951985418.019,
+      "headersMs": 200.5085830023745,
+      "upstreamMs": 200.7630420011992,
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "target": "/demo/trie-trunk/queries/query/summaries?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022&range=1794873600000%2C1794960000000",
+      "startedAt": 1794951987417.439,
+      "headersMs": 118.8303340022685,
+      "upstreamMs": 119.06641700261389,
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/indexes",
+      "target": "/demo/trie-trunk/queries/query/indexes?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022&generation=a8ed53ab7bf43bdd8b3ce0f1258e71d1&rows=0%2C2&rows=2%2C5",
+      "startedAt": 1794951987587.538,
+      "headersMs": 52.712167002027854,
+      "upstreamMs": 52.73695800133282,
+      "bytes": 30,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/packs",
+      "target": "/demo/trie-trunk/queries/query/packs?range=1794895200000%2C1794945600000&definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022",
+      "startedAt": 1794951987587.878,
+      "headersMs": 52.7402500010794,
+      "upstreamMs": 52.762333001737716,
+      "bytes": 856,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "target": "/demo/trie-trunk/queries/query/summaries?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022&range=1794873600000%2C1794960000000",
+      "startedAt": 1794951987540.459,
+      "headersMs": 99.6296249977604,
+      "upstreamMs": 100.34087500025635,
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/leaves",
+      "target": "/demo/trie-trunk/queries/leaves?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022",
+      "startedAt": 1794951987672.3708,
+      "headersMs": 0.3882080018229317,
+      "upstreamMs": 0.4010420016129501,
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "target": "/demo/trie-trunk/queries/query/seeds",
+      "startedAt": 1794951988636.283,
+      "headersMs": 8.238916998379864,
+      "upstreamMs": 8.266166998510016,
+      "bytes": 0,
+      "status": 204
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "target": "/demo/trie-trunk/queries/query/summaries?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022&range=1794873600000%2C1794960000000",
+      "startedAt": 1794951989884.9028,
+      "headersMs": 143.29062499746215,
+      "upstreamMs": 143.68512500004726,
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "target": "/demo/trie-trunk/queries/query/seeds",
+      "startedAt": 1794951990240.4329,
+      "headersMs": 7.008500000665663,
+      "upstreamMs": 7.060416999593144,
+      "bytes": 0,
+      "status": 204
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/summaries",
+      "target": "/demo/trie-trunk/queries/query/summaries?definition=422508a72aa4a84ba8473db3f0024f7eff5b0218c2e46c82eb61d1a8ecad3022&range=1794873600000%2C1794960000000",
+      "startedAt": 1794951990528.001,
+      "headersMs": 147.3432499988121,
+      "upstreamMs": 147.550957997737,
+      "bytes": 33736,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/query/seeds",
+      "target": "/demo/trie-trunk/queries/query/seeds",
+      "startedAt": 1794951990925.524,
+      "headersMs": 8.163250000507105,
+      "upstreamMs": 8.217250000598142,
+      "bytes": 0,
+      "status": 204
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": "2026-11-17T00:00:00Z",
+  "to": "2026-11-17T20:00:00Z",
+  "query": "events | where level = INFO and severity = 1"
+}

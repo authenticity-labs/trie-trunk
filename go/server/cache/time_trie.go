@@ -31,7 +31,7 @@ type TimeLeaf struct {
 	Start, End uint64
 	Segments   uint32
 	State      byte
-	Pods, Sods uint64
+	Packs, Beds uint64
 }
 
 func utcHour(ms int64) int64           { return time.UnixMilli(ms).UTC().Truncate(time.Hour).UnixMilli() }
@@ -71,7 +71,7 @@ func (t *timeDirectory) leaf(ms int64) (TimeLeaf, bool) {
 	}
 	at := h
 	read := func(w byte) uint64 { v := getUintWidth(t.raw[at : at+int(w)]); at += int(w); return v }
-	start, pods, sods, count := read(t.raw[40]), read(t.raw[41]), read(t.raw[42]), read(t.raw[43])
+	start, packs, beds, count := read(t.raw[40]), read(t.raw[41]), read(t.raw[42]), read(t.raw[43])
 	end := start
 	segments := uint32(0)
 	if count > 0 {
@@ -80,7 +80,7 @@ func (t *timeDirectory) leaf(ms int64) (TimeLeaf, bool) {
 	}
 	// Every hour within the published bounds is sealed, including empty hours.
 	// Client file-replication masks are never stored in this server directory.
-	return TimeLeaf{From: ms, To: ms + TimeHourMS, Start: start, End: end, Segments: segments, State: TimeComplete, Pods: pods, Sods: sods}, true
+	return TimeLeaf{From: ms, To: ms + TimeHourMS, Start: start, End: end, Segments: segments, State: TimeComplete, Packs: packs, Beds: beds}, true
 }
 func (t *timeDirectory) boundary(ms int64) (uint64, byte, bool) {
 	if len(t.raw) < TimeTrieHeader {
@@ -112,7 +112,7 @@ func buildHourDirectory(runs []Run, first, sealed int64, tail uint64, source [16
 		if r.PAC == nil || r.End <= r.Start {
 			return timeDirectory{}, fmt.Errorf("invalid hourly segment")
 		}
-		grow(1, r.PodsStart)
+		grow(1, r.PacksStart)
 		grow(2, r.PAC.Placement.MemberStart)
 		grow(3, r.End-r.Start)
 		grow(5, r.End-r.Start)
@@ -141,14 +141,14 @@ func buildHourDirectory(runs []Run, first, sealed int64, tail uint64, source [16
 	i := 0
 	for ms := first; ms < sealed; ms += TimeHourMS {
 		_, _, h, _ := t.positions(time.UnixMilli(ms))
-		pods, sods, count := uint64(0), uint64(0), uint64(0)
+		packs, beds, count := uint64(0), uint64(0), uint64(0)
 		start := row
 		if i < len(runs) && runs[i].PAC.Placement.From == ms {
 			r := runs[i]
 			if r.Start != row+IndexHeaderSlots || r.PAC.Placement.To != ms+TimeHourMS {
 				return timeDirectory{}, fmt.Errorf("noncontiguous hourly segment")
 			}
-			pods, sods, count = r.PodsStart, r.PAC.Placement.MemberStart-4-4*(r.End-r.Start), r.End-r.Start
+			packs, beds, count = r.PacksStart, r.PAC.Placement.MemberStart-4-4*(r.End-r.Start), r.End-r.Start
 			row = r.End
 			i++
 			if i < len(runs) && runs[i].PAC.Placement.From == ms {
@@ -156,7 +156,7 @@ func buildHourDirectory(runs []Run, first, sealed int64, tail uint64, source [16
 			}
 		}
 		at := h
-		for k, v := range []uint64{start, pods, sods, count} {
+		for k, v := range []uint64{start, packs, beds, count} {
 			w := int(widths[k])
 			putUintWidth(t.raw[at:at+w], v)
 			at += w
@@ -184,7 +184,7 @@ func parseTimeDirectory(raw []byte, source [16]byte) (timeDirectory, error) {
 			return timeDirectory{}, fmt.Errorf("invalid directory width")
 		}
 	}
-	if raw[46] != 0 || raw[47] != 0 || t.origin() > t.first() || t.first() > t.sealed() || t.first() != utcHour(t.first()) || t.origin() != utcHour(t.origin()) || t.sealed() != utcHour(t.sealed()) {
+	if raw[46] != 0 || (int8(raw[47]) < -12 || int8(raw[47]) > 14) || t.origin() > t.first() || t.first() > t.sealed() || t.first() != utcHour(t.first()) || t.origin() != utcHour(t.origin()) || t.sealed() != utcHour(t.sealed()) {
 		return timeDirectory{}, fmt.Errorf("invalid directory bounds")
 	}
 	last := t.baseYear()
@@ -217,7 +217,7 @@ func (s *Store) publishTime(b *branchStore) error {
 	if len(runs) > 0 {
 		first = min(first, runs[0].PAC.Placement.From)
 	}
-	path := filepath.Join(s.dir, s.prefix(b.branch)+".tri")
+	path := filepath.Join(s.dir, s.prefix(b.branch)+".time")
 	old, e := os.ReadFile(path)
 	if e != nil && !os.IsNotExist(e) {
 		return e
@@ -236,6 +236,7 @@ func (s *Store) publishTime(b *branchStore) error {
 	if e != nil {
 		return e
 	}
+	t.raw[47] = byte(int8(s.policyFor(b.branch).summaryOffsetHours()))
 	if !bytes.Equal(old, t.raw) {
 		if e = replace(path, t.raw); e != nil {
 			return e
@@ -293,20 +294,20 @@ func (b *branchStore) visitPeriods(from, to time.Time, fn func(*Period)) {
 	}
 }
 
-// podsBoundary resolves a half-open time boundary without reading event indexes.
+// packsBoundary resolves a half-open time boundary without reading event indexes.
 // Empty/blank siblings have no usable address. Walk backward to a populated leaf
 // and read only its length prefix. Coverage validation remains window's job;
 // finding an address never changes blank hours into complete-empty hours.
-func (t *timeDirectory) podsBoundary(file *os.File, retired uint64, ms int64) (uint64, error) {
+func (t *timeDirectory) packsBoundary(file *os.File, retired uint64, ms int64) (uint64, error) {
 	if len(t.raw) < TimeTrieHeader || ms != utcHour(ms) || ms < t.first() || ms > t.sealed() {
 		return 0, fmt.Errorf("invalid PAC time boundary")
 	}
 	if l, ok := t.leaf(ms); ok && l.Segments > 0 {
-		return l.Pods, nil
+		return l.Packs, nil
 	}
 	for at := ms - TimeHourMS; at >= t.first(); at -= TimeHourMS {
 		if l, ok := t.leaf(at); ok && l.Segments > 0 {
-			_, end, err := storedSegmentRange(file, retired, l.Pods)
+			_, end, err := storedSegmentRange(file, retired, l.Packs)
 			return end, err
 		}
 	}

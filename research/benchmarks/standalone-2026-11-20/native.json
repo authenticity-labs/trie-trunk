@@ -1,0 +1,23 @@
+{
+  "all_rows_native_decode_ms": 137.090667,
+  "analytics_ms": 1.446625,
+  "from": 1794960000000,
+  "generation_ms": 67.303875,
+  "input_bytes": 20290680,
+  "install_ms": 17.174,
+  "parse_encode_durable_publish_ms": 11541.805042,
+  "reopen_ms": 1.254667,
+  "rows": 240000,
+  "to": 1795046400000,
+  "upload_ms": 6.654625,
+  "conditions": {
+    "profile": "fresh native Browse node",
+    "input": "generated JSON Lines, five resulting Seed fields including generated identity",
+    "distribution": "240000 events across 24 hours, duration cycles 0\u201319999, success false every tenth event",
+    "timing": "single release run; parsing/encoding/publication inside import timer; file generation and upload separate",
+    "scan": "every row and every field materialized into Rust objects; checksum validates duration; excludes JSON transport and UI",
+    "analytics": "existing generic numeric/boolean classes, no public summary query source",
+    "cache": "OS filesystem cache not cleared",
+    "concurrency": "app build was running during this sample; diagnostic baseline, not an isolated regression comparison"
+  }
+}

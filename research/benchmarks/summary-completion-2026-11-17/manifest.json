@@ -1,0 +1,20 @@
+{
+  "deployed": true,
+  "backup": "/tmp/trunk-summary-backup-20261117",
+  "scope": "Branch-owned summary context, generic fixed class arrays, compatible mixed annotations; custom log class/unit changes deferred.",
+  "benchmarks": {
+    "baseline": "summary-branch-context-2026-11-17/current-source.tar.gz",
+    "timing": "Seven alternating native resident read pairs; all ingestion outside read timings. Same event and PAC hashes. No HTTP/UI performance claim.",
+    "binaries": {
+      "before": "173927dc991ac48bc115378d59f3383212aa63f1949b98b156c8f5083b2379ff",
+      "after": "ceb8c3772ff4c3b6570b943736ffeff9bc6aae3db68025f3842d1c9a8e5f6409"
+    }
+  },
+  "published": {
+    "trunk": "f4423c78bbed9ee12789e656b3759a11b25de92bf4ba5e63330e868aa33dfbe6",
+    "trunk-search": "0a74a1af3dcbd8923f4af27237036c5c9c96b11defee6698d32ab0bffe920963",
+    "client/assets/data-seeds.wasm": "d91ef32f17d7ccb8008b86b41db882da056d09cec52a718448405d7e68bb1929",
+    "client/dist/index.html": "1f2997c8d7f4f11537634e71888279b58f0a00dbe8572a2debabd8d8db37915d",
+    "desktop/dist/Snoot.app/Contents/Resources/web/index.html": "1f2997c8d7f4f11537634e71888279b58f0a00dbe8572a2debabd8d8db37915d"
+  }
+}

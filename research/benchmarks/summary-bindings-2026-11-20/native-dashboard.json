@@ -1,0 +1,191 @@
+{
+  "native": "{\"ok\":true,\"dashboard\":\"Fast\\nDeep\\nTime Window\\nRefresh\\nOct 21 \u2013 Nov 20 \u00b7 UTC \u00b7 Includes Current Summary Period\\nPrecomputed Summaries\\nSummarized Events\\n20,000\\n\u2014\\nError Rate\\n\u2014\\n\u2014\\nAverage Duration\\n9.7 ms\\n\u2014\\nP95 Period Mean Duration\\n9.7 ms\\n\u2014\\nEvent Activity\\nEvents\\n0\\n5,000\\n10,000\\n15,000\\n20,000\\nOct 22\\nOct 29\\nNov 8\\nNov 15\\nP95 Period Mean Trend\\nms\\n0\\n2\\n4\\n6\\n8\\n10\\nOct 22\\nOct 29\\nNov 8\\nNov 15\\nTop 10 Resources\\ndemo / lab / indexed\\n0\\n10,000\\n20,000\\nBottom 10 Active Resources\\ndemo / lab / indexed\\n0\\n10,000\\n20,000\\nServices With Trends\\ndemo / lab\\n20,000\\nObserved Levels\\nResource Summary\\nExport CSV\\nResource\\tEvents\\tErrors\\tError Rate\\tAverage Duration\\tP95 Period Mean Duration\\ndemo/lab/indexed\\t20,000\\t\u2014\\t\u2014\\t9.7 ms\\t9.7 ms\\nDefault Chart Definition\"}",
+  "nativeStderr": "2026/11/20 01:54:40 Snoot listening on http://127.0.0.1:54205 using HTTP\n",
+  "requests": [
+    {
+      "path": "/caches",
+      "target": "/caches",
+      "startedAt": 1795157681072.203,
+      "headersMs": 0.761916016926989,
+      "upstreamMs": 0.8015409985091537,
+      "injectedDelaySeconds": 0,
+      "bytes": 118,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=taxonomy",
+      "startedAt": 1795157681076.8362,
+      "headersMs": 0.3114999854005873,
+      "upstreamMs": 0.4638339742086828,
+      "injectedDelaySeconds": 0,
+      "bytes": 26921,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=summary.rx",
+      "startedAt": 1795157681083.9197,
+      "headersMs": 1.9277080136816949,
+      "upstreamMs": 1.9475000153761357,
+      "injectedDelaySeconds": 0,
+      "bytes": 1068,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=log-query.rx",
+      "startedAt": 1795157681084.106,
+      "headersMs": 1.8594579887576401,
+      "upstreamMs": 1.8717909988481551,
+      "injectedDelaySeconds": 0,
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=indexed.rx",
+      "startedAt": 1795157681084.321,
+      "headersMs": 3.0532920209225267,
+      "upstreamMs": 3.0787920113652945,
+      "injectedDelaySeconds": 0,
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=inventory",
+      "startedAt": 1795157681095.577,
+      "headersMs": 1.9388340006116778,
+      "upstreamMs": 1.9600000232458115,
+      "injectedDelaySeconds": 0,
+      "bytes": 4168,
+      "status": 200
+    },
+    {
+      "path": "/demo/trunk-client/queries/leaves",
+      "target": "/demo/trunk-client/queries/leaves",
+      "startedAt": 1795157681102.46,
+      "headersMs": 0.23924998822622,
+      "upstreamMs": 0.25516599998809397,
+      "injectedDelaySeconds": 0,
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "target": "/demo/lab/indexed/leaves",
+      "startedAt": 1795157681102.565,
+      "headersMs": 0.28162499074824154,
+      "upstreamMs": 0.2955840027425438,
+      "injectedDelaySeconds": 0,
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/timelines",
+      "target": "/demo/lab/indexed/sample/timelines?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1792562400000%2C1795158000000",
+      "startedAt": 1795157681951.971,
+      "headersMs": 1.3342500024009496,
+      "upstreamMs": 1.3569579750765115,
+      "injectedDelaySeconds": 0,
+      "bytes": 1792,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/summaries",
+      "target": "/demo/lab/indexed/sample/summaries?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1794700800000%2C1794787200000",
+      "startedAt": 1795157681962.6501,
+      "headersMs": 1.3297920231707394,
+      "upstreamMs": 1.488375011831522,
+      "injectedDelaySeconds": 0,
+      "bytes": 31969,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/summaries",
+      "target": "/demo/lab/indexed/sample/summaries?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1795132800000%2C1795219200000",
+      "startedAt": 1795157681981.526,
+      "headersMs": 103.48054199130274,
+      "upstreamMs": 103.9513339928817,
+      "injectedDelaySeconds": 0,
+      "bytes": 31300,
+      "status": 200
+    },
+    {
+      "path": "/caches",
+      "target": "/caches",
+      "startedAt": 1795157682087.6611,
+      "headersMs": 0.40341701242141426,
+      "upstreamMs": 0.41883400990627706,
+      "injectedDelaySeconds": 0,
+      "bytes": 118,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=taxonomy",
+      "startedAt": 1795157682089.442,
+      "headersMs": 0.23466598941013217,
+      "upstreamMs": 1.977665990125388,
+      "injectedDelaySeconds": 0,
+      "bytes": 27043,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=inventory",
+      "startedAt": 1795157682094.814,
+      "headersMs": 2.842584013706073,
+      "upstreamMs": 2.856792008969933,
+      "injectedDelaySeconds": 0,
+      "bytes": 4168,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/summaries",
+      "target": "/demo/lab/indexed/sample/summaries?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1795132800000%2C1795219200000",
+      "startedAt": 1795157682105.8618,
+      "headersMs": 7.631999993463978,
+      "upstreamMs": 7.720916997641325,
+      "injectedDelaySeconds": 0,
+      "bytes": 31300,
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": "2026-11-15T00:00:00Z",
+  "to": "2026-11-20T00:00:00Z",
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "nativePerformance": false,
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      3.39990234375,
+      6.02587890625,
+      6.33740234375
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "fdc0075648ce8248db3ce308368400b8b6ca6aa94b04c8c956c9ae41bc9d3361",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795157680037.072,
+    "processMs": 2872.0059169863816,
+    "loadAfter": [
+      3.39990234375,
+      6.02587890625,
+      6.33740234375
+    ]
+  }
+}

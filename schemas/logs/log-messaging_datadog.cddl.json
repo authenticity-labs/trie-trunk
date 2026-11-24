@@ -1,0 +1,149 @@
+{
+  "fixed_strings": {},
+  "identity": "log-messaging_datadog",
+  "root": "log-messaging_datadog",
+  "types": {
+    "log-messaging_datadog": {
+      "fields": [
+        {
+          "name": "timestamp",
+          "optional": true,
+          "value": {
+            "max": 8,
+            "min": 8,
+            "type": "size",
+            "value": {
+              "type": "uint"
+            }
+          }
+        },
+        {
+          "name": "duration",
+          "optional": true,
+          "value": {
+            "choices": [
+              {
+                "max": 9223372036854775807,
+                "min": -9223372036854775808,
+                "type": "integer"
+              },
+              {
+                "max": 8,
+                "min": 8,
+                "type": "size",
+                "value": {
+                  "type": "uint"
+                }
+              },
+              {
+                "type": "float"
+              }
+            ],
+            "type": "choice"
+          }
+        },
+        {
+          "name": "message",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.kind",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.message",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "error.stack",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "system",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "destination",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "operation",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "kind",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "message_id",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "group",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "batch",
+          "optional": true,
+          "value": {
+            "type": "uint"
+          }
+        },
+        {
+          "name": "partition",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "host",
+          "optional": true,
+          "value": {
+            "type": "text"
+          }
+        },
+        {
+          "name": "port",
+          "optional": true,
+          "value": {
+            "max": 65535,
+            "min": 0,
+            "type": "integer"
+          }
+        }
+      ],
+      "type": "open_record"
+    }
+  }
+}

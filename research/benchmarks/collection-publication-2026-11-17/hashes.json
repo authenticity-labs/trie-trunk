@@ -1,0 +1,20 @@
+{
+  "trunk": "3cb4f7394e32826bdab1358e1c44e36ac81fae97ac5c6a9a5bf129c7c8f631d1",
+  "trunk-search": "5c70eb2d8e063acdbf55a3e50ada8598057e26f62b28ee920a5790a4a7badf8f",
+  "client/assets/data-seeds.wasm": "41f1486c0c8240a831e7df23604607c414b72041044c4bfc2105d9b3dfa14f79",
+  "client/services/store/resident.ts": "2e7040b822abfb041c9d2021cd67b6d94970a3f9bb422fdd9e4405bc639dc263",
+  "client/services/store/native.ts": "78e0aecc6884578fbf658899b542a9b41121b5e9508b533f22b9b1cc75fd5b03",
+  "client/services/store/registered.ts": "2b1c4b453d21e75142e1e470cc0a2db5b769a034087f4f786969516c2a6123bd",
+  "client/services/pil/index-replication.ts": "58ce8345d6b815117c2be0f5180d08d46e8e74b50c41b91f16deb7ce928f550e",
+  "client/services/seeds/replicate.ts": "9f74ab4a1c40b965a65ca28cc136adae45cb9d0fc9304abd57059e934deff0f7",
+  "rust/seeds/src/registration/summaries.rs": "1ac0ea63fe11cf68efed7525627604a76a6e02c479c77973b310a2d46162ed51",
+  "rust/src/seed_native/ingress.rs": "55922cdca7ba4eeb0a02a694ae431913ec1d180337684dd6749dbf26c1fa19e0",
+  "README.md": "8497128219782a901823330eab6d65ea5254926b77c6367c6dfd58023bcb470e",
+  "client/services/registered-cutover.test.mjs": "290dbd9dc8b97933e3913bae6add8ab791c84d28dc8e944ab1ef4b0539cec106",
+  "go/server/cache/registered_ingress_summaries.go": "68b58ba97eb70aa6add6e21f43f0d6e3ff30f5d0de3a6b34a47622627d7cb8ed",
+  "go/server/cache/seed_native_ingress.go": "80fc1d4691b7d104e85f64c9f9f605029fd51cd82b7e61b12a501794dc8ed244",
+  "go/server/cache/registered_ingress_test.go": "576655978bc6db6fbc0bd5d5a202ecfc510a5a94a09e7a470745e56d467d6b9b",
+  "web/index.html": "96b9778ed1971c8395c33589bdf8779469507c5a1e3c25c15bdeace5dbc98a8c",
+  "client/dist/index.html": "96b9778ed1971c8395c33589bdf8779469507c5a1e3c25c15bdeace5dbc98a8c",
+  "desktop/dist/Snoot.app/Contents/Resources/web/index.html": "96b9778ed1971c8395c33589bdf8779469507c5a1e3c25c15bdeace5dbc98a8c"
+}

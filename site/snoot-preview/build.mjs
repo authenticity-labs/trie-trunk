@@ -2,8 +2,8 @@ import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {dirname,resolve} from 'node:path';
-import {build} from '../../client/node_modules/vite/dist/node/index.js';
-const here=dirname(fileURLToPath(import.meta.url)),client=resolve(here,'../../client');
+import {build} from '../../../snoot/client/node_modules/vite/dist/node/index.js';
+const here=dirname(fileURLToPath(import.meta.url)),client=resolve(here,'../../../snoot/client');
 const require=createRequire(resolve(client,'package.json'));
 const solid=require('vite-plugin-solid');
 export async function buildSnootPreview(outDir){
@@ -42,7 +42,7 @@ export async function buildSnootPreview(outDir){
    async load(id){
     if(id!==virtual)return;
     const app=await readFile(resolve(client,'app.tsx'),'utf8'),start=app.indexOf('<Show when={page() === "Alerts"}>');
-    const section=app.slice(start),from=section.indexOf('<div class="page-intro">'),to=section.indexOf('</AlertCenter>');
+    const section=app.slice(start),from=section.indexOf('<section class="card alerts-empty">'),to=section.indexOf('</AlertCenter>');
     if(start<0||from<0||to<0)throw Error('Unable to locate the actual Snoot Alerts content');
     return `import {Icon} from ${JSON.stringify(resolve(client,'components/icon.tsx'))};export function ActualAlerts(props){const navigate=props.onNavigate;return <>${section.slice(from,to)}</>}`;
    }

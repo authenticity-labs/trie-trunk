@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http/httptest"
 	"os"
-	"path/filepath"
 	"sync"
 	"testing"
 )
@@ -76,12 +75,13 @@ func TestQuotaPersistenceAndPublicationConflict(t *testing.T) {
 		t.Fatal(state)
 	}
 	policy := quotaPolicy{Pool: quotaNumber(min(1<<30, state.Disk.Maximum)), Scopes: []quotaScope{{Path: []string{"demo", "payment", "transactions.v1", "write"}, Limit: quotaNumber(100), Recovery: &quotaRecovery{Unit: "percent", Value: 25}}}}
+	policy.Groups = []quotaGroup{{Path: []string{"demo", "payment", "transactions.v1"}, ResourceType: "Logs", Managed: true, Limit: 200, RecoveryPercent: 30}}
 	raw, _ := json.Marshal(policy)
 	w = call("PUT", "secret", state.Revision, raw)
 	if w.Code != 200 {
 		t.Fatal(w.Code, w.Body.String())
 	}
-	if json.Unmarshal(w.Body.Bytes(), &state) != nil || state.Enforced || state.Policy.Pool == nil {
+	if json.Unmarshal(w.Body.Bytes(), &state) != nil || state.Enforced || state.Policy.Pool == nil || len(state.Policy.Groups) != 1 || state.Policy.Groups[0].RecoveryPercent != 30 {
 		t.Fatal(w.Body.String())
 	}
 	if w = call("PUT", "secret", "unset", raw); w.Code != 412 {
@@ -92,17 +92,17 @@ func TestQuotaPersistenceAndPublicationConflict(t *testing.T) {
 	if rejected := call("PUT", "secret", state.Revision, fakeRaw); rejected.Code != 400 {
 		t.Fatal("unknown physical quota scope accepted", rejected.Code)
 	}
-	published, _ := os.ReadFile(filepath.Join(root, "quotas.cfg"))
+	published, _ := os.ReadFile(configurationPath(root, nil))
 	w = call("PUT", "secret", state.Revision, []byte(`{"poolBytes":1,"scopes":[]}`+`{}`))
 	if w.Code != 400 {
 		t.Fatal(w.Code)
 	}
-	after, _ := os.ReadFile(filepath.Join(root, "quotas.cfg"))
+	after, _ := os.ReadFile(configurationPath(root, nil))
 	if !bytes.Equal(published, after) {
 		t.Fatal("invalid update changed publication")
 	}
-	diskPolicy, revision, err := readQuotaPolicy(filepath.Join(root, "quotas.cfg"))
-	if err != nil || revision != state.Revision || *diskPolicy.Pool != *policy.Pool {
+	diskPolicy, revision, err := readQuotaPolicy(root)
+	if err != nil || revision != state.Revision || *diskPolicy.Pool != *policy.Pool || len(diskPolicy.Groups) != 1 || diskPolicy.Groups[0].Limit != 200 {
 		t.Fatal(diskPolicy, revision, err)
 	}
 	if w = call("POST", "secret", "", nil); w.Code != 405 {
@@ -155,7 +155,7 @@ func TestQuotaConcurrentAdministrators(t *testing.T) {
 
 func TestQuotaManagedDefaultsAndInactiveLimits(t *testing.T) {
 	for depth := 0; depth <= 4; depth++ {
-		if quotaManaged(nil, depth) != (depth == 0 || depth == 4) {
+		if quotaManaged(nil, depth) != true {
 			t.Fatal(depth)
 		}
 	}
@@ -186,11 +186,63 @@ func TestQuotaManagedDefaultsAndInactiveLimits(t *testing.T) {
 	}
 	policy.Managed = quotaBool(false)
 	policy.Pool = quotaNumber(5000)
-	if err := validateQuotas(policy, 2000); err != nil {
-		t.Fatal(err)
+	if validateQuotas(policy, 2000) == nil {
+		t.Fatal("root flag bypassed physical budget")
 	}
+	policy.Pool = quotaNumber(1000)
 	policy.Scopes[0].Limit = quotaNumber(2001)
 	if validateQuotas(policy, 2000) == nil {
 		t.Fatal("unmanaged root allowed active child to exceed disk")
+	}
+}
+
+func TestSharedResourceQuotaValidation(t *testing.T) {
+	resource := []string{"demo", "svc", "res"}
+	read := append(append([]string{}, resource...), "read")
+	write := append(append([]string{}, resource...), "write")
+	policy := quotaPolicy{Pool: quotaNumber(1000), Scopes: []quotaScope{
+		{Path: read, Limit: quotaNumber(700)}, {Path: write, Limit: quotaNumber(600)},
+	}, Groups: []quotaGroup{{Path: resource, ResourceType: "Logs", Managed: true, Limit: 800, RecoveryPercent: 25}}}
+	if err := validateQuotas(policy, 2000); err != nil {
+		t.Fatal("counted dormant leaf allocations", err)
+	}
+	policy.Groups[0].Managed = false
+	if validateQuotas(policy, 2000) == nil {
+		t.Fatal("restored overallocated leaves")
+	}
+	policy.Groups[0].Managed = true
+	policy.Scopes = append(policy.Scopes, quotaScope{Path: []string{"demo", "svc", "other", "read"}, Limit: quotaNumber(201)})
+	if validateQuotas(policy, 2000) == nil {
+		t.Fatal("shared pool did not reserve capacity")
+	}
+	policy.Scopes = policy.Scopes[:2]
+	policy.Groups[0].RecoveryPercent = 101
+	if validateQuotas(policy, 2000) == nil {
+		t.Fatal("invalid recovery percentage")
+	}
+	policy.Groups[0].RecoveryPercent = 25
+	policy.Groups = append(policy.Groups, policy.Groups[0])
+	if validateQuotas(policy, 2000) == nil {
+		t.Fatal("duplicate shared pool")
+	}
+}
+
+func TestQuotaAncestorAllotmentsReserveOnce(t *testing.T) {
+	p := quotaPolicy{Pool: quotaNumber(1000), Scopes: []quotaScope{
+		{Path: []string{"a"}, Limit: quotaNumber(600)},
+		{Path: []string{"b"}, Limit: quotaNumber(400)},
+		{Path: []string{"a", "service", "resource", "info"}, Limit: quotaNumber(600)},
+	}}
+	if err := validateQuotas(p, 2000); err != nil {
+		t.Fatal(err)
+	}
+	p.Scopes[1].Limit = quotaNumber(401)
+	if validateQuotas(p, 2000) == nil {
+		t.Fatal("unallocated ancestor capacity not reserved")
+	}
+	p.Scopes[1].Limit = quotaNumber(400)
+	p.Scopes[2].Limit = quotaNumber(601)
+	if validateQuotas(p, 2000) == nil {
+		t.Fatal("grandchild exceeded nearest allotment")
 	}
 }

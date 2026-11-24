@@ -1,0 +1,2 @@
+{"axes":[-200,15],"channels":{"inlet":1},"probe":{"serial":"PX-101","calibration":{"offset":-0.25,"unit":"C"}},"spares":[{"serial":"PX-111"},{"serial":"PX-112"}]}
+{"axes":[0,260],"channels":{"outlet":300},"probe":{"serial":"PX-102","calibration":{"offset":0.5,"unit":"C"}},"spares":[]}

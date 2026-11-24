@@ -1,0 +1,23 @@
+{
+  "app": "desktop/dist/Snoot.app",
+  "architectures": [
+    "arm64",
+    "x86_64"
+  ],
+  "tested_architecture": "arm64",
+  "runtime_dependencies": "macOS system frameworks only",
+  "signature": "ad hoc, not notarized",
+  "previous_cli_sha256": "61f6453cf235bbd65faca7ca62c1127237b8f99d1cce5ed47d2c2b9121c8d26b",
+  "node_sha256": "31f06a27513da10bb32d9aa9064ab031b6dcf5cbc670d1081cbedcd29951250a",
+  "web_index_sha256": "f22c09bfee35396f527af0262d2bc9d48d23819baed53226b176ee8c255bcd38",
+  "checks": [
+    "fresh-profile WebKit local installation and reviewed JSON Lines import",
+    "native SQL filtered results and UUIDv7 rendering",
+    "system-only PATH; no configured upstream; no browser database worker",
+    "durable PIL acknowledgment followed by process kill and recovery",
+    "live and published event queries and daily analytics after restart",
+    "CLI SQL projection, casts, grouped aggregate, stdout/stderr and paging",
+    "four shared SQL parser tests",
+    "codesign deep/strict verification"
+  ]
+}

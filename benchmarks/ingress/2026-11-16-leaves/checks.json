@@ -1,0 +1,49 @@
+{
+  "scope": "Definition presentation, independent HTTP log profile, shared leaf labels",
+  "definitions": {
+    "existing_registered": "unchanged",
+    "new_profile": "schemas/logs/log.http.rx",
+    "registered_new_profile": false,
+    "new_duration": "uint(4), microseconds",
+    "indexed_duration": "U32",
+    "query_telemetry_duration": "F64, microseconds"
+  },
+  "checks": {
+    "rust": [
+      "HTTP profile ingestion/Pack/query round trip including U32 maximum",
+      "five registration tests including immutable node offsets and per-version labels"
+    ],
+    "host": [
+      "label GET/PATCH, stale-write rejection, restart persistence, removal",
+      "Definition-specific cache revalidation",
+      "registered Pack reads",
+      "HTTP ingestion recovery and commit checkpoint recovery",
+      "summary publication and annotation refresh",
+      "desktop Leaves route forwarding"
+    ],
+    "client": [
+      "RX autocomplete detail across Pipeline, Builder, SQL",
+      "registered collector/query across versions carries exact leaf-root reference",
+      "TypeScript check and production build"
+    ],
+    "browser": {
+      "isolated_context": "leaf-label-check",
+      "query": "events | page 10",
+      "window": "Last 30 Days",
+      "search_and_render": true,
+      "label_editor": true,
+      "matching_rows_updated": 10,
+      "root_1_labels": {
+        "1": "West Region"
+      },
+      "root_2_labels": {},
+      "restart_and_browser_cache_verified": true
+    }
+  },
+  "limitations": [
+    "HTTP ingress still retains complete state values; state-field interning/factoring is not wired into that owner.",
+    "Old summary-ingestion-check browser cache reported Missing registered trunk trie. Automatic review blocked clearing it; it was left intact. Fresh-session search and reload passed.",
+    "Broader historical Go tests TestResourceLayoutAndLocalLoss and TestResourceReadsProceedWhileWriterMutexesHeld failed on retired/unregistered storage setup; they are not included as passing cutover checks.",
+    "macOS proxy route was tested; the packaged desktop application was not rebuilt."
+  ]
+}

@@ -49,7 +49,7 @@ func TestDemoDailySummaryMeasurement(t *testing.T) {
 			return err
 		}
 		totals[filepath.Ext(path)] += info.Size()
-		if filepath.Ext(path) != ".sum" {
+		if filepath.Ext(path) != ".summ" {
 			return nil
 		}
 		raw, err := os.ReadFile(path)
@@ -117,5 +117,5 @@ func TestDemoDailySummaryMeasurement(t *testing.T) {
 	if e = os.WriteFile(filepath.Join(out, "footprint.json"), raw, 0644); e != nil {
 		t.Fatal(e)
 	}
-	t.Logf("sum=%d bytes; %d sealed packets %d compressed / %d decoded bytes; whole-day median %d bytes", totals[".sum"], len(packets), compressed, decoded, allDays[len(allDays)/2])
+	t.Logf("sum=%d bytes; %d sealed packets %d compressed / %d decoded bytes; whole-day median %d bytes", totals[".summ"], len(packets), compressed, decoded, allDays[len(allDays)/2])
 }

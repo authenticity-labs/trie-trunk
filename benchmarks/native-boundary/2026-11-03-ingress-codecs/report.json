@@ -1,0 +1,992 @@
+{
+  "date": "2026-11-03",
+  "machine": "Apple M1 Max, macOS, Go darwin/arm64",
+  "baseline": "Executable captured immediately before this encoding/handoff repair. This is not a comparison with the pre-framework project.",
+  "durable_ingress": {
+    "operation": "128 prepared events: native framing, validation, normalization, staging writes, one batch sync, accumulator updates and resident publication. Store open/close excluded.",
+    "sampling": "Five samples per case, ten batches per sample; old/new process order alternates.",
+    "before": {
+      "positional/payload=78": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 6384896.0,
+            "MB/s": 2.81,
+            "native-peak-B": 65536.0,
+            "B/op": 133224.0,
+            "allocs/op": 1519.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6819758.0,
+            "MB/s": 2.63,
+            "native-peak-B": 65536.0,
+            "B/op": 133224.0,
+            "allocs/op": 1519.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6307596.0,
+            "MB/s": 2.84,
+            "native-peak-B": 65536.0,
+            "B/op": 133334.0,
+            "allocs/op": 1520.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6132621.0,
+            "MB/s": 2.92,
+            "native-peak-B": 65536.0,
+            "B/op": 133307.0,
+            "allocs/op": 1520.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6729317.0,
+            "MB/s": 2.66,
+            "native-peak-B": 65536.0,
+            "B/op": 133224.0,
+            "allocs/op": 1519.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 6384896.0,
+          "MB/s": 2.81,
+          "native-peak-B": 65536.0,
+          "B/op": 133224.0,
+          "allocs/op": 1519.0
+        }
+      },
+      "positional/payload=4096": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 7196017.0,
+            "MB/s": 73.96,
+            "native-peak-B": 1409024.0,
+            "B/op": 744024.0,
+            "allocs/op": 1701.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 7132592.0,
+            "MB/s": 74.62,
+            "native-peak-B": 1409024.0,
+            "B/op": 744081.0,
+            "allocs/op": 1703.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 7081421.0,
+            "MB/s": 75.16,
+            "native-peak-B": 1409024.0,
+            "B/op": 743898.0,
+            "allocs/op": 1699.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 7516204.0,
+            "MB/s": 70.81,
+            "native-peak-B": 1409024.0,
+            "B/op": 744166.0,
+            "allocs/op": 1701.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6753967.0,
+            "MB/s": 78.8,
+            "native-peak-B": 1409024.0,
+            "B/op": 744289.0,
+            "allocs/op": 1703.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 7132592.0,
+          "MB/s": 74.62,
+          "native-peak-B": 1409024.0,
+          "B/op": 744081.0,
+          "allocs/op": 1701.0
+        }
+      },
+      "authored/payload=78": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 6826234.0,
+            "MB/s": 1.86,
+            "native-peak-B": 32768.0,
+            "B/op": 189012.0,
+            "allocs/op": 2348.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6959087.0,
+            "MB/s": 1.82,
+            "native-peak-B": 32768.0,
+            "B/op": 189019.0,
+            "allocs/op": 2348.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6907808.0,
+            "MB/s": 1.83,
+            "native-peak-B": 32768.0,
+            "B/op": 189008.0,
+            "allocs/op": 2348.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 7200292.0,
+            "MB/s": 1.76,
+            "native-peak-B": 32768.0,
+            "B/op": 189012.0,
+            "allocs/op": 2348.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 7020338.0,
+            "MB/s": 1.81,
+            "native-peak-B": 32768.0,
+            "B/op": 189012.0,
+            "allocs/op": 2348.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 6959087.0,
+          "MB/s": 1.82,
+          "native-peak-B": 32768.0,
+          "B/op": 189012.0,
+          "allocs/op": 2348.0
+        }
+      },
+      "authored/payload=4096": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 8636938.0,
+            "MB/s": 61.01,
+            "native-peak-B": 1409024.0,
+            "B/op": 1835979.0,
+            "allocs/op": 2531.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8449613.0,
+            "MB/s": 62.37,
+            "native-peak-B": 1409024.0,
+            "B/op": 1836353.0,
+            "allocs/op": 2533.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8778396.0,
+            "MB/s": 60.03,
+            "native-peak-B": 1409024.0,
+            "B/op": 1836664.0,
+            "allocs/op": 2535.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8366104.0,
+            "MB/s": 62.99,
+            "native-peak-B": 1409024.0,
+            "B/op": 1836579.0,
+            "allocs/op": 2536.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8985013.0,
+            "MB/s": 58.65,
+            "native-peak-B": 1409024.0,
+            "B/op": 1835891.0,
+            "allocs/op": 2530.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 8636938.0,
+          "MB/s": 61.01,
+          "native-peak-B": 1409024.0,
+          "B/op": 1836353.0,
+          "allocs/op": 2533.0
+        }
+      }
+    },
+    "after": {
+      "positional/payload=78": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 6719567.0,
+            "MB/s": 2.67,
+            "native-peak-B": 65536.0,
+            "B/op": 44222.0,
+            "allocs/op": 624.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6175346.0,
+            "MB/s": 2.9,
+            "native-peak-B": 65536.0,
+            "B/op": 44136.0,
+            "allocs/op": 623.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6623487.0,
+            "MB/s": 2.71,
+            "native-peak-B": 65536.0,
+            "B/op": 44329.0,
+            "allocs/op": 625.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6723554.0,
+            "MB/s": 2.67,
+            "native-peak-B": 65536.0,
+            "B/op": 44246.0,
+            "allocs/op": 624.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 5765312.0,
+            "MB/s": 3.11,
+            "native-peak-B": 65536.0,
+            "B/op": 44219.0,
+            "allocs/op": 624.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 6623487.0,
+          "MB/s": 2.71,
+          "native-peak-B": 65536.0,
+          "B/op": 44222.0,
+          "allocs/op": 624.0
+        }
+      },
+      "positional/payload=4096": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 7221842.0,
+            "MB/s": 73.7,
+            "native-peak-B": 1409024.0,
+            "B/op": 56774.0,
+            "allocs/op": 804.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6400612.0,
+            "MB/s": 83.15,
+            "native-peak-B": 1409024.0,
+            "B/op": 56558.0,
+            "allocs/op": 801.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6643342.0,
+            "MB/s": 80.11,
+            "native-peak-B": 1409024.0,
+            "B/op": 56702.0,
+            "allocs/op": 803.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6848200.0,
+            "MB/s": 77.72,
+            "native-peak-B": 1409024.0,
+            "B/op": 56752.0,
+            "allocs/op": 804.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6629112.0,
+            "MB/s": 80.29,
+            "native-peak-B": 1409024.0,
+            "B/op": 56812.0,
+            "allocs/op": 803.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 6643342.0,
+          "MB/s": 80.11,
+          "native-peak-B": 1409024.0,
+          "B/op": 56752.0,
+          "allocs/op": 803.0
+        }
+      },
+      "authored/payload=78": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 6610971.0,
+            "MB/s": 1.92,
+            "native-peak-B": 32768.0,
+            "B/op": 159312.0,
+            "allocs/op": 1740.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6823292.0,
+            "MB/s": 1.86,
+            "native-peak-B": 32768.0,
+            "B/op": 159312.0,
+            "allocs/op": 1740.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6736142.0,
+            "MB/s": 1.88,
+            "native-peak-B": 32768.0,
+            "B/op": 159316.0,
+            "allocs/op": 1740.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 7817508.0,
+            "MB/s": 1.62,
+            "native-peak-B": 32768.0,
+            "B/op": 159312.0,
+            "allocs/op": 1740.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 6868116.0,
+            "MB/s": 1.85,
+            "native-peak-B": 32768.0,
+            "B/op": 159316.0,
+            "allocs/op": 1740.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 6823292.0,
+          "MB/s": 1.86,
+          "native-peak-B": 32768.0,
+          "B/op": 159312.0,
+          "allocs/op": 1740.0
+        }
+      },
+      "authored/payload=4096": {
+        "samples": [
+          {
+            "iterations": 10,
+            "ns_per_op": 8797396.0,
+            "MB/s": 59.9,
+            "native-peak-B": 1409024.0,
+            "B/op": 1200483.0,
+            "allocs/op": 1925.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8266700.0,
+            "MB/s": 63.75,
+            "native-peak-B": 1409024.0,
+            "B/op": 1200124.0,
+            "allocs/op": 1924.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8064075.0,
+            "MB/s": 65.35,
+            "native-peak-B": 1409024.0,
+            "B/op": 1200381.0,
+            "allocs/op": 1926.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8399050.0,
+            "MB/s": 62.74,
+            "native-peak-B": 1409024.0,
+            "B/op": 1200172.0,
+            "allocs/op": 1924.0
+          },
+          {
+            "iterations": 10,
+            "ns_per_op": 8250529.0,
+            "MB/s": 63.87,
+            "native-peak-B": 1409024.0,
+            "B/op": 1200614.0,
+            "allocs/op": 1927.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 8266700.0,
+          "MB/s": 63.75,
+          "native-peak-B": 1409024.0,
+          "B/op": 1200381.0,
+          "allocs/op": 1925.0
+        }
+      }
+    }
+  },
+  "encoding_handoff": {
+    "operation": "One decoded positional event: old Encode(nil), native allocation/copy and Scan versus EncodeAllocated and ScanFields. Includes byte equality assertion, excludes IO, transforms, framing and full ingress. Both modes run in the same executable.",
+    "sampling": "Five samples, 300ms per case.",
+    "results": {
+      "payload=78/before": {
+        "samples": [
+          {
+            "iterations": 906476,
+            "ns_per_op": 398.0,
+            "MB/s": 371.85,
+            "B/op": 697.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 874812,
+            "ns_per_op": 450.1,
+            "MB/s": 328.83,
+            "B/op": 697.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 931676,
+            "ns_per_op": 388.1,
+            "MB/s": 381.3,
+            "B/op": 697.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 939998,
+            "ns_per_op": 385.2,
+            "MB/s": 384.17,
+            "B/op": 697.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 820676,
+            "ns_per_op": 383.4,
+            "MB/s": 386.07,
+            "B/op": 697.0,
+            "allocs/op": 7.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 388.1,
+          "MB/s": 381.3,
+          "B/op": 697.0,
+          "allocs/op": 7.0
+        }
+      },
+      "payload=78/after": {
+        "samples": [
+          {
+            "iterations": 1921605,
+            "ns_per_op": 187.4,
+            "MB/s": 789.87,
+            "B/op": 1.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 1923320,
+            "ns_per_op": 185.7,
+            "MB/s": 797.04,
+            "B/op": 1.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 1932328,
+            "ns_per_op": 187.8,
+            "MB/s": 788.01,
+            "B/op": 1.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 1918275,
+            "ns_per_op": 186.9,
+            "MB/s": 791.98,
+            "B/op": 1.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 1885288,
+            "ns_per_op": 190.8,
+            "MB/s": 775.67,
+            "B/op": 1.0,
+            "allocs/op": 0.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 187.4,
+          "MB/s": 789.87,
+          "B/op": 1.0,
+          "allocs/op": 0.0
+        }
+      },
+      "payload=4096/before": {
+        "samples": [
+          {
+            "iterations": 283432,
+            "ns_per_op": 1269.0,
+            "MB/s": 3284.17,
+            "B/op": 5405.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 290316,
+            "ns_per_op": 1256.0,
+            "MB/s": 3317.68,
+            "B/op": 5405.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 302452,
+            "ns_per_op": 1232.0,
+            "MB/s": 3381.72,
+            "B/op": 5405.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 289491,
+            "ns_per_op": 1243.0,
+            "MB/s": 3350.62,
+            "B/op": 5405.0,
+            "allocs/op": 7.0
+          },
+          {
+            "iterations": 288546,
+            "ns_per_op": 1267.0,
+            "MB/s": 3287.63,
+            "B/op": 5405.0,
+            "allocs/op": 7.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 1256.0,
+          "MB/s": 3317.68,
+          "B/op": 5405.0,
+          "allocs/op": 7.0
+        }
+      },
+      "payload=4096/after": {
+        "samples": [
+          {
+            "iterations": 652080,
+            "ns_per_op": 571.0,
+            "MB/s": 7295.93,
+            "B/op": 37.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 647422,
+            "ns_per_op": 665.4,
+            "MB/s": 6260.82,
+            "B/op": 37.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 620970,
+            "ns_per_op": 570.3,
+            "MB/s": 7305.3,
+            "B/op": 37.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 599104,
+            "ns_per_op": 566.9,
+            "MB/s": 7348.38,
+            "B/op": 37.0,
+            "allocs/op": 0.0
+          },
+          {
+            "iterations": 635953,
+            "ns_per_op": 570.7,
+            "MB/s": 7299.64,
+            "B/op": 37.0,
+            "allocs/op": 0.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 570.7,
+          "MB/s": 7299.64,
+          "B/op": 37.0,
+          "allocs/op": 0.0
+        }
+      },
+      "payload=65536/before": {
+        "samples": [
+          {
+            "iterations": 30728,
+            "ns_per_op": 11846.0,
+            "MB/s": 5538.66,
+            "B/op": 74344.0,
+            "allocs/op": 9.0
+          },
+          {
+            "iterations": 30388,
+            "ns_per_op": 11898.0,
+            "MB/s": 5514.17,
+            "B/op": 74344.0,
+            "allocs/op": 9.0
+          },
+          {
+            "iterations": 29950,
+            "ns_per_op": 11431.0,
+            "MB/s": 5739.41,
+            "B/op": 74344.0,
+            "allocs/op": 9.0
+          },
+          {
+            "iterations": 31128,
+            "ns_per_op": 11862.0,
+            "MB/s": 5531.06,
+            "B/op": 74344.0,
+            "allocs/op": 9.0
+          },
+          {
+            "iterations": 30613,
+            "ns_per_op": 11767.0,
+            "MB/s": 5575.76,
+            "B/op": 74344.0,
+            "allocs/op": 9.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 11846.0,
+          "MB/s": 5538.66,
+          "B/op": 74344.0,
+          "allocs/op": 9.0
+        }
+      },
+      "payload=65536/after": {
+        "samples": [
+          {
+            "iterations": 70090,
+            "ns_per_op": 5177.0,
+            "MB/s": 12672.82,
+            "B/op": 112.0,
+            "allocs/op": 2.0
+          },
+          {
+            "iterations": 69387,
+            "ns_per_op": 5209.0,
+            "MB/s": 12594.78,
+            "B/op": 112.0,
+            "allocs/op": 2.0
+          },
+          {
+            "iterations": 68397,
+            "ns_per_op": 5173.0,
+            "MB/s": 12683.95,
+            "B/op": 112.0,
+            "allocs/op": 2.0
+          },
+          {
+            "iterations": 69079,
+            "ns_per_op": 5178.0,
+            "MB/s": 12670.72,
+            "B/op": 112.0,
+            "allocs/op": 2.0
+          },
+          {
+            "iterations": 69982,
+            "ns_per_op": 5173.0,
+            "MB/s": 12683.27,
+            "B/op": 112.0,
+            "allocs/op": 2.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 5177.0,
+          "MB/s": 12672.82,
+          "B/op": 112.0,
+          "allocs/op": 2.0
+        }
+      }
+    }
+  },
+  "sealing": {
+    "operation": "Existing BenchmarkSealPhases: flush 10,000 records, including file writes/sync, indexes, summaries and resident publication. Ingress setup excluded.",
+    "sampling": "Five samples per case, one hour per sample, alternating old/new executable order.",
+    "before": {
+      "read/records=10000": {
+        "samples": [
+          {
+            "iterations": 1,
+            "ns_per_op": 70324999.0,
+            "outside-lock-ns": 44480625.0,
+            "publication-ns": 3996791.0,
+            "publication-wait-ns": 334.0,
+            "total-locked-ns": 25837916.0,
+            "B/op": 10843688.0,
+            "allocs/op": 46586.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 62604542.0,
+            "outside-lock-ns": 38369709.0,
+            "publication-ns": 3646584.0,
+            "publication-wait-ns": 291.0,
+            "total-locked-ns": 24223791.0,
+            "B/op": 10838032.0,
+            "allocs/op": 46580.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 74467583.0,
+            "outside-lock-ns": 38333334.0,
+            "publication-ns": 3764000.0,
+            "publication-wait-ns": 500.0,
+            "total-locked-ns": 36127916.0,
+            "B/op": 10837856.0,
+            "allocs/op": 46577.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 70232083.0,
+            "outside-lock-ns": 39230333.0,
+            "publication-ns": 4066792.0,
+            "publication-wait-ns": 291.0,
+            "total-locked-ns": 30995210.0,
+            "B/op": 10848072.0,
+            "allocs/op": 46593.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 67332625.0,
+            "outside-lock-ns": 37325125.0,
+            "publication-ns": 3574709.0,
+            "publication-wait-ns": 291.0,
+            "total-locked-ns": 30001668.0,
+            "B/op": 10836584.0,
+            "allocs/op": 46576.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 70232083.0,
+          "outside-lock-ns": 38369709.0,
+          "publication-ns": 3764000.0,
+          "publication-wait-ns": 291.0,
+          "total-locked-ns": 30001668.0,
+          "B/op": 10838032.0,
+          "allocs/op": 46580.0
+        }
+      },
+      "write/records=10000": {
+        "samples": [
+          {
+            "iterations": 1,
+            "ns_per_op": 110277834.0,
+            "outside-lock-ns": 40506833.0,
+            "publication-ns": 39474583.0,
+            "publication-wait-ns": 292.0,
+            "total-locked-ns": 69767500.0,
+            "B/op": 71445632.0,
+            "allocs/op": 132494.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 105865958.0,
+            "outside-lock-ns": 41859375.0,
+            "publication-ns": 42724792.0,
+            "publication-wait-ns": 291.0,
+            "total-locked-ns": 64003751.0,
+            "B/op": 70783280.0,
+            "allocs/op": 129413.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 106527500.0,
+            "outside-lock-ns": 43394875.0,
+            "publication-ns": 37818750.0,
+            "publication-wait-ns": 333.0,
+            "total-locked-ns": 63128875.0,
+            "B/op": 71456800.0,
+            "allocs/op": 132508.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 97504666.0,
+            "outside-lock-ns": 38741292.0,
+            "publication-ns": 35421042.0,
+            "publication-wait-ns": 375.0,
+            "total-locked-ns": 58762250.0,
+            "B/op": 71445408.0,
+            "allocs/op": 132492.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 93726792.0,
+            "outside-lock-ns": 38245334.0,
+            "publication-ns": 33935792.0,
+            "publication-wait-ns": 541.0,
+            "total-locked-ns": 55478375.0,
+            "B/op": 71456008.0,
+            "allocs/op": 132501.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 105865958.0,
+          "outside-lock-ns": 40506833.0,
+          "publication-ns": 37818750.0,
+          "publication-wait-ns": 333.0,
+          "total-locked-ns": 63128875.0,
+          "B/op": 71445632.0,
+          "allocs/op": 132494.0
+        }
+      }
+    },
+    "after": {
+      "read/records=10000": {
+        "samples": [
+          {
+            "iterations": 1,
+            "ns_per_op": 72384292.0,
+            "outside-lock-ns": 41337125.0,
+            "publication-ns": 5037250.0,
+            "publication-wait-ns": 250.0,
+            "total-locked-ns": 31038250.0,
+            "B/op": 10841768.0,
+            "allocs/op": 46576.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 75255334.0,
+            "outside-lock-ns": 42948250.0,
+            "publication-ns": 3834084.0,
+            "publication-wait-ns": 333.0,
+            "total-locked-ns": 32300250.0,
+            "B/op": 10843256.0,
+            "allocs/op": 46577.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 70332375.0,
+            "outside-lock-ns": 42380333.0,
+            "publication-ns": 3864250.0,
+            "publication-wait-ns": 291.0,
+            "total-locked-ns": 27944418.0,
+            "B/op": 10836088.0,
+            "allocs/op": 46567.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 72522709.0,
+            "outside-lock-ns": 47199292.0,
+            "publication-ns": 4424000.0,
+            "publication-wait-ns": 417.0,
+            "total-locked-ns": 25317457.0,
+            "B/op": 11943680.0,
+            "allocs/op": 51359.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 68615792.0,
+            "outside-lock-ns": 40535750.0,
+            "publication-ns": 4012417.0,
+            "publication-wait-ns": 333.0,
+            "total-locked-ns": 28073501.0,
+            "B/op": 10843368.0,
+            "allocs/op": 46578.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 72384292.0,
+          "outside-lock-ns": 42380333.0,
+          "publication-ns": 4012417.0,
+          "publication-wait-ns": 333.0,
+          "total-locked-ns": 28073501.0,
+          "B/op": 10843256.0,
+          "allocs/op": 46577.0
+        }
+      },
+      "write/records=10000": {
+        "samples": [
+          {
+            "iterations": 1,
+            "ns_per_op": 155577459.0,
+            "outside-lock-ns": 57472834.0,
+            "publication-ns": 52107750.0,
+            "publication-wait-ns": 333.0,
+            "total-locked-ns": 98101333.0,
+            "B/op": 71444704.0,
+            "allocs/op": 132482.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 97487209.0,
+            "outside-lock-ns": 40619792.0,
+            "publication-ns": 33455583.0,
+            "publication-wait-ns": 542.0,
+            "total-locked-ns": 56864000.0,
+            "B/op": 71456264.0,
+            "allocs/op": 132498.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 94658542.0,
+            "outside-lock-ns": 40586625.0,
+            "publication-ns": 34552917.0,
+            "publication-wait-ns": 208.0,
+            "total-locked-ns": 54069333.0,
+            "B/op": 68577352.0,
+            "allocs/op": 119860.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 155475084.0,
+            "outside-lock-ns": 41659625.0,
+            "publication-ns": 89019375.0,
+            "publication-wait-ns": 583.0,
+            "total-locked-ns": 113811125.0,
+            "B/op": 71451560.0,
+            "allocs/op": 132499.0
+          },
+          {
+            "iterations": 1,
+            "ns_per_op": 93308083.0,
+            "outside-lock-ns": 36953208.0,
+            "publication-ns": 32921417.0,
+            "publication-wait-ns": 375.0,
+            "total-locked-ns": 56351292.0,
+            "B/op": 71057120.0,
+            "allocs/op": 130658.0
+          }
+        ],
+        "median": {
+          "ns_per_op": 97487209.0,
+          "outside-lock-ns": 40619792.0,
+          "publication-ns": 34552917.0,
+          "publication-wait-ns": 375.0,
+          "total-locked-ns": 56864000.0,
+          "B/op": 71444704.0,
+          "allocs/op": 132482.0
+        }
+      }
+    }
+  },
+  "interpretation": [
+    "Encoding/handoff is about 2x faster and removes the complete Go-owned encoded payload and its native copy.",
+    "Durable batch timings remain close and are fsync-sensitive; do not interpret the isolated codec speedup as a 2x total ingress improvement.",
+    "Native peak bytes in the durable comparison are unchanged. Inputs and published outputs retain independent immutable native spans.",
+    "Sealing sample ranges overlap and have outliers; no sealing speedup is established.",
+    "Go still owns field descriptors, scalar scratch, maps and other metadata. This does not claim zero Go allocation throughout ingress."
+  ],
+  "verification": [
+    "Full cache, logger and telemetry test suites passed with the deployed-lifecycle overlay.",
+    "Full Pill Packer Go tests passed.",
+    "Native chunk reuse, input immutability, published-span lifetime and recovery verified.",
+    "Caller-owned codec tests cover fixed/adaptive widths, field states, extended offsets, allocation failures and nested schema rejection.",
+    "Actual Snoot WebKit search passed against an isolated copy of the existing sandbox cache.",
+    "All eight deployed server logger Definitions verified byte-identical."
+  ],
+  "source_sha256": {
+    "go/server/cache/writer.go": "8683feb4e00e69c06b30bc8507921f5aba135ac8fc41661b37047c1bb65c43b7",
+    "go/server/cache/transforms.go": "c42bdabeef7e5c111b9f2417d76c30ac8408242dd6adf01dbb409ef67f9dafe7",
+    "go/server/cache/native_ingress.go": "a74f4da47f181e15dccce2de1e5549c23bd0301097a3285eaf2b35374ce4af1c",
+    "go/server/cache/native_live.go": "3e9e29e5c351ef674cf4d2c9b140a3f9c2129055f7b9ab3e0226d661feaf5af0",
+    "go/server/cache/staging.go": "feaa21597c7129ffb8f44eca2a2c47f942136b0202d7f8d135b202dd03d82bf2",
+    "go/server/cache/seal.go": "f7377b99c4678bb954adb31a675ee221233371e3f0e46cd248fd5d888f77a5ff",
+    "go/server/cache/summary_accumulator.go": "242ace86e16b2a9d69366f40fc6ea159677f71cc1ca94f5b9621b02815f91b33",
+    "go/server/cache/ingress_codec_bench_test.go": "ffa3753bc7977cff20b04b9d9b382146b1c3fe2375e1a93f1b0b5b9175a652b2",
+    "go/server/cache/ingress_codec_test.go": "66884c9a567686555bdc20dfb42ece599e1ac89839181a719dcaffd99b2106ed",
+    "../pill-packer/go/codec/encode_allocated.go": "ecca2e2236797a3b3a51d667c899904f58edc74c7fb6682aa8a81e755960fd81"
+  },
+  "release": {
+    "backup": "/Users/Shared/code/applications/trie-trunk/.backups/codec-handoff-20261103-121641",
+    "before_sha256": "bca483aef23e4452422e01202beb63f1f9090aaf8c380b29b738f96846df0ded",
+    "after_sha256": "7e1e7ac17279d9e46248a0f1f7f2349f4de948a464bc8635fb81eb82096198e3",
+    "before_benchmark": "/Users/Shared/code/applications/trie-trunk/.backups/codec-handoff-20261103-121641/before.test",
+    "scope": "Ingress encoding and native buffer handoff; existing logger Definitions and storage lifecycle preserved"
+  },
+  "schema_scope": "Before/after performance samples used the same pre-@fields-change schemas. The subsequent OpenTelemetry open-map schema change was tested separately and is not included in these timings."
+}

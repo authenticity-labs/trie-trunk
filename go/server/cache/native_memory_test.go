@@ -71,8 +71,8 @@ func TestNativeMemoryPoolCloseWithReader(t *testing.T) {
 	}
 	b.close()
 }
-func TestSealSchedulerBoundsConcurrency(t *testing.T) {
-	scheduler := NewSealScheduler(2)
+func TestCommitSchedulerBoundsConcurrency(t *testing.T) {
+	scheduler := NewCommitScheduler(2)
 	var wg sync.WaitGroup
 	var active, peak atomic.Int32
 	for i := 0; i < 20; i++ {
@@ -183,7 +183,7 @@ func BenchmarkIngressBufferOwnership(b *testing.B) {
 }
 
 func TestSealWindowAccounting(t *testing.T) {
-	s := NewSealScheduler(1)
+	s := NewCommitScheduler(1)
 	end := time.Date(2026, 10, 24, 13, 0, 0, 0, time.UTC)
 	s.observeWindow(end, end.Add(59*time.Minute))
 	s.observeWindow(end, end.Add(61*time.Minute))

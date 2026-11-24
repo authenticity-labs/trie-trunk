@@ -27,7 +27,7 @@ func TestCacheCatalog(t *testing.T) {
 				{"GET", "", "wrong", "", 401},
 				{"POST", "", "secret", "", 405},
 				{"GET", "?root=/etc", "secret", "", 404},
-				{"GET", "", "secret", "application/pil", 406},
+				{"GET", "", "secret", "application/pil", 200},
 				{"GET", "", "secret", "application/json", 200},
 			} {
 				r := httptest.NewRequest(tc.method, path+tc.suffix, nil)
@@ -45,14 +45,22 @@ func TestCacheCatalog(t *testing.T) {
 					continue
 				}
 				var got map[string][]string
-				if err := json.Unmarshal(w.Body.Bytes(), &got); err != nil {
+				decode := json.Unmarshal
+				if tc.accept == "application/pil" {
+					decode = decoder.Unmarshal
+				}
+				if err := decode(w.Body.Bytes(), &got); err != nil {
 					t.Fatal(err)
 				}
 				if len(got) != 2 || !reflect.DeepEqual(got[path[1:]], want) || len(got["collections"]) != 0 {
 					t.Fatalf("catalog %v, want %v", got, want)
 				}
-				if w.Header().Get("Cache-Control") != "no-store" {
-					t.Fatal("catalog must not be cached")
+				wantCache := "no-store"
+				if tc.accept == "application/pil" {
+					wantCache = "private, no-cache"
+				}
+				if w.Header().Get("Cache-Control") != wantCache {
+					t.Fatal("catalog requires credential-private revalidation", w.Header())
 				}
 			}
 		}
@@ -90,6 +98,7 @@ func TestCollectionCatalogRequiresEnabledReplay(t *testing.T) {
 	if err := json.Unmarshal(w.Body.Bytes(), &got); err != nil {
 		t.Fatal(err)
 	}
+
 	if !reflect.DeepEqual(got.Collections, []string{api.tap(Write)}) {
 		t.Fatal("missing enabled collection", w.Body.String())
 	}

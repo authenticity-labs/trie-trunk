@@ -1,0 +1,9 @@
+{
+  "native": "{\"ok\":false,\"stage\":\"page-error\",\"error\":\"ResizeObserver loop completed with undelivered notifications.\",\"file\":\"http://127.0.0.1:59340/\",\"line\":0}",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-11-17T00:00:00Z",
+  "to": "2026-11-17T20:00:00Z",
+  "query": "events | where level = INFO and severity = 1"
+}

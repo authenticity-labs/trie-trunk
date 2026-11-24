@@ -1,0 +1,100 @@
+{
+  "native": "{\"ok\":true,\"summaryPruned\":true,\"previewWaitMs\":1,\"query\":\"events | where duration > 20000\",\"screen\":\"Local Trunk\\nSearch\\nDashboards\\nAlerts\\nCollections\\nTrunks\\nSearch Guide\\nDemo User\\nLog Out\\n\u2014 Search\\nQuick Guide\\nLight\\nDark\\nAuto\\ndemo\\n/\\nlab\\n/\\nindexed\\nPipeline\\nBuilder\\nSQL\\nDrag tabs to reorder, or use Alt and Left or Right Arrow. The first tab is the default for new queries.\\nDeep\\nLive\\nSearch Query\\nAdd a clause, or press Enter to search.\\n+ Filter\\n+ Text\\n+ Sort\\n+ Page Size\\nText Mode\\n2026-11-15 18:00 \u2192 20:00\\nSearch\\nNo Matches In This Time Window\\nEvents\\nCharts\\nEvent Activity\\nQuery Preview\\n0 Events\\nEvents\\n0\"}",
+  "requests": [
+    {
+      "path": "/caches",
+      "target": "/caches",
+      "startedAt": 1794959161050.852,
+      "headersMs": 5.724458002077881,
+      "upstreamMs": 5.738833002396859,
+      "bytes": 116,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=taxonomy",
+      "startedAt": 1794959161060.259,
+      "headersMs": 0.3759579994948581,
+      "upstreamMs": 1.105166993511375,
+      "bytes": 146239,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=indexed.rx",
+      "startedAt": 1794959161074.3152,
+      "headersMs": 22.97487499890849,
+      "upstreamMs": 22.989459001109935,
+      "bytes": 457,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=log-query.rx",
+      "startedAt": 1794959161074.455,
+      "headersMs": 22.955583001021296,
+      "upstreamMs": 22.9620829995838,
+      "bytes": 587,
+      "status": 200
+    },
+    {
+      "path": "/demo/definitions",
+      "target": "/demo/definitions?file=summary.rx",
+      "startedAt": 1794959161074.197,
+      "headersMs": 24.47933300572913,
+      "upstreamMs": 24.610083004517946,
+      "bytes": 13976,
+      "status": 200
+    },
+    {
+      "path": "/demo/registries",
+      "target": "/demo/registries?kind=inventory",
+      "startedAt": 1794959161113.544,
+      "headersMs": 1.39929199940525,
+      "upstreamMs": 1.4174590032780543,
+      "bytes": 3912,
+      "status": 200
+    },
+    {
+      "path": "/demo/trie-trunk/queries/leaves",
+      "target": "/demo/trie-trunk/queries/leaves",
+      "startedAt": 1794959161118.9382,
+      "headersMs": 0.2718330069910735,
+      "upstreamMs": 0.27925000176765025,
+      "bytes": 235,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/leaves",
+      "target": "/demo/lab/indexed/leaves",
+      "startedAt": 1794959161118.987,
+      "headersMs": 0.564500005566515,
+      "upstreamMs": 0.5770839998149313,
+      "bytes": 714,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/timelines",
+      "target": "/demo/lab/indexed/sample/timelines?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1794765600000%2C1794772800000",
+      "startedAt": 1794959161149.502,
+      "headersMs": 0.4813750056200661,
+      "upstreamMs": 0.4933340023853816,
+      "bytes": 96,
+      "status": 200
+    },
+    {
+      "path": "/demo/lab/indexed/sample/summaries",
+      "target": "/demo/lab/indexed/sample/summaries?definition=7fb3686b21b67ee6edbab3904de993e56d3fc09a1182da694bf3c5dda303474a&range=1794700800000%2C1794787200000",
+      "startedAt": 1794959161313.046,
+      "headersMs": 0.6470419975812547,
+      "upstreamMs": 0.8166669940692373,
+      "bytes": 36707,
+      "status": 200
+    }
+  ],
+  "failures": [],
+  "directSocket": false,
+  "from": "2026-11-15T18:00:00Z",
+  "to": "2026-11-15T20:00:00Z",
+  "query": "events | where duration > 20000"
+}

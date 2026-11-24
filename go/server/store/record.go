@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"trie-trunk/go/codec"
 )
 

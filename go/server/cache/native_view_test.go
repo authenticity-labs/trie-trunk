@@ -47,7 +47,7 @@ func TestColdViewPlansWholePACWithoutPayloadReads(t *testing.T) {
 			// The disposable text index is ready. Corrupt payload bytes deliberately:
 			// planning, scalar search, whole-run statistics, and cursor generation may not read them.
 			b := s.branches[branch]
-			if _, e = b.pods.WriteAt([]byte("BROKEN!!"), int64(b.runs[0].PodsStart-b.podsRetired)); e != nil {
+			if _, e = b.packs.WriteAt([]byte("BROKEN!!"), int64(b.runs[0].PacksStart-b.packsRetired)); e != nil {
 				t.Fatal(e)
 			}
 			h := &HTTP{Store: s}

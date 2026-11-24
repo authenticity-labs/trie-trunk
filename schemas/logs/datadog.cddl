@@ -1,0 +1,179 @@
+; Single-record provider profile. Additional keys remain valid.
+
+log_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ * tstr => any
+}
+
+
+log-http_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "http.method": tstr,
+ ? "http.status_code": tstr,
+ ? "http.url": tstr,
+ ? "http.url_details.path": tstr,
+ ? "route": tstr,
+ ? "http.url_details.scheme": tstr,
+ ? "http.version": tstr,
+ ? "host": tstr,
+ ? "port": 0..65535,
+ ? "client": tstr,
+ ? "http.useragent": tstr,
+ ? "response_size": uint,
+ ? "request_size": uint,
+ * tstr => any
+}
+
+
+log-db_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "db.system": tstr,
+ ? "namespace": tstr,
+ ? "collection": tstr,
+ ? "operation": tstr,
+ ? "summary": tstr,
+ ? "db.statement": tstr,
+ ? "status": tstr,
+ ? "rows": uint,
+ ? "batch": uint,
+ ? "host": tstr,
+ ? "port": 0..65535,
+ * tstr => any
+}
+
+
+log-messaging_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "system": tstr,
+ ? "destination": tstr,
+ ? "operation": tstr,
+ ? "kind": tstr,
+ ? "message_id": tstr,
+ ? "group": tstr,
+ ? "batch": uint,
+ ? "partition": tstr,
+ ? "host": tstr,
+ ? "port": 0..65535,
+ * tstr => any
+}
+
+
+log-security_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "action": tstr,
+ ? "outcome": tstr,
+ ? "decision": tstr,
+ ? "actor": tstr,
+ ? "target": tstr,
+ ? "reason": tstr,
+ ? "method": tstr,
+ ? "policy": tstr,
+ ? "session": tstr,
+ ? "client": tstr,
+ * tstr => any
+}
+
+
+log-job_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "job": tstr,
+ ? "run": tstr,
+ ? "status": tstr,
+ ? "attempt": uint,
+ ? "reason": tstr,
+ ? "schedule": tstr,
+ ? "queue": tstr,
+ ? "worker": tstr,
+ ? "task": tstr,
+ ? "workflow": tstr,
+ * tstr => any
+}
+
+
+log-task_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "task": tstr,
+ ? "run": tstr,
+ ? "status": tstr,
+ ? "attempt": uint,
+ ? "reason": tstr,
+ ? "job": tstr,
+ ? "workflow": tstr,
+ ? "step": tstr,
+ ? "worker": tstr,
+ * tstr => any
+}
+
+
+log-workflow_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "workflow": tstr,
+ ? "run": tstr,
+ ? "status": tstr,
+ ? "attempt": uint,
+ ? "reason": tstr,
+ ? "step": tstr,
+ ? "parent": tstr,
+ ? "object": tstr / uint / bstr,
+ * tstr => any
+}
+
+
+log-system_datadog = {
+ ? "timestamp": uint .size 8,
+ ? "duration": (-9223372036854775808..9223372036854775807) / (uint .size 8) / float,
+ ? "message": tstr,
+ ? "error.kind": tstr,
+ ? "error.message": tstr,
+ ? "error.stack": tstr,
+ ? "action": tstr,
+ ? "pid": uint,
+ ? "parent": uint,
+ ? "executable": tstr,
+ ? "exit": -9223372036854775808..9223372036854775807,
+ ? "signal": tstr,
+ ? "host": tstr,
+ ? "component": tstr,
+ * tstr => any
+}
+

@@ -1,0 +1,27 @@
+{
+  "rust_ingress_tests": 8,
+  "javascript_tests": 28,
+  "typescript": "passed",
+  "production_build": "passed",
+  "http_ingestion_summary_recovery_tests": "passed",
+  "live_zero_query": {
+    "status": "complete",
+    "rows": 0,
+    "duration_ms": 99.7
+  },
+  "popup": {
+    "heading": "Checkpoints",
+    "annotation": "@checkpoints",
+    "shape": "array<{name,start?,duration}>",
+    "total_ms": 99.7,
+    "worker_ms": 61.8,
+    "before_collection_ms": 51,
+    "collection_ms": 10.6,
+    "after_collection_ms": 0.2,
+    "presentation_ms": 29.4,
+    "outside_positioned_spans_ms": 8.5,
+    "horizontal_overflow": false,
+    "keyboard": "Escape closes and returns focus"
+  },
+  "benchmark_note": "after is a deployed smoke test, not an optimized comparison"
+}

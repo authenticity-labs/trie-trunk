@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"net/http/httptest"
 	"net/url"
@@ -203,24 +203,24 @@ func TestNativeCollectHTTPGapOnlyAndLazyPayload(t *testing.T) {
 	if len(ms) != 1 || ms[0].Provisional || len(ms[0].Index) != 1 || ms[0].Index[0] != (Span{1, 7}) {
 		t.Fatal("not complete hourly index", ms)
 	}
-	var idx, pods []byte
+	var idx, packs []byte
 	for _, c := range chunks {
 		if c.Kind == "index" {
 			idx = append(idx, c.Data...)
 		}
 		if c.Kind == "pac" {
-			pods = append(pods, c.Data...)
+			packs = append(packs, c.Data...)
 		}
 	}
 	if !bytes.Equal(idx, s.branches[Write].rows[IndexRowSize:]) {
 		t.Fatal("index was reencoded")
 	}
-	lo, hi, e := s.branches[Write].podsRange(2, s.row)
+	lo, hi, e := s.branches[Write].packsRange(2, s.row)
 	if e != nil {
 		t.Fatal(e)
 	}
-	source, e := readBytes(s.branches[Write].pods, lo, hi)
-	if e != nil || !bytes.Equal(source, pods) {
+	source, e := readBytes(s.branches[Write].packs, lo, hi)
+	if e != nil || !bytes.Equal(source, packs) {
 		t.Fatal("not exact lazy payload", e)
 	}
 	m := ms[0]
@@ -244,7 +244,16 @@ func TestNativeCollectHTTPGapOnlyAndLazyPayload(t *testing.T) {
 		if e = os.MkdirAll(dir, 0755); e != nil {
 			t.Fatal(e)
 		}
-		for name, raw := range map[string][]byte{"ranges.pil": ungzipTest(t, cold.Body.Bytes()), "definition.rx": l.Bytes, "index.bin": idx, "pods.bin": pods} {
+		exportViewNative(t, dir, p.api, at, at.Add(time.Hour))
+		oldPath := path
+		path += "&data=none"
+		indexOnly := request(nil, true)
+		path = oldPath
+		states, e := os.ReadFile(s.shared.Name())
+		if e != nil {
+			t.Fatal(e)
+		}
+		for name, raw := range map[string][]byte{"leaf.trie": states, "whole-index.bin": s.branches[Write].rows, "ranges.pil": ungzipTest(t, cold.Body.Bytes()), "indexes.pil": ungzipTest(t, indexOnly.Body.Bytes()), "definition.rx": l.Bytes, "index.bin": idx, "packs.bin": packs} {
 			if e = os.WriteFile(filepath.Join(dir, name), raw, 0644); e != nil {
 				t.Fatal(e)
 			}

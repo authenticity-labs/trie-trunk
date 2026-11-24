@@ -7,7 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	pilcodec "github.com/AuthenticityLabs/pill-packer/go/codec"
+	native "github.com/authenticity-labs/pill-packer/go"
+	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"net"
 	"net/http"
@@ -53,14 +54,18 @@ type Config struct {
 	Cache      string
 	Branch     string
 	Definition []byte
-	Token      string
+	// ResourceType explicitly classifies the taxonomy leaf, independent of schema.
+	ResourceType string
+	Token        string
 	// Supply an HTTP/3 client here when desired. The default client negotiates
 	// HTTP/2 over TLS. The caller owns any supplied client and transport.
 	HTTPClient *http.Client
 	Timeout    time.Duration
 	// DisableCompression disables negotiated HTTP/per-event compression.
 	DisableCompression bool
-	// CompressionLevel accepts 1 (default, low CPU) or 6 (smaller output).
+	// CompressionAlgorithm defaults to zstd. gzip and br are explicit alternatives.
+	CompressionAlgorithm string
+	// CompressionLevel defaults to 1.
 	CompressionLevel int
 	// BatchMilliseconds is the maximum intentional linger for concurrent writes.
 	// Zero sends immediately. Write calls still wait for durable acknowledgement.
@@ -90,8 +95,24 @@ func Open(ctx context.Context, c Config) (*Logger, error) {
 	if c.CompressionLevel == 0 {
 		c.CompressionLevel = 1
 	}
-	if c.CompressionLevel != 1 && c.CompressionLevel != 6 {
-		return nil, fmt.Errorf("compression level must be 1 or 6")
+	if c.CompressionAlgorithm == "" {
+		c.CompressionAlgorithm = "zstd"
+	}
+	if c.CompressionAlgorithm == "brotli" {
+		c.CompressionAlgorithm = "br"
+	}
+	if _, err := pilcodec.CompressionFlags(c.CompressionAlgorithm); err != nil {
+		return nil, err
+	}
+	max := 22
+	if c.CompressionAlgorithm == "gzip" {
+		max = 9
+	}
+	if c.CompressionAlgorithm == "br" {
+		max = 11
+	}
+	if c.CompressionLevel < 1 || c.CompressionLevel > max {
+		return nil, fmt.Errorf("invalid compression level")
 	}
 	l, e := cache.ParseDefinition(c.Definition)
 	if e != nil {
@@ -142,7 +163,7 @@ func (w *Logger) request(ctx context.Context, method, path string, body io.Reade
 	u := *w.origin
 	u.Path = path
 	if path == "/definitions" {
-		u.Path = "/" + w.config.Cache + "/registries"
+		u.Path = "/" + w.config.Cache + "/definitions"
 	}
 	if path == "/ingest" {
 		n := w.layout.Definition.Resource
@@ -165,6 +186,9 @@ func (w *Logger) request(ctx context.Context, method, path string, body io.Reade
 	r.Header.Set("Definition-Version", fmt.Sprintf("%x", announced.Digest))
 	r.Header.Set("Definition-Identity", announced.Definition.Identity)
 	r.Header.Set("Definition-Revision", fmt.Sprint(announced.Definition.Version))
+	if path == "/definitions" && w.config.ResourceType != "" {
+		r.Header.Set("Resource-Type", w.config.ResourceType)
+	}
 	// This client implements both fixed and adaptive layouts, regardless of the
 	// producer's initial choice. The server may select either supported profile.
 	r.Header.Set("PIL-Features", "adaptive-integers,"+cache.HTTPCompressionFeature)
@@ -176,7 +200,7 @@ func (w *Logger) request(ctx context.Context, method, path string, body io.Reade
 	} else if method == "POST" {
 		r.Header.Set("Content-Type", "application/pil")
 		if compressed, ok := body.(*compressedRequest); ok {
-			r.Header.Set("Content-Encoding", "gzip")
+			r.Header.Set("Content-Encoding", w.config.CompressionAlgorithm)
 			r.ContentLength = int64(compressed.Len())
 		}
 	}
@@ -307,7 +331,7 @@ func (w *Logger) WriteValuesTo(ctx context.Context, branch string, values []Valu
 			w.mu.Unlock()
 			return fmt.Errorf("field count mismatch")
 		}
-		if values[w.source.Event].State == Absent {
+		if w.source.Definition.Resource.Strategy != "log" && values[w.source.Event].State == Absent {
 			values = append([]Value(nil), values...)
 			id, err := codec.NewUUIDv7(time.Now())
 			if err != nil {
@@ -338,7 +362,7 @@ func (w *Logger) WriteValuesTo(ctx context.Context, branch string, values []Valu
 	if len(values) != len(w.source.Definition.Fields) {
 		return fmt.Errorf("field count mismatch")
 	}
-	if values[w.source.Event].State == Absent {
+	if w.source.Definition.Resource.Strategy != "log" && values[w.source.Event].State == Absent {
 		values = append([]Value(nil), values...)
 		id, e := codec.NewUUIDv7(time.Now())
 		if e != nil {
@@ -347,7 +371,7 @@ func (w *Logger) WriteValuesTo(ctx context.Context, branch string, values []Valu
 		values[w.source.Event] = Value{State: Direct, Bytes: id[:]}
 	}
 	v := values[w.source.Event]
-	if v.State != Direct || len(v.Bytes) != 16 || !codec.UUIDv7(v.Bytes).Valid() {
+	if w.source.Definition.Resource.Strategy != "log" && (v.State != Direct || len(v.Bytes) != 16 || !codec.UUIDv7(v.Bytes).Valid()) {
 		return fmt.Errorf("event_id must be UUIDv7")
 	}
 	if e := w.source.ValidateValues(values); e != nil {
@@ -394,7 +418,7 @@ func (w *Logger) writeFramesNow(ctx context.Context, frames [][]byte, branch str
 			return e
 		}
 		v := f.Values[w.source.Event]
-		if v.State != Direct || len(v.Bytes) != 16 || !codec.UUIDv7(v.Bytes).Valid() {
+		if w.source.Definition.Resource.Strategy != "log" && (v.State != Direct || len(v.Bytes) != 16 || !codec.UUIDv7(v.Bytes).Valid()) {
 			return fmt.Errorf("event_id must be UUIDv7")
 		}
 		if w.projection != nil {
@@ -426,15 +450,17 @@ func (w *Logger) writeOnce(ctx context.Context, frames [][]byte, branch string) 
 	if w.httpCompression {
 		// Compress the batch once, including every PIL header. Ingress removes
 		// this transport coding before staging.
-		var packed bytes.Buffer
-		if err := pilcodec.Gzip(&packed, body, w.config.CompressionLevel); err != nil {
+		flags, _ := pilcodec.CompressionFlags(w.config.CompressionAlgorithm)
+		packed, err := native.CompressStreamOwned(body, flags, w.config.CompressionLevel)
+		if err != nil {
 			return err
 		}
+		defer packed.Close()
 		plainSize := 0
 		for _, frame := range frames {
 			plainSize += len(frame)
 		}
-		if packed.Len() < plainSize {
+		if len(packed.Bytes()) < plainSize {
 			body = &compressedRequest{bytes.NewReader(packed.Bytes())}
 		} else {
 			for i, frame := range frames {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	pil "github.com/AuthenticityLabs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go/codec"
 )
 
 // Projection is compiled once per negotiation. Positional input is always

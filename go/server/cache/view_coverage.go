@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// ViewBucket certifies the complete PIL event set, not native .idx/.pods bytes.
+// ViewBucket certifies the complete PIL event set, not native .idx/.packs bytes.
 // Physical generation and definition are incorporated in Key. Row intervals
 // come from the same semantic time trie used by native replication.
 type ViewBucket struct {

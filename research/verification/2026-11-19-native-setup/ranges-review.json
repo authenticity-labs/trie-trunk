@@ -1,0 +1,39 @@
+{
+  "native": "{\"ok\":true,\"checks\":{\"nativeCandidate\":true,\"uuidv7First\":true,\"wideIntegers\":true,\"timestampRequired\":true,\"observedRanges\":true,\"floatPrecision\":true,\"utf8Sizing\":true,\"potentialEnums\":true},\"candidate\":\"Definition Candidate\\n\\nChoose a log file to inspect a sample. Your file is inspected on this Mac; nothing is registered or imported yet.\\n\\nLog File\\n\\n1 record inspected from sample.jsonl. The sample reached the end of the file.\\n\\nEvent Time\\n\\nid \u00b7 UUIDv7 Timestamp \u00b7 1 match\\n\\nat \u00b7 Timestamp \u00b7 1 match\\n\\nWidths reflect observed values. Text capacity uses the largest sampled UTF-8 byte length; float narrowing must preserve every sampled value. Potential enums are suggestions, not enforced choices.\\n\\nField\\tProposed Type\\tObserved Range\\tPresent\\tNull\\tPotential Enum\\nat\\ttstr(20)\\t20 \u2192 20 bytes\\t1\\t0\\t\u2014\\ncount\\tuint(16)\\t340282366920938463463374607431768211455 \u2192 340282366920938463463374607431768211455\\t1\\t0\\t\u2014\\nduration\\tuint(3)\\t65536 \u2192 65536\\t1\\t0\\t\u2014\\nid\\ttstr(36)\\t36 \u2192 36 bytes\\t1\\t0\\t\u2014\\n\\nTypes and widths describe the sample only; validate every record during import.\",\"ranges\":\"Definition Candidate\\n\\nChoose a log file to inspect a sample. Your file is inspected on this Mac; nothing is registered or imported yet.\\n\\nLog File\\n\\n4 records inspected from sample.jsonl. The sample reached the end of the file.\\n\\nEvent Time\\n\\nA timestamp mapping is required. Import time will not be used.\\n\\nWidths reflect observed values. Text capacity uses the largest sampled UTF-8 byte length; float narrowing must preserve every sampled value. Potential enums are suggestions, not enforced choices.\\n\\nField\\tProposed Type\\tObserved Range\\tPresent\\tNull\\tPotential Enum\\nlabel\\ttstr(2)\\t2 \u2192 2 bytes\\t4\\t0\\t\\n2 Observed Values\\n\\nratio\\tfloat(4)\\t1.5 \u2192 2.25\\t4\\t0\\t\u2014\\nstatus\\tuint(2)\\t200 \u2192 404\\t4\\t0\\t\\n2 Observed Values\\n\\nTypes and widths describe the sample only; validate every record during import.\\n\\nMap an event timestamp before import; import time is not a substitute.\"}",
+  "nativeStderr": "2026/11/19 04:50:24 Snoot listening on http://127.0.0.1:62563 using Unix Socket\n",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": null,
+  "to": null,
+  "query": "events | where duration >= 10000",
+  "dispatch": "port",
+  "host": {
+    "cpus": 10,
+    "loadBefore": [
+      13.06396484375,
+      12.8681640625,
+      9.74951171875
+    ],
+    "runtime": "78523c04a328b2ca9e7ec78c6298e3c51d46c1a90b2e4682307c03aee45a1e7e",
+    "web": "f25e2b4a60f58ba8963f923267930a90a8be060f948f73aeb640044a14636ae7",
+    "testWeb": null,
+    "diagnosticLibrary": null,
+    "scheduling": null,
+    "nativeWake": false,
+    "workerDelayMs": 0,
+    "responseDelaySeconds": 0,
+    "withoutActivity": false,
+    "freshReplica": false,
+    "resizeTrace": false,
+    "recordResizeWarnings": false,
+    "diagnosticActivity": false,
+    "launchAt": 1795081824720.761,
+    "processMs": 1133.0259590176865,
+    "loadAfter": [
+      12.498046875,
+      12.75390625,
+      9.7275390625
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "narrow": {
+    "before": {
+      "case": "narrow",
+      "shared_schema_initialization": {
+        "allocation_calls": 9983,
+        "allocation_volume_bytes": 2071753,
+        "peak_extra_bytes": 1049598,
+        "retained_delta_bytes": 819793
+      }
+    },
+    "after": {
+      "case": "narrow",
+      "shared_schema_initialization": {
+        "allocation_calls": 2849,
+        "allocation_volume_bytes": 346981,
+        "peak_extra_bytes": 163077,
+        "retained_delta_bytes": 158846
+      }
+    }
+  },
+  "typical": {
+    "before": {
+      "case": "typical",
+      "shared_schema_initialization": {
+        "allocation_calls": 10699,
+        "allocation_volume_bytes": 2205615,
+        "peak_extra_bytes": 1139665,
+        "retained_delta_bytes": 907178
+      }
+    },
+    "after": {
+      "case": "typical",
+      "shared_schema_initialization": {
+        "allocation_calls": 4427,
+        "allocation_volume_bytes": 543906,
+        "peak_extra_bytes": 266351,
+        "retained_delta_bytes": 260278
+      }
+    }
+  },
+  "wide": {
+    "before": {
+      "case": "wide",
+      "shared_schema_initialization": {
+        "allocation_calls": 11377,
+        "allocation_volume_bytes": 2269859,
+        "peak_extra_bytes": 1149035,
+        "retained_delta_bytes": 907178
+      }
+    },
+    "after": {
+      "case": "wide",
+      "shared_schema_initialization": {
+        "allocation_calls": 6076,
+        "allocation_volume_bytes": 693190,
+        "peak_extra_bytes": 293328,
+        "retained_delta_bytes": 272972
+      }
+    }
+  },
+  "quiet": {
+    "before": {
+      "case": "quiet",
+      "shared_schema_initialization": {
+        "allocation_calls": 10699,
+        "allocation_volume_bytes": 2205615,
+        "peak_extra_bytes": 1139665,
+        "retained_delta_bytes": 907178
+      }
+    },
+    "after": {
+      "case": "quiet",
+      "shared_schema_initialization": {
+        "allocation_calls": 4427,
+        "allocation_volume_bytes": 543906,
+        "peak_extra_bytes": 266351,
+        "retained_delta_bytes": 260278
+      }
+    }
+  }
+}

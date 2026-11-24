@@ -1,0 +1,8 @@
+{
+  "binaries": {
+    "prior": "eea1365457e5d48b2d490f18171ef7cedb4512e5895697a6432d0b7a0d76b661",
+    "current": "173927dc991ac48bc115378d59f3383212aa63f1949b98b156c8f5083b2379ff"
+  },
+  "baseline": "summary-box-context-2026-11-17/current-source.tar.gz",
+  "scope": "Native release resident daily PAC reads. Event ingestion, summary preparation and registry publication are outside these read-only timings. One clone per received PAC inside open timing; 100 warm queries per run. Nine alternating pairs. Same harness, event bytes and summary PAC bytes verified. Shared current taxonomy and codecs in both builds."
+}

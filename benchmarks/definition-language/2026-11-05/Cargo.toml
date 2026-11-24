@@ -1,0 +1,10 @@
+[package]
+name = "pil-definition-perf"
+version = "0.0.0"
+edition = "2024"
+[dependencies]
+pil_codec = { package = "pill-packer", path = "/tmp/pil-definition-perf/codec", features = ["schema", "api"] }
+serde_json = "1"
+sha2 = "0.10"
+[profile.release]
+debug = 1

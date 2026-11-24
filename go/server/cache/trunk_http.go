@@ -18,12 +18,18 @@ type trunkFile struct {
 	Size       uint64 `pil:"size"`
 	Bootstrap  bool   `pil:"bootstrap"`
 }
+type taxonomyBinding struct {
+	Tap        string `pil:"tap"`
+	Definition string `pil:"definition"`
+	BranchID   uint16 `pil:"branchId"`
+}
 type trunkCatalog struct {
-	Scope       string      `pil:"scope"`
-	Directories []string    `pil:"directories"`
-	Files       []trunkFile `pil:"files"`
-	Sources     []string    `pil:"sources"`
-	Collections []string    `pil:"collections"`
+	Bindings    []taxonomyBinding `pil:"bindings"`
+	Scope       string            `pil:"scope"`
+	Directories []string          `pil:"directories"`
+	Files       []trunkFile       `pil:"files"`
+	Sources     []string          `pil:"sources"`
+	Collections []string          `pil:"collections"`
 }
 type trunkSnapshot struct {
 	catalog     trunkCatalog
@@ -59,7 +65,7 @@ func (h *HTTP) trunkSnapshot(scope string) (*trunkSnapshot, error) {
 	selected := []*HTTP{}
 	within := func(p string) bool { return scope == "" || p == scope || strings.HasPrefix(p, scope+"/") }
 	add := func(p, kind, definition string, raw []byte, size uint64, bootstrap bool) {
-		if files[p] || !within(p) {
+		if files[p] || !within(p) && kind != "definition" && p != "trunk.trie" {
 			return
 		}
 		files[p] = true
@@ -94,6 +100,7 @@ func (h *HTTP) trunkSnapshot(scope string) (*trunkSnapshot, error) {
 		}
 		for b := Read; b <= Trace; b++ {
 			source := api.tap(b)
+			result.catalog.Bindings = append(result.catalog.Bindings, taxonomyBinding{source, digest, s.taxonomyBranches[b]})
 			if !sources[source] {
 				result.catalog.Sources = append(result.catalog.Sources, source)
 				sources[source] = true
@@ -103,7 +110,7 @@ func (h *HTTP) trunkSnapshot(scope string) (*trunkSnapshot, error) {
 				source string
 			}{l, source})
 		}
-		add(folder+"/resource.rx", "definition", digest, append([]byte(nil), l.Bytes...), uint64(len(l.Bytes)), true)
+		add("definitions/"+digest+".rx", "definition", digest, append([]byte(nil), l.Bytes...), uint64(len(l.Bytes)), true)
 		stat, err := s.shared.Stat()
 		var raw []byte
 		if err == nil {
@@ -114,10 +121,17 @@ func (h *HTTP) trunkSnapshot(scope string) (*trunkSnapshot, error) {
 			s.mu.Unlock()
 			return nil, err
 		}
-		add(folder+"/state.tri", "state", digest, raw, uint64(len(raw)), true)
+		add(folder+"/leaf.trie", "state", digest, raw, uint64(len(raw)), true)
 		for b := Read; b <= Trace; b++ {
-			for _, ext := range []string{"tri", "sum", "idx", "tvy", "pods"} {
-				filename := b.Name() + "." + ext
+			for _, ext := range []string{"time", "sum", "idx", "tvy", "packs"} {
+				suffix := ext
+				if ext == "idx" {
+					suffix = "indx"
+				}
+				if ext == "sum" {
+					suffix = "summ"
+				}
+				filename := b.Name() + "." + suffix
 				stat, err := os.Stat(s.dir + string(os.PathSeparator) + filename)
 				if os.IsNotExist(err) {
 					continue
@@ -129,10 +143,10 @@ func (h *HTTP) trunkSnapshot(scope string) (*trunkSnapshot, error) {
 				add(folder+"/"+filename, ext, digest, nil, uint64(stat.Size()), false)
 			}
 		}
-		// The hierarchy belongs to the cache, not to a particular definition minor.
-		cachePath := s.config.Cache + "/resource.tri"
-		if within(cachePath) && !files[cachePath] {
-			raw, err := os.ReadFile(s.root + string(os.PathSeparator) + "resource.tri")
+		// Cache endpoints expose the same trunk-wide immutable taxonomy snapshot.
+		cachePath := "trunk.trie"
+		if (scope == "" || scope == s.config.Cache) && !files[cachePath] {
+			raw, err := taxonomyBytes(s.config.Root)
 			if err != nil {
 				s.mu.Unlock()
 				return nil, err
@@ -271,7 +285,7 @@ func (h *HTTP) trunkFileHTTP(w http.ResponseWriter, r *http.Request) bool {
 	if _, ok := registeredPath(relative); !ok {
 		return false
 	}
-	if !strings.HasSuffix(relative, "/resource.rx") && !strings.HasSuffix(relative, "/resource.tri") && !strings.HasSuffix(relative, "/state.tri") {
+	if !(strings.HasPrefix(relative, "definitions/") && strings.HasSuffix(relative, ".rx")) && relative != "trunk.trie" && !strings.HasSuffix(relative, "/leaf.trie") {
 		return false
 	}
 	if r.Method != "GET" {
@@ -283,7 +297,11 @@ func (h *HTTP) trunkFileHTTP(w http.ResponseWriter, r *http.Request) bool {
 		http.Error(w, "invalid artifact path", 400)
 		return true
 	}
-	snapshot, err := h.trunkSnapshot(path.Dir(relative))
+	scope := path.Dir(relative)
+	if strings.HasPrefix(relative, "definitions/") || relative == "trunk.trie" {
+		scope = ""
+	}
+	snapshot, err := h.trunkSnapshot(scope)
 	if err != nil {
 		http.NotFound(w, r)
 		return true

@@ -1,0 +1,1 @@
+ok  	trie-trunk/go/cmd/snoot-desktop	1.441s

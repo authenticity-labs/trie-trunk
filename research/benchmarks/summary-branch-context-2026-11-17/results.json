@@ -1,0 +1,1030 @@
+[
+  {
+    "case": "narrow",
+    "medians": {
+      "open_us": {
+        "prior": 377.166,
+        "current": 125.95799999999998
+      },
+      "cold_query_us": {
+        "prior": 43.292,
+        "current": 42.209
+      },
+      "cold_total_us": {
+        "prior": 420.75,
+        "current": 168.5
+      },
+      "warm_query_us": {
+        "prior": 36.336670000000005,
+        "current": 36.46375
+      }
+    },
+    "pairs": [
+      {
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.042,
+          "cold_total_us": 409.16700000000003,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 367.125,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.48292
+        },
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.166999999999994,
+          "cold_total_us": 166.917,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 124.75,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.25083
+        }
+      },
+      {
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.875,
+          "cold_total_us": 167.416,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 124.54100000000001,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.855
+        },
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 43.791000000000004,
+          "cold_total_us": 420.957,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 377.166,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.31417
+        }
+      },
+      {
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 45.291,
+          "cold_total_us": 487.707,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 442.416,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.41417
+        },
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 43.208999999999996,
+          "cold_total_us": 176.876,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 133.667,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 37.26792
+        }
+      },
+      {
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.209,
+          "cold_total_us": 169.709,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 127.50000000000001,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.46375
+        },
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 43.292,
+          "cold_total_us": 425.58400000000006,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 382.29200000000003,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.336670000000005
+        }
+      },
+      {
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 41.625,
+          "cold_total_us": 420.75,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 379.125,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.31042
+        },
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.875,
+          "cold_total_us": 180.292,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 137.417,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.4575
+        }
+      },
+      {
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 43.416,
+          "cold_total_us": 169.166,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 125.75,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.62959
+        },
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 47.542,
+          "cold_total_us": 501.33400000000006,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 453.79200000000003,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.82333
+        }
+      },
+      {
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 41.916000000000004,
+          "cold_total_us": 408.62399999999997,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 366.70799999999997,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.27875
+        },
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 41.958,
+          "cold_total_us": 167.916,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 125.95799999999998,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.34125
+        }
+      },
+      {
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 41.25,
+          "cold_total_us": 168.5,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 127.25,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.283339999999995
+        },
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 43.458999999999996,
+          "cold_total_us": 417.709,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 374.25,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.90625
+        }
+      },
+      {
+        "prior": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 41.166,
+          "cold_total_us": 401.582,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 360.416,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.2825
+        },
+        "current": {
+          "bytes": 36040,
+          "case": "narrow",
+          "cold_query_us": 42.0,
+          "cold_total_us": 165.833,
+          "days": 1,
+          "event_sha256": "91b210910e85c97ce4dd5370f4699ea04570eb0b0ee6406a44c4511331a2960a",
+          "events": 2304,
+          "open_us": 123.833,
+          "pac_sha256": "ed9fc5f7140fad40ec4c2710978b1ac1fc1f12df9c16fc669deee6c946ec4c1c",
+          "warm_query_us": 36.62084
+        }
+      }
+    ]
+  },
+  {
+    "case": "typical",
+    "medians": {
+      "open_us": {
+        "prior": 2527.4579999999996,
+        "current": 919.75
+      },
+      "cold_query_us": {
+        "prior": 275.333,
+        "current": 272.95899999999995
+      },
+      "cold_total_us": {
+        "prior": 2803.8749999999995,
+        "current": 1193.208
+      },
+      "warm_query_us": {
+        "prior": 264.97916999999995,
+        "current": 266.22208
+      }
+    },
+    "pairs": [
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 276.417,
+          "cold_total_us": 2803.8749999999995,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2527.4579999999996,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 264.20208
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 282.625,
+          "cold_total_us": 1254.2089999999998,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 971.584,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 269.78542
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 272.0,
+          "cold_total_us": 1161.291,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 889.2909999999999,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 267.33167
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 275.333,
+          "cold_total_us": 2768.5,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2493.167,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 268.285
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 276.584,
+          "cold_total_us": 2824.3759999999997,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2547.792,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.80875
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.458,
+          "cold_total_us": 1193.208,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 919.75,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.24333
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.29200000000003,
+          "cold_total_us": 1192.209,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 918.917,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 266.22208
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 280.666,
+          "cold_total_us": 2792.791,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2512.125,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 266.30584
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.875,
+          "cold_total_us": 2792.416,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2518.541,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 266.72208
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 272.208,
+          "cold_total_us": 1191.666,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 919.458,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 262.88791999999995
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 272.16700000000003,
+          "cold_total_us": 1184.917,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 912.75,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 262.95125
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.58299999999997,
+          "cold_total_us": 2947.5,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2673.917,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.385
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.125,
+          "cold_total_us": 2765.792,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2492.667,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 271.70459000000005
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 272.709,
+          "cold_total_us": 1235.542,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 962.833,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 267.77125
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 272.95899999999995,
+          "cold_total_us": 1246.7089999999998,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 973.75,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 263.10792000000004
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 277.58299999999997,
+          "cold_total_us": 2836.333,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2558.75,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 264.47416
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 274.375,
+          "cold_total_us": 2817.625,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 2543.25,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 264.97916999999995
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "typical",
+          "cold_query_us": 273.79200000000003,
+          "cold_total_us": 1198.667,
+          "days": 7,
+          "event_sha256": "2da16723dd683e506fd5680464fd1be0bf5396c11d87e1d6beb901d659223400",
+          "events": 16128,
+          "open_us": 924.875,
+          "pac_sha256": "6c7f5f680449244fbf44f45510782d354c3fa9edc64b9080dc3ef4d2469c6ebe",
+          "warm_query_us": 266.81875
+        }
+      }
+    ]
+  },
+  {
+    "case": "wide",
+    "medians": {
+      "open_us": {
+        "prior": 2819.667,
+        "current": 1172.0
+      },
+      "cold_query_us": {
+        "prior": 386.70799999999997,
+        "current": 374.66700000000003
+      },
+      "cold_total_us": {
+        "prior": 3258.208,
+        "current": 1541.542
+      },
+      "warm_query_us": {
+        "prior": 265.34583,
+        "current": 263.84625
+      }
+    },
+    "pairs": [
+      {
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 382.25,
+          "cold_total_us": 3176.0409999999997,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2793.7909999999997,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 263.47875
+        },
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 371.458,
+          "cold_total_us": 1510.708,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1139.25,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 266.88875
+        }
+      },
+      {
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 374.66700000000003,
+          "cold_total_us": 1540.375,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1165.7079999999999,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 267.05084
+        },
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 387.333,
+          "cold_total_us": 3298.375,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2911.042,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 268.1775
+        }
+      },
+      {
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 451.833,
+          "cold_total_us": 3258.208,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2806.375,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 264.13542
+        },
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 375.79200000000003,
+          "cold_total_us": 1610.75,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1234.958,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 263.975
+        }
+      },
+      {
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 383.792,
+          "cold_total_us": 1685.626,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1301.834,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 263.84625
+        },
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 373.70799999999997,
+          "cold_total_us": 3261.417,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2887.709,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 270.115
+        }
+      },
+      {
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 556.875,
+          "cold_total_us": 3670.958,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 3114.083,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 266.46125
+        },
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 407.625,
+          "cold_total_us": 1716.125,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1308.5,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 263.0975
+        }
+      },
+      {
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 377.5,
+          "cold_total_us": 1587.833,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1210.333,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 268.99833
+        },
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 386.70799999999997,
+          "cold_total_us": 3338.208,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2951.5,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 265.34583
+        }
+      },
+      {
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 440.542,
+          "cold_total_us": 3239.667,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2799.125,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 264.82625
+        },
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 369.542,
+          "cold_total_us": 1541.542,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1172.0,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 263.45875
+        }
+      },
+      {
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 373.917,
+          "cold_total_us": 1516.0839999999998,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1142.167,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 262.7025
+        },
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 375.375,
+          "cold_total_us": 3195.042,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2819.667,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 266.74165999999997
+        }
+      },
+      {
+        "prior": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 370.33299999999997,
+          "cold_total_us": 3134.416,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 2764.083,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 263.35625
+        },
+        "current": {
+          "bytes": 3538381,
+          "case": "wide",
+          "cold_query_us": 369.666,
+          "cold_total_us": 1514.9989999999998,
+          "days": 7,
+          "event_sha256": "500db66c6b5511f3556051c612caab4b6e6be571197e7217d81d12a078a724e5",
+          "events": 16128,
+          "open_us": 1145.3329999999999,
+          "pac_sha256": "8d06b1da80faaeb65c2cdd6e37b33e774af54c7804d5bd22870317828f0a269b",
+          "warm_query_us": 262.89833
+        }
+      }
+    ]
+  },
+  {
+    "case": "quiet",
+    "medians": {
+      "open_us": {
+        "prior": 2506.25,
+        "current": 899.625
+      },
+      "cold_query_us": {
+        "prior": 123.375,
+        "current": 124.917
+      },
+      "cold_total_us": {
+        "prior": 2629.625,
+        "current": 1023.125
+      },
+      "warm_query_us": {
+        "prior": 79.71125,
+        "current": 79.59208000000001
+      }
+    },
+    "pairs": [
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 124.04199999999999,
+          "cold_total_us": 2660.292,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2536.25,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 80.53291
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 123.75,
+          "cold_total_us": 1062.042,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 938.2919999999999,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.69040999999999
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 126.959,
+          "cold_total_us": 1093.751,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 966.7919999999999,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 81.93833
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 124.49999999999999,
+          "cold_total_us": 2598.5,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2474.0,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.71125
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 122.33400000000002,
+          "cold_total_us": 2635.959,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2513.625,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.53375
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 130.166,
+          "cold_total_us": 1049.749,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 919.583,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.59208000000001
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 124.917,
+          "cold_total_us": 1001.126,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 876.209,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.43749999999999
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 123.167,
+          "cold_total_us": 2614.251,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2491.0840000000003,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.85708
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 123.375,
+          "cold_total_us": 2629.625,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2506.25,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.64250000000001
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 126.12499999999999,
+          "cold_total_us": 1049.7089999999998,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 923.584,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.41833000000001
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 121.667,
+          "cold_total_us": 998.208,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 876.5409999999999,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.99792000000001
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 122.75,
+          "cold_total_us": 2661.791,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2539.041,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.6
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 143.791,
+          "cold_total_us": 2847.166,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2703.375,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.56625
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 123.5,
+          "cold_total_us": 1023.125,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 899.625,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.42792
+        }
+      },
+      {
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 125.75,
+          "cold_total_us": 1008.708,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 882.958,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.96875000000001
+        },
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 136.0,
+          "cold_total_us": 2627.792,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2491.792,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.91583
+        }
+      },
+      {
+        "prior": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 123.08299999999998,
+          "cold_total_us": 2619.625,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 2496.542,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 80.05207999999999
+        },
+        "current": {
+          "bytes": 998221,
+          "case": "quiet",
+          "cold_query_us": 120.958,
+          "cold_total_us": 1019.333,
+          "days": 7,
+          "event_sha256": "00d4030f2254549382f5a4657cd6d5072aaf77abdd2b40826ca70b7075d8cda1",
+          "events": 672,
+          "open_us": 898.375,
+          "pac_sha256": "5ad248b5b325345e9e9af8dcf174a7df1c8016c172769fa0e5cd3a26e8b49d60",
+          "warm_query_us": 79.24958
+        }
+      }
+    ]
+  }
+]

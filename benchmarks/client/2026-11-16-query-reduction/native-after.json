@@ -1,0 +1,9 @@
+{
+  "native": "{\"ok\":true,\"loaded\":100,\"visible\":8,\"wallMs\":1015,\"submitHandlerMs\":23,\"window\":\"2026-09-18 00:00 \u2192 2026-11-17 00:00\",\"boundary\":{\"totalMs\":1008,\"workerMs\":805,\"outsideWorkerMs\":203,\"steps\":{\"startedAt\":1794876322223,\"beforeReplicationMs\":111,\"replicationMs\":521,\"afterReplicationMs\":173}},\"runs\":[{\"loaded\":100,\"visible\":8,\"wallMs\":1015,\"submitHandlerMs\":23,\"window\":\"2026-09-18 00:00 \u2192 2026-11-17 00:00\",\"boundary\":{\"totalMs\":1008,\"workerMs\":805,\"outsideWorkerMs\":203,\"steps\":{\"startedAt\":1794876322223,\"beforeReplicationMs\":111,\"replicationMs\":521,\"afterReplicationMs\":173}}}]}",
+  "requests": [],
+  "failures": [],
+  "directSocket": true,
+  "from": "2026-09-18T00:00:00.000Z",
+  "to": "2026-11-17T00:00:00.000Z",
+  "query": "events | where duration >= 10000"
+}

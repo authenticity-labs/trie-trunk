@@ -20,14 +20,14 @@ func TestOptionalHierarchyOverridesAndReload(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	write("trunk.cfg", "version=1\n[policy]\nobject_index=true\n[policy.staging]\nmax_bytes=1000\nmax_records=200\n[policy.retention]\nread='30d'\n[policy.replication]\nindex_period='4h'\n")
+	write("caches/trunk.conf", "version=1\n[policy]\nobject_index=true\n[policy.staging]\nmax_bytes=1000\nmax_records=200\n[policy.retention]\nread='30d'\n[policy.replication]\nindex_period='4h'\n")
 	l := testLayout(t, false)
 	n := l.Definition.Resource
 	resource := filepath.Join("caches", "demo", n.Service, n.Resource+".v1")
-	write("caches/demo/cache.cfg", "version=1\n[policy]\nobject_index=false\n[policy.retention]\nread='14d'\n")
-	write(filepath.Join("caches", "demo", n.Service, "service.cfg"), "version=1\n[policy.staging]\nmax_bytes=0\n[policy.retention]\nread='7d'\n")
-	write(filepath.Join(resource, "resource.cfg"), "version=1\n[policy.retention]\nread='3d'\n")
-	write(filepath.Join(resource, "debug.cfg"), "version=1\ninherit=false\n[policy.retention]\ndebug='1h'\n[policy.replication]\nindex_period='6h'\n")
+	write("caches/demo/demo.conf", "version=1\n[policy]\nobject_index=false\n[policy.retention]\nread='14d'\n")
+	write(filepath.Join("caches", "demo", n.Service, n.Service+".conf"), "version=1\n[policy.staging]\nmax_bytes=0\n[policy.retention]\nread='7d'\n")
+	write(filepath.Join(resource, filepath.Base(resource)+".conf"), "version=1\n[policy.retention]\nread='3d'\n")
+	write(filepath.Join(resource, "debug", "debug.conf"), "version=1\ninherit=false\n[policy.retention]\ndebug='1h'\n[policy.replication]\nindex_period='6h'\n")
 	s, err := Open(Config{Root: filepath.Join(root, "caches"), Cache: "demo", Tenant: "test", Layout: l})
 	if err != nil {
 		t.Fatal(err)
@@ -45,11 +45,11 @@ func TestOptionalHierarchyOverridesAndReload(t *testing.T) {
 		t.Fatal(windows, err)
 	}
 	old, oldBranches := s.policy, s.branchPolicies
-	write(filepath.Join(resource, "debug.cfg"), "version=1\n[policy]\nobject_index=true\n")
+	write(filepath.Join(resource, "debug", "debug.conf"), "version=1\n[policy]\nobject_index=true\n")
 	if err = s.ReloadPolicy(); err == nil || !reflect.DeepEqual(old, s.policy) || !reflect.DeepEqual(oldBranches, s.branchPolicies) {
 		t.Fatal("invalid reload changed active policy", err)
 	}
-	write(filepath.Join(resource, "debug.cfg"), "version=1\n[policy.replication]\nindex_period='1h'\n")
+	write(filepath.Join(resource, "debug", "debug.conf"), "version=1\n[policy.replication]\nindex_period='1h'\n")
 	if err = s.ReloadPolicy(); err != nil {
 		t.Fatal(err)
 	}

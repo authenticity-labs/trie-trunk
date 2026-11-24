@@ -113,5 +113,5 @@ func TestMeasurePagedView(t *testing.T) {
 		runtime.ReadMemStats(&after)
 		results[mode] = map[string]any{"latency": times, "response_bytes": size, "allocated_bytes": after.TotalAlloc - before.TotalAlloc, "allocations": after.Mallocs - before.Mallocs}
 	}
-	saveMeasurement(t, map[string]any{"events": n, "results": results, "scope": "same Go handler, temporary store, warm OS cache, cached definitions, range-sized integers except U64 duration required by aggregate role; standard aggregates enabled, collection.idx disabled; no network, compression, rendering or ingestion timing"})
+	saveMeasurement(t, map[string]any{"events": n, "results": results, "scope": "same Go handler, temporary store, warm OS cache, cached definitions, range-sized integers except U64 duration required by aggregate role; standard aggregates enabled, collection.indx disabled; no network, compression, rendering or ingestion timing"})
 }

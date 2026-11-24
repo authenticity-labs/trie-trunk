@@ -1,0 +1,26 @@
+   Compiling pill-packer v0.1.0 (/Users/Shared/code/applications/pill-packer/rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.68s
+     Running tests/pac_bound_arrays.rs (/Users/Shared/code/applications/pill-packer/rust/target/debug/deps/pac_bound_arrays-5040bd5e382e5c10)
+
+running 7 tests
+test empty_bound_arrays_need_no_member_payload ... ok
+test differently_bound_pills_are_rejected_before_batch_mutation ... ok
+test reject_wrong_shapes_and_overflow_without_encoding ... ok
+test owned_shared_and_header_only_readers_bind_once_from_the_header ... ok
+test fixed_objects_are_contiguous_and_bindings_do_not_change_rx ... ok
+test common_only_and_sparse_array_fields_keep_dimensions ... ok
+test dimensions_live_in_pack_not_definition_or_each_member ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pac_parameters.rs (/Users/Shared/code/applications/pill-packer/rust/target/debug/deps/pac_parameters-1907f6b597a20da8)
+
+running 5 tests
+test wildcard_zero_and_allocation_limits ... ok
+test positional_objects_roundtrip_in_shared_readers_and_keep_rx ... ok
+test reject_equal_extent_different_plans_and_invalid_targets ... ok
+test mixed_same_rx_preserves_bindings_snapshots_restore_and_header_only ... ok
+test compressed_mixed_parameters_survive ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

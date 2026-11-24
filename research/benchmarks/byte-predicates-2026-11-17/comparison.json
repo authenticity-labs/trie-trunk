@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "query": "level = ERROR",
+      "records": 100000,
+      "matches": 16664,
+      "before_ms": 4.998958,
+      "after_ms": 2.860458,
+      "reduction_percent": 42.77891512591224
+    },
+    {
+      "query": "severity = 4",
+      "records": 100000,
+      "matches": 25000,
+      "before_ms": 14.813167,
+      "after_ms": 3.157542,
+      "reduction_percent": 78.6842205991467
+    }
+  ],
+  "executables": {
+    "before": "ba01fdc78e717af2eb05e676a1d1530282cb23ddfa20f8077eb4e750c813f6ca",
+    "after": "3c01ba26052ef8e0899ff6fc2223a77116096946adb6658b9639e38411fcbd73"
+  }
+}

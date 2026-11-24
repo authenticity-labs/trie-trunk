@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"path/filepath"
 	"time"
 )
 
@@ -82,7 +81,23 @@ func (s *Store) publishStatistics() error {
 	if e != nil {
 		return e
 	}
-	return replace(filepath.Join(s.dir, "resource.stats"), raw)
+	footer, e := leafStatisticsFooter(s.trie.fileEnd, raw)
+	if e != nil {
+		return e
+	}
+	// Statistics publish only at Close, after sealing has finished. Interrupted
+	// footer replacement cannot invalidate the immutable node prefix.
+	if e = s.shared.Truncate(s.trie.fileEnd); e != nil {
+		return e
+	}
+	if _, e = s.shared.WriteAt(footer, s.trie.fileEnd); e != nil {
+		return e
+	}
+	if e = s.shared.Sync(); e != nil {
+		return e
+	}
+	s.trie.footer = true
+	return nil
 }
 func (s *Store) Statistics() (TrieStatistics, error) {
 	s.mu.Lock()

@@ -1,0 +1,103 @@
+{
+  "ok": true,
+  "loaded": 24,
+  "visible": 0,
+  "wallMs": 1000,
+  "domReadyMs": 79,
+  "submitHandlerMs": 10,
+  "startedAt": 1795069697073,
+  "observedAt": 1795069698075,
+  "visibility": "hidden",
+  "window": "2026-11-15 18:00 \u2192 20:00",
+  "boundary": {
+    "client": {
+      "portStartAt": 1795069697085,
+      "portReadyAt": 1795069697138,
+      "dispatchAt": 1795069697138,
+      "postStartAt": 1795069697138,
+      "postWallStartAt": 1795069697138,
+      "postEndAt": 1795069697138,
+      "submitMicrotaskAt": 1795069697138,
+      "submitTaskAt": 1795069697138,
+      "ackReceivedAt": 1795069697138,
+      "ackWallReceivedAt": 1795069697139,
+      "clientSentAt": 1795069697138,
+      "clientWallSentAt": 1795069697138,
+      "workerDispatch": 0,
+      "hostReadyAt": 0,
+      "nodeReceivedAt": 1795069697138,
+      "nodeWallReceivedAt": 1795069697139,
+      "pendingRequests": 0,
+      "nodeAckAt": 1795069697138,
+      "view-pageAt": 1795069697141,
+      "convertMs": 0,
+      "pageMs": 9,
+      "view-summaryAt": 1795069697150
+    },
+    "totalMs": 77,
+    "workerMs": 3,
+    "outsideWorkerMs": 74
+  },
+  "startup": {
+    "navigationStartAt": 1795069695480,
+    "driverMs": 18,
+    "controlsReadyMs": 572,
+    "submitMs": 1593,
+    "replicaReset": {
+      "removed": false,
+      "ms": 5
+    }
+  },
+  "runs": [
+    {
+      "loaded": 24,
+      "visible": 0,
+      "wallMs": 1000,
+      "domReadyMs": 79,
+      "submitHandlerMs": 10,
+      "startedAt": 1795069697073,
+      "observedAt": 1795069698075,
+      "visibility": "hidden",
+      "window": "2026-11-15 18:00 \u2192 20:00",
+      "boundary": {
+        "client": {
+          "portStartAt": 1795069697085,
+          "portReadyAt": 1795069697138,
+          "dispatchAt": 1795069697138,
+          "postStartAt": 1795069697138,
+          "postWallStartAt": 1795069697138,
+          "postEndAt": 1795069697138,
+          "submitMicrotaskAt": 1795069697138,
+          "submitTaskAt": 1795069697138,
+          "ackReceivedAt": 1795069697138,
+          "ackWallReceivedAt": 1795069697139,
+          "clientSentAt": 1795069697138,
+          "clientWallSentAt": 1795069697138,
+          "workerDispatch": 0,
+          "hostReadyAt": 0,
+          "nodeReceivedAt": 1795069697138,
+          "nodeWallReceivedAt": 1795069697139,
+          "pendingRequests": 0,
+          "nodeAckAt": 1795069697138,
+          "view-pageAt": 1795069697141,
+          "convertMs": 0,
+          "pageMs": 9,
+          "view-summaryAt": 1795069697150
+        },
+        "totalMs": 77,
+        "workerMs": 3,
+        "outsideWorkerMs": 74
+      }
+    }
+  ],
+  "nativeActivityState": {
+    "mode": "native",
+    "peak": 1,
+    "errors": 0,
+    "pending": 0,
+    "active": 0,
+    "starts": 3,
+    "ends": 3
+  },
+  "warnings": []
+}

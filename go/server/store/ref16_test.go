@@ -93,7 +93,7 @@ func TestReference16MaturityLateArrivalDedupAndRecovery(t *testing.T) {
 		t.Fatal(scopes, err)
 	}
 	dir := filepath.Join(s.directory(c.Root, m.config.Tap), scopes[0].Dir)
-	before, _ := os.ReadFile(filepath.Join(dir, "events.pods"))
+	before, _ := os.ReadFile(filepath.Join(dir, "events.packs"))
 	index, _ := os.ReadFile(filepath.Join(dir, "events.idx"))
 	if string(index[:4]) != "TIDA" || order.Uint32(index[4:8]) != 4 || len(index) != 36+8+4+2*34 {
 		t.Fatal("wrong active layout", len(index))
@@ -106,7 +106,7 @@ func TestReference16MaturityLateArrivalDedupAndRecovery(t *testing.T) {
 	if string(index[:4]) != "TIDC" || len(index) != 36+8+12+2*26 {
 		t.Fatal("wrong compact layout", len(index))
 	}
-	after, _ := os.ReadFile(filepath.Join(dir, "events.pods"))
+	after, _ := os.ReadFile(filepath.Join(dir, "events.packs"))
 	if !bytes.Equal(before, after) {
 		t.Fatal("maturity rewrote payload")
 	}

@@ -56,7 +56,7 @@ type historySource struct {
 	release       func()
 	memoryRelease func()
 	output        *nativeBuffer
-	reader        podsReader
+	reader        packsReader
 	assembler     frameAssembler
 }
 type historyLocation struct {
@@ -79,8 +79,8 @@ func (h *historySnapshot) close() {
 			s.memoryRelease()
 			s.memoryRelease = nil
 		}
-		if s.branch.pods != nil {
-			s.branch.pods.Close()
+		if s.branch.packs != nil {
+			s.branch.packs.Close()
 		}
 		if s.release != nil {
 			s.release()
@@ -137,7 +137,7 @@ func (h *historySnapshot) visitFrames(ctx context.Context, visit func(EventRefer
 	return nil
 }
 
-// History follows optional collection.idx postings across all immutable minors in
+// History follows optional collection.indx postings across all immutable minors in
 // event order, including acknowledged pending writes. Revisions are opaque.
 // Provisional callbacks use ProvisionalRow, never a durable physical address.
 // Callback bytes are borrowed until the next callback. No writer lock is held
@@ -194,7 +194,20 @@ func (p *Endpoint) snapshotHistory(identity string, major uint32, id Value, from
 		}
 		// Sealing belongs to maintenance/ingress. Replay reads merge durable
 		// pending data and committed data without initiating disk writes.
-		source := &historySource{layout: s.layout, row: s.row, branch: branchStore{baseRows: b.baseRows, podsRetired: b.podsRetired, blockBase: b.blockBase, layout: s.layout, runs: append([]Run(nil), b.runs...), generation: b.generation, podsEnd: b.podsEnd, time: b.time, timeAnchor: b.timeAnchor}, trie: sharedTrie{nodes: s.trie.nodes}, reader: podsReader{point: true}}
+		source := &historySource{layout: s.layout, row: s.row, branch: branchStore{baseRows: b.baseRows, packsRetired: b.packsRetired, blockBase: b.blockBase, layout: s.layout, runs: append([]Run(nil), b.runs...), generation: b.generation, packsEnd: b.packsEnd, time: b.time, timeAnchor: b.timeAnchor}, trie: sharedTrie{nodes: s.trie.nodes}, reader: packsReader{point: true}}
+		source.branch.sealedMemory = make(map[int64]*nativeArena)
+		for _, run := range b.runs {
+			if len(b.residentPack(run, s.config.Now())) > 0 {
+				hour := run.PAC.Placement.From / TimeHourMS
+				source.branch.sealedMemory[hour] = b.sealedMemory[hour]
+			}
+		}
+		if b.readerIndex != nil {
+			index := b.readerIndex
+			index.refs.Add(1)
+			source.release = index.release
+			source.branch.rows = b.rows[:len(b.rows):len(b.rows)]
+		}
 		source.memoryRelease = b.pinMemory()
 		source.output = s.memory.buffer()
 		source.assembler = frameAssembler{layout: source.layout, trie: &source.trie}
@@ -212,24 +225,20 @@ func (p *Endpoint) snapshotHistory(identity string, major uint32, id Value, from
 			continue
 		}
 		for _, row := range selected {
-			var event [16]byte
-			identity, err := source.contextIdentity(b, row)
-			if err != nil {
-				return nil, err
+			run := source.reader.context.segment(b, row)
+			event, e := seedKey(b.rowTime(row), uint32(row-run.Start))
+			if e != nil {
+				return nil, e
 			}
-			copy(event[:], identity)
-			raw := b.live.get(event[:], false, s.config.Now())
-			if raw == nil && source.branch.pods == nil {
-				source.branch.rows, source.release, e = b.snapshotIndex()
-				if e != nil {
-					return nil, e
-				}
-				source.branch.pods, e = os.Open(b.pods.Name())
+			// Retain the PAC and its index. Reconstruct one PIL at a time during
+			// visit, after releasing the writer mutex, without expanded snapshots.
+			if len(source.branch.residentPack(*run, time.Time{})) == 0 && source.branch.packs == nil {
+				source.branch.packs, e = os.Open(b.packs.Name())
 				if e != nil {
 					return nil, e
 				}
 			}
-			h.locations = append(h.locations, historyLocation{source: source, row: row, binding: s.binding, id: event, raw: raw})
+			h.locations = append(h.locations, historyLocation{source: source, row: row, binding: s.binding, id: event})
 		}
 		for _, p := range pending {
 			h.locations = append(h.locations, historyLocation{source: source, row: ProvisionalRow, binding: s.binding, id: p.id, raw: p.frame})
@@ -247,10 +256,10 @@ func (p *Endpoint) snapshotHistory(identity string, major uint32, id Value, from
 	return h, nil
 }
 
-func (s *historySource) contextIdentity(b *branchStore, row uint64) ([]byte, error) {
-	raw, err := s.reader.read(b, row, s.row)
-	if err != nil {
-		return nil, err
+func (v historyLocation) resident() bool {
+	if v.raw != nil {
+		return true
 	}
-	return s.layout.seedIdentity(raw, b.rowTime(row))
+	run := v.source.reader.context.segment(&v.source.branch, v.row)
+	return len(v.source.branch.residentPack(*run, time.Time{})) > 0
 }
