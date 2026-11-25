@@ -7,6 +7,7 @@ use crate::{
 use pil_codec::api::{FieldBytes, NativeValue, Pill, PillView};
 use std::{borrow::Cow, sync::Arc};
 
+#[derive(Default)]
 pub struct StatePaths(BTreeMap<u16, Vec<u16>>);
 
 impl StatePaths {

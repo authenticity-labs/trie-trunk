@@ -30,6 +30,33 @@ pub fn ingest(
     })
 }
 
+/// Write the same recovery frames as single-PIL admission. Each touched hour
+/// crosses its durability barrier before the batch becomes visible to readers.
+pub fn ingest_batch(
+    owner: &mut super::OwnedIngress,
+    files: &mut std::collections::BTreeMap<u64, File>,
+    batch: super::Batch<'_>,
+) -> Result<usize> {
+    use std::io::{BufWriter, Seek, SeekFrom, Write};
+    for (hour, _) in batch.hours() {
+        let file = files.get_mut(&hour).ok_or("missing ingress spool")?;
+        file.seek(SeekFrom::End(0))?;
+        let mut writer = BufWriter::new(file);
+        for &(pill, (time, _)) in &batch.rows {
+            if time / crate::TIME_HOUR_MS * crate::TIME_HOUR_MS == hour {
+                writer.write_all(&super::recovery::prefix(batch.branch, pill)?)?;
+                writer.write_all(pill)?;
+            }
+        }
+        writer.flush()?;
+        writer.get_ref().sync_all()?;
+    }
+    for &(pill, coords) in &batch.rows {
+        owner.admit(batch.branch, pill, coords)?;
+    }
+    Ok(batch.rows.len())
+}
+
 fn suffix(prefix: &Path, extension: &str) -> PathBuf {
     let mut name = prefix.as_os_str().to_owned();
     name.push(extension);

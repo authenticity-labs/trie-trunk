@@ -372,6 +372,7 @@ impl Node {
             .trunk
             .write()
             .map_err(|_| "Registry publication poisoned")? = Arc::new(registered);
+        self.roots.refresh(next);
         self.registry_generation
             .store(self.changed(), std::sync::atomic::Ordering::Release);
         Ok(())

@@ -68,7 +68,7 @@ func native(root, output, shape string, samples int, aggregates, objects bool, s
 		}
 	}
 	c := cache.Config{Root: root, Cache: "bench", Tenant: "benchmark", Layout: l, ObjectIndex: objects, Now: func() time.Time { return now }}
-	s, e := cache.Open(c)
+	s, e := cache.OpenPrototype(c)
 	if e != nil {
 		return e
 	}
@@ -84,7 +84,7 @@ func native(root, output, shape string, samples int, aggregates, objects bool, s
 	}
 	out := report{Format: "cache-format-6-prototype", Count: len(frames), Shape: shape, Aggregates: aggregates, ObjectIndex: objects, FixtureHash: hash, Start: start, End: end, Go: runtime.Version(), Platform: runtime.GOOS + "/" + runtime.GOARCH, CPU: runtime.NumCPU(), IngestNS: time.Since(begin).Nanoseconds(), RowWidth: l.RowLayout().Width, Bytes: map[string]int64{}, Wire: map[string]int64{}, Query: map[string]latency{}}
 	begin = time.Now()
-	s, e = cache.Open(c)
+	s, e = cache.OpenPrototype(c)
 	if e != nil {
 		return e
 	}

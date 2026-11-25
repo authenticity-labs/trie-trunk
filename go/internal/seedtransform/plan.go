@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	native "github.com/authenticity-labs/pill-packer/go"
-	api "github.com/authenticity-labs/pill-packer/go/api"
 	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"math/big"
 	"math/bits"
@@ -23,8 +22,8 @@ type node struct {
 	frame       pil.Frame
 	children    map[int]*node
 	used        []bool
-	owner       *api.Prescription
-	projections map[int]*api.Prescription
+	owner       *pil.Layout
+	projections map[int]*pil.Layout
 	schemas     map[int]map[string]any
 }
 type binding struct {
@@ -67,7 +66,7 @@ func Compile(source, target *pil.Layout, mappings *meta.PreparedSynonyms, metada
 		if depth > 32 {
 			return nil, fmt.Errorf("nested Definition exceeds depth limit")
 		}
-		n := &node{layout: l, children: map[int]*node{}, used: make([]bool, len(l.Definition.Fields)), projections: map[int]*api.Prescription{}, schemas: map[int]map[string]any{}}
+		n := &node{layout: l, children: map[int]*node{}, used: make([]bool, len(l.Definition.Fields)), projections: map[int]*pil.Layout{}, schemas: map[int]map[string]any{}}
 		success := false
 		defer func() {
 			if !success {
@@ -98,7 +97,7 @@ func Compile(source, target *pil.Layout, mappings *meta.PreparedSynonyms, metada
 					if e != nil {
 						return nil, e
 					}
-					rx, e := (api.Doc{}).Write(raw, api.JSON)
+					rx, e := pil.FromJSON(raw)
 					if e != nil {
 						return nil, e
 					}
@@ -120,11 +119,11 @@ func Compile(source, target *pil.Layout, mappings *meta.PreparedSynonyms, metada
 				return nil, err
 			}
 			// Use the same Definition compiler as DOC, including nested schema rules.
-			rx, err := (api.Doc{}).Write(raw, api.JSON)
+			rx, err := pil.FromJSON(raw)
 			if err != nil {
 				return nil, fmt.Errorf("child %s: %w", name, err)
 			}
-			child, err := build(rx.Layout, v, depth+1)
+			child, err := build(rx, v, depth+1)
 			if err != nil {
 				rx.Close()
 				return nil, err
@@ -530,11 +529,11 @@ func cast(value any, m meta.Synonym) (any, error) {
 // about the choice tag or nested PIL layout. Only this field is materialized.
 func fieldValue(n *node, i int, v pil.Value) (any, error) {
 	if rx := n.projections[i]; rx != nil && v.State != pil.Absent && v.State != pil.Null {
-		raw, e := rx.Layout.Encode(nil, []pil.Value{v})
+		raw, e := rx.Encode(nil, []pil.Value{v})
 		if e != nil {
 			return nil, e
 		}
-		raw, e = rx.Layout.DecodeJSON(raw)
+		raw, e = rx.DecodeJSON(raw)
 		if e != nil {
 			return nil, e
 		}

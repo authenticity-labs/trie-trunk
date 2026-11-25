@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package seedtransform
 
 import (
@@ -38,26 +40,44 @@ func fixtureShape(t testing.TB, shape, provider string) *Plan {
 	for _, d := range source.Definitions {
 		layouts[d.Name] = read(d.Name)
 	}
-	ms, ss := read("field-meta"), read("synonym")
-	md, sy, reg, e := meta.Build(source, layouts, ms, ss)
+	metadata := map[string]*meta.Layout{}
+	for name, layout := range layouts {
+		m, err := meta.Open(layout.Bytes)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(m.Close)
+		metadata[name] = m
+	}
+	readMeta := func(name string) *meta.Layout {
+		m, err := meta.Open(read(name).Bytes)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(m.Close)
+		return m
+	}
+	ms, ss := readMeta("field-meta"), readMeta("synonym")
+	md, sy, reg, e := meta.Build(source, metadata, ms, ss)
 	if e != nil {
 		t.Fatal(e)
 	}
 	target := layouts[shape+"_trietrunk"]
+	targetMeta := metadata[shape+"_trietrunk"]
 	entry := reg[fmt.Sprintf("%x", target.Digest)]
-	mp, e := meta.ReadPack(bytes.NewReader(md), entry.Metadata, ms, target)
+	mp, e := meta.ReadPack(bytes.NewReader(md), entry.Metadata, ms, targetMeta)
 	if e != nil {
 		t.Fatal(e)
 	}
-	prepared, e := meta.Prepare(mp, ms, target)
+	prepared, e := meta.Prepare(mp, ms, targetMeta)
 	if e != nil {
 		t.Fatal(e)
 	}
-	sp, e := meta.ReadPack(bytes.NewReader(sy), entry.Synonyms[shape+"_"+provider], ss, target)
+	sp, e := meta.ReadPack(bytes.NewReader(sy), entry.Synonyms[shape+"_"+provider], ss, targetMeta)
 	if e != nil {
 		t.Fatal(e)
 	}
-	mapping, e := meta.PrepareSynonyms(sp, ss, target)
+	mapping, e := meta.PrepareSynonyms(sp, ss, targetMeta)
 	if e != nil {
 		t.Fatal(e)
 	}

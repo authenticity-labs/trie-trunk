@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package serve
 
 import (
@@ -212,14 +214,11 @@ func TestNativeCacheHTTP2HTTP3AndSocket(t *testing.T) {
 			if e != nil || response.StatusCode != 200 || response.ProtoMajor != tc.major {
 				t.Fatalf("%v %v %s", response, e, body)
 			}
-			packs, e := pilcodec.OpenNestedPack(body)
-			if e != nil || packs.Count() != 1 || response.Header.Get("Trunk-Format") != "seed-packs/0" || response.Header.Get("Content-Encoding") != "" {
+			packs, e := pilcodec.ParsePAC(nil, body, nil)
+			if e != nil || len(packs.Members) != 1 || response.Header.Get("Trunk-Format") != "seed-packs/0" || response.Header.Get("Content-Encoding") != "" {
 				t.Fatal("invalid seed transport", e, response.Header)
 			}
-			raw, e := packs.Get(0)
-			if e != nil {
-				t.Fatal(e)
-			}
+			raw := packs.Members[0]
 			unpacked, e := pilcodec.ExpandPAC(raw)
 			if e != nil {
 				t.Fatal(e)
@@ -251,7 +250,7 @@ func TestNativeCacheHTTP2HTTP3AndSocket(t *testing.T) {
 					failures <- fmt.Errorf("branch %s: %d %s", branch, response.StatusCode, string(raw))
 					return
 				}
-				_, e = pilcodec.OpenNestedPack(raw)
+				_, e = pilcodec.ParsePAC(nil, raw, nil)
 				failures <- e
 			}(branch)
 		}
@@ -495,18 +494,15 @@ func TestSummariesNativeRoute(t *testing.T) {
 	if e != nil || response.StatusCode != 200 || response.ProtoMajor != 3 {
 		t.Fatal(response.StatusCode, response.Proto, string(raw), e)
 	}
-	pack, e := pilcodec.OpenNestedPack(raw)
+	pack, e := pilcodec.ParsePAC(nil, raw, nil)
 	if e != nil {
 		t.Fatal(e)
 	}
-	if pack.Count() != 2 || response.ContentLength != int64(len(raw)) || response.Header.Get("Content-Type") != "application/pil" {
-		t.Fatal("invalid summary PAC response", pack.Count(), response.ContentLength, len(raw), response.Header)
+	if len(pack.Members) != 2 || response.ContentLength != int64(len(raw)) || response.Header.Get("Content-Type") != "application/pil" {
+		t.Fatal("invalid summary PAC response", len(pack.Members), response.ContentLength, len(raw), response.Header)
 	}
-	for i := 0; i < pack.Count(); i++ {
-		child, e := pack.Get(i)
-		if e != nil {
-			t.Fatal(e)
-		}
+	for i := 0; i < len(pack.Members); i++ {
+		child := pack.Members[i]
 		if _, e = pilcodec.ExpandPAC(child); e != nil {
 			t.Fatal(e)
 		}

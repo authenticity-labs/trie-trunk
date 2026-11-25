@@ -9,33 +9,38 @@ import (
 	"time"
 )
 
+func (h *HTTP) rejectionAvailability(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	if len(q) != 1 || len(q["format"]) != 1 {
+		http.Error(w, "availability is an unfiltered presence check", 400)
+		return
+	}
+	sources := h.sources
+	if len(sources) == 0 && h.Store != nil {
+		sources = []*HTTP{h}
+	}
+	available := false
+	for _, source := range sources {
+		found, err := source.Store.hasRejections()
+		if err != nil {
+			http.Error(w, "could not check alert availability", 500)
+			return
+		}
+		if found {
+			available = true
+			break
+		}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(map[string]bool{"available": available})
+}
+
 // Inspection uses JSON text for the single-event display edge. Keep its numeric
 // literals inside a string so browser JSON parsing cannot round U64/I64 values.
 func (h *HTTP) rejectionsHTTP(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	if q.Get("format") == "availability" {
-		if len(q) != 1 || len(q["format"]) != 1 {
-			http.Error(w, "availability is an unfiltered presence check", 400)
-			return
-		}
-		sources := h.sources
-		if len(sources) == 0 && h.Store != nil {
-			sources = []*HTTP{h}
-		}
-		available := false
-		for _, source := range sources {
-			found, err := source.Store.hasRejections()
-			if err != nil {
-				http.Error(w, "could not check alert availability", 500)
-				return
-			}
-			if found {
-				available = true
-				break
-			}
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]bool{"available": available})
+		h.rejectionAvailability(w, r)
 		return
 	}
 	inspection := q.Get("format") == "inspection"

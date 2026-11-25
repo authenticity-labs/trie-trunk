@@ -109,6 +109,30 @@ func (s *Store) policyFor(branch Branch) Policy {
 	return s.policy
 }
 
+// EffectivePolicy resolves settings at a registered Trunk scope using the same
+// inheritance rules as the configuration editor and ingestion.
+func EffectivePolicy(root string, scope []string) (Policy, error) {
+	var config Configuration
+	for _, part := range scope {
+		if !filepath.IsLocal(part) || filepath.Base(part) != part || part == "." {
+			return Policy{}, fmt.Errorf("invalid configuration scope")
+		}
+	}
+	if len(scope) > 0 {
+		raw, err := readConfiguration(configurationPath(root, scope[:1]))
+		if err != nil {
+			return Policy{}, err
+		}
+		if len(raw) > 0 {
+			config, err = ParseConfiguration(raw)
+			if err != nil {
+				return Policy{}, err
+			}
+		}
+	}
+	return configuredScope(root, scope, config)
+}
+
 // Shared by the runtime and configuration editor so displayed inheritance follows
 // precisely the same registry and filesystem precedence as ingestion.
 func configuredScope(root string, scope []string, c Configuration) (Policy, error) {

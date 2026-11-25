@@ -6,12 +6,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"os"
 	"os/exec"
 	"path/filepath"
 	meta "trie-trunk/go/internal/definitionmeta"
-	"trie-trunk/go/server/cache"
 )
 
 func main() {
@@ -28,13 +27,13 @@ func run() error {
 	if e != nil {
 		return e
 	}
-	layouts := map[string]*pil.Layout{}
+	layouts := map[string]*meta.Layout{}
 	defer func() {
 		for _, l := range layouts {
 			l.Close()
 		}
 	}()
-	compile := func(file, root string) (*pil.Layout, error) {
+	compile := func(file, root string) (*meta.Layout, error) {
 		out := filepath.Join(*dir, root+".rx")
 		if b, e := exec.Command(*rx, "write", filepath.Join(*dir, file), out, "--root", root).CombinedOutput(); e != nil {
 			return nil, fmt.Errorf("compile %s: %s: %w", root, b, e)
@@ -103,7 +102,7 @@ func run() error {
 		if e != nil {
 			return nil, e
 		}
-		return pil.Define(raw)
+		return meta.Open(raw)
 	}
 	for _, d := range source.Definitions {
 		sourceFiles := map[string]string{"trietrunk": "trietrunk.cddl", "opentelemetry": "opentelemetry.cddl", "datadog": "datadog.cddl"}
@@ -132,7 +131,7 @@ func run() error {
 	}
 	// This bundle has metadata bindings only. Registration supplies real resource
 	// bindings; no service/resource paths are invented to address presentation data.
-	catalog := cache.Catalog{Format: cache.Format, Cache: "log-definitions", Tenant: "local", Definitions: map[string][32]byte{}, DefinitionResources: entries}
+	catalog := meta.Registry[uint8]{Format: meta.RegistryFormat, Cache: "log-definitions", Tenant: "local", Definitions: map[string][32]byte{}, DefinitionResources: entries}
 	registry, e := pil.MarshalObject(catalog)
 	if e != nil {
 		return e

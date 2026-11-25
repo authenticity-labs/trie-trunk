@@ -160,7 +160,8 @@ func TestAddressTradeoffFixture(t *testing.T) {
 			for variant, posts := range collectionPosts {
 				f, e := os.Create(filepath.Join(dir, fmt.Sprintf("collection%d.indx", variant)))
 				mustAddress(t, e)
-				idx := newObjectIndex(f)
+				idx, e := loadObjectIndex(f)
+				mustAddress(t, e)
 				begin := time.Now()
 				for a := 0; a < len(posts); a += 8192 {
 					b := min(a+8192, len(posts))
@@ -330,7 +331,8 @@ func TestAddressTradeoffPackedCollection(t *testing.T) {
 			mustAddress(t, e)
 			current, e := loadObjectIndex(file)
 			mustAddress(t, e)
-			stats := map[string]int{"current_leaf_pages": len(current.sources[objectBinding{}].Fences), "current_directory_pages": len(current.view.Metadata)}
+			leaves, _, dirs := current.pages(objectBinding{})
+			stats := map[string]int{"current_leaf_pages": leaves, "current_directory_pages": dirs}
 			data, e := json.MarshalIndent(stats, "", "  ")
 			mustAddress(t, e)
 			mustAddress(t, os.WriteFile(filepath.Join(dir, "collection_publication.json"), data, 0644))
@@ -338,7 +340,7 @@ func TestAddressTradeoffPackedCollection(t *testing.T) {
 			sizes := map[int]map[string]int{}
 			for _, width := range []int{4, 7, 8} {
 				parentN, extraN := 8/width, 32/width
-				p := newCollectionPage(objectBinding{})
+				p := newComparisonPage()
 				pages := []collectionPage{}
 				fences := [][16]byte{}
 				for _, o := range objects {
@@ -346,14 +348,14 @@ func TestAddressTradeoffPackedCollection(t *testing.T) {
 					if p.used()+units > collectionUnits {
 						p.seal()
 						pages = append(pages, p)
-						p = newCollectionPage(objectBinding{})
+						p = newComparisonPage()
 					}
 					if p.used() == 0 {
 						fences = append(fences, o.id)
 					}
 					n := p.used()
 					for j := 0; j < units; j++ {
-						p.add(p.used(), j > 0)
+						p.add(j > 0)
 					}
 					copy(p[p.at(n):], o.id[:])
 					for j := range o.rows {

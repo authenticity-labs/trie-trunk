@@ -654,6 +654,11 @@ fn discovery_and_version_scopes_come_from_registered_resource_identity() {
     assert!(trie.route(revision.branch).unwrap().event_storage().is_err());
     assert!(catalog.files.iter().any(|f|f.kind=="pods" && f.path=="demo/service/events/account.pods"));
     assert_eq!(catalog.files.iter().filter(|f|f.path=="demo/service/events/http.v1.packs").count(),1);
+    let bed = catalog.files.iter().find(|f| f.path == "demo/service/events/http.v1.beds").unwrap().clone();
+    let mut browse = trie.catalog("demo").unwrap();
+    browse.files_present(&[bed]).unwrap();
+    assert_eq!(browse.files.len(), 1);
+    assert_eq!(browse.files[0].kind, "beds");
     assert!(catalog.files.iter().any(|f|f.path=="demo/service/events/security.v1.packs"));
     assert!(catalog.files.iter().any(|f|f.path.contains(".v1")));
     let states:Vec<_>=catalog.files.iter().filter(|f|f.kind=="state").collect();

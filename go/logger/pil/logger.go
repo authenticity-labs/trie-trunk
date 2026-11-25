@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	native "github.com/authenticity-labs/pill-packer/go"
-	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"net"
 	"net/http"
@@ -72,18 +71,19 @@ type Config struct {
 	BatchMilliseconds int
 }
 type Logger struct {
-	batch           timedBatch
-	mu              sync.Mutex
-	config          Config
-	layout          *cache.Layout
-	source          *cache.Layout
-	projection      *cache.Projection
-	definitions     map[string]*cache.Layout
-	client          *http.Client
-	origin          *url.URL
-	digest          string
-	ready, closed   bool
-	httpCompression bool
+	batch            timedBatch
+	mu               sync.Mutex
+	config           Config
+	layout           *cache.Layout
+	source           *cache.Layout
+	projection       *cache.Projection
+	definitions      map[string]*cache.Layout
+	client           *http.Client
+	origin           *url.URL
+	digest           string
+	ready, closed    bool
+	httpCompression  bool
+	compressionFlags uint32
 }
 
 // Open registers before returning a usable logger. Definition can come from a
@@ -101,18 +101,9 @@ func Open(ctx context.Context, c Config) (*Logger, error) {
 	if c.CompressionAlgorithm == "brotli" {
 		c.CompressionAlgorithm = "br"
 	}
-	if _, err := pilcodec.CompressionFlags(c.CompressionAlgorithm); err != nil {
+	flags, err := native.CompressionFlags(c.CompressionAlgorithm, c.CompressionLevel)
+	if err != nil {
 		return nil, err
-	}
-	max := 22
-	if c.CompressionAlgorithm == "gzip" {
-		max = 9
-	}
-	if c.CompressionAlgorithm == "br" {
-		max = 11
-	}
-	if c.CompressionLevel < 1 || c.CompressionLevel > max {
-		return nil, fmt.Errorf("invalid compression level")
 	}
 	l, e := cache.ParseDefinition(c.Definition)
 	if e != nil {
@@ -153,7 +144,7 @@ func Open(ctx context.Context, c Config) (*Logger, error) {
 	clone := *client
 	clone.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	c.Definition = nil // Layout owns a defensive copy of the definition bytes.
-	w := &Logger{config: c, layout: l, source: l, definitions: map[string]*cache.Layout{fmt.Sprintf("%x", l.Digest): l}, client: &clone, origin: u, digest: fmt.Sprintf("%x", l.Digest)}
+	w := &Logger{config: c, compressionFlags: flags, layout: l, source: l, definitions: map[string]*cache.Layout{fmt.Sprintf("%x", l.Digest): l}, client: &clone, origin: u, digest: fmt.Sprintf("%x", l.Digest)}
 	if e = w.Register(ctx); e != nil {
 		return nil, e
 	}
@@ -450,8 +441,7 @@ func (w *Logger) writeOnce(ctx context.Context, frames [][]byte, branch string) 
 	if w.httpCompression {
 		// Compress the batch once, including every PIL header. Ingress removes
 		// this transport coding before staging.
-		flags, _ := pilcodec.CompressionFlags(w.config.CompressionAlgorithm)
-		packed, err := native.CompressStreamOwned(body, flags, w.config.CompressionLevel)
+		packed, err := native.CompressStreamOwned(body, w.compressionFlags, w.config.CompressionLevel)
 		if err != nil {
 			return err
 		}

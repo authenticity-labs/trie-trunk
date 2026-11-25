@@ -16,6 +16,11 @@ typedef struct {
     TTSeedSlice bytes;
 } TTSeedValue;
 void *trunk_seed_document(TTSeedSlice);
+void *trunk_log_release_digest(TTSeedSlice, uint32_t, uint32_t);
+void *trunk_log_open(TTSeedSlice, uint8_t, void **);
+void *trunk_log_definition(TTSeedSlice);
+void *trunk_log_encode(const void *, uint64_t, TTSeedSlice, TTSeedSlice);
+void trunk_log_close(void *);
 void *trunk_seed_ingress_inspect(void *, uint16_t, TTSeedSlice, uint64_t);
 void *trunk_seed_ingress_persist(void *, uint16_t, TTSeedSlice, uint64_t, int32_t);
 void *trunk_seed_ingress_publish(const void *, TTSeedSlice, bool, size_t);

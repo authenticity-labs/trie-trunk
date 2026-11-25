@@ -109,6 +109,7 @@ pub struct HourIndex {
     fields: IndexFields,
 }
 impl HourIndex {
+    pub const ROW_BYTES: usize = ROW_BYTES;
     pub fn open(
         bytes: Arc<Vec<u8>>,
         range: Range<usize>,

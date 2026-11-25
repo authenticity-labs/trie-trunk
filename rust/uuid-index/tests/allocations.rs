@@ -45,22 +45,41 @@ fn point_reads_do_not_allocate() {
 
 #[test]
 fn slotted_reads_do_not_allocate() {
-    use trunk_uuid_index::slotted::{Command, Index};
-    let dir = tempfile::tempdir().unwrap();
-    let index = Index::create(dir.path().join("collection.idx"), KeyKind::Uuid, None).unwrap();
+    use trunk_uuid_index::collection::{Binding, Index, Posting};
+    let index = Index::open(tempfile::tempfile().unwrap()).unwrap();
+    let k = Binding::default();
     index
-        .apply(&[Command::put([4; 16], 0, 77), Command::put([4; 16], 8, 99)])
+        .append(
+            k,
+            4,
+            0,
+            2,
+            &[
+                Posting {
+                    object: [4; 16],
+                    revision: 0,
+                    hour: 0,
+                    record: 77,
+                },
+                Posting {
+                    object: [4; 16],
+                    revision: 8,
+                    hour: 0,
+                    record: 99,
+                },
+            ],
+        )
         .unwrap();
-    let snapshot = index.snapshot().unwrap();
+    let snapshot = index.snapshot();
     COUNT.set(0);
     TRACK.set(true);
     for _ in 0..1000 {
-        assert_eq!(index.latest(&[4; 16]).unwrap(), Some((8, 99)));
-        assert_eq!(snapshot.get(&[4; 16], 0).unwrap(), Some(77));
-        assert_eq!(snapshot.get(&[4; 16], 4).unwrap(), None);
-        assert_eq!(snapshot.latest(&[5; 16]).unwrap(), None);
+        assert_eq!(snapshot.latest(k, [4; 16]).unwrap(), Some((8, 99)));
+        assert_eq!(snapshot.get(k, [4; 16], 0).unwrap(), Some(77));
+        assert_eq!(snapshot.get(k, [4; 16], 4).unwrap(), None);
+        assert_eq!(snapshot.latest(k, [5; 16]).unwrap(), None);
         snapshot
-            .history(&[4; 16], |_, v| {
+            .history(k, [4; 16], |_, v| {
                 std::hint::black_box(v);
             })
             .unwrap();

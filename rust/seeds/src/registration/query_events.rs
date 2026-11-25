@@ -17,7 +17,7 @@ pub fn definition() -> Result<Document, Error> {
             Field::new("time")
                 .r#type("uint")
                 .size(6)
-                .annotation("@time"),
+                .annotation("@time").annotation("@otel(Timestamp)"),
         )
         .field(Field::new("id").r#type("bytes").size(10).annotation("@log"))
         .field(Field::new("level").r#type("uint").size(1).annotation("@otel(SeverityNumber)"));
@@ -25,7 +25,7 @@ pub fn definition() -> Result<Document, Error> {
         d = d.field(Field::new(name).r#type("tstr"));
     }
     for name in ["from", "to"] {
-        d = d.field(Field::new(name).r#type("uint").size(6));
+        d = d.field(Field::new(name).r#type("uint").size(6).annotation("@timestamp(ms)"));
     }
     d = d.field(Field::new("rows").r#type("uint").size(4).annotation("#summ(numeric)"));
     d = d.field(
@@ -33,7 +33,8 @@ pub fn definition() -> Result<Document, Error> {
                 .r#type("float")
                 .size(8)
                 .annotation("@unit(us)").annotation("#summ(numeric)"),
-        ).field(Field::new("checkpoints").array_object("checkpoint").annotation("@unit(us)").annotation("@checkpoints"));
+        ).field(Field::new("checkpoints").array_object("checkpoint").annotation("@unit(us)").annotation("@checkpoints"))
+         .field(Field::new("attributes").array("any").annotation("@fields").annotation("@otel(Attributes)"));
     d.sign()
 }
 #[derive(serde::Deserialize)]

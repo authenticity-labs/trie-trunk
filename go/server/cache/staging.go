@@ -27,7 +27,7 @@ func (s *Store) Run(ctx context.Context, interval time.Duration) error {
 		case <-ctx.Done():
 			return nil
 		case <-ticker.C:
-			if e := s.Flush(); e != nil {
+			if e := s.flushAll(); e != nil {
 				return e
 			}
 		}

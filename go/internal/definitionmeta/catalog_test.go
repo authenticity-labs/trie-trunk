@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"os"
 	"path/filepath"
 	"testing"
@@ -12,32 +11,32 @@ import (
 
 const fixtureRoot = "../../../schemas/logs"
 
-func fixture(t testing.TB) (Source, map[string]*pil.Layout, *pil.Layout, *pil.Layout) {
+func fixture(t testing.TB) (Source, map[string]*Layout, *Layout, *Layout) {
 	t.Helper()
 	source, e := LoadSource(fixtureRoot)
 	if e != nil {
 		t.Fatal(e)
 	}
-	read := func(name string) *pil.Layout {
+	read := func(name string) *Layout {
 		raw, e := os.ReadFile(filepath.Join(fixtureRoot, name+".rx"))
 		if e != nil {
 			t.Fatal(e)
 		}
-		l, e := pil.Define(raw)
+		l, e := Open(raw)
 		if e != nil {
 			t.Fatal(e)
 		}
 		t.Cleanup(l.Close)
 		return l
 	}
-	definitions := map[string]*pil.Layout{}
+	definitions := map[string]*Layout{}
 	for _, d := range source.Definitions {
 		definitions[d.Name] = read(d.Name)
 	}
 	return source, definitions, read("field-meta"), read("synonym")
 }
-func ordinal(rx *pil.Layout, name string) int {
-	for i, f := range rx.Definition.Fields {
+func ordinal(rx *Layout, name string) int {
+	for i, f := range rx.Fields {
 		if f.Name == name {
 			return i
 		}
@@ -72,7 +71,7 @@ func TestGeneratedCatalogRoundTrip(t *testing.T) {
 		if e != nil {
 			t.Fatal(e)
 		}
-		for i, f := range rx.Definition.Fields {
+		for i, f := range rx.Fields {
 			if prepared.Fields[i].Semantic == "" {
 				t.Fatal("missing ordinal", f.Name)
 			}

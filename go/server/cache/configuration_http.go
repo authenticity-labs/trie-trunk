@@ -77,7 +77,7 @@ func (p *Endpoint) configurationHTTP(w http.ResponseWriter, r *http.Request, sou
 		http.Error(w, "scope must be a JSON path", 400)
 		return
 	}
-	inventory, err := collectStorageInventory(sources, map[string]string{p.config.Cache: filepath.Join(p.config.Root, p.config.Cache)}, false)
+	inventory, err := collectStorageInventory(sources, map[string]string{p.config.Cache: filepath.Join(p.config.Root, p.config.Cache)}, false, p.node)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -210,22 +210,7 @@ func (p *Endpoint) configurationHTTP(w http.ResponseWriter, r *http.Request, sou
 		raw = next
 		revision = fmt.Sprintf("%x", sha256.Sum256(raw))
 	}
-	var config Configuration
-	if len(scope) > 0 {
-		registry, e := readConfiguration(configurationPath(p.config.Root, scope[:1]))
-		if e != nil {
-			http.Error(w, e.Error(), 500)
-			return
-		}
-		if len(registry) > 0 {
-			config, e = ParseConfiguration(registry)
-			if e != nil {
-				http.Error(w, e.Error(), 500)
-				return
-			}
-		}
-	}
-	effective, err := configuredScope(p.config.Root, scope, config)
+	effective, err := EffectivePolicy(p.config.Root, scope)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

@@ -34,7 +34,9 @@ func runServe(ctx context.Context, args []string) (result error) {
 	tenant := flags.String("tenant", "", "cache tenant owner")
 	root := flags.String("dir", "./taps", "store root")
 	storage := flags.String("storage", "", "storage representation: pack or browse (defaults to node configuration)")
-	postgres := flags.String("postgres", "", "read-only PostgreSQL listener (loopback IP:port)")
+	postgres := flags.String("postgres", "", "read-only PostgreSQL listener (IP:port)")
+	pgCert := flags.String("postgres-cert", "", "PostgreSQL TLS server certificate chain (PEM)")
+	pgKey := flags.String("postgres-key", "", "PostgreSQL TLS private key (PEM)")
 	control := flags.String("control-socket", "", "private Rust query/control socket")
 	stdio := flags.Bool("stdio", false, "read lifecycle commands from stdin; exit when stdin closes")
 	web := flags.String("web", "./web", "built web app directory; empty disables static files")
@@ -53,7 +55,7 @@ func runServe(ctx context.Context, args []string) (result error) {
 	if flags.NArg() != 0 {
 		return fmt.Errorf("unexpected serve arguments")
 	}
-	env, err := applyEnvironment(flags, "dir", "storage", "web", "host", "http-address", "cert", "key", "client-ca", "socket", "queries", "entry-headers", "cache", "tenant")
+	env, err := applyEnvironment(flags, "postgres", "postgres-cert", "postgres-key", "dir", "storage", "web", "host", "http-address", "cert", "key", "client-ca", "socket", "queries", "entry-headers", "cache", "tenant")
 	if err != nil {
 		return err
 	}
@@ -62,7 +64,36 @@ func runServe(ctx context.Context, args []string) (result error) {
 			return func() {}, nil
 		}
 		password, _ := env.lookup("TRUNK_PG_PASSWORD")
-		listener, err := owner.Postgres(*postgres, password)
+		if path, _ := env.lookup("TRUNK_PG_PASSWORD_FILE"); path != "" {
+			if password != "" {
+				return nil, errors.New("set only one of TRUNK_PG_PASSWORD and TRUNK_PG_PASSWORD_FILE")
+			}
+			raw, err := os.ReadFile(path)
+			if err != nil {
+				return nil, fmt.Errorf("read PostgreSQL password file: %w", err)
+			}
+			password = strings.TrimSuffix(strings.TrimSuffix(string(raw), "\n"), "\r")
+			if password == "" {
+				return nil, errors.New("PostgreSQL password file is empty")
+			}
+		}
+		caches, err := owner.Caches()
+		if err != nil {
+			return nil, err
+		}
+		policy, err := cache.EffectivePolicy(*root, nil)
+		if err != nil {
+			return nil, err
+		}
+		offsets := map[string]int{"": policy.UTCOffsetHours()}
+		for _, name := range caches {
+			policy, err := cache.EffectivePolicy(*root, []string{name})
+			if err != nil {
+				return nil, err
+			}
+			offsets[name] = policy.UTCOffsetHours()
+		}
+		listener, err := owner.Postgres(*postgres, password, *pgCert, *pgKey, offsets)
 		if err != nil {
 			return nil, err
 		}

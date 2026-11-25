@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"testing"
 	"time"
 )

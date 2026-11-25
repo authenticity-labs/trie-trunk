@@ -20,9 +20,35 @@ type registeredLeafWriter struct {
 
 func (w *registeredLeafWriter) close() {
 	w.native.close()
+	w.native = nil
+	w.registry = nil
 	if w.file != nil {
 		w.file.Close()
+		w.file = nil
 	}
+}
+
+// Enroll in endpoint shutdown before waiting on the per-file writer.
+func (p *Endpoint) acquireLeafWriter(path string) (*registeredLeafWriter, error) {
+	p.mu.Lock()
+	if p.closed {
+		p.mu.Unlock()
+		return nil, fmt.Errorf("endpoint closed")
+	}
+	writer := p.registeredLeafWriters[path]
+	if writer == nil {
+		writer = &registeredLeafWriter{}
+		p.registeredLeafWriters[path] = writer
+	}
+	p.commitWork.Add(1)
+	p.mu.Unlock()
+	writer.mu.Lock()
+	return writer, nil
+}
+
+func (p *Endpoint) releaseLeafWriter(writer *registeredLeafWriter) {
+	writer.mu.Unlock()
+	p.commitWork.Done()
 }
 
 // commitLeafBatch is the state publication step of an hourly commit. The
@@ -50,21 +76,11 @@ func (p *Endpoint) commitLeafBatch(branch uint16, hour time.Time, first int, nod
 	if err != nil {
 		return err
 	}
-	p.mu.Lock()
-	if p.closed {
-		p.mu.Unlock()
-		return fmt.Errorf("endpoint closed")
+	writer, err := p.acquireLeafWriter(path)
+	if err != nil {
+		return err
 	}
-	writer := p.registeredLeafWriters[path]
-	if writer == nil {
-		writer = &registeredLeafWriter{}
-		p.registeredLeafWriters[path] = writer
-	}
-	p.commitWork.Add(1)
-	p.mu.Unlock()
-	defer p.commitWork.Done()
-	writer.mu.Lock()
-	defer writer.mu.Unlock()
+	defer p.releaseLeafWriter(writer)
 	// Never hold the endpoint publication lock while waiting for a permit.
 	release := p.config.CommitScheduler.acquire()
 	defer release()
@@ -88,9 +104,6 @@ func (p *Endpoint) commitLeafBatch(branch uint16, hour time.Time, first int, nod
 		}
 		if !os.SameFile(info, current) {
 			writer.close()
-			writer.native = nil
-			writer.file = nil
-			writer.registry = nil
 		}
 	}
 	if writer.registry != reader {

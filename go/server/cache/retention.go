@@ -87,7 +87,7 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 	}
 	defer func() {
 		if loadedObjects && s.config.group == nil && s.objects != nil {
-			s.objects.file.Close()
+			s.objects.close()
 			s.objects = nil
 		}
 	}()
@@ -197,7 +197,7 @@ func (s *Store) prune(branch Branch, cutoff time.Time) (err error) {
 		return err
 	}
 	created = append(created, base+".time")
-	next.time.raw[47] = byte(int8(s.policyFor(branch).summaryOffsetHours()))
+	next.time.raw[47] = byte(int8(s.policyFor(branch).UTCOffsetHours()))
 	if err = replace(base+".time", next.time.raw); err != nil {
 		return err
 	}
@@ -277,7 +277,11 @@ func (s *Store) compactObjects() error {
 	name := f.Name()
 	defer os.Remove(name)
 	defer f.Close()
-	next := newObjectIndex(f)
+	next, e := loadObjectIndex(f)
+	if e != nil {
+		return e
+	}
+	defer next.release()
 	for key, source := range s.objects.sources {
 		if key.Minor == s.layout.Definition.Resource.Minor && key.Generation != s.branches[Write].generation {
 			continue
@@ -336,7 +340,7 @@ func (s *Store) compactObjects() error {
 	}
 	// All endpoint operations share the group lock. Existing public history
 	// snapshots hold event files, not the collection index descriptor.
-	if e = s.objects.file.Close(); e != nil {
+	if e = s.objects.close(); e != nil {
 		return e
 	}
 	published, e := os.OpenFile(path, os.O_RDWR, 0600)

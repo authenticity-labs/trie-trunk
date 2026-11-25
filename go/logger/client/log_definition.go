@@ -1,10 +1,12 @@
+//go:build trunk_prototype
+
 package logging
 
 import (
 	_ "embed"
 	"encoding/binary"
 	"fmt"
-	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
+	pilcodec "github.com/authenticity-labs/pill-packer/go"
 	"trie-trunk/go/codec"
 	Keys "trie-trunk/go/logger/client/keys"
 	"trie-trunk/go/logger/pil"

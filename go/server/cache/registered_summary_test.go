@@ -37,7 +37,7 @@ func TestRegisteredSummaryReadsPreservePublishedPAC(t *testing.T) {
 	for path, raw := range map[string][]byte{
 		"trunk.trie": fixture("trunk"), "definitions/summary-hour.rx": fixture("source.rx"),
 		"definitions/summary-hour-summaries.rx": fixture("summary.rx"),
-		"demo/lab/measurements/sample.0.summ":  fixture("summ"), "demo/lab/measurements/sample.0.time": timeline.raw,
+		"demo/lab/measurements/sample.0.summ":   fixture("summ"), "demo/lab/measurements/sample.0.time": timeline.raw,
 	} {
 		if e = os.WriteFile(filepath.Join(root, path), raw, 0600); e != nil {
 			t.Fatal(e)
@@ -75,7 +75,7 @@ func TestRegisteredSummaryReadsPreservePublishedPAC(t *testing.T) {
 	}
 }
 
-func TestAnnotationPublicationRegistersIndependentSummaryLineage(t *testing.T) {
+func TestAnnotationPublicationReusesRegisteredSummaryDefinition(t *testing.T) {
 	root := t.TempDir()
 	t.Cleanup(func() { taxonomyRegistrations.Delete(filepath.Join(root, "trunk.trie")) })
 	target := SeedRegistration{Cache: "demo", Service: "lab", Resource: "measurements", ResourceType: "sample", File: "sample.rx"}
@@ -85,7 +85,7 @@ func TestAnnotationPublicationRegistersIndependentSummaryLineage(t *testing.T) {
 		if annotated {
 			annotations = `["#summ(boolean)"]`
 		}
-		value, e := seedNativeDocument([]byte(fmt.Sprintf(`[{"header":{"rx-name":"sample"},"fields":[{"name":"duration","type":[1,0],"size":4,"annotations":["#summ(numeric)"]},{"name":"cached","type":[6,0],"size":1,"annotations":%s}]}]`, annotations)))
+		value, e := seedNativeDocument([]byte(fmt.Sprintf(`[{"header":{"rx-name":"sample","rx-major":1},"fields":[{"name":"duration","type":[1,0],"size":4,"annotations":["#summ(numeric)"]},{"name":"cached","type":[6,0],"size":1,"annotations":%s}]}]`, annotations)))
 		if e != nil {
 			t.Fatal(e)
 		}
@@ -123,6 +123,9 @@ func TestAnnotationPublicationRegistersIndependentSummaryLineage(t *testing.T) {
 	if next.Definition != route.Definition || next.Digest != route.Digest {
 		t.Fatal("annotation publication changed the event schema identity")
 	}
+	if !bytes.Equal(after, read("definitions/sample.rx")) {
+		t.Fatal("updated annotations were not published")
+	}
 	binding, e := seedNativeBinding(read("trunk.trie"), 1)
 	if e != nil {
 		t.Fatal(e)
@@ -132,8 +135,8 @@ func TestAnnotationPublicationRegistersIndependentSummaryLineage(t *testing.T) {
 	if e = json.Unmarshal(binding.bytes, &resource); e != nil {
 		t.Fatal(e)
 	}
-	if len(resource.Summaries) != 2 {
-		t.Fatal("missing independent summary revisions", string(binding.bytes))
+	if len(resource.Summaries) != 1 {
+		t.Fatal("expected one generic summary Definition", string(binding.bytes))
 	}
 	if e = RegisterSeedDefinition(root, before, target); e != nil {
 		t.Fatal(e)
@@ -147,7 +150,7 @@ func TestAnnotationPublicationRegistersIndependentSummaryLineage(t *testing.T) {
 	if e = json.Unmarshal(rollback.bytes, &restored); e != nil {
 		t.Fatal(e)
 	}
-	if len(restored.Summaries) != 2 {
-		t.Fatal("rollback duplicated summary schema")
+	if len(restored.Summaries) != 1 || restored.Summaries[0] != resource.Summaries[0] || !bytes.Equal(before, read("definitions/sample.rx")) {
+		t.Fatal("rollback did not restore the original annotations and summary binding")
 	}
 }

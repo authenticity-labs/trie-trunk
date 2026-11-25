@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sort"
 	"time"
+	"trie-trunk/go/internal/node"
 )
 
 // Inventory follows the registered definitions and opened physical branches.
@@ -42,12 +43,17 @@ func (v *storageInventory) add(path []string) {
 		}
 	}
 }
-func collectStorageInventory(sources []*HTTP, roots map[string]string, history bool) (*storageInventory, error) {
+func collectStorageInventory(sources []*HTTP, roots map[string]string, history bool, registered *node.Node) (*storageInventory, error) {
 	v := &storageInventory{nodes: map[string]*storageNode{}, roots: map[string]string{}, owners: map[string]storageOwner{}, samples: []storageSample{}}
 	v.add([]string{})
 	for cache, root := range roots {
 		v.roots[cache] = root
 		v.add([]string{cache})
+		if registered != nil {
+			if err := v.registered(registered, cache, filepath.Dir(root), history); err != nil {
+				return nil, err
+			}
+		}
 	}
 	for _, source := range sources {
 		s := source.Store
@@ -62,6 +68,53 @@ func collectStorageInventory(sources []*HTTP, roots map[string]string, history b
 		}
 	}
 	return v, nil
+}
+func (v *storageInventory) registered(ownerNode *node.Node, cache, dir string, history bool) error {
+	reader, err := taxonomyReader(dir)
+	if err != nil {
+		return err
+	}
+	routes, err := reader.routes(cache)
+	if err != nil {
+		return err
+	}
+	type sampleKey struct {
+		source string
+		hour   uint64
+	}
+	samples := make(map[sampleKey]int)
+	for _, route := range routes {
+		directory := filepath.Join(dir, filepath.FromSlash(route.Storage.Directory))
+		scope := []string{route.Cache, route.Service, route.Resource, filepath.Base(route.Source)}
+		v.add(scope)
+		owner := v.owners[directory]
+		if owner.branches == nil {
+			owner = storageOwner{resource: scope[:3], branches: map[string][]string{}}
+		}
+		if _, seen := owner.branches[route.Storage.Stem]; seen {
+			continue
+		}
+		if history {
+			usage, err := ownerNode.StorageUsage(route.Branch)
+			if err != nil {
+				return err
+			}
+			for _, hour := range usage {
+				key := sampleKey{route.Source, hour[0]}
+				i, exists := samples[key]
+				if !exists {
+					i = len(v.samples)
+					samples[key] = i
+					v.samples = append(v.samples, storageSample{Path: scope, Hour: int64(hour[0])})
+				}
+				v.samples[i].Events += hour[1]
+				v.samples[i].Bytes += float64(hour[2])
+			}
+		}
+		owner.branches[route.Storage.Stem] = scope
+		v.owners[directory] = owner
+	}
+	return nil
 }
 func (s *Store) inventoryStorage(v *storageInventory, history bool) error {
 	s.mu.Lock()

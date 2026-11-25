@@ -5,6 +5,37 @@ use pil_codec::api::FieldBytes;
 use trie_trunk_taxonomy::{Trunk as Taxonomy, registration::Registration};
 
 #[test]
+fn shipped_event_lineages_bind_to_their_registered_branches() {
+    let fixtures = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../testdata");
+    for (directory, file) in [
+        ("http-ingress", "query.rx"),
+        ("major-generations", "query.rx"),
+        ("registered-trunk", "sample.rx"),
+        ("registered-indexed", "indexed.rx"),
+    ] {
+        let path = fixtures.join(directory);
+        let raw = std::fs::read(path.join("trunk.trie")).unwrap();
+        let taxonomy = Taxonomy::open(raw.as_slice()).unwrap();
+        let registry = taxonomy.definitions().unwrap();
+        let mut trunk = Trunk::open(raw.as_slice()).unwrap();
+        let rx = std::fs::read(path.join(file)).unwrap();
+        trunk.prescribe_file(file, &rx).unwrap();
+        let mut bound = 0;
+        for resource in registry.resources() {
+            if registry.definitions()[resource.definition as usize].file == file {
+                let packs = trunk.trie().branches().select([resource.branch]).packs().unwrap();
+                packs.definition(resource.branch).unwrap();
+                bound += 1;
+            }
+        }
+        assert!(bound > 0, "no registered event branches in {directory}");
+        let unrelated = doc::new("unrelated").field(Field::new("other").r#type("bool")).sign().unwrap();
+        assert!(trunk.prescribe_file(file, unrelated.bytes().unwrap()).is_err());
+        trunk.prescribe_file(file, &rx).unwrap();
+    }
+}
+
+#[test]
 fn historical_annotations_reuse_the_event_codec_after_restart_and_rollback() {
     let make = |selected: &str| {
         let mut document = doc::new("http").namespace("log");

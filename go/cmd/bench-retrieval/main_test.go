@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"testing"
+
+	pil "github.com/authenticity-labs/pill-packer/go"
 )
 
 func TestSealedViewControlParsing(t *testing.T) {
@@ -52,5 +54,39 @@ func TestLargeViewControlAndUnknownPayload(t *testing.T) {
 	}
 	if _, _, e := parse([]byte{'T', 'P', 'I', 'L', 2, 7, 0, 255, 254}); e == nil {
 		t.Fatal("accepted unmeasured live payload")
+	}
+}
+
+func TestCollectedPacksUseRustExtents(t *testing.T) {
+	d, err := pil.FromJSON([]byte(`{"pil":0,"definition":"size","version":0,"fields":[{"name":"n","type":"U16"}]}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer d.Close()
+	pack, err := d.Pack([][]byte{{0xc0, 42, 0}}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	flags, err := pil.CompressionFlags("zstd", 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	compressed, err := pil.SealOwned(pack, flags, 1, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer compressed.Close()
+	body := append(bytes.Clone(pack), compressed.Bytes()...)
+	packs, err := splitPacks(body)
+	if err != nil || len(packs) != 2 || !bytes.Equal(packs[0], pack) || !bytes.Equal(packs[1], compressed.Bytes()) {
+		t.Fatal("incorrect PAC boundaries", err)
+	}
+	for end := 1; end < len(body); end++ {
+		if end == len(pack) {
+			continue
+		}
+		if _, err := splitPacks(body[:end]); err == nil {
+			t.Fatalf("accepted truncation at %d", end)
+		}
 	}
 }

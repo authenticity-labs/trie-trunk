@@ -46,7 +46,7 @@ func run(args []string) error {
 		return nodeCommand(args[1:])
 	case "install", "inspect", "candidate", "ports", "beds", "time", "search", "definitions", "seeds":
 		return runNode(ctx, args)
-	case "ingest", "serve":
+	case "roots", "serve":
 		err = runServices(ctx, args)
 	case "--help", "-h":
 		fmt.Print(usage + "\n")
@@ -69,13 +69,13 @@ func splitServices(args []string) ([]serviceCommand, error) {
 	seen := map[string]bool{}
 	for len(args) > 0 {
 		name := args[0]
-		if name != "ingest" && name != "serve" || seen[name] {
-			return nil, fmt.Errorf("expected ingest and/or serve, each at most once")
+		if name != "roots" && name != "serve" || seen[name] {
+			return nil, fmt.Errorf("expected roots and/or serve, each at most once")
 		}
 		seen[name] = true
 		args = args[1:]
 		i := 0
-		for i < len(args) && args[i] != "ingest" && args[i] != "serve" {
+		for i < len(args) && args[i] != "roots" && args[i] != "serve" {
 			arg := args[i]
 			i++
 			if strings.HasPrefix(arg, "-") && !strings.Contains(arg, "=") && arg != "--help" && arg != "-h" && i < len(args) {
@@ -99,8 +99,8 @@ func runServices(ctx context.Context, args []string) error {
 	done := make(chan error, len(commands))
 	for _, command := range commands {
 		go func() {
-			if command.name == "ingest" {
-				done <- runIngestContext(ctx, command.args)
+			if command.name == "roots" {
+				done <- runRootsContext(ctx, command.args)
 			} else {
 				done <- runServe(ctx, command.args)
 			}
@@ -136,6 +136,7 @@ const usage = `usage:
     Socket-only configuration; --stdio accepts status/close and exits on EOF.
   trunk serve --dir PATH --postgres 127.0.0.1:55432
     Read-only PostgreSQL clients connect as trunk with TRUNK_PG_PASSWORD.
+    For LAN access, supply --postgres-cert and --postgres-key and enable client SSL.
   trunk serve [443] --dir PATH --cache NAME --tenant OWNER
     HTTP/2 (TCP), HTTP/3 (UDP), and a private Unix socket share one Rust node.
     --cert and --key configure TLS; TRUNK_TOKEN or --client-ca authenticates access.
@@ -143,11 +144,11 @@ const usage = `usage:
     --web PATH serves the independent UI; --web '' disables it.
     --storage pack|browse selects .packs or .beds, defaulting to node configuration.
     Changing storage configuration does not convert existing files.
-  trunk ingest [5140] --dir PATH --cache NAME --tenant OWNER
+  trunk roots [5140] --dir PATH --cache NAME --tenant OWNER
     POST /definitions registers raw RX PIL with Resource-Service, Resource-Name,
     and Resource-Type headers. POST /CACHE/SERVICE/RESOURCE/TYPE/seeds ingests PIL.
-    GET /packs collects sealed Packs. There is no old /ingest or JSON/CBOR fallback.
+    The /seeds WebSocket accepts PIL batches and acknowledges durable admission.
     Loopback HTTP is supported; remote listeners require TLS and authentication.
-    'ingest PORT serve PORT' shares the same owner and commit scheduler.
+    'roots PORT serve PORT' shares the same owner and commit scheduler.
     Loads .env and .env.<ENVIRONMENT>; --env PATH selects one file, --env '' disables.
     Explicit arguments override process environment, profile, and .env defaults.`

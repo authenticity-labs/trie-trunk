@@ -37,7 +37,7 @@ func summaryDayOffset(ms int64, hours int) int64 {
 	return q*summaryDayMS - offset
 }
 func (s *Store) summaryDay(branch Branch, ms int64) int64 {
-	return summaryDayOffset(ms, s.policyFor(branch).summaryOffsetHours())
+	return summaryDayOffset(ms, s.policyFor(branch).UTCOffsetHours())
 }
 
 // Daily summary packets are standard PIL PACs. Their members are ordered hourly
@@ -322,7 +322,7 @@ func (s *Store) packSummaryDays(b *branchStore) (result error) {
 			}
 		}
 	}
-	rollups, e := calendarRollups(locations, first, cutoff, s.policyFor(b.branch).summaryOffsetHours())
+	rollups, e := calendarRollups(locations, first, cutoff, s.policyFor(b.branch).UTCOffsetHours())
 	if e != nil {
 		return e
 	}

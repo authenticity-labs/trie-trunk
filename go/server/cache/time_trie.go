@@ -236,7 +236,7 @@ func (s *Store) publishTime(b *branchStore) error {
 	if e != nil {
 		return e
 	}
-	t.raw[47] = byte(int8(s.policyFor(b.branch).summaryOffsetHours()))
+	t.raw[47] = byte(int8(s.policyFor(b.branch).UTCOffsetHours()))
 	if !bytes.Equal(old, t.raw) {
 		if e = replace(path, t.raw); e != nil {
 			return e

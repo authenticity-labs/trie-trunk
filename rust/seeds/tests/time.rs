@@ -40,3 +40,19 @@ fn range_clips_to_publication_and_preserves_half_open_boundaries() {
         assert_eq!(trie.range(from - TIME_HOUR_MS, from).unwrap().count(), 0);
     }
 }
+
+#[test]
+fn occupied_hours_exclude_empty_edges_and_span_gaps() {
+    use data_seeds::TimeLeaf;
+    let hour = TIME_HOUR_MS;
+    let mut trie = TimeTrie::create(0, [1; 16], 0).unwrap();
+    trie = trie.publish(2 * hour, None).unwrap();
+    assert_eq!(trie.occupied().unwrap(), None);
+    for (at, start) in [(3, 0), (9, 2)] {
+        let leaf = TimeLeaf {hour: at * hour, start, end: start + 2, count: 1, packs: 0, beds: 0};
+        trie = trie.publish((at + 1) * hour, Some(leaf)).unwrap();
+        assert_eq!(trie.occupied().unwrap(), Some(3 * hour..(at + 1) * hour));
+    }
+    trie = trie.publish(40 * hour, None).unwrap();
+    assert_eq!(trie.occupied().unwrap(), Some(3 * hour..10 * hour));
+}

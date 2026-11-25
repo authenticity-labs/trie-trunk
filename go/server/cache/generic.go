@@ -4,23 +4,34 @@ package cache
 import (
 	"encoding/hex"
 	"fmt"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"github.com/fxamacker/cbor/v2"
 	"strings"
+	"sync"
 	"trie-trunk/go/codec"
 )
 
 var ingressDecoder, _ = (cbor.DecOptions{DupMapKey: cbor.DupMapKeyEnforcedAPF, TagsMd: cbor.TagsForbidden, MaxNestedLevels: 32, MaxArrayElements: 65536, MaxMapPairs: 65536}).DecMode()
 
-var genericLayout, genericLayoutError = compileGenericDefinition()
+var genericPreset struct {
+	sync.Once
+	layout *Layout
+	err    error
+}
+
+func genericDefinition() (*Layout, error) {
+	genericPreset.Do(func() { genericPreset.layout, genericPreset.err = compileGenericDefinition() })
+	return genericPreset.layout, genericPreset.err
+}
 
 // GenericDefinition is the built-in blind-registration definition. Incoming
 // values are represented by native PIL objects with text or integer keys.
 func GenericDefinition() (*Layout, error) {
-	if genericLayoutError != nil {
-		return nil, genericLayoutError
+	layout, err := genericDefinition()
+	if err != nil {
+		return nil, err
 	}
-	return ParseDefinition(genericLayout.Bytes)
+	return ParseDefinition(layout.Bytes)
 }
 func compileGenericDefinition() (*Layout, error) {
 	return Compile(Definition{Identity: "default/logs", Version: 1 << 20,
@@ -29,7 +40,8 @@ func compileGenericDefinition() (*Layout, error) {
 	})
 }
 func (s *Store) generic() bool {
-	return genericLayoutError == nil && genericLayout.Digest == s.layout.Digest
+	layout, err := genericDefinition()
+	return err == nil && layout.Digest == s.layout.Digest
 }
 
 func (s *Store) wrapBlind(value any) ([]byte, error) {

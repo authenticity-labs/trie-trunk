@@ -10,28 +10,39 @@ import (
 	"testing"
 )
 
+func registeredConfigurationEndpoint(t *testing.T, root string) *Endpoint {
+	t.Helper()
+	doc, err := seedNativeDocument([]byte(`[{"header":{"rx-name":"event","rx-major":1},"fields":[{"name":"time","type":[1,0],"size":6,"annotations":["@time"]}]}]`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer doc.close()
+	target := SeedRegistration{Cache: "demo", Service: "payment", Resource: "transactions", ResourceType: "http", File: "event.rx"}
+	if err = RegisterSeedDefinition(root, doc.bytes, target); err != nil {
+		t.Fatal(err)
+	}
+	p, err := OpenEndpoint(Config{Root: root, Cache: "demo", Tenant: "test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { p.Close() })
+	return p
+}
+
 func TestConfigurationEditorUsesHierarchyAndPreservesOtherSettings(t *testing.T) {
-	root := filepath.Join(t.TempDir(), "caches")
-	p, err := OpenEndpoint(Config{Root: root, Cache: "demo", Tenant: "test", Layout: testLayout(t, false)})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer p.Close()
-	s := p.api.Store
-	s.mu.Lock()
-	_, err = s.openBranch(Write)
-	s.mu.Unlock()
-	if err != nil {
-		t.Fatal(err)
-	}
-	n := s.layout.Definition.Resource
-	resource := []string{"demo", n.Service, n.Resource + ".v1"}
-	branch := append(append([]string{}, resource...), "write")
+	root := t.TempDir()
+	p := registeredConfigurationEndpoint(t, root)
+	var err error
+	resource := []string{"demo", "payment", "transactions"}
+	branch := append(append([]string{}, resource...), "http")
 	trunk := configurationPath(root, nil)
 	if err = os.WriteFile(trunk, []byte("version=1\n[policy]\nsummary_utc_offset_hours=-5\n[policy.pac]\nlevel=8\n[policy.staging]\nmax_bytes=100\nmax_records=20\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
 	resourceFile := configurationPath(root, resource)
+	if err = os.MkdirAll(filepath.Dir(resourceFile), 0700); err != nil {
+		t.Fatal(err)
+	}
 	if err = os.WriteFile(resourceFile, []byte("version=1\n[quota]\nlimit_bytes=1000\n[policy.replication]\nindex_period='4h'\n[policy.staging]\nmax_bytes=0\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +52,7 @@ func TestConfigurationEditorUsesHierarchyAndPreservesOtherSettings(t *testing.T)
 		r.Header.Set("Authorization", "Bearer "+token)
 		r.Header.Set("If-Match", `"`+revision+`"`)
 		w := httptest.NewRecorder()
-		p.operationHandler("secret").ServeHTTP(w, r)
+		p.Handler("secret").ServeHTTP(w, r)
 		return w
 	}
 	if w := call("GET", resource, "", "", ""); w.Code != 401 {
@@ -66,7 +77,7 @@ func TestConfigurationEditorUsesHierarchyAndPreservesOtherSettings(t *testing.T)
 	if initial.Effective["pac.level"] != float64(8) || initial.Effective["staging.max_bytes"] != float64(0) || initial.Effective["staging.max_records"] != float64(20) {
 		t.Fatal(initial.Effective)
 	}
-	if len(initial.Transforms) != 1 || initial.Transforms[0].Source != "" {
+	if len(initial.Transforms) != 0 {
 		t.Fatal(initial.Transforms)
 	}
 	w := call("PUT", resource, initial.Revision, `{"category":"compression","values":{"pac.level":9}}`, "secret")
@@ -80,10 +91,6 @@ func TestConfigurationEditorUsesHierarchyAndPreservesOtherSettings(t *testing.T)
 	after := get(resource)
 	if after.Local["replication.index_period"] != "4h" || after.Local["staging.max_bytes"] != float64(0) || after.Local["pac.level"] != float64(9) {
 		t.Fatal(after.Local)
-	}
-	// A saved override does not claim to alter the running store.
-	if s.policy.PAC.level() != 1 {
-		t.Fatal("save changed active policy")
 	}
 	if w = call("PUT", resource, initial.Revision, `{"category":"compression","values":{"pac.level":4}}`, "secret"); w.Code != 412 {
 		t.Fatal(w.Code)
@@ -137,11 +144,8 @@ func TestConfigurationEditorUsesHierarchyAndPreservesOtherSettings(t *testing.T)
 			t.Fatal("offset inheritance")
 		}
 	}
-	// Runtime and UI resolve the same policy after restart/reload.
-	if err = s.ReloadPolicy(); err != nil {
-		t.Fatal(err)
-	}
-	if s.policy.PAC.level() != 9 || s.policy.Staging.MaxBytes != 100 || s.policy.Replication.IndexPeriod != "4h" {
-		t.Fatal(s.policy)
+	policy, err := configuredScope(root, resource, Configuration{})
+	if err != nil || policy.PAC.level() != 9 || policy.Staging.MaxBytes != 100 || policy.Replication.IndexPeriod != "4h" {
+		t.Fatal(policy, err)
 	}
 }

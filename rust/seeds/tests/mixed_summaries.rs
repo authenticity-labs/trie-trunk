@@ -51,18 +51,13 @@ fn contribute(
     duration: u64,
     label: &str,
     renamed: &str,
-    boolean: bool,
 ) {
     let seed = plan
         .ingest(bucket, duration, |duration, seed| {
             seed.set_uint("duration", duration)?
                 .set_enum("status", label.into())?
-                .set_int(renamed, -(1i128 << 100))?;
-            if boolean {
-                seed.set_bool("changing", true)?;
-            } else {
-                seed.set_uint("changing", (1u128 << 100) + 7)?;
-            }
+                .set_int(renamed, -(1i128 << 100))?
+                .set_uint("changing", (1u128 << 100) + 7)?;
             Ok(())
         })
         .unwrap();
@@ -70,7 +65,6 @@ fn contribute(
     seed.cap().unwrap();
 }
 #[test]
-#[ignore = "TODO: custom log class changes; retained for the deferred mixed-class design"]
 fn mixed_periods_merge_losslessly_without_adding_period_rows() {
     let a = source(2, &["short", "1234567890"], "old_name", false)
         .summaries(288)
@@ -78,123 +72,89 @@ fn mixed_periods_merge_losslessly_without_adding_period_rows() {
     let b = source(4, &["12345678901234567890", "short"], "new_name", false)
         .summaries(288)
         .unwrap();
-    let c = source(2, &["short", "12345678"], "new_name", true)
-        .summaries(288)
-        .unwrap();
-    let mixed = MixedSummaryPlan::new(&[a.clone(), b.clone(), c.clone()]).unwrap();
+    let mixed = MixedSummaryPlan::new(&[a.clone(), b.clone()]).unwrap();
     let mut aa = a.bucket();
     let mut bb = b.bucket();
-    let mut cc = c.bucket();
-    contribute(&a, &mut aa, 65_535, "1234567890", "old_name", false);
+    contribute(&a, &mut aa, 65535, "1234567890", "old_name");
     contribute(
         &b,
         &mut bb,
         4_000_000_000,
         "12345678901234567890",
         "new_name",
-        false,
     );
-    contribute(&c, &mut cc, 42, "12345678", "new_name", true);
     let mut transition = mixed.bucket();
-    mixed.merge(&mut transition, &a, &aa).unwrap();
-    mixed.merge(&mut transition, &b, &bb).unwrap();
-    // A rollback extends the same logical period, never another row.
-    mixed.merge(&mut transition, &a, &aa).unwrap();
-    let mut incompatible = mixed.bucket();
-    mixed.merge(&mut incompatible, &b, &bb).unwrap();
-    mixed.merge(&mut incompatible, &c, &cc).unwrap();
+    for (plan, bucket) in [(&a, &aa), (&b, &bb), (&a, &aa)] {
+        mixed.merge(&mut transition, plan, bucket).unwrap();
+    }
     let mut after = mixed.bucket();
-    mixed.merge(&mut after, &c, &cc).unwrap();
+    mixed.merge(&mut after, &b, &bb).unwrap();
     let empty = mixed.bucket();
-    let pack = mixed
-        .layout()
-        .pack((0..288).map(|i| {
-            mixed
-                .seed(match i {
+    let mut writer = mixed.layout().fill().unwrap();
+    for period in 0..288 {
+        mixed
+            .load(
+                &mut writer,
+                match period {
                     100 => &transition,
-                    101 => &incompatible,
-                    102 => &after,
+                    101 => &after,
                     _ => &empty,
-                })
-                .unwrap()
-        }))
-        .unwrap();
-    let empty_pack = mixed
-        .layout()
-        .pack((0..288).map(|_| mixed.seed(&empty).unwrap()))
-        .unwrap();
-    assert_eq!(mixed.layout().open(empty_pack.bytes()).unwrap().len(), 288);
+                },
+            )
+            .unwrap();
+    }
+    let pack = writer.seal().unwrap();
     let opened = mixed.layout().open(pack.bytes()).unwrap();
     assert_eq!(opened.len(), 288);
-    assert_ne!(opened.options().address_bytes, 0);
+    assert_eq!(opened.options().address_bytes, 0);
+    let projection = SummaryProjection::from_layout(mixed.layout().clone()).unwrap();
+    let periods = projection.periods(opened.headers()).unwrap().unwrap();
     let mut reader = opened.reader();
     let row = reader.get(100).unwrap();
     assert_eq!(row.mode(), EncodingMode::FixedSparse);
     row.validate().unwrap();
-    let duration = mixed.field(&row, "duration").unwrap();
+    let plan = periods.period(100).unwrap();
+    let duration = plan.field(&row, "duration").unwrap();
     assert_eq!(member(&duration, "sum"), &Data::from(4_000_131_070u64));
     assert_eq!(member(&duration, "max"), &Data::from(4_000_000_000u64));
     assert_eq!(member(&duration, "count"), &Data::from(3u64));
-    let status = mixed.field(&row, "status").unwrap();
+    let status = plan.field(&row, "status").unwrap();
     let labels = member(&status, "values");
     assert_eq!(
         member(member(labels, "12345678901234567890"), "count"),
-        &Data::from(1u64)
+        &1u64.into()
     );
+    assert_eq!(member(member(labels, "1234567890"), "count"), &2u64.into());
+    let wide = plan.field(&row, "changing").unwrap();
     assert_eq!(
-        member(member(labels, "1234567890"), "count"),
-        &Data::from(2u64)
-    );
-    let exact = mixed.field(&row, "changing").unwrap();
-    assert_eq!(
-        pil_codec::unsigned_native(member(&exact, "sum")).unwrap(),
+        pil_codec::unsigned_native(member(&wide, "sum")).unwrap(),
         3 * ((1u128 << 100) + 7)
     );
     for name in ["old_name", "new_name"] {
-        assert_eq!(mixed.field(&row, name).unwrap(), Data::Null);
-        let bounds = mixed
+        assert_eq!(plan.field(&row, name).unwrap(), Data::Null);
+        let bounds = SummaryProjection::Single(plan.clone())
             .comparison(&row, name, Compare::Gt, &0.into())
             .unwrap();
         assert_eq!((bounds.lower, bounds.upper), (0, 3));
     }
     let row = reader.get(101).unwrap();
-    let raw = row.crush().unwrap();
-    assert!(!raw.contains_key("states"));
-    assert!(
-        raw["fields"]
-            .as_ref()
-            .unwrap()
-            .as_object()
-            .unwrap()
-            .values()
-            .any(|v| v.is_null())
-    );
-    assert_eq!(mixed.field(&row, "changing").unwrap(), Data::Null);
-    let bounds = mixed
-        .comparison(&row, "changing", Compare::Eq, &false.into())
+    let value = periods
+        .period(101)
+        .unwrap()
+        .field(&row, "new_name")
         .unwrap();
-    assert_eq!((bounds.lower, bounds.upper), (0, 2));
-    let exact = mixed.field(&row, "new_name").unwrap();
     assert_eq!(
-        pil_codec::signed_native(member(&exact, "sum")).unwrap(),
-        -(2i128 << 100)
-    );
-    // The incompatible version alone remains useful, not poisoned by the
-    // fact that another period used a different class under the same name.
-    let row = reader.get(102).unwrap();
-    assert_eq!(
-        member(&mixed.field(&row, "changing").unwrap(), "true_count"),
-        &1u64.into()
+        pil_codec::signed_native(member(&value, "sum")).unwrap(),
+        -(1i128 << 100)
     );
     let row = reader.get(287).unwrap();
-    assert_eq!(mixed.field(&row, "duration").unwrap(), Data::Null);
-    assert_eq!(
-        mixed
-            .comparison(&row, "duration", Compare::Gt, &0.into())
-            .unwrap()
-            .upper,
-        0
-    );
+    let value = periods
+        .period(287)
+        .unwrap()
+        .field(&row, "duration")
+        .unwrap();
+    assert_eq!(member(&value, "count"), &0u64.into());
+    assert_eq!(member(&value, "min"), &Data::Null);
 }
 
 #[test]
@@ -230,12 +190,20 @@ fn daily_commit_combines_source_accumulators_only_after_all_complete() {
     assert_eq!(reader.get(5).unwrap().mode(), EncodingMode::FixedSparse);
     assert_eq!(
         member(
-            &periods.period(5).unwrap().field(&reader.get(5).unwrap(), "duration").unwrap(),
+            &periods
+                .period(5)
+                .unwrap()
+                .field(&reader.get(5).unwrap(), "duration")
+                .unwrap(),
             "sum"
         ),
         &21u64.into()
     );
-    let empty = periods.period(6).unwrap().field(&reader.get(6).unwrap(), "duration").unwrap();
+    let empty = periods
+        .period(6)
+        .unwrap()
+        .field(&reader.get(6).unwrap(), "duration")
+        .unwrap();
     assert_eq!(member(&empty, "count"), &0u64.into());
     assert_eq!(member(&empty, "min"), &Data::Null);
     drop(reader);
@@ -272,13 +240,16 @@ fn daily_commit_combines_source_accumulators_only_after_all_complete() {
     );
     let reopened = container.pack(1).unwrap();
     let mut reader = reopened.reader();
-    let empty = periods.period(6).unwrap().field(&reader.get(6).unwrap(), "duration").unwrap();
+    let empty = periods
+        .period(6)
+        .unwrap()
+        .field(&reader.get(6).unwrap(), "duration")
+        .unwrap();
     assert_eq!(member(&empty, "count"), &0u64.into());
     assert_eq!(member(&empty, "min"), &Data::Null);
 }
 
 #[test]
-#[ignore = "TODO: custom log signedness changes; retained for the deferred mixed-class design"]
 fn signedness_is_never_reinterpreted_and_overflow_is_not_wrapped() {
     let make = |kind: &str| {
         let d = doc::new(format!("{kind}-events"))
@@ -294,63 +265,33 @@ fn signedness_is_never_reinterpreted_and_overflow_is_not_wrapped() {
     };
     let unsigned = make("uint");
     let signed = make("int");
-    let mixed = MixedSummaryPlan::new(&[unsigned.clone(), signed.clone()]).unwrap();
-    let mut u = unsigned.bucket();
-    unsigned
-        .ingest(&mut u, u128::MAX, |v, seed| {
-            seed.set_uint("n", v)?;
-            Ok(())
-        })
-        .unwrap()
-        .cap()
-        .unwrap();
-    let mut s = signed.bucket();
-    signed
-        .ingest(&mut s, i128::MIN, |v, seed| {
-            seed.set_int("n", v)?;
-            Ok(())
-        })
-        .unwrap()
-        .cap()
-        .unwrap();
-    let mut conflict = mixed.bucket();
-    mixed.merge(&mut conflict, &unsigned, &u).unwrap();
-    mixed.merge(&mut conflict, &signed, &s).unwrap();
-    let pack = mixed
-        .layout()
-        .pack([mixed.seed(&conflict).unwrap()])
-        .unwrap();
-    let opened = mixed.layout().open(pack.bytes()).unwrap();
-    let mut reader = opened.reader();
-    let row = reader.get(0).unwrap();
-    assert_eq!(mixed.field(&row, "n").unwrap(), Data::Null);
-    assert_eq!(
-        mixed
-            .comparison(&row, "n", Compare::Gt, &0.into())
-            .unwrap()
-            .upper,
-        2
-    );
-    let mut overflow = mixed.bucket();
-    mixed.merge(&mut overflow, &unsigned, &u).unwrap();
-    mixed.merge(&mut overflow, &unsigned, &u).unwrap();
-    let pack = mixed
-        .layout()
-        .pack([mixed.seed(&overflow).unwrap()])
-        .unwrap();
-    let opened = mixed.layout().open(pack.bytes()).unwrap();
-    let mut reader = opened.reader();
-    let row = reader.get(0).unwrap();
-    let pil_codec::api::NativeValue::Composite(raw_fields) = row.native_value(1).unwrap() else {
-        panic!()
+    let Err(error) = MixedSummaryPlan::new(&[unsigned.clone(), signed]) else {
+        panic!("signed and unsigned summary fields require different numeric interpretation");
     };
-    assert_eq!(member(member(&raw_fields, "n"), "sum"), &Data::Null);
-    let value = mixed.field(&row, "n").unwrap();
+    assert!(error.to_string().contains("class or unit changes"));
+    let mut bucket = unsigned.bucket();
+    for _ in 0..2 {
+        unsigned
+            .ingest(&mut bucket, u128::MAX, |v, seed| {
+                seed.set_uint("n", v)?;
+                Ok(())
+            })
+            .unwrap();
+    }
+    let pack = unsigned
+        .layout()
+        .pack([unsigned.seed(&bucket).unwrap()])
+        .unwrap();
+    let opened = unsigned.layout().open(pack.bytes()).unwrap();
+    let mut reader = opened.reader();
+    let row = reader.get(0).unwrap();
+    let value = unsigned.field(&row, "n").unwrap();
     assert_eq!(member(&value, "sum"), &Data::Null);
     assert_eq!(
         pil_codec::unsigned_native(member(&value, "max")).unwrap(),
         u128::MAX
     );
+    assert_eq!(member(&value, "count"), &2u64.into());
 }
 
 #[test]
@@ -410,5 +351,9 @@ fn custom_log_class_changes_fail_explicitly_until_supported() {
         Ok(_) => panic!("incompatible classes must not reinterpret stored slots"),
         Err(error) => error,
     };
-    assert!(error.to_string().contains("class or unit changes are not supported"));
+    assert!(
+        error
+            .to_string()
+            .contains("class or unit changes are not supported")
+    );
 }

@@ -6,6 +6,7 @@ use data_seeds::{SeedDefinition, doc};
 use pil_codec::{Error, api::FieldBytes};
 use std::{ffi::c_void, sync::Arc};
 mod ingress;
+mod log;
 
 #[repr(C)]
 #[derive(Clone, Copy)]

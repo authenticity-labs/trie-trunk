@@ -11,7 +11,7 @@ import (
 func TestEndpointStartupPreparesRegisteredRXInRust(t *testing.T) {
 	root := t.TempDir()
 	t.Cleanup(func() { taxonomyRegistrations.Delete(filepath.Join(root, "trunk.trie")) })
-	document, err := seedNativeDocument([]byte(`[{"header":{"rx-name":"event"},"fields":[
+	document, err := seedNativeDocument([]byte(`[{"header":{"rx-name":"event","rx-major":1},"fields":[
 		{"name":"time","type":[1,0],"size":6,"annotations":["@time"]},
 		{"name":"id","type":[4,0],"size":10,"annotations":["@event"]},
 		{"name":"extra","type":[126,122],"size":0,"element-size":0,"annotations":["@fields"]}

@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-// Open takes one writer lease for this cache and recovers committed storage.
+// openStore takes one writer lease for this cache and recovers committed storage.
 // Definitions are immutable; format experiments regenerate disposable test data.
-func Open(c Config) (s *Store, err error) {
+func openStore(c Config) (s *Store, err error) {
 	if !name(c.Cache) || c.Tenant == "" || c.Root == "" || c.Layout == nil {
 		return nil, fmt.Errorf("cache, tenant, root and definition required")
 	}
@@ -296,7 +296,7 @@ func (s *Store) openBranch(branch Branch) (b *branchStore, err error) {
 	if err = s.openSwap(b); err != nil {
 		return nil, err
 	}
-	if raw, e := os.ReadFile(filepath.Join(s.dir, s.prefix(branch)+".time")); e == nil && len(raw) >= TimeTrieHeader && int(int8(raw[47])) != s.policyFor(branch).summaryOffsetHours() {
+	if raw, e := os.ReadFile(filepath.Join(s.dir, s.prefix(branch)+".time")); e == nil && len(raw) >= TimeTrieHeader && int(int8(raw[47])) != s.policyFor(branch).UTCOffsetHours() {
 		b.summaryDays = map[int64]summaryDayLocation{}
 		b.summaryPackedThrough = -1
 		b.calendarRollups = nil

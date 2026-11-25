@@ -1,0 +1,6 @@
+{"layout":"flat","lookups":32,"median_us":285.833,"p95_us":458.042,"rows":4}
+{"layout":"bound","lookups":32,"median_us":293.271,"p95_us":417.0,"rows":4}
+{"layout":"bound-rollback","lookups":32,"median_us":311.4375,"p95_us":567.3330000000001,"rows":4}
+{"layout":"flat","lookups":32,"median_us":39405.7705,"p95_us":40443.792,"rows":4096}
+{"layout":"bound","lookups":32,"median_us":39011.125,"p95_us":39539.791,"rows":4096}
+{"layout":"bound-rollback","lookups":32,"median_us":39389.0,"p95_us":40433.084,"rows":4096}

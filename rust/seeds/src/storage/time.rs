@@ -257,6 +257,26 @@ impl TimeTrie {
         })
     }
 
+    /// Occupied UTC hours in the retained origin. Row ordinals are cumulative,
+    /// so leading and trailing empty hours can be skipped with two lower bounds.
+    pub fn occupied(&self) -> Result<Option<Range<u64>>, Error> {
+        if self.received.is_some() { return Err(error("occupied bounds require an origin timeline")); }
+        let h = &self.header;
+        let Some(first) = self.leaf(h.first)? else { return Ok(None) };
+        if first.start == h.tail { return Ok(None); }
+        let containing = |ordinal: u64| -> Result<u64, Error> {
+            let mut lo = h.first / TIME_HOUR_MS;
+            let mut hi = h.sealed / TIME_HOUR_MS;
+            while lo < hi {
+                let mid = lo + (hi - lo) / 2;
+                let leaf = self.leaf(mid * TIME_HOUR_MS)?.ok_or_else(|| error("missing origin hour"))?;
+                if leaf.end <= ordinal { lo = mid + 1; } else { hi = mid; }
+            }
+            Ok(lo * TIME_HOUR_MS)
+        };
+        Ok(Some(containing(first.start)?..containing(h.tail - 1)? + TIME_HOUR_MS))
+    }
+
     fn position(&self, ms: u64) -> Result<usize, Error> {
         let at = date(ms)?;
         let year = usize::try_from(at.year() - self.header.base_year)

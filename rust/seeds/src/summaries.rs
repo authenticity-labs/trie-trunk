@@ -637,9 +637,6 @@ impl SummaryBox {
         Self::from_box(PackBox::open_footer_owned(footer, length)?)
     }
     fn from_box(inner: PackBox<'static>) -> Result<Self, Error> {
-        if inner.options().external_addresses {
-            return Err(error("summary Box requires ordinal addressing"));
-        }
         let versions = versions::Versions::read(&inner)?;
         Ok(Self { versions, inner })
     }
@@ -648,10 +645,7 @@ impl SummaryBox {
         self.versions.base()
     }
     pub fn layout_at(&self, ordinal: usize) -> Result<&Arc<SummaryLayout>, Error> {
-        self.versions.at(
-            self.inner.member_range(ordinal)?.start,
-            self.inner.next_address(),
-        )
+        self.versions.for_pack(&self.inner, ordinal)
     }
     pub fn is_uniform(&self) -> bool {
         self.versions.is_uniform()
@@ -720,9 +714,6 @@ impl<'a> SummaryBoxReader<'a> {
         SummaryBoxReader::from_box(PackBox::open_footer_owned(footer, length)?)
     }
     fn from_box(inner: PackBox<'a>) -> Result<Self, Error> {
-        if inner.options().external_addresses {
-            return Err(error("summary Box requires ordinal addressing"));
-        }
         let versions = versions::Versions::read(&inner)?;
         Ok(Self { versions, inner })
     }
@@ -731,10 +722,7 @@ impl<'a> SummaryBoxReader<'a> {
         self.versions.base()
     }
     pub fn layout_at(&self, ordinal: usize) -> Result<&Arc<SummaryLayout>, Error> {
-        self.versions.at(
-            self.inner.member_range(ordinal)?.start,
-            self.inner.next_address(),
-        )
+        self.versions.for_pack(&self.inner, ordinal)
     }
     pub fn is_uniform(&self) -> bool {
         self.versions.is_uniform()
@@ -771,7 +759,9 @@ impl<'a> SummaryBoxReader<'a> {
         if range.end - range.start != bytes.len() as u64 {
             return Err(error("summary Pack extent mismatch"));
         }
-        self.layout_at(ordinal)?.open(bytes)
+        self.versions
+            .at(range.start, self.inner.next_address())?
+            .open(bytes)
     }
 }
 

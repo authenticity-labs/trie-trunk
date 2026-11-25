@@ -14,7 +14,7 @@ used = 0
 # Deliberately scatter physical units while preserving logical UUID order.
 units = list(range(5, 128, 2)) + list(range(6, 128, 2))
 for key, base, span, cursor in [(0, 65536, 14, 5), (2, 0, 2, 1), (4, 16777214, 2, 0)]:
-    n_units = 1 + max(0, span-2+5)//6
+    n_units = 1 + max(0, span-1+5)//6
     own = units[used:used+n_units]
     for j,u in enumerate(own):
         p[37+used+j] = u | (128 if j else 0)
@@ -26,8 +26,8 @@ for key, base, span, cursor in [(0, 65536, 14, 5), (2, 0, 2, 1), (4, 16777214, 2
     hist = []
     for j in range(span):
         if j == 3: continue  # missing revision
-        pos = (cursor+j)%span
-        at = a+22+pos*5 if pos<2 else own[1+(pos-2)//6]*32+(pos-2)%6*5
+        pos = (cursor+j)%(1+(n_units-1)*6)
+        at = a+27 if pos==0 else own[1+(pos-1)//6]*32+(pos-1)%6*5
         hour, record = key+1, 70000+j
         p[at:at+2] = hour.to_bytes(2,'little')
         p[at+2:at+5] = record.to_bytes(3,'little')

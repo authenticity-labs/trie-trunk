@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package cache
 
 import (
@@ -47,7 +49,7 @@ func decodeHistory(t *testing.T, raw []byte) (frames [][]byte, digests [][32]byt
 		}
 		switch tag {
 		case 1:
-			l := nativeControl("BYTES", "BYTES", "BYTES")
+			l := defineControl.definition()
 			b, e := l.ReadFrame(r, nil)
 			if e != nil {
 				t.Fatal(e)
@@ -62,7 +64,7 @@ func decodeHistory(t *testing.T, raw []byte) (frames [][]byte, digests [][32]byt
 			}
 			maps[d.Digest] = d
 		case 2:
-			l := nativeControl("U32", "BYTES", "STRING")
+			l := bindControl.definition()
 			b, e := l.ReadFrame(r, nil)
 			if e != nil {
 				t.Fatal(e)

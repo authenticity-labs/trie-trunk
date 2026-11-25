@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"github.com/pelletier/go-toml/v2"
 )
 

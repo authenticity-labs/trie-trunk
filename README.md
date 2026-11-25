@@ -196,7 +196,46 @@ certification that those implementations remain active. Rust/Go build outputs
 and the separate browser WASM artifacts also remain: this pass did not establish
 which copies can be removed without affecting packaging or old/new comparisons.
 
-## HTTP PIL Ingress
+## Trunk Roots
+
+Trunk Roots is the node’s messaging platform. Run `trunk roots` to expose a
+dedicated listener, or use the registered ingress on `trunk serve`. Both use
+the shared Rust node.
+
+| Message flow | Direction | Availability |
+| --- | --- | --- |
+| Ingress queue | Producer to registered branch | HTTP POST accepts one PIL. The `trunk.seeds.v1` WebSocket on the same branch accepts batches. Both acknowledge durable admission. |
+| Object collection subscription | Collection to subscriber | The same `/roots` WebSocket delivers admitted change PILs for the selected object Definition revision. |
+| Live events | Event branch to subscriber | Subscribe to `/<cache>/<service>/<resource>/<type>/roots` with WebSocket subprotocol `trunk.roots.v1`. Each binary message contains one or more admitted PILs, each preceded by its four-byte big-endian length. |
+
+For a live subscription, select the registered Definition with the usual
+`Trunk-Branch` header or the `?branch=<id>` query parameter. The accepted
+handshake marks the start of delivery. Single and batched writes appear in
+admission order after durability. Reconnect starts a new live interval. After a
+disconnect, refresh from the branch to recover missed events. A subscriber that
+exceeds its bounded queue is disconnected independently of producer acknowledgement.
+
+An object producer selects the exact registered object Definition with `Trunk-Branch`
+and sends a `Revision<T>` PIL. Its `object` field carries the partial business
+object, including its UUID. The durable spool retains the branch with the PIL.
+At hourly publication, the node writes each change once in the uncompressed
+`.pods` file and indexes the object UUID and revision. Object History follows
+that index across minor Definition changes, including a return to an earlier
+minor. Roots admits revision IDs from 1 through 16,777,215. Zero is reserved
+for the current object. Roots checks every revision in a batch before acknowledging
+it. Subscribers can receive admitted changes before hourly publication.
+
+The paired Pill Packer checkout for this revision is
+`7c723c615e73b34155e46070e844c4547ac64511`. From the Trunk checkout,
+run `make test-revisions` with Pill Packer in the sibling `../pill-packer` directory to verify
+the binding, UUID index, process restart, checkpoint replay, and network
+transports. The Rust restart test also checks the HTTP wire fixtures byte for
+byte. Set `TRUNK_REVISION_FIXTURES` to the absolute path of
+`testdata/object-revisions` when deliberately regenerating those fixtures.
+Run `cargo run --release --locked --manifest-path rust/node/Cargo.toml --example revision_lookup`
+for the paired Object History benchmark.
+
+### HTTP PIL Ingress
 
 `PUT /definitions` or `POST /definitions` registers a raw RX document with
 `Content-Type: application/pil`: RX is itself PIL-encoded, with no JSON envelope.

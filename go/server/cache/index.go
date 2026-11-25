@@ -27,12 +27,8 @@ func (b *branchStore) packsRange(number uint64, r RowLayout) (uint64, uint64, er
 		return 0, 0, fmt.Errorf("row outside payload segment")
 	}
 	run := b.runs[i]
-	leaf, ok := b.time.leaf(run.PAC.Placement.From)
-	if !ok { // The resident PAC directory precedes derived timeline publication.
-		return run.PacksStart, run.PacksEnd, nil
-	}
-	return storedSegmentRange(b.packs, b.packsRetired, leaf.Packs)
-
+	// Sealing and recovery already validated this run's physical extent.
+	return run.PacksStart, run.PacksEnd, nil
 }
 
 // The readable PAC length eliminates a second physical address in the directory.
@@ -90,12 +86,12 @@ type Period struct {
 type Run struct {
 	Start      uint64            `pil:"0"`
 	End        uint64            `pil:"1"`
-	PacksStart  uint64            `pil:"2"`
-	PacksEnd    uint64            `pil:"3"`
+	PacksStart uint64            `pil:"2"`
+	PacksEnd   uint64            `pil:"3"`
 	MinMS      int64             `pil:"4"`
 	MaxMS      int64             `pil:"5"`
 	IndexCRC   uint32            `pil:"6"`
-	PacksCRC    uint32            `pil:"7"`
+	PacksCRC   uint32            `pil:"7"`
 	TrieSize   int               `pil:"8"`
 	References map[uint16]uint64 `pil:"10,omitempty"`
 	PAC        *StoredPAC        `pil:"9"`

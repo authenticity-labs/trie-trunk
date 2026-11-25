@@ -43,24 +43,14 @@ func TestQuotaAllocationValidation(t *testing.T) {
 }
 func TestQuotaPersistenceAndPublicationConflict(t *testing.T) {
 	root := t.TempDir()
-	layout := testLayout(t, false)
-	p, err := OpenEndpoint(Config{Root: root, Cache: "demo", Tenant: "test", Layout: layout})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer p.Close()
-	p.api.Store.mu.Lock()
-	_, err = p.api.Store.openBranch(Write)
-	p.api.Store.mu.Unlock()
-	if err != nil {
-		t.Fatal(err)
-	}
+	p := registeredConfigurationEndpoint(t, root)
+	var err error
 	call := func(method, token, revision string, body []byte) *httptest.ResponseRecorder {
 		r := httptest.NewRequest(method, "/storage/quotas", bytes.NewReader(body))
 		r.Header.Set("Authorization", "Bearer "+token)
 		r.Header.Set("If-Match", `"`+revision+`"`)
 		w := httptest.NewRecorder()
-		p.operationHandler("secret").ServeHTTP(w, r)
+		p.Handler("secret").ServeHTTP(w, r)
 		return w
 	}
 	if w := call("GET", "", "", nil); w.Code != 401 {
@@ -74,8 +64,8 @@ func TestQuotaPersistenceAndPublicationConflict(t *testing.T) {
 	if state.Revision != "unset" || state.Enforced || state.Disk.Maximum == 0 || state.Disk.Maximum > state.Disk.Total {
 		t.Fatal(state)
 	}
-	policy := quotaPolicy{Pool: quotaNumber(min(1<<30, state.Disk.Maximum)), Scopes: []quotaScope{{Path: []string{"demo", "payment", "transactions.v1", "write"}, Limit: quotaNumber(100), Recovery: &quotaRecovery{Unit: "percent", Value: 25}}}}
-	policy.Groups = []quotaGroup{{Path: []string{"demo", "payment", "transactions.v1"}, ResourceType: "Logs", Managed: true, Limit: 200, RecoveryPercent: 30}}
+	policy := quotaPolicy{Pool: quotaNumber(min(1<<30, state.Disk.Maximum)), Scopes: []quotaScope{{Path: []string{"demo", "payment", "transactions", "http"}, Limit: quotaNumber(100), Recovery: &quotaRecovery{Unit: "percent", Value: 25}}}}
+	policy.Groups = []quotaGroup{{Path: []string{"demo", "payment", "transactions"}, ResourceType: "Custom", Managed: true, Limit: 200, RecoveryPercent: 30}}
 	raw, _ := json.Marshal(policy)
 	w = call("PUT", "secret", state.Revision, raw)
 	if w.Code != 200 {
@@ -87,7 +77,7 @@ func TestQuotaPersistenceAndPublicationConflict(t *testing.T) {
 	if w = call("PUT", "secret", "unset", raw); w.Code != 412 {
 		t.Fatal(w.Code)
 	}
-	fake := quotaPolicy{Pool: policy.Pool, Scopes: []quotaScope{{Path: []string{"demo", "payment", "transactions.v1", "error.read"}, Limit: quotaNumber(1)}}}
+	fake := quotaPolicy{Pool: policy.Pool, Scopes: []quotaScope{{Path: []string{"demo", "payment", "transactions", "error.read"}, Limit: quotaNumber(1)}}}
 	fakeRaw, _ := json.Marshal(fake)
 	if rejected := call("PUT", "secret", state.Revision, fakeRaw); rejected.Code != 400 {
 		t.Fatal("unknown physical quota scope accepted", rejected.Code)
@@ -132,7 +122,7 @@ func TestQuotaConcurrentAdministrators(t *testing.T) {
 			req := httptest.NewRequest("PUT", "/storage/quotas", bytes.NewReader(raw))
 			req.Header.Set("If-Match", `"unset"`)
 			w := httptest.NewRecorder()
-			p.operationHandler("").ServeHTTP(w, req)
+			p.Handler("").ServeHTTP(w, req)
 			codes <- w.Code
 		}(i, p)
 	}

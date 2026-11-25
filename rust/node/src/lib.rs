@@ -3,8 +3,10 @@
 pub mod cli;
 pub mod command;
 mod ingress;
+mod collections;
 mod drafts;
 pub mod logs;
+pub mod roots;
 mod ports;
 mod presentation;
 pub mod publication;
@@ -53,10 +55,12 @@ pub struct Node {
     root: PathBuf,
     configuration: Configuration,
     trunk: std::sync::RwLock<std::sync::Arc<Trunk>>,
+    roots: roots::Roots,
     runtime: std::sync::Mutex<ingress::Runtime>,
     uploads: std::sync::Mutex<ports::Uploads>,
     jobs: std::sync::Mutex<ports::Jobs>,
     memory: data_seeds::MemoryBudget,
+    object_publication: std::sync::RwLock<()>,
     publication: std::sync::atomic::AtomicU64,
     registry_generation: std::sync::atomic::AtomicU64,
     _lock: Ownership,
@@ -80,7 +84,7 @@ impl Node {
         }
         let mut lease = None;
         let result = (|| -> Result<Self> {
-            fs::create_dir(root.join(".trunk"))?;
+            metadata_directory(root)?;
             lease = Some(ownership(root)?);
             fs::create_dir(root.join("definitions"))?;
             let configuration = Configuration {
@@ -104,8 +108,10 @@ impl Node {
                 root: root.canonicalize()?,
                 configuration,
                 trunk: std::sync::RwLock::new(std::sync::Arc::new(trunk)),
+                roots: roots::Roots::new(memory.clone()),
                 runtime: std::sync::Mutex::new(ingress::Runtime::new(memory.clone())?),
                 memory,
+                object_publication: Default::default(),
                 publication: Default::default(),
                 registry_generation: Default::default(),
                 uploads: Default::default(),
@@ -143,7 +149,7 @@ impl Node {
     }
     fn open_scoped(root:&Path,configuration:Configuration,memory:data_seeds::MemoryBudget,clock:u64)->Result<Self>{
         let root = root.canonicalize()?;
-        fs::create_dir_all(root.join(".trunk"))?;
+        metadata_directory(&root)?;
         let lock = ownership(&root)?;
         fs::create_dir_all(root.join("definitions"))?;
         let path = root.join("trunk.trie");
@@ -167,8 +173,10 @@ impl Node {
             root,
             configuration,
             trunk: std::sync::RwLock::new(std::sync::Arc::new(trunk)),
+            roots: roots::Roots::new(memory.clone()),
             runtime: std::sync::Mutex::new(ingress::Runtime::new(memory.clone())?),
             memory,
+            object_publication: Default::default(),
             publication: Default::default(),
             registry_generation: Default::default(),
             uploads: Default::default(),
@@ -211,6 +219,15 @@ impl Drop for Ownership {
         // inherit the descriptor even though it is close-on-exec.
         let _ = self.0.unlock();
     }
+}
+fn metadata_directory(root: &Path) -> io::Result<()> {
+    let mut dir = fs::DirBuilder::new();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::DirBuilderExt;
+        dir.mode(0o700);
+    }
+    dir.recursive(true).create(root.join(".trunk"))
 }
 fn ownership(root: &Path) -> io::Result<Ownership> {
     let mut options = OpenOptions::new();

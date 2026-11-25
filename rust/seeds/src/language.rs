@@ -31,6 +31,28 @@ pub fn request(v: &Json) -> Result<Json, String> {
         _ => Err("Unknown query operation".into()),
     }
 }
+/// Treat an adjacent @ and identifier as a field selector in field positions.
+pub fn statements(dialect: &dyn sqlparser::dialect::Dialect, sql: &str) -> Result<Vec<Statement>, String> {
+    let parser = Parser::new(dialect).with_recursion_limit(64);
+    if !sql.contains('@') {
+        return parser.try_with_sql(sql).and_then(|mut p| p.parse_statements()).map_err(|e| e.to_string());
+    }
+    use sqlparser::tokenizer::{Token, Tokenizer};
+    let tokens = Tokenizer::new(dialect, sql).tokenize_with_location().map_err(|e| e.to_string())?;
+    let mut input = tokens.into_iter().peekable();
+    let mut tokens = Vec::with_capacity(input.len());
+    while let Some(mut token) = input.next() {
+        if token.token == Token::AtSign {
+            if let Some(next) = input.next_if(|t| matches!(&t.token, Token::Word(w) if w.quote_style.is_none())) {
+                let Token::Word(word) = next.token else { unreachable!() };
+                token.token = Token::make_word(&format!("@{}", word.value.to_ascii_lowercase()), Some('"'));
+                token.span.end = next.span.end;
+            }
+        }
+        tokens.push(token);
+    }
+    parser.with_tokens_with_locations(tokens).parse_statements().map_err(|e| e.to_string())
+}
 fn name(e: &Expr) -> Result<String, String> {
     match e {
         Expr::Identifier(i) => Ok(if i.quote_style.is_some() {
@@ -109,6 +131,16 @@ fn truth(e: &Expr, fields: &HashSet<String>) -> Result<(Json, Json), String> {
     };
     match e {
         Expr::Nested(e) => truth(e, fields),
+        Expr::IsTrue(inner) | Expr::IsNotTrue(inner) => {
+            let mut test = inner.as_ref();
+            while let Expr::Nested(nested) = test { test = nested; }
+            if !matches!(test, Expr::IsNull(_) | Expr::IsNotNull(_)) {
+                return Err("Truth tests currently require IS NULL or IS NOT NULL".into());
+            }
+            let (yes, _) = truth(test, fields)?;
+            let no = json!({"kind":"not","value":yes});
+            Ok(if matches!(e, Expr::IsTrue(_)) { (yes, no) } else { (no, yes) })
+        }
         Expr::UnaryOp {
             op: UnaryOperator::Not,
             expr,
@@ -143,6 +175,17 @@ fn truth(e: &Expr, fields: &HashSet<String>) -> Result<(Json, Json), String> {
             Ok((cast_filter(&n,cast, "!=", null()), cast_filter(&n,cast, "==", null())))
         }
         Expr::BinaryOp { left, op, right } => {
+            if let Expr::Position { expr, r#in } = left.as_ref() {
+                let (field, cast) = checked(r#in)?;
+                let text = literal(expr)?;
+                if cast.is_some() || text["kind"] != "string" || *op != BinaryOperator::Gt
+                    || literal(right)? != json!({"kind":"number","value":"0"}) {
+                    return Err("Use POSITION('text' IN field) > 0 for a substring comparison".into());
+                }
+                let contains = filter(&field, "contains", text);
+                let no = both("and", filter(&field, "!=", null()), json!({"kind":"not","value":contains}));
+                return Ok((contains, no));
+            }
             let (n,cast) = checked(left)?;
             let v = literal(right)?;
             let (yes, no) = match op {
@@ -183,12 +226,7 @@ fn parse_execution(text:&str,fields:&[String],catalog:Option<&taxonomy::Scope<'_
     if text.len() > 8192 {
         return Err("Query too long".into());
     }
-    let statements = Parser::new(&AnsiDialect {})
-        .with_recursion_limit(64)
-        .try_with_sql(text)
-        .map_err(|e| e.to_string())?
-        .parse_statements()
-        .map_err(|e| e.to_string())?;
+    let statements = statements(&AnsiDialect {}, text)?;
     if statements.len() != 1 {
         return Err("Provide one SELECT statement".into());
     }
@@ -378,7 +416,7 @@ fn parse_execution(text:&str,fields:&[String],catalog:Option<&taxonomy::Scope<'_
             }
         }
     }
-    let mut plan = json!({"filters":[],"order":"asc","relational":Relational{selection,group_by}});
+    let mut plan = json!({"filters":[],"order":"asc"});
     if let Some(target) = target {
         plan["table"] = json!(target);
     }
@@ -395,18 +433,38 @@ fn parse_execution(text:&str,fields:&[String],catalog:Option<&taxonomy::Scope<'_
             || v[0].with_fill.is_some()
             || matches!(v[0].options.sort, Some(OrderBySort::Using(_)))
             || source != "events"
-            || name(&v[0].expr)? != "timestamp"
-            || aggregate
+            || group_by.is_some()
         {
-            return Err("Only event timestamp ordering is currently supported".into());
+            return Err("Expected one ascending or descending field on event rows".into());
         }
+        let requested = name(&v[0].expr)?;
+        let field = if execution {
+            // SQL gives an output alias precedence over an input column of the same name.
+            if let Some(column) = selection.iter().find(|column| column.alias == requested) {
+                if column.cast.is_some() {
+                    return Err("Ordering by a cast result is not supported".into());
+                }
+                column.field.as_deref().ok_or("Expected an event field")?
+            } else if names.contains(&requested) {
+                &requested
+            } else if requested == "timestamp" && names.contains("@time") {
+                "@time"
+            } else {
+                return Err(format!("Unknown sort field {requested}"));
+            }
+        } else if requested == "timestamp" {
+            "timestamp"
+        } else {
+            return Err("Only event timestamp ordering is supported in this view".into());
+        };
         plan["order"] = json!(if matches!(v[0].options.sort, Some(OrderBySort::Desc)) {
             "desc"
         } else {
             "asc"
         });
-        if execution { plan["orderBy"] = json!({"field":"timestamp","direction":plan["order"]}); }
+        if execution { plan["orderBy"] = json!({"field":field,"direction":plan["order"]}); }
     }
+    plan["relational"] = json!(Relational { selection, group_by });
     Ok(json!({"collection":source,"plan":plan}))
 }
 
@@ -419,6 +477,19 @@ mod tests {
         ["time", "timestamp", "value", "region", "bucket", "count"]
             .map(str::to_owned)
             .to_vec()
+    }
+    #[test]
+    fn executable_order_uses_the_registered_field() {
+        let fields = ["time", "sensor", "@time"].map(str::to_owned);
+        for (query, field, direction) in [
+            (r#"SELECT * FROM events ORDER BY "time" ASC"#, "time", "asc"),
+            ("SELECT * FROM events ORDER BY timestamp DESC", "@time", "desc"),
+            ("SELECT sensor AS time FROM events ORDER BY time DESC", "sensor", "desc"),
+        ] {
+            let plan = parse_execution(query, &fields, None, true).unwrap();
+            assert_eq!(plan["plan"]["orderBy"], json!({"field":field,"direction":direction}));
+        }
+        assert!(parse_execution("SELECT * FROM events ORDER BY missing", &fields, None, true).is_err());
     }
     #[test]
     fn aggregate_groups_and_projections() {

@@ -3,7 +3,7 @@ package cache
 import (
 	"encoding/json"
 	"fmt"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"io"
 	"net/http"
 	"strings"
@@ -132,7 +132,7 @@ func (h *HTTP) providerIngress(w http.ResponseWriter, r *http.Request, kind stri
 		report(e, 422)
 		return
 	}
-	if e = h.Store.Flush(); e != nil {
+	if e = h.Store.flushAll(); e != nil {
 		report(e, 500)
 		return
 	}

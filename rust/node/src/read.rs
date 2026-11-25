@@ -146,6 +146,7 @@ impl Node {
         to: u64,
         plan: &data_seeds::relational::join::Plan,
         limit: Option<usize>,
+        context: &data_seeds::cast::Context,
     ) -> Result<data_seeds::relational::join::Join> {
         if from >= to || branches.is_empty() {
             return Err("Join requires a branch scope and time window".into());
@@ -188,8 +189,8 @@ impl Node {
         Ok(plan.bind([&ld, &rd])?.open(
             self.memory.clone(),
             limit,
-            |query| self.cursor(left, query),
-            |query| self.cursor(right, query),
+            |query| self.cursor(left, query.context(context.clone())),
+            |query| self.cursor(right, query.context(context.clone())),
         )?)
     }
 

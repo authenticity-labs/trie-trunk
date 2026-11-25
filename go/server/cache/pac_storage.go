@@ -116,10 +116,12 @@ func decodeStoredPAC(l *Layout, run Run, raw []byte) (*PAC, error) {
 	if run.PAC == nil {
 		return nil, fmt.Errorf("missing PAC directory")
 	}
-	var err error
-	raw, err = expandPAC(raw)
-	if err != nil {
-		return nil, err
+	if run.PAC.Compressed {
+		var err error
+		raw, err = expandPAC(raw)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if uint64(len(raw)) != run.PAC.Decoded {

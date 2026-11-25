@@ -68,6 +68,7 @@ pub struct SeedDefinition {
     summary_plan: std::sync::OnceLock<Result<summaries::Prepared, String>>,
     #[cfg(any(feature = "registration", feature = "query-language"))]
     semantics: Vec<(usize, &'static metadata::Profile)>,
+    change_key: Option<String>,
     rx: Arc<Prescription>,
     annotations: Vec<Vec<String>>,
     enum_kinds: Vec<Option<pil_codec::Scalar>>,
@@ -115,6 +116,16 @@ impl SeedDefinition {
             .collect();
         let header = &document.definitions()[member].header;
         use pil_codec::{Scalar,authoring_language::language as lang};
+        for field in &document.definitions()[member].fields {
+            for tag in &field.annotations {
+                if (tag == "@timestamp" || tag.starts_with("@timestamp("))
+                    && (tag != "@timestamp(ms)"
+                        || !matches!(field.base_kind(), [lang::INT, 0] | [lang::UINT, 0]))
+                {
+                    return Err(error(format!("{}: use @timestamp(ms) on an integer field", field.name)));
+                }
+            }
+        }
         let enum_kinds=document.definitions()[member].fields.iter().map(|field|match field.base_kind() {
             [lang::ENUM,lang::UINT]=>Some(Scalar::Uint(16)),[lang::ENUM,lang::INT]=>Some(Scalar::Int(16)),_=>None,
         }).collect();
@@ -124,7 +135,7 @@ impl SeedDefinition {
             summary_plan: Default::default(),
             #[cfg(any(feature = "registration", feature = "query-language"))]
             semantics: metadata::bindings(&rx, &annotations),
-            rx, annotations, enum_kinds, identity, summary_fields, summary_analytics, digest: header.rx_hash.clone(),
+            change_key: None, rx, annotations, enum_kinds, identity, summary_fields, summary_analytics, digest: header.rx_hash.clone(),
             version: (header.rx_major, header.rx_minor),
             name: header.rx_name.clone(), namespace: header.namespace.clone(),
             registration: None,
@@ -132,6 +143,10 @@ impl SeedDefinition {
     }
     pub fn read(bytes: &[u8]) -> Result<Arc<Self>, Error> {
         Self::prescribe(&doc::read(bytes)?)
+    }
+    pub fn version(&self) -> (u32,u32) {self.version}
+    pub fn digest(&self) -> &[u8] {
+        &self.digest
     }
     pub fn prescription(&self) -> &Arc<Prescription> {
         &self.rx
@@ -153,7 +168,7 @@ impl SeedDefinition {
             #[cfg(any(feature = "registration", feature = "query-language"))]
             semantics: self.semantics.clone(),
             identity: seed::identity::Identity::new(&rx, &self.annotations),
-            rx,
+            change_key: self.change_key.clone(), rx,
             annotations: self.annotations.clone(), enum_kinds: self.enum_kinds.clone(),
             summary_fields: self.summary_fields.clone(), summary_analytics: self.summary_analytics.clone(),
             digest: self.digest.clone(), version: self.version,
@@ -190,7 +205,7 @@ impl SeedDefinition {
             plans: query::Plans::default(),
             summary_plan: Default::default(),
             semantics: metadata::bindings(&self.rx, annotations),
-            rx: self.rx.clone(),
+            change_key: self.change_key.clone(), rx: self.rx.clone(),
             annotations: annotations.to_vec(),
             enum_kinds: self.enum_kinds.clone(),
             identity: seed::identity::Identity::new(&self.rx, annotations),
@@ -371,6 +386,18 @@ impl SeedPackSnapshot {
         Arc::new(Self { definition:self.definition.clone(),lineage:self.lineage.clone(),pack:self.pack.clone(),
             byte_length:self.byte_length,allocation:self.allocation,storage:self.storage.clone(),memory:Some(memory),
             write_checked:std::sync::atomic::AtomicBool::new(self.write_checked.load(std::sync::atomic::Ordering::Relaxed)) })
+    }
+    /// Read the supplied fields of one indexed revision, preserving explicit nulls.
+    pub fn stored_object(&self, ordinal: usize) -> Result<Object, Error> {
+        let mut reader = self.pack.reader();
+        let pill = reader.get(ordinal)?;
+        let mut object = Vec::new();
+        for (i, field) in pill.prescription().definition().fields().iter().enumerate() {
+            if let Cell::Value(data) = value::own(pill.native_value(i)?)? {
+                object.push((field.name.clone(), data));
+            }
+        }
+        Ok(object)
     }
     pub fn definitions(&self) -> impl Iterator<Item = &Arc<SeedDefinition>> {
         self.lineage.iter().flat_map(|m| m.values())

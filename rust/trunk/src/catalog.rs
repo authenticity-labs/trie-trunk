@@ -58,7 +58,7 @@ impl Trunk {
                 collections.insert(route.source()?);
                 files.insert(path.clone(),File {path,branch_id:Some(route.branch),definitions:vec![],kind:"pods".into(),definition:Some(route.digest.clone()),digest:None,size:0,bootstrap:false});
             } else {
-            for (suffix, kind) in [("time", "time"), ("summ", "sum"), ("indx", "idx"), ("packs", "packs")] {
+            for (suffix, kind) in [("time", "time"), ("summ", "sum"), ("indx", "idx"), ("packs", "packs"), ("beds", "beds")] {
                 let path = format!("{}/{}.{}", storage.directory, storage.stem, suffix);
                 files.insert(path.clone(), File { path, branch_id:Some(route.branch), definitions:vec![], kind:kind.into(), definition:Some(route.digest.clone()), digest:None, size:0, bootstrap:false });
             }

@@ -63,12 +63,19 @@ func TestRegisteredMajorGenerationsShareURLAndKeepIndependentStorage(t *testing.
 		}
 		return w
 	}
+	scope := []string{"demo", "trunk-client", "queries", "query"}
+	checkRegisteredStorage(t, p, scope, hour, 0)
 	for _, entry := range []struct {
 		branch int
 		file   string
 	}{{1, "v1.pil"}, {2, "v1-minor.pil"}, {3, "v2.pil"}, {1, "v1.pil"}} {
 		request(entry.branch, "seeds", read(entry.file))
 	}
+	// An unregistered filename contributes only to its resource.
+	if err := os.WriteFile(filepath.Join(root, "demo/trunk-client/queries/error.read.fake"), []byte("sample"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	checkRegisteredStorage(t, p, scope, hour, 4)
 	old, newer := request(1, "packs", nil).Body.Bytes(), request(3, "packs", nil).Body.Bytes()
 	if bytes.Equal(old, newer) {
 		t.Fatal("major generations shared a live Pack")
@@ -107,4 +114,5 @@ func TestRegisteredMajorGenerationsShareURLAndKeepIndependentStorage(t *testing.
 	p = open()
 	request(1, "packs", nil)
 	request(3, "packs", nil)
+	checkRegisteredStorage(t, p, scope, hour, 4)
 }

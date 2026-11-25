@@ -61,6 +61,7 @@ fn cli_registration_ingestion_queries_and_recovery_share_the_node() {
                     Field::new("value")
                         .r#type("uint")
                         .size(3)
+                        .annotation("@duration")
                         .annotation("#summ(numeric)"),
                 )
                 .sign()
@@ -134,6 +135,8 @@ fn cli_registration_ingestion_queries_and_recovery_share_the_node() {
             let sql = by_id.iter().position(|arg| arg == "--sql").unwrap() + 1;
             by_id[sql] = format!("SELECT value FROM events WHERE id = '{uuid}'");
             assert_eq!(command(&by_id, &[]).unwrap(), b"{\"value\":42}\n");
+            by_id[sql] = format!("SELECT @duration AS value FROM events WHERE @event = '{uuid}' AND @time = {now}");
+            assert_eq!(command(&by_id, &[]).unwrap(), b"{\"value\":42}\n");
             let mut totals = query.clone();
             totals[sql]="SELECT COUNT(*) AS n, SUM(value) AS s, MIN(value) AS lo, MAX(value) AS hi, AVG(value) AS mean FROM events WHERE value >= 40".into();
             let check = |args: &[String], n: &str, empty: bool| {
@@ -154,6 +157,9 @@ fn cli_registration_ingestion_queries_and_recovery_share_the_node() {
                 }
             };
             check(&totals, "1", false);
+            let mut annotated_totals = totals.clone();
+            annotated_totals[sql] = totals[sql].replace("value", "@duration");
+            check(&annotated_totals, "1", false);
             let since = totals.iter().position(|a| a == "--from").unwrap() + 1;
             let until = totals.iter().position(|a| a == "--to").unwrap() + 1;
             totals[since] = now.to_string();

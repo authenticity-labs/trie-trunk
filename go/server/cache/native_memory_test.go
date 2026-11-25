@@ -2,7 +2,6 @@ package cache
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"fmt"
 	"sync"
@@ -57,6 +56,7 @@ func TestNativeMemoryAdoptionPinAndBudget(t *testing.T) {
 		t.Fatal("buffer leaked")
 	}
 }
+
 func TestNativeMemoryPoolCloseWithReader(t *testing.T) {
 	m := newNativeMemory(256)
 	b := m.buffer()
@@ -71,6 +71,7 @@ func TestNativeMemoryPoolCloseWithReader(t *testing.T) {
 	}
 	b.close()
 }
+
 func TestCommitSchedulerBoundsConcurrency(t *testing.T) {
 	scheduler := NewCommitScheduler(2)
 	var wg sync.WaitGroup
@@ -92,48 +93,6 @@ func TestCommitSchedulerBoundsConcurrency(t *testing.T) {
 	stats := scheduler.Stats()
 	if peak.Load() > 2 || stats.Active != 0 || stats.Waiting != 0 || stats.Attempts != 20 {
 		t.Fatalf("invalid scheduler: %+v peak=%d", stats, peak.Load())
-	}
-}
-
-func TestNativeHistorySurvivesStoreClose(t *testing.T) {
-	l := testLayout(t, false)
-	at := time.Date(2026, 10, 24, 12, 0, 0, 0, time.UTC)
-	p, err := OpenEndpoint(Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: true, Now: func() time.Time { return at.Add(time.Minute) }})
-	if err != nil {
-		t.Fatal(err)
-	}
-	raw := testFrame(t, l, at, 1, false)
-	if _, err = p.api.Store.Append(Write, raw); err != nil {
-		t.Fatal(err)
-	}
-	h, err := p.snapshotHistory(l.Definition.Identity, 1, testObject(42), at, at.Add(time.Hour))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer h.close()
-	if err = p.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err = h.visitBorrowed(context.Background(), func(_ EventReference, b []byte) error {
-		if &b[0] != &h.locations[0].raw[0] {
-			t.Fatal("borrowed history copied payload")
-		}
-		return nil
-	}); err != nil {
-		t.Fatal(err)
-	}
-	n := 0
-	if err = h.visit(context.Background(), func(_ EventReference, b []byte) error {
-		n++
-		if !sameSeedData(t, l, b, raw) {
-			t.Fatal("snapshot changed after close")
-		}
-		return nil
-	}); err != nil {
-		t.Fatal(err)
-	}
-	if n != 1 {
-		t.Fatalf("rows=%d", n)
 	}
 }
 

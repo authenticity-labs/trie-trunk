@@ -295,7 +295,7 @@ pub fn run_output(
     let mut aliases = Vec::<(String, String)>::new();
     if let Some(text) = sql_text {
         let bootstrap = connection.call(json!({"op":"bootstrap"}))?;
-        let fields = table::columns(&json!({}), &branches, Some(&bootstrap))?;
+        let fields = table::sql_fields(&branches, &bootstrap)?;
         let ast = connection
             .call(json!({"op":"language","query":{"op":"prepare","text":text,"fields":fields}}))?;
         let plan = ast["plan"].clone();

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"trie-trunk/go/codec"
 )
 

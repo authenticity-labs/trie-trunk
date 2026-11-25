@@ -141,7 +141,11 @@ func (s *Store) openObjects() error {
 			f.Close()
 			return e
 		}
-		s.objects = newObjectIndex(f)
+		s.objects, e = loadObjectIndex(f)
+		if e != nil {
+			f.Close()
+			return e
+		}
 	}
 	if g := s.config.group; g != nil {
 		g.objects[s.collection] = s.objects

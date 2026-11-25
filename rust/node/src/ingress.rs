@@ -26,7 +26,9 @@ pub(crate) struct Runtime {
     lanes: HashMap<String, Lane>,
     scheduler: CommitScheduler,
 }
+use crate::collections::writer::Pods;
 struct Lane {
+    pods: Option<Pods>,
     generation: u64,
     branch: u16,
     prefix: PathBuf,
@@ -138,11 +140,7 @@ impl Runtime {
     }
     pub(crate) fn refresh(&mut self, node: &Node, branch: u16) -> Result<()> {
         let route = node.trie().route(branch)?;
-        if route.pods()?.is_some() {
-            return Ok(());
-        }
-        let storage = route.storage()?;
-        let base = format!("{}/{}", storage.directory, storage.stem);
+        let base = ingress_base(&route)?;
         if self.lanes.remove(&base).is_some() {
             let lane = Lane::open(node, branch, &base, now(), &mut self.scheduler)?;
             self.lanes.insert(base, lane);
@@ -219,6 +217,17 @@ impl Runtime {
         }
         Ok((!source.packs.is_empty()).then_some(source))
     }
+    pub(crate) fn storage_usage(&self, base: &str) -> Result<Vec<(u64, u64, u64)>> {
+        let mut hours = Vec::new();
+        if let Some(lane) = self.lanes.get(base) {
+            for hour in lane.live.hours() {
+                let spool = lane.files.get(&hour).ok_or("Missing open hour spool")?;
+                hours.push((hour, lane.live.count(hour) as u64, spool.metadata()?.len()));
+            }
+        }
+        Ok(hours)
+    }
+
     pub(crate) fn counts(&self, base: &str) -> Vec<(u64, u64)> {
         self.lanes
             .get(base)
@@ -323,7 +332,7 @@ impl data_seeds::PackSource for LiveSource {
         ))
     }
 }
-fn file(path: &Path) -> Result<File> {
+pub(crate) fn file(path: &Path) -> Result<File> {
     Ok(OpenOptions::new()
         .read(true)
         .write(true)
@@ -332,7 +341,7 @@ fn file(path: &Path) -> Result<File> {
         .mode(0o600)
         .open(path)?)
 }
-fn suffix(prefix: &Path, extension: &str) -> PathBuf {
+pub(crate) fn suffix(prefix: &Path, extension: &str) -> PathBuf {
     PathBuf::from(format!("{}{extension}", prefix.display()))
 }
 pub(crate) fn atomic(path: &Path, bytes: &[u8]) -> Result<()> {
@@ -411,10 +420,16 @@ fn records(path: &Path, mut visit: impl FnMut(u16, &[u8], &[u8]) -> Result<()>) 
     Ok(())
 }
 
+fn ingress_base(route: &trie_trunk_taxonomy::registration::Route) -> Result<String> {
+    if let Some(path) = route.pods()? {
+        return Ok(path.strip_suffix(".pods").ok_or("Invalid PODS path")?.to_owned());
+    }
+    let storage = route.event_storage()?;
+    Ok(format!("{}/{}",storage.directory,storage.stem))
+}
 impl Node {
     pub fn prepare(&self, branch: u16, clock: u64) -> Result<()> {
-        let storage = self.trie().route(branch)?.event_storage()?;
-        let base = format!("{}/{}", storage.directory, storage.stem);
+        let base = ingress_base(&self.trie().route(branch)?)?;
         let mut runtime = self.runtime.lock().map_err(|_| "Trunk writer poisoned")?;
         if !runtime.lanes.contains_key(&base) {
             let lane = Lane::open(self, branch, &base, clock, &mut runtime.scheduler)?;
@@ -431,7 +446,18 @@ impl Node {
             .map(|r| r.branch)
             .collect::<Vec<_>>();
         let mut runtime = self.runtime.lock().map_err(|_| "Native writer poisoned")?;
-        for (branch, base) in self.sources(&branches)? {
+        let mut sources = self.sources(&branches)?;
+        let mut seen = std::collections::HashSet::new();
+        for &branch in &branches {
+            let route = self.trie().route(branch)?;
+            if route.pods()?.is_some() {
+                let base = ingress_base(&route)?;
+                if seen.insert(base.clone()) && !spool_paths(&self.root.join(&base))?.is_empty() {
+                    sources.push((branch,base));
+                }
+            }
+        }
+        for (branch, base) in sources {
             let trie = self.trie();
             let definition = trie
                 .registered()
@@ -455,10 +481,8 @@ impl Node {
         }
         Ok(())
     }
-    pub fn ingest(&self, branch: u16, pill: &[u8], now: u64) -> Result<u64> {
-        let storage = self.trie().route(branch)?.event_storage()?;
-        let base = format!("{}/{}", storage.directory, storage.stem);
-        let mut runtime = self.runtime.lock().map_err(|_| "Native writer poisoned")?;
+    fn ingress_lane<'a>(&self, runtime: &'a mut Runtime, branch: u16, now: u64) -> Result<&'a mut Lane> {
+        let base = ingress_base(&self.trie().route(branch)?)?;
         if !runtime.lanes.contains_key(&base) {
             let lane = Lane::open(self, branch, &base, now, &mut runtime.scheduler)?;
             runtime.lanes.insert(base.clone(), lane);
@@ -467,11 +491,44 @@ impl Node {
         if let Some(error) = &lane.failed {
             return Err(error.clone().into());
         }
+        Ok(lane)
+    }
+
+    pub fn ingest_batch(&self, branch: u16, wire: &[u8], now: u64) -> Result<usize> {
+        let mut runtime = self.runtime.lock().map_err(|_| "Native writer poisoned")?;
+        let lane = self.ingress_lane(&mut runtime, branch, now)?;
+        let batch = lane.live.batch(branch, wire, now).map_err(crate::InputError)?;
+        let keys = lane.pods.as_ref().map(|p| p.pending(lane.live.scope().definition(branch)?, batch.pills())).transpose()?;
+        // Hold every lease before charging any hour or writing any bytes.
+        let reservations = batch.hours().map(|(hour, bytes)| {
+            lane.reservation(hour, bytes, &self.memory).map(|(next, lease)| (hour, next, lease))
+        }).collect::<Result<Vec<_>>>()?;
+        for (hour, next, lease) in reservations {
+            lane.charge(hour, next, lease);
+        }
+        let result = (|| {
+            lane.rotate(now / TIME_HOUR_MS * TIME_HOUR_MS)?;
+            for (hour, _) in batch.hours() {
+                lane.spool(hour)?;
+            }
+            data_seeds::registration::ingress::files::ingest_batch(&mut lane.live, &mut lane.files, batch)
+        })();
+        if let Err(e) = &result {
+            lane.failed = Some(e.to_string());
+        }
+        if result.is_ok() { if let (Some(p),Some(keys))=(&mut lane.pods,keys) {p.admit(keys);} self.roots.publish(branch, wire, false); }
+        result
+    }
+
+    pub fn ingest(&self, branch: u16, pill: &[u8], now: u64) -> Result<u64> {
+        let mut runtime = self.runtime.lock().map_err(|_| "Native writer poisoned")?;
+        let lane = self.ingress_lane(&mut runtime, branch, now)?;
         let time = lane
             .live
             .inspect(branch, pill, now)
             .map_err(crate::InputError)?;
         let hour = time / TIME_HOUR_MS * TIME_HOUR_MS;
+        let keys = lane.pods.as_ref().map(|p| p.pending(lane.live.scope().definition(branch)?, std::iter::once((time,pill)))).transpose()?;
         lane.reserve(hour, pill.len() + 16, &self.memory)?;
         let result = (|| -> Result<u64> {
             lane.rotate(now / TIME_HOUR_MS * TIME_HOUR_MS)?;
@@ -488,6 +545,7 @@ impl Node {
         if let Err(e) = &result {
             lane.failed = Some(e.to_string());
         }
+        if result.is_ok() { if let (Some(p),Some(keys))=(&mut lane.pods,keys) {p.admit(keys);} self.roots.publish(branch, pill, true); }
         result
     }
     pub fn commit(&self, now: u64) -> Result<usize> {
@@ -576,7 +634,11 @@ impl Lane {
     ) -> Result<Self> {
         let prefix = node.root.join(base);
         let storage = node.configuration.storage;
-        if !suffix(&prefix, storage.suffix()).try_exists()?
+        let trie = node.trie();
+        let route = trie.route(branch)?;
+        let objects = route.pods()?.is_some();
+        let extension = if objects { ".pods" } else { storage.suffix() };
+        if !objects && !suffix(&prefix, storage.suffix()).try_exists()?
             && suffix(&prefix, storage.alternative().suffix()).try_exists()?
         {
             return Err(format!("Storage configuration selects {} but this datastore contains {}; changing configuration does not convert stored data", storage.suffix(), storage.alternative().suffix()).into());
@@ -586,9 +648,11 @@ impl Lane {
         // Canonical containment applies to directories created by registrations too.
         within(
             &node.root,
-            &node.trie().route(branch)?.event_storage()?.directory,
+            &route.storage()?.directory,
         )?;
-        restore_summary(&prefix, scheduler)?;
+        let scope = if objects {trie.branches().select([branch]).pods()?} else {trie.branches().select([branch]).packs()?};
+        let _guard = if objects {Some(node.object_publication.write().map_err(|_| "Object publication poisoned")?)} else {None};
+        let mut pods = if objects { Some(Pods::open(&prefix)?) } else { restore_summary(&prefix, scheduler)?; None };
         for path in spool_paths(&prefix)? {
             let mut committed = false;
             records(&path, |reference, _, raw| {
@@ -596,12 +660,10 @@ impl Lane {
                     return Err("Recovery data follows a commit checkpoint".into());
                 }
                 if reference == 0 {
-                    apply(
-                        &prefix,
-                        node.configuration.storage,
-                        &Publication::read(raw)?,
-                        scheduler,
-                    )?;
+                    let plan = Publication::read(raw)?;
+                    if let Some(p) = &mut pods {
+                        p.publish(&prefix,&scope,&plan)?;
+                    } else {apply(&prefix,storage,&plan,scheduler)?;}
                     committed = true;
                 }
                 Ok(())
@@ -619,28 +681,27 @@ impl Lane {
             File::open("/dev/urandom")?.read_exact(&mut generation)?;
             let mut writer = data_seeds::packs::Writer::new(&[])?;
             atomic(
-                &suffix(&prefix, node.configuration.storage.suffix()),
+                &suffix(&prefix, extension),
                 writer.commit()?.bytes,
             )?;
-            atomic(&suffix(&prefix, ".indx"), &[])?;
+            if !objects {atomic(&suffix(&prefix, ".indx"), &[])?;}
             atomic(&time_path, TimeTrie::create(first, generation, 0)?.bytes())?;
             node.changed();
         }
         let time = TimeTrie::open(Arc::new(bounded(&time_path, 16 << 20)?))?;
         let leaf_path = node.root.join(node.trie().route(branch)?.leaf_path()?);
-        if !leaf_path.try_exists()? {
+        if !objects && !leaf_path.try_exists()? {
             let trie = node.trie();
             let mut leaves = trie.branches().select([branch]).leaves()?.create()?;
             leaves.register(branch)?;
             atomic(&leaf_path, &leaves.publish()?)?;
         }
         let calendar = time.summary_calendar()?;
-        let scope = node.trie().branches().select([branch]).packs()?;
-        let state = data_seeds::registration::ingress::StatePaths::registered(
+        let state = if objects {Default::default()} else { data_seeds::registration::ingress::StatePaths::registered(
             &node.trie(),
             branch,
             &scope,
-        )?;
+        )? };
         let mut live = OwnedIngress::new(
             scope,
             branch,
@@ -654,14 +715,15 @@ impl Lane {
         } else {
             (Vec::new(), 0, None)
         };
-        let summary_start = live.summaries_start(
+        let summary_start = if objects {None} else {live.summaries_start(
             node.trie().registered(),
             &time,
             &[],
             &summary_footer,
             summary_length,
-        )?;
+        )?};
         let mut lane = Self {
+            pods,
             generation: node.changed(),
             branch,
             prefix,
@@ -698,6 +760,10 @@ impl Lane {
                         return Err("Recovery spool mixes hours".into());
                     }
                     hour = Some(at);
+                    if let Some(p) = &mut lane.pods {
+                        let keys = p.pending(lane.live.scope().definition(branch)?, std::iter::once((time,pill)))?;
+                        p.admit(keys);
+                    }
                     lane.reserve(at, pill.len() + 16, &node.memory)?;
                 }
                 Ok(())
@@ -718,20 +784,25 @@ impl Lane {
         Ok(lane)
     }
     fn reserve(&mut self, hour: u64, bytes: usize, budget: &MemoryBudget) -> Result<()> {
+        let (next, lease) = self.reservation(hour, bytes, budget)?;
+        self.charge(hour, next, lease);
+        Ok(())
+    }
+    fn reservation(&self, hour: u64, bytes: usize, budget: &MemoryBudget) -> Result<(usize, Option<MemoryLease>)> {
         let used = self.charged.get(&hour).copied().unwrap_or(0);
         let next = used
             .checked_add(bytes.checked_mul(2).ok_or("Ingress budget overflow")?)
             .ok_or("Ingress budget overflow")?;
         let chunk = 64 << 10;
         let extra = next.div_ceil(chunk) - used.div_ceil(chunk);
-        if extra > 0 {
-            self.charges
-                .entry(hour)
-                .or_default()
-                .push(budget.reserve(extra * chunk)?);
+        let lease = (extra > 0).then(|| budget.reserve(extra * chunk)).transpose()?;
+        Ok((next, lease))
+    }
+    fn charge(&mut self, hour: u64, next: usize, lease: Option<MemoryLease>) {
+        if let Some(lease) = lease {
+            self.charges.entry(hour).or_default().push(lease);
         }
         self.charged.insert(hour, next);
-        Ok(())
     }
     fn rotate(&mut self, hour: u64) -> Result<()> {
         if hour > self.head {
@@ -775,8 +846,11 @@ impl Lane {
         let time = bounded(&suffix(&self.prefix, ".time"), 16 << 20)?;
         let storage = node.configuration.storage;
         let (footer, length, _lease) =
-            footer(&suffix(&self.prefix, storage.suffix()), &node.memory)?;
-        let publication = if self.state.is_empty() {
+            footer(&suffix(&self.prefix, if self.pods.is_some() {".pods"} else {storage.suffix()}), &node.memory)?;
+        let publication = if self.pods.is_some() {
+            let sealed = self.live.seal(hour,now)?;
+            Publication::prepare(&sealed,&time,&footer,length,None)?
+        } else if self.state.is_empty() {
             self.live
                 .publication(hour, now, &time, &footer, length, storage.compression())?
         } else {
@@ -813,7 +887,10 @@ impl Lane {
         let spool = self.spool(hour)?;
         spool.write_all(&checkpoint)?;
         spool.sync_all()?;
-        apply(&self.prefix, storage, &publication, scheduler)?;
+        if let Some(p) = &mut self.pods {
+            let _guard = node.object_publication.write().map_err(|_| "Object publication poisoned")?;
+            p.publish(&self.prefix,self.live.scope(),&publication)?;
+        } else {apply(&self.prefix, storage, &publication, scheduler)?;}
         self.generation = node.changed();
         self.live.published(hour)?;
         self.files.remove(&hour);

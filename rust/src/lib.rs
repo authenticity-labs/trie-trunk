@@ -1,3 +1,4 @@
+mod collection;
 mod disk_rows;
 mod index_cache;
 mod routing;

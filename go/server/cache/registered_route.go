@@ -135,6 +135,19 @@ func taxonomyRoute(root string, id uint16) (registeredRoute, error) {
 	return route, err
 }
 
+func (reader *registeredRouteReader) routes(cache string) ([]registeredRoute, error) {
+	result, err := reader.trie.routes(cache)
+	if err != nil {
+		return nil, err
+	}
+	defer result.close()
+	var routes []registeredRoute
+	if err = json.Unmarshal(result.bytes, &routes); err != nil {
+		return nil, err
+	}
+	return routes, nil
+}
+
 // Startup prepares the reusable RX files named by this cache's registrations.
 // Rust resolves lineage and builds codec plans. Host startup only reads files.
 func prepareRegisteredDefinitions(root, cache string) error {
@@ -147,13 +160,8 @@ func prepareRegisteredDefinitions(root, cache string) error {
 	if err != nil {
 		return err
 	}
-	result, err := reader.trie.routes(cache)
+	routes, err := reader.routes(cache)
 	if err != nil {
-		return err
-	}
-	defer result.close()
-	var routes []registeredRoute
-	if err = json.Unmarshal(result.bytes, &routes); err != nil {
 		return err
 	}
 	for _, route := range routes {

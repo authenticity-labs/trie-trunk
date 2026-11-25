@@ -8,9 +8,10 @@ import (
 	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"strings"
 	"time"
+	"trie-trunk/go/internal/definitionmeta"
 )
 
-const Format uint32 = 6
+const Format = definitionmeta.RegistryFormat
 const MaxFrame = pil.MaxFrame
 
 type Branch uint8

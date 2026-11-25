@@ -81,12 +81,25 @@ func (s *Store) loadProviders(c *ProviderConfig) (err error) {
 	if !bytes.Equal(bound, s.layout.Bytes) {
 		return fmt.Errorf("provider target does not match resource Definition")
 	}
-	ms, err := read("field-meta")
+	readMetadata := func(name string) (*meta.Layout, error) {
+		layout, err := read(name)
+		if err != nil {
+			return nil, err
+		}
+		defer layout.Close()
+		return meta.Open(layout.Bytes)
+	}
+	targetMeta, err := meta.Open(target.Bytes)
+	if err != nil {
+		return err
+	}
+	defer targetMeta.Close()
+	ms, err := readMetadata("field-meta")
 	if err != nil {
 		return err
 	}
 	defer ms.Close()
-	ss, err := read("synonym")
+	ss, err := readMetadata("synonym")
 	if err != nil {
 		return err
 	}
@@ -101,11 +114,11 @@ func (s *Store) loadProviders(c *ProviderConfig) (err error) {
 		return err
 	}
 	defer synonyms.Close()
-	pack, err := meta.ReadPack(metadata, targetEntry.Metadata, ms, target)
+	pack, err := meta.ReadPack(metadata, targetEntry.Metadata, ms, targetMeta)
 	if err != nil {
 		return err
 	}
-	prepared, err := meta.Prepare(pack, ms, target)
+	prepared, err := meta.Prepare(pack, ms, targetMeta)
 	if err != nil {
 		return err
 	}
@@ -123,12 +136,12 @@ func (s *Store) loadProviders(c *ProviderConfig) (err error) {
 		if e != nil {
 			return e
 		}
-		pack, e := meta.ReadPack(synonyms, location, ss, target)
+		pack, e := meta.ReadPack(synonyms, location, ss, targetMeta)
 		if e != nil {
 			source.Close()
 			return e
 		}
-		mapping, e := meta.PrepareSynonyms(pack, ss, target)
+		mapping, e := meta.PrepareSynonyms(pack, ss, targetMeta)
 		if e != nil {
 			source.Close()
 			return e

@@ -29,6 +29,28 @@ impl Node {
         Ok(out)
     }
 
+    /// Read occupied hours across the selected physical stores and their open heads.
+    pub fn time_bounds(&self, branches: &[u16]) -> Result<Option<[u64; 2]>> {
+        let runtime = self.runtime.lock().map_err(|_| "Trunk writer poisoned")?;
+        let mut bounds: Option<[u64; 2]> = None;
+        let mut include = |from: u64, to: u64| {
+            let extent = bounds.get_or_insert([from, to]);
+            extent[0] = extent[0].min(from);
+            extent[1] = extent[1].max(to);
+        };
+        for (_, base) in self.sources(branches)? {
+            let path = self.root.join(format!("{base}.time"));
+            if path.try_exists()? {
+                let trie = TimeTrie::open(Arc::new(bounded(&path, 16 << 20)?))?;
+                if let Some(range) = trie.occupied()? { include(range.start, range.end); }
+            }
+            for (hour, count) in runtime.counts(&base) {
+                if count > 0 { include(hour, hour.checked_add(TIME_HOUR_MS).ok_or("hour overflow")?); }
+            }
+        }
+        Ok(bounds)
+    }
+
     pub fn timeline(&self, branches: &[u16], from: u64, to: u64) -> Result<Value> {
         let from = from / TIME_HOUR_MS * TIME_HOUR_MS;
         let to = to
@@ -42,6 +64,7 @@ impl Node {
         let mut counts = vec![0u64; ((to - from) / TIME_HOUR_MS) as usize];
         let mut errors = counts.clone();
         let mut received = 0usize;
+        let mut first: Option<u64> = None;
         let runtime = self.runtime.lock().map_err(|_| "Native writer poisoned")?;
         for (branch, base) in self.sources(branches)? {
             if !self.root.join(format!("{base}.time")).exists() {
@@ -51,6 +74,7 @@ impl Node {
                 &within(&self.root, &format!("{base}.time"))?,
                 16 << 20,
             )?))?;
+            first = Some(first.map_or(time.header().first, |value| value.min(time.header().first)));
             for (hour, count) in runtime.counts(&base) {
                 if hour >= from && hour < to {
                     counts[((hour - from) / TIME_HOUR_MS) as usize] += count;
@@ -76,8 +100,12 @@ impl Node {
             .iter()
             .try_fold(0u64, |a, b| a.checked_add(*b))
             .ok_or("Count overflow")?;
-        Ok(json!({"from":from,"to":to,"counts":counts,"errors":errors,
-            "count":total,"receivedHours":received}))
+        let mut window = json!({"from":from,"to":to,"counts":counts,"errors":errors,
+            "count":total,"receivedHours":received});
+        if let Some(first) = first {
+            window["first"] = first.into();
+        }
+        Ok(window)
     }
 
     pub fn summaries(

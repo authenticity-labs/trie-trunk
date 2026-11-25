@@ -4,11 +4,35 @@ use crate::{Predicate, SeedDefinition};
 use std::borrow::Cow;
 
 impl SeedDefinition {
+    /// Whether a query result reconstructs this field as a full event UUID.
+    pub fn is_event_id(&self, name: &str) -> bool {
+        self.identity.is_some_and(|id| self.query_ordinal(name) == Some(id.id))
+    }
+
+    pub(crate) fn selectors(tags: &[String]) -> impl Iterator<Item = &str> {
+        tags.iter()
+            .map(|tag| tag.split_once('(').map_or(tag.as_str(), |(name, _)| name))
+            .filter(|name| matches!(*name, "@time" | "@duration" | "@event" | "@object"))
+    }
+
+    // Match annotation names at prescription binding time, including parameterized tags.
+    pub(crate) fn annotation_field(&self, selector: &str) -> Result<Option<usize>, crate::Error> {
+        let mut matches = self.annotations.iter().enumerate().filter(|(_, tags)| {
+            Self::selectors(tags).any(|name| name == selector)
+        });
+        let first = matches.next().map(|(ordinal, _)| ordinal);
+        if matches.next().is_some() {
+            return Err(crate::error(format!("ambiguous annotation {selector} in {}: use a field name", self.name)));
+        }
+        Ok(first)
+    }
+
     /// Physical fields keep precedence. An ambiguous annotation alias is unavailable.
     pub fn query_ordinal(&self, name: &str) -> Option<usize> {
         if let Some(ordinal) = self.rx.field_ordinal(name) {
             return Some(ordinal);
         }
+        if name.starts_with('@') { return self.annotation_field(name).ok().flatten(); }
         #[cfg(any(feature = "registration", feature = "query-language"))]
         {
             let mut matches = self
@@ -45,19 +69,15 @@ impl SeedDefinition {
             ordinal,
             #[cfg(any(feature = "registration", feature = "query-language"))]
             view: self.metadata(ordinal).and_then(|p| {
-                p.view(name, &self.rx.definition().fields()[ordinal].name)
+                let stored = &self.rx.definition().fields()[ordinal].name;
+                p.view(if name.starts_with('@') { stored } else { name }, stored)
                     .map(|v| (p, v))
             }),
         })
     }
     pub fn predicate<'a>(&self, predicate: &'a Predicate) -> Cow<'a, Predicate> {
-        #[cfg(any(feature = "registration", feature = "query-language"))]
-        if !self.semantics.is_empty() {
-            return self.lower(predicate);
-        }
-        Cow::Borrowed(predicate)
+        self.lower(predicate)
     }
-    #[cfg(any(feature = "registration", feature = "query-language"))]
     fn lower<'a>(&self, predicate: &'a Predicate) -> Cow<'a, Predicate> {
         use Predicate::*;
         let field = |name: &str| {
@@ -77,10 +97,11 @@ impl SeedDefinition {
                 op,
                 value,
             } => {
-                if let Some((ordinal, stored)) = field(name) {
-                    if let Some(profile) = self.metadata(ordinal) {
+                if let Some((_ordinal, stored)) = field(name) {
+                    #[cfg(any(feature = "registration", feature = "query-language"))]
+                    if let Some(profile) = self.metadata(_ordinal) {
                         if let Some(mapped) =
-                            profile.comparison(stored, profile.view(name, stored), *op, value)
+                            profile.comparison(stored, profile.view(if name.starts_with('@') { stored } else { name }, stored), *op, value)
                         {
                             return Cow::Owned(mapped);
                         }
@@ -118,14 +139,20 @@ impl SeedDefinition {
                 }
             }
             And(parts) | Or(parts) => {
-                let lowered: Vec<_> = parts.iter().map(|p| self.lower(p)).collect();
-                if lowered.iter().any(|p| matches!(p, Cow::Owned(_))) {
-                    let parts = lowered.into_iter().map(Cow::into_owned).collect();
-                    return Cow::Owned(if matches!(predicate, And(_)) {
-                        And(parts)
-                    } else {
-                        Or(parts)
-                    });
+                let mut changed = None;
+                for (i, part) in parts.iter().enumerate() {
+                    match (self.lower(part), &mut changed) {
+                        (Cow::Borrowed(_), None) => {}
+                        (item, Some(items)) => Vec::push(items, item.into_owned()),
+                        (Cow::Owned(item), None) => {
+                            let mut items = parts[..i].to_vec();
+                            items.push(item);
+                            changed = Some(items);
+                        }
+                    }
+                }
+                if let Some(parts) = changed {
+                    return Cow::Owned(if matches!(predicate, And(_)) { And(parts) } else { Or(parts) });
                 }
             }
             Not(inner) => {

@@ -3,7 +3,7 @@ package codec
 import (
 	"crypto/sha256"
 	"fmt"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 )
 
 // Revision identifies the complete connection-bound schema and value catalog.

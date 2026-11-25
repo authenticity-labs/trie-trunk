@@ -35,6 +35,18 @@ pub struct OwnedIngress {
     text_fields: HashMap<u16, Vec<usize>>,
     failure: Option<String>,
 }
+pub struct Batch<'a> {
+    branch: u16,
+    rows: Vec<(&'a [u8], (u64, u16))>,
+    hours: BTreeMap<u64, usize>,
+}
+impl<'a> Batch<'a> {
+    pub fn pills(&self) -> impl Iterator<Item = (u64, &'a [u8])> + '_ {self.rows.iter().map(|(pill,(time,_))|(*time,*pill))}
+    pub fn hours(&self) -> impl Iterator<Item = (u64, usize)> + '_ {
+        self.hours.iter().map(|(&hour, &charge)| (hour, charge))
+    }
+}
+
 impl OwnedIngress {
     pub fn new(
         scope: Packs,
@@ -99,6 +111,52 @@ impl OwnedIngress {
         self.healthy()?;
         self.live.inspect(branch, bytes, now)
     }
+    /// Preflight a transport message before any recovery file is changed.
+    pub fn batch<'a>(&self, branch: u16, mut wire: &'a [u8], now: u64) -> Result<Batch<'a>, Error> {
+        self.healthy()?;
+        if wire.is_empty() || wire.len() > 4 << 20 {
+            return Err(error("invalid ingress batch size"));
+        }
+        let mut batch = Batch { branch, rows: Vec::new(), hours: BTreeMap::new() };
+        let rx = self.scope.definition(branch)?.prescription();
+        let mut scratch = pil_codec::FrameIndex::default();
+        let mut total = self.live.bytes;
+        while !wire.is_empty() {
+            let (length, rest) = wire.split_at_checked(4).ok_or_else(|| error("truncated PIL length"))?;
+            let size = u32::from_be_bytes(length.try_into().unwrap()) as usize;
+            let (pill, rest) = rest.split_at_checked(size).ok_or_else(|| error("truncated PIL"))?;
+            if batch.rows.len() >= 1024 {
+                return Err(error("too many PILs in ingress batch"));
+            }
+            if size > self.live.limits.pill_bytes {
+                return Err(error("ingress Pill size limit exceeded"));
+            }
+            // Coordinates are a selective read. Check the whole frame before
+            // placing any part of the message in the durable recovery stream.
+            rx.bind_with(Fill::Encoded(pill), &mut scratch)?;
+            let coords = self.live.coordinates(branch, pill, Some(now))?;
+            let hour = coords.0 / TIME_HOUR_MS * TIME_HOUR_MS;
+            let charge = size + 16;
+            total = total.checked_add(charge).ok_or_else(|| error("ingress budget overflow"))?;
+            if total > self.live.limits.bytes {
+                return Err(error("ingress input budget exhausted"));
+            }
+            *batch.hours.entry(hour).or_default() += charge;
+            batch.rows.push((pill, coords));
+            wire = rest;
+        }
+        let new_hours = batch.hours.keys().filter(|h| !self.live.hours.contains_key(h)).count();
+        if self.live.hours.len() + new_hours > self.live.limits.open_hours {
+            return Err(error("ingress open-hour limit exceeded"));
+        }
+        Ok(batch)
+    }
+
+    fn admit(&mut self, branch: u16, bytes: &[u8], coordinates: (u64, u16)) -> Result<u64, Error> {
+        let time = self.live.append(branch, bytes, coordinates)?;
+        self.observe(branch, bytes, time)?;
+        Ok(time)
+    }
     /// Validate before writing, make recovery durable, then expose the event to
     /// queries and accumulators. Every ingress adapter uses this boundary.
     pub fn persist(
@@ -111,11 +169,7 @@ impl OwnedIngress {
         self.healthy()?;
         let coordinates = self.live.coordinates(branch, bytes, Some(now))?;
         let prefix = recovery::prefix(branch, bytes)?;
-        let result = durable(&prefix, bytes).and_then(|()| {
-            let time = self.live.append(branch, bytes, coordinates)?;
-            self.observe(branch, bytes, time)?;
-            Ok(time)
-        });
+        let result = durable(&prefix, bytes).and_then(|()| self.admit(branch, bytes, coordinates));
         if let Err(error) = &result {
             self.failure = Some(error.to_string());
         }

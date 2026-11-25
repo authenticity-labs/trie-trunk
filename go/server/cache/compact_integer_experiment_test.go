@@ -150,9 +150,6 @@ func (a *compactIntegerLayout) encode(dst []byte, values []Value) ([]byte, error
 	if len(values) != len(a.fields) {
 		return nil, fmt.Errorf("field count mismatch")
 	}
-	if !a.eligible {
-		return a.base.Layout.Encode(dst, values)
-	}
 	dst = append(dst[:0], make([]byte, a.mask)...)
 	var widths [256]byte
 	controlBits := 0
@@ -228,9 +225,6 @@ func (a *compactIntegerLayout) scan(raw []byte, reuse *Frame) error {
 		return fmt.Errorf("nonzero mask padding")
 	}
 	bits := a.controlBits(raw)
-	if bits == 0 {
-		return a.base.Scan(raw, reuse)
-	}
 	controlEnd := a.mask + (bits+7)/8
 	if len(raw) < controlEnd {
 		return fmt.Errorf("short width plane")

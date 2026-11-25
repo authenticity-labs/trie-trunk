@@ -553,6 +553,9 @@ fn query_telemetry_encodes_millisecond_observations_as_microseconds() {
     let document = definition().unwrap();
     assert_eq!(document.definitions()[0].header.namespace, "log");
     assert_eq!(document.definitions()[0].header.rx_name, "query");
+    let def = SeedDefinition::prescribe(&document).unwrap();
+    assert_eq!(def.query_ordinal("@time"), def.query_ordinal("time"));
+    assert!(def.query_ordinal("@timestamp").is_none());
     let (trunk, branch) = registered(&document);
     let scope = trunk.trie().branches().select([branch]).packs().unwrap();
     let mut ingress = scope
@@ -560,7 +563,7 @@ fn query_telemetry_encodes_millisecond_observations_as_microseconds() {
         .unwrap();
     let event: QueryEvent = serde_json::from_value(serde_json::json!({
         "time": HOUR + 1, "id": [1,2,3,4,5,6,7,8,9,10], "source": "demo/lab/test",
-        "query": "events", "status": "complete", "from": HOUR, "to": 2*HOUR,
+        "query": "events", "status": "complete", "from": 804556800000u64, "to": 804729600000u64,
         "rows": 0, "duration": 12.5, "worker": 10.25
     }))
     .unwrap();
@@ -574,7 +577,10 @@ fn query_telemetry_encodes_millisecond_observations_as_microseconds() {
         .load_registered(std::sync::Arc::new(bytes), 0..size, 1 << 20)
         .unwrap();
     let rows = reader
-        .query(Query::new())
+        .query(Query::new().filter(data_seeds::Predicate::And(vec![
+            data_seeds::Predicate::compare("from", data_seeds::Compare::Eq, "1995-07-01T00:00:00Z"),
+            data_seeds::Predicate::compare("to", data_seeds::Compare::Eq, "1995-07-03T00:00:00Z"),
+        ])))
         .unwrap()
         .fetch(1)
         .unwrap()

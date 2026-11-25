@@ -25,7 +25,7 @@ pub struct Logs {
 }
 impl Node {
     pub fn logs(self: &Arc<Self>, cache: &str, resources: &[String]) -> Result<Logs> {
-        let bytes = include_bytes!("../../../schemas/logs/log.http.rx");
+        let bytes = data_seeds::seed::log::HTTP;
         let definition = SeedDefinition::read(bytes)?;
         let mut branches = BTreeMap::new();
         for resource in resources {

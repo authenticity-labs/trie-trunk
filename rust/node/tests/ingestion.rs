@@ -41,6 +41,7 @@ fn lifecycle(storage_mode: Storage, factored: bool) {
                 .annotation("#summ(numeric)"),
         )
         .field(Field::new("message").r#type("tstr"))
+        .field(Field::new("status").r#type("uint").size(2))
         .sign()
         .unwrap();
     let branch = node
@@ -70,6 +71,11 @@ fn lifecycle(storage_mode: Storage, factored: bool) {
                     .set_byte_string("id", &id)?
                     .set_uint("duration", value)?
                     .set_text_string("message", "instrument reading completed")?;
+                match i {
+                    0 => { s.set_null("status")?; }
+                    1 => { s.set_uint("status", 200)?; }
+                    _ => {}
+                }
                 Ok(())
             })
             .unwrap();
@@ -92,11 +98,51 @@ fn lifecycle(storage_mode: Storage, factored: bool) {
         assert_eq!(values, [10, 20, 30]);
         page.len()
     }
+    let check_filtered_pages = |node: &Node| {
+        let fields = ["duration".to_owned()];
+        let mut plan = data_seeds::language::parse(
+            "SELECT COUNT(*) FROM events WHERE duration > 10", &fields,
+        ).unwrap()["plan"].clone();
+        for (text, expected) in [("reading", "2"), ("missing text", "0")] {
+            plan["search"] = serde_json::json!({"mode":"contains","fields":["message"],"text":text});
+            let result = node.summary_table(&[branch], hour, hour + HOUR, &plan, &serde_json::json!({})).unwrap();
+            assert_eq!(result["rows"][0][0]["$integer"], expected);
+        }
+        // A partial page must resume the same ordered result across ties in event time.
+        let page = Query::new()
+            .filter(Predicate::Or(vec![
+                Predicate::IsNull("status".into()),
+                Predicate::IsAbsent("status".into()),
+            ]))
+            .select(["duration"])
+            .order_by("duration", data_seeds::Direction::Descending)
+            .limit(2);
+        let mut cursor = node.query(branch, hour, hour + HOUR, page).unwrap();
+        for duration in [30u64, 10] {
+            assert_eq!(cursor.fetch(1).unwrap().objects().unwrap(),
+                vec![vec![("duration".into(), duration.into())]]);
+        }
+        assert!(cursor.fetch(1).unwrap().is_empty());
+        for (predicate, duration) in [(Predicate::IsNull("status".into()), 10u64),
+                                      (Predicate::IsAbsent("status".into()), 30)] {
+            let query = Query::new().filter(predicate).select(["duration"]);
+            assert_eq!(node.query(branch, hour, hour + HOUR, query).unwrap().fetch(2).unwrap().objects().unwrap(),
+                vec![vec![("duration".into(), duration.into())]]);
+        }
+    };
+    let paths = node.trie().route(branch).unwrap().event_storage().unwrap();
+    let base = root.join(paths.directory).join(paths.stem);
+    let spool_len = std::fs::metadata(format!("{}.seeds", base.display())).unwrap().len();
+    assert_eq!(node.storage_usage(branch).unwrap(), [(hour, 3, spool_len)]);
+    check_filtered_pages(&node);
     assert_eq!(rows(&node, branch, hour), 3);
     assert_eq!(
         node.timeline(&[branch], hour, hour + HOUR).unwrap()["count"],
         3
     );
+    let later = node.timeline(&[branch], hour + HOUR, hour + 2 * HOUR).unwrap();
+    assert_eq!(later["count"], 0);
+    assert!(later["first"].as_u64().unwrap() <= hour);
     let live = node
         .summaries(
             &[branch],
@@ -120,6 +166,11 @@ fn lifecycle(storage_mode: Storage, factored: bool) {
         .fetch(10).unwrap().objects().unwrap();
     assert_eq!(live_rows, vec![vec![("duration".to_owned(), 20u64.into())]]);
     node.commit(hour + HOUR + 900_000).unwrap();
+    check_filtered_pages(&node);
+    let file = std::fs::read(format!("{}{}", base.display(), storage_mode.suffix())).unwrap();
+    let body = data_seeds::packs::footer_range(&file, file.len() as u64).unwrap().start;
+    let index = std::fs::metadata(format!("{}.indx", base.display())).unwrap().len();
+    assert_eq!(node.storage_usage(branch).unwrap(), [(hour, 3, body + index)]);
     let sealed_rows = node.query(branch, hour, hour + HOUR, filtered).unwrap()
         .fetch(10).unwrap().objects().unwrap();
     assert_eq!(sealed_rows, live_rows);

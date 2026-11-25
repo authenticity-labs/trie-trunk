@@ -91,6 +91,7 @@ pub struct Query {
     limit: Option<usize>,
     offset: usize,
     context: crate::cast::Context,
+    checkpoint: Option<std::ops::Range<u64>>,
 }
 /// Immutable predicate programs already compiled by the cursor for this query.
 pub struct SourceFilter<'a> {
@@ -148,6 +149,7 @@ impl Default for Query {
             limit: None,
             offset: 0,
             context: crate::cast::Context::default(),
+            checkpoint: None,
         }
     }
 }
@@ -166,6 +168,11 @@ impl Query {
     /// Restrict Definition versions before field planning or record traversal.
     pub fn version(mut self, major: u32, minor: u32) -> Self {
         self.version = Some((major, minor));
+        self
+    }
+    /// Track in-window event times seen by the scan, before matching or ordering.
+    pub fn checkpoint(mut self, window: std::ops::Range<u64>) -> Self {
+        self.checkpoint = Some(window);
         self
     }
     pub fn filter(mut self, predicate: Predicate) -> Self {
@@ -209,39 +216,17 @@ pub(crate) trait PredicateRow {
     fn null_at(&self, ordinal: usize) -> Result<bool, Error>;
     fn present_at(&self, ordinal: usize) -> Result<bool, Error>;
 }
-impl PredicateRow for PillView<'_> {
-    fn compare_id(&self, id: &Identity, rhs: &value::Operand) -> Result<Option<Ordering>, Error> {
-        value::compare_operand(id.read(|i| Ok(self.native_value(i)?))?, rhs)
-    }
-    fn cast_at(&self,access:Access,plan:&crate::cast::Plan)->Result<NativeValue<'_>,Error> {plan.value(access.value(self.native_value(access.ordinal)?))}
-    fn byte_at(&self, ordinal: usize) -> Result<byte::Cell, Error> {
-        byte::Cell::native(self.native_value(ordinal)?)
-    }
-    fn contains_at(&self, ordinal: usize, text: &str) -> Result<Option<bool>, Error> {
-        Ok(match self.native_value(ordinal)? {
-            NativeValue::Scalar(pil_codec::Value::String(v)) => Some(v.contains(text)),
-            NativeValue::Composite(Data::Text(v)) => Some(v.contains(text)),
-            _ => None,
-        })
-    }
-
-    fn compare_at(&self, ordinal: usize, rhs: &value::Operand) -> Result<Option<Ordering>, Error> {
-        value::compare_operand(self.native_value(ordinal)?, rhs)
-    }
-    fn null_at(&self, ordinal: usize) -> Result<bool, Error> {
-        Ok(matches!(
-            self.native_value(ordinal)?,
-            NativeValue::Scalar(pil_codec::Value::Null) | NativeValue::Composite(Data::Null)
-        ))
-    }
-    fn present_at(&self, ordinal: usize) -> Result<bool, Error> {
-        self.is_present(ordinal)
-    }
-}
-
 pub(crate) trait NativeRow {
     fn native_value(&self, field:usize)->Result<NativeValue<'_>,Error>;
     fn is_present(&self, field:usize)->Result<bool,Error>;
+}
+impl NativeRow for PillView<'_> {
+    fn native_value(&self, field: usize) -> Result<NativeValue<'_>, Error> {
+        PillView::native_value(self, field)
+    }
+    fn is_present(&self, field: usize) -> Result<bool, Error> {
+        PillView::is_present(self, field)
+    }
 }
 impl NativeRow for BoundRow<'_> {
     fn native_value(&self, field:usize)->Result<NativeValue<'_>,Error>{BoundRow::native_value(self,field)}
@@ -437,6 +422,7 @@ struct Plan {
     program: Arc<Program>,
 }
 struct Program {
+    clock: Option<(usize, u64)>,
     #[cfg(feature = "registration")]
     after_seek: Option<Arc<Expression>>,
     #[cfg(feature = "registration")]
@@ -480,6 +466,7 @@ impl Plans {
         #[cfg(not(feature = "registration"))]
         let residual_bytes = 0;
         let program=Arc::new(Program {
+            clock: crate::seed::identity::clock(&definition.annotations),
             #[cfg(feature = "registration")]
             time,
             #[cfg(feature = "registration")]
@@ -534,6 +521,13 @@ impl PackPlans {
     fn required<'a>(&'a self, source: &ReadPack, ordinal: usize) -> Result<&'a Arc<Plan>, Error> {
         self.select(source, ordinal)?.ok_or_else(|| error("result row is outside the query Definition scope"))
     }
+}
+
+struct ScanProgress<'a> {
+    pack: &'a ReadPack,
+    plans: &'a PackPlans,
+    window: &'a std::ops::Range<u64>,
+    latest: &'a mut Option<u64>,
 }
 
 /// Pack-local filtering. Fetch size is a delivery batch size, not a query LIMIT.
@@ -592,9 +586,9 @@ impl PackScan {
     }
     fn next_checked(&mut self, cancelled: Option<&AtomicBool>) -> Result<Option<usize>, Error> {
         let mut work = usize::MAX;
-        self.next_bounded(cancelled, &mut work)
+        self.next_bounded(cancelled, &mut work, None)
     }
-    fn next_bounded(&mut self, cancelled: Option<&AtomicBool>, work: &mut usize) -> Result<Option<usize>, Error> {
+    fn next_bounded(&mut self, cancelled: Option<&AtomicBool>, work: &mut usize, mut progress: Option<ScanProgress<'_>>) -> Result<Option<usize>, Error> {
         while self.next < self.end && *work > 0 {
             *work -= 1;
             if self.next % 64 == 0 && cancelled.is_some_and(|c| c.load(AtomicOrdering::Relaxed)) {
@@ -606,14 +600,29 @@ impl PackScan {
                 let Some(plan) = plans.select(source, ordinal)? else { continue; };
                 &plan.predicate
             } else { &self.predicate };
-            // No field is needed to accept an unfiltered member. In a file
-            // query, defer its payload read until projection/materialization.
+            let mut pill = None;
+            if let Some(p) = &mut progress {
+                if let Some((field, scale)) = p.plans.required(p.pack, ordinal)?.clock {
+                    let stored = self.storage.as_ref().map(|s| s.value(ordinal, field)).transpose()?.flatten();
+                    let value = match stored {
+                        Some(value) => value,
+                        None => pill.insert(self.reader.get(ordinal)?).native_value(field)?,
+                    };
+                    if let Some(ms) = crate::seed::identity::ticks(value)
+                        .and_then(|t| u64::try_from(t / u128::from(scale)).ok())
+                        .filter(|ms| p.window.contains(ms))
+                    {
+                        *p.latest = (*p.latest).max(Some(ms));
+                    }
+                }
+            }
+            // Exact indexed reads do not need the member payload.
             if matches!(predicate.as_ref(), Expression::All) {
                 if !self.exclude_matches { return Ok(Some(ordinal)); }
                 continue;
             }
             let row = BoundRow {
-                row: self.reader.get(ordinal)?,
+                row: match pill { Some(row) => row, None => self.reader.get(ordinal)? },
                 ordinal,
                 storage: self.storage.as_ref(),
             };
@@ -726,6 +735,7 @@ pub struct Cursor {
     slice_started: bool,
     pub scanned: usize,
     pub matched: usize,
+    pub checkpoint_ms: Option<u64>,
     #[cfg(feature = "planner-lab")]
     pub(crate) lab: crate::planner_lab::Execution,
 }
@@ -817,6 +827,7 @@ impl Cursor {
             slice_started: false,
             scanned: 0,
             matched: 0,
+            checkpoint_ms: None,
             #[cfg(feature = "planner-lab")]
             lab: crate::planner_lab::Execution::default(),
         })
@@ -926,7 +937,11 @@ impl Cursor {
             }
             let reader = self.reader.as_mut().unwrap();
             let before = reader.next;
-            let result = reader.next_bounded(Some(&self.cancelled), work);
+            let progress = self.query.checkpoint.as_ref().map(|window| ScanProgress {
+                window, pack: self.current.as_ref().unwrap(), plans: self.plans[self.pack].as_ref().unwrap(),
+                latest: &mut self.checkpoint_ms,
+            });
+            let result = reader.next_bounded(Some(&self.cancelled), work, progress);
             self.scanned += reader.next - before;
             if let Some(row) = result? {
                 self.matched += 1;
@@ -1028,7 +1043,12 @@ impl Cursor {
             }
             let reader = self.reader.as_mut().unwrap();
             let before = reader.next;
-            let result = reader.next_checked(Some(&self.cancelled));
+            let progress = self.query.checkpoint.as_ref().map(|window| ScanProgress {
+                window, pack: self.current.as_ref().unwrap(), plans: self.plans[self.pack].as_ref().unwrap(),
+                latest: &mut self.checkpoint_ms,
+            });
+            let mut work = usize::MAX;
+            let result = reader.next_bounded(Some(&self.cancelled), &mut work, progress);
             self.scanned += reader.next - before;
             if let Some(row) = result? {
                 self.matched += 1;
@@ -1522,6 +1542,13 @@ pub(crate) fn validate_definition_names(definitions: &[Arc<crate::SeedDefinition
         fields.push(f);
     }
     for name in fields {
+        if name.starts_with('@') {
+            for definition in definitions {
+                if definition.rx.field_ordinal(name).is_none() {
+                    definition.annotation_field(name)?;
+                }
+            }
+        }
         if !definitions.is_empty()
             && !definitions
                 .iter()

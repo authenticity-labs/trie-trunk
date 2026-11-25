@@ -4,12 +4,10 @@ import (
 	"context"
 	"crypto/subtle"
 	"fmt"
-	"mime"
 	"net/http"
-	"path/filepath"
+	"os"
 	"sort"
 	"strconv"
-	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -28,9 +26,13 @@ type Endpoint struct {
 	storage               seedStorage
 	api                   *HTTP
 	group                 *storeGroup
+	closeGroup            func() error
+	lease                 *os.File
 	apis                  map[string]*HTTP
 	preferred             map[string]*HTTP
 	closed                bool
+	streams               context.Context
+	stopStreams           context.CancelFunc
 	registeredReads       map[string]*registeredReadSnapshot
 	node                  *node.Node
 	registeredLeaves      map[string]*registeredLeafSnapshot
@@ -52,6 +54,7 @@ func OpenEndpoint(c Config) (p *Endpoint, err error) {
 		return nil, fmt.Errorf("register a DOC-authored RX Definition in trunk.trie before opening the endpoint")
 	}
 	p = &Endpoint{config: c, registrationSlots: make(chan struct{}, 4), apis: map[string]*HTTP{}, preferred: map[string]*HTTP{}}
+	p.streams, p.stopStreams = context.WithCancel(context.Background())
 	if p.config.Storage == "" {
 		p.config.Storage = "pack"
 	}
@@ -76,7 +79,7 @@ func OpenEndpoint(c Config) (p *Endpoint, err error) {
 	p.readMemory = newNativeMemory(budget)
 	// Take the writer lease before reading preferences/catalogs. Otherwise a
 	// second administrator could publish a new choice between read and open.
-	p.group, err = newStoreGroup(c)
+	p.lease, err = cacheLease(c)
 	if err != nil {
 		p.readMemory.close()
 		return nil, err
@@ -126,6 +129,7 @@ func (p *Endpoint) installType(l *Layout, resourceType string) error {
 			return e
 		}
 		p.group = g
+		p.closeGroup = g.close
 	}
 	c := p.config
 	c.Layout = l
@@ -221,137 +225,6 @@ func (p *Endpoint) Handler(token string) http.Handler {
 		p.ServeHTTP(w, r)
 	})
 }
-func (p *Endpoint) serveHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Cache-Control", "no-store")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-	if r.URL.Path == "/ingest" && p.node != nil {
-		http.NotFound(w, r)
-		return
-	}
-	if r.URL.Path == "/definitions" {
-		p.registration(w, r)
-		return
-	}
-	if r.URL.Path == "/objects/history" || r.URL.Path == "/objects/state" || strings.HasPrefix(r.URL.Path, "/collections/") {
-		p.replayHTTP(w, r)
-		return
-	}
-
-	p.mu.Lock()
-
-	if p.closed {
-		p.mu.Unlock()
-		http.Error(w, "endpoint closed", 503)
-		return
-	}
-	if r.URL.Path == "/ingest" {
-		kind, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
-		// Standard CBOR is independent of PIL logger registration.
-		if r.Method == "POST" && r.Header.Get("Definition-Version") == "" && blindContentType(kind) && r.Header.Get("Trunk-Version") == "" && r.Header.Get("Trunk-Digest") == "" && r.Header.Get("Upgrade") == "" {
-			l, e := GenericDefinition()
-			if e == nil {
-				e = p.install(l)
-			}
-			if e == nil {
-				e = p.persistPreferences()
-			}
-			if e != nil {
-				p.mu.Unlock()
-				http.Error(w, e.Error(), 409)
-				return
-			}
-		}
-	}
-	api := p.api
-	if r.URL.Path == "/ingest" && r.Header.Get("Definition-Version") == "" && blindContentType(strings.Split(r.Header.Get("Content-Type"), ";")[0]) {
-		l, _ := GenericDefinition()
-		api = p.apis[fmt.Sprintf("%x", l.Digest)]
-	}
-	sources := p.sources()
-	if r.URL.Path == "/ingest" && (r.Header.Get("Definition-Version") != "" || strings.EqualFold(strings.Split(r.Header.Get("Content-Type"), ";")[0], "application/pil")) {
-		api = p.apis[r.Header.Get("Definition-Version")]
-		if api == nil {
-			for _, candidate := range sources {
-				if candidate.Store.providers[r.Header.Get("Definition-Version")] == nil {
-					continue
-				}
-				branches, err := candidate.branch(r.URL.Query().Get("tap"))
-				if err != nil || len(branches) != 1 {
-					continue
-				}
-				if api != nil {
-					p.mu.Unlock()
-					http.Error(w, "ambiguous provider destination", 412)
-					return
-				}
-				api = candidate
-			}
-		}
-	}
-	p.mu.Unlock()
-	if trunkRequest(r) {
-		(&HTTP{sources: sources}).trunkHTTP(w, r)
-		return
-	}
-	if (&HTTP{sources: sources}).trunkFileHTTP(w, r) {
-		return
-	}
-	if r.URL.Path == "/configurations" {
-		p.configurationHTTP(w, r, sources)
-		return
-	}
-	if r.URL.Path == "/storage/quotas" {
-		p.quotaHTTP(w, r)
-		return
-	}
-	if r.URL.Path == "/storage" {
-		(&HTTP{sources: sources, storageRoots: map[string]string{p.config.Cache: filepath.Join(p.config.Root, p.config.Cache)}}).serveHTTP(w, r)
-		return
-	}
-	if catalogRequest(r) {
-		if !catalogGET(w, r) {
-			return
-		}
-		taps := []string{}
-		seen := map[string]bool{}
-		for _, source := range sources {
-			for b := Read; b <= Trace; b++ {
-				tap := source.tap(b)
-				if !seen[tap] {
-					seen[tap] = true
-					taps = append(taps, tap)
-				}
-			}
-		}
-		sort.Strings(taps)
-		w.Header().Set("Content-Type", "application/json")
-		writeCatalog(w, r, taps, collectionSources(sources))
-		return
-	}
-	if api == nil && r.Method == http.MethodGet && r.URL.Path == "/rejections" && r.URL.Query().Get("format") == "availability" {
-		(&HTTP{}).serveHTTP(w, r)
-		return
-	}
-	if file, ok := branchFilePath(r.URL.Path); ok {
-		(&HTTP{sources: sources}).branchFileHTTP(w, r, file)
-		return
-	}
-	if api != nil && (r.URL.Path == "/events" || r.URL.Path == "/collect" || r.URL.Path == "/seed-packs" || r.URL.Path == "/schemas" || r.URL.Path == "/rejections") {
-		handler := &HTTP{Store: api.Store, sources: sources}
-		handler.serveHTTP(w, r)
-		return
-	}
-	if api == nil {
-		if r.URL.Path == "/ingest" && r.Method != "POST" {
-			w.Header().Set("Allow", "POST")
-			w.WriteHeader(405)
-			return
-		}
-		http.Error(w, "register a PIL definition before writing; blind CBOR registers automatically", 412)
-		return
-	}
-	api.serveHTTP(w, r)
-}
 func (p *Endpoint) Run(ctx context.Context, interval time.Duration) error {
 	if interval <= 0 {
 		return fmt.Errorf("positive maintenance interval required")
@@ -364,7 +237,6 @@ func (p *Endpoint) Run(ctx context.Context, interval time.Duration) error {
 			return nil
 		case <-ticker.C:
 			p.mu.Lock()
-			sources := p.sources()
 			closed := p.closed
 			p.mu.Unlock()
 			if closed {
@@ -372,11 +244,6 @@ func (p *Endpoint) Run(ctx context.Context, interval time.Duration) error {
 			}
 			if e := p.flushRegistered(uint64(p.config.Now().UnixMilli())); e != nil {
 				return e
-			}
-			for _, api := range sources {
-				if e := api.Store.Flush(); e != nil {
-					return e
-				}
 			}
 		}
 	}
@@ -392,6 +259,9 @@ func (p *Endpoint) Close() error {
 		return nil
 	}
 	p.closed = true
+	if p.stopStreams != nil {
+		p.stopStreams()
+	}
 	p.closeDone = make(chan struct{})
 	defer close(p.closeDone)
 	p.mu.Unlock()
@@ -410,16 +280,11 @@ func (p *Endpoint) Close() error {
 	}
 	p.readMemory.close()
 	p.node.Close()
-	if p.group != nil {
-		return p.group.close()
+	if p.lease != nil {
+		return p.lease.Close()
+	}
+	if p.closeGroup != nil {
+		return p.closeGroup()
 	}
 	return nil
-}
-
-func blindContentType(kind string) bool {
-	switch strings.ToLower(kind) {
-	case "application/cbor", "application/json", "application/jsonl", "application/x-ndjson", "text/plain", "application/syslog":
-		return true
-	}
-	return false
 }

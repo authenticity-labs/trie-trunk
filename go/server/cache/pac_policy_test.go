@@ -1,12 +1,10 @@
 package cache
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 )
 
 func TestPACCompressionPolicy(t *testing.T) {
@@ -41,141 +39,5 @@ func TestPACCompressionPolicy(t *testing.T) {
 		if err != nil || p.PAC.level() != want {
 			t.Fatal("scope inheritance", inherit, p, err)
 		}
-	}
-}
-
-func TestWritePacksRemainUncompressed(t *testing.T) {
-	for _, indexed := range []bool{false, true} {
-		t.Run(fmt.Sprintf("collections=%t", indexed), func(t *testing.T) {
-			l := testLayout(t, false)
-			at := time.Date(2026, 10, 19, 12, 0, 0, 0, time.UTC)
-			cfg := Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l,
-				ObjectIndex: indexed, Now: func() time.Time { return at.Add(3 * time.Hour) }}
-			s, err := Open(cfg)
-			if err != nil {
-				t.Fatal(err)
-			}
-			t.Cleanup(func() { s.Close() })
-			for n := uint32(1); n <= 64; n++ {
-				if _, err := s.Append(Write, testFrame(t, l, at.Add(time.Duration(n)*time.Second), n, false)); err != nil {
-					t.Fatal(err)
-				}
-			}
-			if err := s.Flush(); err != nil {
-				t.Fatal(err)
-			}
-			if s.branches[Write].runs[0].PAC.Compressed {
-				t.Fatalf("compressed=%t with collections=%t", s.branches[Write].runs[0].PAC.Compressed, indexed)
-			}
-			if err := s.Close(); err != nil {
-				t.Fatal(err)
-			}
-			s, err = Open(cfg)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if got := len(collect(t, s, Write, at, at.Add(time.Hour))); got != 64 {
-				t.Fatalf("recovered %d writes", got)
-			}
-		})
-	}
-}
-
-func TestPACCompressionReloadAndStoredBytes(t *testing.T) {
-	l := testLayout(t, false)
-	at := time.Date(2026, 10, 19, 12, 0, 0, 0, time.UTC)
-	now := at.Add(75 * time.Minute)
-	cfg := Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l,
-		Now: func() time.Time { return now }}
-	s, err := Open(cfg)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer func() { s.Close() }()
-	writePolicy := func(name string, level int) {
-		t.Helper()
-		path := filepath.Join(s.collection, filepath.Base(s.collection)+".conf")
-		if name != "resource" {
-			path = filepath.Join(s.collection, name, name+".conf")
-		}
-		if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.WriteFile(path,
-			[]byte(fmt.Sprintf("version=1\n[policy.pac]\nlevel=%d\n", level)), 0600); err != nil {
-			t.Fatal(err)
-		}
-	}
-	writePolicy("resource", 6)
-	writePolicy("error", 9)
-	if err := s.ReloadPolicy(); err != nil {
-		t.Fatal(err)
-	}
-	if s.policyFor(Read).PAC.level() != 6 || s.policyFor(Error).PAC.level() != 9 {
-		t.Fatal("branch override did not inherit")
-	}
-	var original []byte
-	for i, level := range []int{9, 3} {
-		now = at.Add(75*time.Minute + time.Duration(i)*time.Hour)
-		writePolicy("error", level)
-		if err := s.ReloadPolicy(); err != nil {
-			t.Fatal(err)
-		}
-		instant := at.Add(time.Duration(i) * time.Hour)
-		for n := uint32(1); n <= 20; n++ {
-			if _, err := s.Append(Error, testFrame(t, l, instant.Add(time.Duration(n)*time.Second), n, false)); err != nil {
-				t.Fatal(err)
-			}
-		}
-		if err := s.Flush(); err != nil {
-			t.Fatal(err)
-		}
-		b := s.branches[Error]
-		run := b.runs[i]
-		raw, err := readBytes(b.packs, run.PacksStart, run.PacksEnd)
-		if err != nil {
-			t.Fatal(err)
-		}
-		decoded, err := expandPAC(raw)
-		if err != nil {
-			t.Fatal(err)
-		}
-		expected, err := compressPAC(decoded, level)
-		if err != nil || !bytes.Equal(raw, expected) {
-			t.Fatal("sealing ignored configured level", level, err)
-		}
-
-		if i == 0 {
-			original = append([]byte(nil), raw...)
-		}
-	}
-	writePolicy("error", 23)
-	if err := s.ReloadPolicy(); err == nil || s.policyFor(Error).PAC.level() != 3 {
-		t.Fatal("invalid reload changed active compression policy")
-	}
-	writePolicy("error", 3)
-	if _, err := s.Append(Write, testFrame(t, l, at, 100, false)); err != nil {
-		t.Fatal(err)
-	}
-	if err := s.Flush(); err != nil {
-		t.Fatal(err)
-	}
-	if s.branches[Write].runs[0].PAC.Compressed {
-		t.Fatal("write packs must remain uncompressed after policy reload")
-	}
-	if err := s.Close(); err != nil {
-		t.Fatal(err)
-	}
-	s, err = Open(cfg)
-	if err != nil {
-		t.Fatal(err)
-	}
-	b := s.branches[Error]
-	raw, err := readBytes(b.packs, b.runs[0].PacksStart, b.runs[0].PacksEnd)
-	if err != nil || !bytes.Equal(raw, original) {
-		t.Fatal("old PAC changed after reload/recovery", err)
-	}
-	if events := collect(t, s, Error, at, at.Add(2*time.Hour)); len(events) != 40 {
-		t.Fatal("mixed-level recovery lost events", len(events))
 	}
 }

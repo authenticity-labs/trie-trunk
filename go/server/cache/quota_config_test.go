@@ -11,11 +11,8 @@ import (
 
 func TestScopedQuotaOverridesPreservePolicyAndInherit(t *testing.T) {
 	root := t.TempDir()
-	endpoint, err := OpenEndpoint(Config{Root: root, Cache: "demo", Tenant: "test", Layout: testLayout(t, false)})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer endpoint.Close()
+	registeredConfigurationEndpoint(t, root)
+	var err error
 	cachePath := configurationPath(root, []string{"demo"})
 	if _, err = os.Stat(cachePath); !os.IsNotExist(err) {
 		t.Fatal("created default cache override", err)
@@ -31,7 +28,7 @@ func TestScopedQuotaOverridesPreservePolicyAndInherit(t *testing.T) {
 	if _, err = os.Stat(cachePath); !os.IsNotExist(err) {
 		t.Fatal("root quota created cache override", err)
 	}
-	leaf := []string{"demo", "payment", "transactions.v1", "write"}
+	leaf := []string{"demo", "payment", "transactions", "http"}
 	p.Scopes = []quotaScope{{Path: leaf, Limit: quotaNumber(1000), Recovery: &quotaRecovery{Unit: "percent", Value: 20}}}
 	if err = saveQuotaPolicy(root, p); err != nil {
 		t.Fatal(err)

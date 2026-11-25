@@ -773,3 +773,40 @@ fn disk_query_zero_limit_and_early_cancellation_perform_no_io() {
     let mut cancelled = Cursor::from_source(source, Query::new()).unwrap();
     cancelled.cancel(); assert!(cancelled.poll(10,10).is_err()); assert!(stats.lock().unwrap().loads.is_empty());
 }
+
+#[test]
+fn scan_checkpoint_uses_each_sources_annotated_clock_before_filtering() {
+    use data_seeds::{doc, Field, SeedDefinition};
+    let mut sources = data_seeds::Packs::new();
+    for (name, clock, unit, times) in [
+        ("first", "received", "@time(ms)", [101u64, 117, 202]),
+        ("second", "measured", "@time(us)", [111_000, 123_999, 200_000]),
+    ] {
+        let document = doc::new(name)
+            .field(Field::new(clock).r#type("uint").size(8).annotation(unit))
+            .field(Field::new("status").r#type("uint").size(1))
+            .sign().unwrap();
+        let definition = SeedDefinition::prescribe(&document).unwrap();
+        let mut pack = definition.fill(times.len()).unwrap();
+        for time in times {
+            pack.load(definition.ingest((), |_, row| {
+                row.set_uint(clock, time)?.set_uint("status", 1u8)?;
+                Ok(())
+            }).unwrap()).unwrap();
+        }
+        pack.seal().unwrap();
+        sources.pack(definition.open(pack.into_bytes().unwrap()).unwrap());
+    }
+    for direction in [data_seeds::Direction::Ascending, data_seeds::Direction::Descending] {
+        let query = data_seeds::Query::new().checkpoint(100..200)
+            .filter(data_seeds::Predicate::compare("status", data_seeds::Compare::Eq, 2u64))
+            .order_by("status", direction).limit(1);
+        let mut cursor = sources.query(query).unwrap();
+        loop {
+            let slice = cursor.poll(1, 2).unwrap();
+            assert!(slice.batch.is_empty());
+            if slice.done { break; }
+        }
+        assert_eq!(cursor.checkpoint_ms, Some(123));
+    }
+}

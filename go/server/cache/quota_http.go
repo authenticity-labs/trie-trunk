@@ -271,7 +271,7 @@ func (p *Endpoint) quotaHTTP(w http.ResponseWriter, r *http.Request) {
 		p.mu.Lock()
 		sources := p.sources()
 		p.mu.Unlock()
-		inventory, inventoryErr := collectStorageInventory(sources, map[string]string{p.config.Cache: filepath.Join(p.config.Root, p.config.Cache)}, false)
+		inventory, inventoryErr := collectStorageInventory(sources, map[string]string{p.config.Cache: filepath.Join(p.config.Root, p.config.Cache)}, false, p.node)
 		if inventoryErr != nil {
 			http.Error(w, "could not verify storage inventory", 500)
 			return

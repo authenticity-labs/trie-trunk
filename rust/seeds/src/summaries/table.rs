@@ -86,6 +86,17 @@ impl SummaryTable {
         let totals = plan["source"] != "summaries" && plan["relational"]["groupBy"].is_array();
         let mut predicates = Vec::new();
         if totals {
+            if let Some(search) = plan.get("search") {
+                if search["mode"] != "contains" {
+                    return Err(error("Event aggregates support substring search only"));
+                }
+                let text = search["text"].as_str().ok_or_else(|| error("Missing search text"))?;
+                let fields: Vec<String> = serde_json::from_value(search["fields"].clone())
+                    .map_err(|_| error("Text search requires the selected text fields"))?;
+                predicates.push(crate::Predicate::Or(fields.into_iter().map(|field|
+                    crate::Predicate::Contains { field, text: text.to_owned() }
+                ).collect()));
+            }
             for f in plan["filters"].as_array().into_iter().flatten() {
                 predicates.push(crate::request::predicate(
                     &crate::request::language_predicate(&json!({"kind":"filter","filter":f}))?,

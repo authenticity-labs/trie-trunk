@@ -15,13 +15,13 @@ func TestServeRequiresRegisteredNetworkConfiguration(t *testing.T) {
 }
 
 func TestServiceCommandBoundaries(t *testing.T) {
-	for _, args := range [][]string{{"ingest", "5410", "serve", "443"}, {"serve", "443", "ingest", "5410"}, {"ingest", "--dir", "serve", "serve", "443"}} {
+	for _, args := range [][]string{{"roots", "5410", "serve", "443"}, {"serve", "443", "roots", "5410"}, {"roots", "--dir", "serve", "serve", "443"}} {
 		commands, err := splitServices(args)
 		if err != nil || len(commands) != 2 {
 			t.Fatal(commands, err)
 		}
 	}
-	for _, args := range [][]string{{"ingest", "5410", "ingest"}, {"serve", "443", "serve"}, {"other"}} {
+	for _, args := range [][]string{{"roots", "5410", "roots"}, {"serve", "443", "serve"}, {"other"}} {
 		if _, err := splitServices(args); err == nil {
 			t.Fatal("accepted", args)
 		}

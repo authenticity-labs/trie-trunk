@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"bytes"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"mime"
 	"trie-trunk/go/codec"
 	"unicode/utf8"
@@ -161,7 +161,7 @@ func (h *HTTP) genericIngress(w http.ResponseWriter, r *http.Request) {
 		received++
 		anyDuplicate = anyDuplicate || duplicate
 	}
-	if e = h.Store.Flush(); e != nil {
+	if e = h.Store.flushAll(); e != nil {
 		http.Error(w, e.Error(), 500)
 		return
 	}

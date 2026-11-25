@@ -13,15 +13,7 @@ use std::{
 };
 use trie_trunk_taxonomy::registration::{Draft, Selection};
 
-fn stamp(document: Document, major: u32, minor: u32) -> Result<Document> {
-    let mut members = document.retain_members(&[0])?.definitions().to_vec();
-    for member in &mut members {
-        member.header.rx_major = major;
-        member.header.rx_minor = minor;
-        member.header.rx_hash.clear();
-    }
-    Ok(Document::from_definitions(members).sign()?)
-}
+use data_seeds::registration::stamp;
 
 pub(super) fn release(candidate: Document, previous: &[u8]) -> Result<(Document, Selection)> {
     let h = &candidate.definitions()[0].header;

@@ -51,7 +51,7 @@ pub fn timestamp(text: &str, context: &Context) -> Result<i128, Error> {
     }
     for format in [
         "%Y-%m-%d %H:%M:%S%.f %:z",
-        "%Y-%m-%d %H:%M:%S%.f%:z",
+        "%Y-%m-%d %H:%M:%S%.f%#z",
         "%d/%b/%Y:%H:%M:%S %z",
     ] {
         if let Ok(t) = DateTime::parse_from_str(text, format) {

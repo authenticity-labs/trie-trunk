@@ -54,6 +54,9 @@ impl SeedDefinition {
             .iter()
             .find_map(|a| a.strip_prefix(name)?.strip_prefix('(')?.strip_suffix(')'))
     }
+    pub fn timestamp_unit(&self, field: &str) -> Option<&str> {
+        self.time_unit(self.query_ordinal(field)?)
+    }
     pub(crate) fn time_unit(&self, i: usize) -> Option<&str> {
         if self
             .annotations
@@ -62,7 +65,7 @@ impl SeedDefinition {
         {
             return Some("ms");
         }
-        if let Some(unit) = self.annotation(i, "@time") {
+        if let Some(unit) = self.annotation(i, "@time").or_else(|| self.annotation(i, "@timestamp")) {
             return Some(unit);
         }
         match self.rx.definition().fields()[i].kind {

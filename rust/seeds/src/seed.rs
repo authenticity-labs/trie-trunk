@@ -6,3 +6,5 @@ pub use crate::{Seed, SeedDefinition as Definition, SeedView as View, Cell, Obje
 pub use crate::{pack, packs, stalks};
 pub use crate::Beds;
 pub(crate) mod identity;
+#[cfg(feature = "registration")]
+pub mod log;

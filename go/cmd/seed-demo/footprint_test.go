@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package main
 
 // Opt-in reproducible measurement, not a timing assertion or production exporter.

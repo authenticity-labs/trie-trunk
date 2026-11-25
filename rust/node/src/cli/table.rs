@@ -111,6 +111,12 @@ pub(super) fn columns(
     branches: &Value,
     bootstrap: Option<&Value>,
 ) -> Result<Vec<String>> {
+    column_names(query, branches, bootstrap, false)
+}
+pub(super) fn sql_fields(branches: &Value, bootstrap: &Value) -> Result<Vec<String>> {
+    column_names(&Value::Null, branches, Some(bootstrap), true)
+}
+fn column_names(query: &Value, branches: &Value, bootstrap: Option<&Value>, selectors: bool) -> Result<Vec<String>> {
     let mut names = Vec::new();
     if let Some(fields) = query.get("select") {
         names.extend(
@@ -149,6 +155,9 @@ pub(super) fn columns(
                 .as_array()
                 .ok_or("Missing Definition fields")?
             {
+                if selectors {
+                    names.extend(field["selectors"].as_array().into_iter().flatten().filter_map(Value::as_str).map(str::to_owned));
+                }
                 names.push(
                     field["name"]
                         .as_str()

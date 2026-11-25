@@ -43,14 +43,11 @@ func TestLiveSummaryAccumulatorCheckpoints(t *testing.T) {
 		if w.Header().Get("Trunk-Ingress") == "" {
 			t.Fatal("missing ingress meter")
 		}
-		p, e := pil.OpenNestedPack(w.Body.Bytes())
-		if e != nil || p.Count() != 1 {
+		p, e := pil.ParsePAC(nil, w.Body.Bytes(), nil)
+		if e != nil || len(p.Members) != 1 {
 			t.Fatal(e, p)
 		}
-		raw, e := p.Get(0)
-		if e != nil {
-			t.Fatal(e)
-		}
+		raw := p.Members[0]
 		return raw
 	}
 	layout, e := summaryBucketLayout()
@@ -62,7 +59,7 @@ func TestLiveSummaryAccumulatorCheckpoints(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if len(p.Members) != 3 || len(p.Members[0]) != 50 || p.Headers["live-summary"][17] != 2 || order.Uint64(p.Headers["rollup"]) != 3 {
+	if len(p.Members) != 3 || len(p.Members[0]) != 1+6*8 || p.Headers["live-summary"][17] != 2 || order.Uint64(p.Headers["rollup"]) != 3 {
 		t.Fatal("bad bucket snapshot", p)
 	}
 	if dir := os.Getenv("TRUNK_LIVE_SUMMARY_FIXTURE"); dir != "" {
@@ -161,14 +158,14 @@ func TestLiveSummaryRestartAndBranchWithoutDailySummaries(t *testing.T) {
 		if w.Code != 200 {
 			t.Fatal(w.Code, w.Body.String())
 		}
-		p, err := pil.OpenNestedPack(w.Body.Bytes())
+		p, err := pil.ParsePAC(nil, w.Body.Bytes(), nil)
 		if err != nil {
 			t.Fatal(err)
 		}
-		raw, err := p.Get(0)
-		if err != nil {
-			t.Fatal(err)
+		if len(p.Members) != 1 {
+			t.Fatal("expected one live Pack")
 		}
+		raw := p.Members[0]
 		layout, _ := summaryBucketLayout()
 		v, err := pil.ParsePAC(layout, raw, nil)
 		if err != nil {

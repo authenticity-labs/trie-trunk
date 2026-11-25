@@ -46,7 +46,7 @@ impl BindingReader {
     pub(crate) fn new(binding: &Arc<dyn StorageBinding>) -> Self {
         match binding.cursor() { Some(cursor) => Self::Cursor(cursor), None => Self::Shared(binding.clone()) }
     }
-    fn value(&self, row: usize, field: usize) -> Result<Option<NativeValue<'_>>, Error> {
+    pub(crate) fn value(&self, row: usize, field: usize) -> Result<Option<NativeValue<'_>>, Error> {
         match self { Self::Shared(b) => b.value(row,field), Self::Cursor(c) => c.value(row,field) }
     }
     fn requires_absent(&self, row: usize, field: usize) -> Result<bool, Error> {

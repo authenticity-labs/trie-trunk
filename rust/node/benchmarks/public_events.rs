@@ -322,9 +322,10 @@ fn postgres_public_events() -> Result<()> {
     let mut breakdown = std::collections::BTreeMap::<String, usize>::new();
     for event in &events { *breakdown.entry(event.kind.clone()).or_default() += 1; }
     let total = events.len();
+    let first = events.iter().map(|event| event.time).min().unwrap();
     let comments = events.into_iter().filter(|r| r.kind == "IssueCommentEvent").collect::<Vec<_>>();
     replay(&node, "comments", "event_type", &comments, &scratch)?;
-    let service = crate::postgres::Service::start(node, "127.0.0.1:0", "fixture".into())?;
+    let service = crate::postgres::Service::start(node, "127.0.0.1:0", "fixture".into(), "", "", [("lab".into(), -5)].into())?;
     let run = |sql: &str, password: &str| -> Result<(bool,String,String)> {
         let mut child = Command::new("psql")
             .args(["-X", "-qAtw", "-v", "ON_ERROR_STOP=1", "-h", "127.0.0.1", "-p",
@@ -346,6 +347,13 @@ fn postgres_public_events() -> Result<()> {
     assert_eq!(read("SELECT datname FROM pg_database WHERE datistemplate = $1\n\\bind false\n\\g\n")?, "lab");
     assert_eq!(read("SELECT t.table_name FROM information_schema.tables AS t JOIN pg_class AS pc ON t.table_name=pc.relname AND quote_ident(t.table_schema)=pc.relnamespace::regnamespace::text ORDER BY t.table_name;")?, "comments.comments\ngithub.github");
     assert_eq!(read("SELECT column_name FROM information_schema.columns WHERE table_schema=$1 AND table_name=$2 AND ordinal_position=1\n\\bind public github.github\n\\g\n")?, "time");
+    assert_eq!(read("SELECT udt_name FROM information_schema.columns WHERE table_name='github.github' AND column_name='time';")?, "timestamptz");
+    let rendered = read(r#"SELECT time AS started FROM public."github.github" ORDER BY time LIMIT 1;"#)?;
+    let instant = chrono::DateTime::parse_from_str(&rendered, "%Y-%m-%d %H:%M:%S%.f%#z")?;
+    assert_eq!(instant.timestamp_millis(), first as i64);
+    assert_eq!(instant.offset().local_minus_utc(), -5 * 3600);
+    let local = instant.naive_local();
+    assert_eq!(read(&format!(r#"SELECT time FROM public."github.github" WHERE time='{local}' LIMIT 1;"#))?, rendered);
     assert_eq!(read(r#"SELECT COUNT(*) FROM public."github.github";"#)?, total.to_string());
     let counts = read(r#"SELECT event_type, COUNT(*) FROM public."github.github" GROUP BY event_type;"#)?;
     let expected = breakdown.into_iter().map(|(kind,n)|format!("{kind}|{n}")).collect::<Vec<_>>();

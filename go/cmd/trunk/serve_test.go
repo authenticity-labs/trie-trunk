@@ -111,7 +111,7 @@ func TestCombinedPILIngestServeAndSearch(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	args := []string{"ingest", ingestPort, "--env", env, "serve", servePort, "--env", env}
+	args := []string{"roots", ingestPort, "--env", env, "serve", servePort, "--env", env}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	done := make(chan error, 1)

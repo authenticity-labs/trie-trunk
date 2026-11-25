@@ -3,7 +3,6 @@ package cache
 import (
 	"fmt"
 	native "github.com/authenticity-labs/pill-packer/go"
-	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"net/http"
 	"strings"
@@ -14,11 +13,15 @@ import (
 const HTTPCompressionFeature = "http-native-compression"
 
 func ingressReader(r *http.Request) (io.Reader, func(), error) {
-	switch strings.ToLower(strings.TrimSpace(r.Header.Get("Content-Encoding"))) {
+	encoding := strings.ToLower(strings.TrimSpace(r.Header.Get("Content-Encoding")))
+	switch encoding {
 	case "", "identity":
 		return r.Body, func() {}, nil
 	case "gzip", "zstd", "br":
-		flags, _ := pilcodec.CompressionFlags(strings.ToLower(strings.TrimSpace(r.Header.Get("Content-Encoding"))))
+		flags, err := native.CompressionFlags(encoding, 1)
+		if err != nil {
+			return nil, nil, err
+		}
 		z, err := native.NewDecoder(r.Body, flags)
 		if err != nil {
 			return nil, nil, fmt.Errorf("invalid compressed request: %w", err)

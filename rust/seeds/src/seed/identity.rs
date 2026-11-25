@@ -24,12 +24,36 @@ pub(crate) fn millis(uuid: &[u8]) -> Option<u64> {
     Some(uuid[..6].iter().fold(0, |ms, b| ms << 8 | u64::from(*b)))
 }
 
+pub(crate) fn clock(annotations: &[Vec<String>]) -> Option<(usize, u64)> {
+    annotations.iter().enumerate().find_map(|(i, a)| {
+        a.iter().find_map(|a| Some((i, match a.as_str() {
+            "@time" | "@time(ms)" => 1,
+            "@time(us)" => 1_000,
+            "@time(ns)" => 1_000_000,
+            _ => return None,
+        })))
+    })
+}
+
+pub(crate) fn ticks(value: NativeValue<'_>) -> Option<u128> {
+    Some(match value {
+        NativeValue::Scalar(Value::U8(v)) => v as u128,
+        NativeValue::Scalar(Value::U16(v)) => v as u128,
+        NativeValue::Scalar(Value::U24(v) | Value::U32(v)) => v as u128,
+        NativeValue::Scalar(Value::U64(v)) => v as u128,
+        NativeValue::Scalar(Value::U128(v)) => v,
+        NativeValue::Scalar(Value::I64(v) | Value::TimestampMs(v) | Value::TimestampUs(v) | Value::TimestampNs(v)) if v >= 0 => v as u128,
+        NativeValue::Composite(ciborium::Value::Integer(n)) => u128::try_from(n).ok()?,
+        _ => return None,
+    })
+}
+
 /// Resolve annotations once per prescription, including reordered revisions.
 #[derive(Clone, Copy)]
 pub(crate) struct Identity {
     pub id: usize,
-    time: usize,
-    units_per_ms: u64,
+    pub(super) time: usize,
+    pub(super) units_per_ms: u64,
 }
 impl Identity {
     pub fn new(rx: &Prescription, annotations: &[Vec<String>]) -> Option<Self> {
@@ -37,14 +61,7 @@ impl Identity {
         if rx.definition().fields()[id].kind != Type::Scalar(Scalar::FixedBytes(10)) {
             return None;
         }
-        let (time, units_per_ms) = annotations.iter().enumerate().find_map(|(i, a)| {
-            a.iter().find_map(|a| Some((i, match a.as_str() {
-                "@time" | "@time(ms)" => 1,
-                "@time(us)" => 1_000,
-                "@time(ns)" => 1_000_000,
-                _ => return None,
-            })))
-        })?;
+        let (time, units_per_ms) = clock(annotations)?;
         Some(Self { id, time, units_per_ms })
     }
 
@@ -54,15 +71,7 @@ impl Identity {
             NativeValue::Scalar(Value::Bytes(v)) if v.len() == 10 => v,
             _ => return Err(error("event identity requires ten bytes")),
         };
-        let time = match read(self.time)? {
-            NativeValue::Scalar(Value::U8(v)) => v as u128,
-            NativeValue::Scalar(Value::U16(v)) => v as u128,
-            NativeValue::Scalar(Value::U24(v) | Value::U32(v)) => v as u128,
-            NativeValue::Scalar(Value::U64(v)) => v as u128,
-            NativeValue::Scalar(Value::U128(v)) => v,
-            NativeValue::Scalar(Value::I64(v) | Value::TimestampMs(v) | Value::TimestampUs(v) | Value::TimestampNs(v)) if v >= 0 => v as u128,
-            _ => return Err(error("event identity requires a nonnegative timestamp")),
-        };
+        let time = ticks(read(self.time)?).ok_or_else(|| error("event identity requires a nonnegative timestamp"))?;
         let millis = time / self.units_per_ms as u128;
         if millis >= 1 << 48 { return Err(error("event timestamp exceeds UUIDv7 range")); }
         let mut bytes = [0; 16];

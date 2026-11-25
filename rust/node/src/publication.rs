@@ -15,10 +15,16 @@ pub struct Published {
     pub summary_length: u64,
     pub index_length: u64,
 }
+pub enum SnapshotKind {
+    Packs,
+    Summaries,
+    Timeline,
+}
 pub struct Snapshot {
     pub generation: u64,
     pub published: Option<Published>,
     pub live: Vec<Vec<u8>>,
+    pub open_counts: Vec<u8>,
     pub summaries: Vec<(u64, Vec<u8>)>,
     pub registry: data_seeds::registration::Snapshot,
     pub(crate) memory: Vec<data_seeds::MemoryLease>,
@@ -47,11 +53,58 @@ pub(crate) fn footer(
     Ok((bytes, length, lease))
 }
 impl Node {
+    /// Physical bytes attributable to each hour of a registered storage generation.
+    pub fn storage_usage(&self, branch: u16) -> Result<Vec<(u64, u64, u64)>> {
+        use std::os::unix::fs::FileExt;
+        let storage = self.configuration.storage;
+        let (time, file, mut hours) = {
+            let runtime = self.runtime.lock().map_err(|_| "Trunk writer poisoned")?;
+            let route = self.trie().route(branch)?;
+            if route.pods()?.is_some() {
+                return Ok(Vec::new());
+            }
+            let paths = route.event_storage()?;
+            let base = format!("{}/{}", paths.directory, paths.stem);
+            let hours = runtime.storage_usage(&base)?;
+            let timeline = self.root.join(format!("{base}.time"));
+            if !timeline.try_exists()? {
+                return Ok(hours);
+            }
+            let time = data_seeds::TimeTrie::open(std::sync::Arc::new(bounded(&timeline, 16 << 20)?))?;
+            if time.header().first == time.header().sealed {
+                return Ok(hours);
+            }
+            let file = optional(&self.root.join(format!("{base}{}", storage.suffix())))?;
+            (time, file, hours)
+        };
+        let length = file.as_ref().map(File::metadata).transpose()?.map_or(0, |m| m.len());
+        for leaf in time.range(time.header().first, time.header().sealed)? {
+            let leaf = leaf?;
+            if leaf.count == 0 {
+                continue;
+            }
+            let file = file.as_ref().ok_or("Published hour missing its datastore")?;
+            let address = storage.address(&leaf);
+            let available = length.checked_sub(address).ok_or("Pack outside datastore")?;
+            let mut header = [0; data_seeds::pack::MAX_PREFIX];
+            let n = available.min(header.len() as u64) as usize;
+            file.read_exact_at(&mut header[..n], address)?;
+            let bytes = data_seeds::pack::stored_length(&header[..n])?;
+            if bytes > available {
+                return Err("Pack exceeds datastore".into());
+            }
+            let index = (leaf.end - leaf.start).checked_mul(data_seeds::HourIndex::ROW_BYTES as u64)
+                .ok_or("Index length overflow")?;
+            hours.push((leaf.hour, leaf.count, bytes.checked_add(index).ok_or("Hour length overflow")?));
+        }
+        Ok(hours)
+    }
+
     pub fn publication(
         &self,
         branch: u16,
         windows: &[(u64, u64)],
-        summaries: bool,
+        kind: SnapshotKind,
         known: Option<u64>,
         clock: u64,
     ) -> Result<Snapshot> {
@@ -72,11 +125,19 @@ impl Node {
             generation: 0,
             published: None,
             live: vec![],
+            open_counts: vec![],
             summaries: vec![],
             registry: self.trie(),
             memory: vec![],
         };
-        if summaries {
+        if matches!(kind, SnapshotKind::Timeline) {
+            // Capture mutable counts under the same lock as the sealed time trie.
+            let mut counts = runtime.counts(&base);
+            counts.retain(|(hour, _)| windows.iter().any(|(from, to)| hour >= from && hour < to));
+            if !counts.is_empty() {
+                snapshot.open_counts = serde_json::to_vec(&counts)?;
+            }
+        } else if matches!(kind, SnapshotKind::Summaries) {
             let day_ms = data_seeds::summaries::SUMMARY_DAY_MS;
             for &(from, to) in windows {
                 let mut day = from;

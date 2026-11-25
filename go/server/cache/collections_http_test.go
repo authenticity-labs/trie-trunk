@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package cache
 
 import (
@@ -9,11 +11,8 @@ import (
 func TestCollectionHistoryPathFetchesLatestRetainedAndLiveWrites(t *testing.T) {
 	l := testLayout(t, false)
 	at := time.Date(2026, 10, 28, 12, 0, 0, 0, time.UTC)
-	p, err := OpenEndpoint(Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: true, Now: func() time.Time { return at.Add(2 * time.Hour) }})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer p.Close()
+	p := prototypeCollectionEndpoint(t, Config{Root: t.TempDir(), Cache: "demo", Tenant: "test", Layout: l, ObjectIndex: true, Now: func() time.Time { return at.Add(2 * time.Hour) }})
+	var err error
 	s := p.api.Store
 	first := testFrame(t, l, at, 1, false)
 	if _, err = s.Append(Write, first); err != nil {

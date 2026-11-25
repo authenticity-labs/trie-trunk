@@ -72,6 +72,8 @@ pub enum Request {
     Language {
         query: Value,
     },
+    History { source: String, id: String, from: u64, to: u64, #[serde(default)] state: bool },
+    TimeBounds { branches: Vec<u16> },
     Timeline {
         branches: Vec<u16>,
         from: u64,
@@ -152,8 +154,9 @@ impl Session {
         self.cursors
             .retain(|_, c| c.touched.elapsed() < Duration::from_secs(60));
         match request {
+            Request::History {source,id,from,to,state} => self.node.history(&source,&id,from,to,state),
             Request::DraftRead {scope,generation,request} => {
-                if !matches!(request.as_ref(),Request::Query{..}|Request::Join{..}|Request::Timeline{..}|Request::SummaryTable{..}|Request::Bootstrap|Request::Resolve{..}){
+                if !matches!(request.as_ref(),Request::Query{..}|Request::Join{..}|Request::TimeBounds{..}|Request::Timeline{..}|Request::SummaryTable{..}|Request::Bootstrap|Request::Resolve{..}){
                     return Err("Expected a draft query".into());
                 }
                 let owner=self.node.clone();
@@ -220,6 +223,7 @@ impl Session {
             Request::Language { query } => {
                 data_seeds::language::request(&query).map_err(Into::into)
             }
+            Request::TimeBounds { branches } => Ok(json!(self.node.time_bounds(&branches)?)),
             Request::Timeline { branches, from, to } => self.node.timeline(&branches, from, to),
             Request::Summaries {
                 branches,
@@ -260,7 +264,7 @@ impl Session {
                 page_size,
             } => {
                 self.admit(page_size)?;
-                let rows = self.node.join(&branches, from, to, &plan, limit)?;
+                let rows = self.node.join(&branches, from, to, &plan, limit, &Default::default())?;
                 self.start(Rows::Joined(rows), page_size)
             }
             Request::Query {
@@ -385,7 +389,7 @@ impl Session {
     }
 }
 
-fn result_row(object: data_seeds::Object, size: &mut usize) -> Result<Value> {
+pub(crate) fn result_row(object: data_seeds::Object, size: &mut usize) -> Result<Value> {
     let row = Value::Object(
         object
             .into_iter()

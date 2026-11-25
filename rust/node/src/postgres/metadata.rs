@@ -8,14 +8,92 @@ use sqlparser::ast::*;
 use std::ops::ControlFlow;
 
 // Translate PostgreSQL catalog syntax at the AST boundary. Values stay bound.
-struct Metadata;
+#[derive(Default)]
+struct Metadata {
+    // PostgreSQL exposes a scalar set-returning function's alias as its value.
+    subscript_aliases: Vec<Vec<Ident>>,
+}
+
+fn subscript_source(f: &TableFactor) -> Option<(&TableAlias, &TableFunctionArgs)> {
+    let TableFactor::Table {
+        name,
+        args: Some(args),
+        alias: Some(alias),
+        ..
+    } = f
+    else {
+        return None;
+    };
+    if !alias.columns.is_empty() || name.to_string().to_lowercase() != "generate_subscripts" {
+        return None;
+    }
+    let [
+        FunctionArg::Unnamed(FunctionArgExpr::Expr(_)),
+        FunctionArg::Unnamed(FunctionArgExpr::Expr(Expr::Value(dim))),
+    ] = args.args.as_slice()
+    else {
+        return None;
+    };
+    (dim.value == Value::Number("1".into(), false)).then_some((alias, args))
+}
+
+fn integer(n: &str) -> Expr {
+    Expr::Value(Value::Number(n.into(), false).into())
+}
+
+fn binary(left: Expr, op: BinaryOperator, right: Expr) -> Expr {
+    Expr::Nested(Box::new(Expr::BinaryOp {
+        left: Box::new(left),
+        op,
+        right: Box::new(right),
+    }))
+}
 impl VisitorMut for Metadata {
     type Break = String;
+    fn pre_visit_query(&mut self, q: &mut Query) -> ControlFlow<String> {
+        let mut aliases = Vec::new();
+        if let SetExpr::Select(select) = q.body.as_ref() {
+            for from in &select.from {
+                for f in
+                    std::iter::once(&from.relation).chain(from.joins.iter().map(|j| &j.relation))
+                {
+                    if let Some((alias, _)) = subscript_source(f) {
+                        aliases.push(alias.name.clone());
+                    }
+                }
+            }
+        }
+        self.subscript_aliases.push(aliases);
+        ControlFlow::Continue(())
+    }
+
+    fn post_visit_query(&mut self, _: &mut Query) -> ControlFlow<String> {
+        self.subscript_aliases.pop();
+        ControlFlow::Continue(())
+    }
+
+    fn post_visit_table_factor(&mut self, f: &mut TableFactor) -> ControlFlow<String> {
+        if subscript_source(f).is_some() {
+            if let TableFactor::Table {
+                name,
+                args: Some(args),
+                ..
+            } = f
+            {
+                *name = ObjectName::from(Ident::new("json_each"));
+                args.args.truncate(1);
+            }
+        }
+        ControlFlow::Continue(())
+    }
+
     fn pre_visit_table_factor(&mut self, f: &mut TableFactor) -> ControlFlow<String> {
-        if !matches!(
-            f,
-            TableFactor::Table { args: None, .. } | TableFactor::Derived { .. }
-        ) {
+        if subscript_source(f).is_none()
+            && !matches!(
+                f,
+                TableFactor::Table { args: None, .. } | TableFactor::Derived { .. }
+            )
+        {
             return ControlFlow::Break("Unsupported catalog source".into());
         }
         ControlFlow::Continue(())
@@ -36,6 +114,8 @@ impl VisitorMut for Metadata {
                 matches!(
                     i.value.to_lowercase().as_str(),
                     "pg_class"
+                        | "pg_constraint"
+                        | "generate_subscripts"
                         | "pg_database"
                         | "pg_type"
                         | "pg_namespace"
@@ -59,6 +139,39 @@ impl VisitorMut for Metadata {
     }
     fn post_visit_expr(&mut self, e: &mut Expr) -> ControlFlow<String> {
         match e {
+            Expr::Identifier(id)
+                if self
+                    .subscript_aliases
+                    .last()
+                    .is_some_and(|aliases| aliases.contains(id)) =>
+            {
+                let key = Expr::CompoundIdentifier(vec![id.clone(), Ident::new("key")]);
+                *e = binary(key, BinaryOperator::Plus, integer("1"));
+            }
+            Expr::CompoundFieldAccess { root, access_chain }
+                if matches!(
+                    access_chain.last(),
+                    Some(AccessExpr::Subscript(Subscript::Index { .. }))
+                ) =>
+            {
+                let Some(AccessExpr::Subscript(Subscript::Index { index })) = access_chain.pop()
+                else {
+                    unreachable!()
+                };
+                let array = if access_chain.is_empty() {
+                    *root.clone()
+                } else {
+                    Expr::CompoundFieldAccess {
+                        root: root.clone(),
+                        access_chain: std::mem::take(access_chain),
+                    }
+                };
+                *e = binary(
+                    array,
+                    BinaryOperator::LongArrow,
+                    binary(index, BinaryOperator::Minus, integer("1")),
+                );
+            }
             Expr::AnyOp {
                 left,
                 compare_op: BinaryOperator::Eq,
@@ -137,7 +250,7 @@ pub fn select(
     describe: bool,
     active: &Arc<Active>,
 ) -> Result<Output> {
-    if let ControlFlow::Break(msg) = VisitMut::visit(&mut q, &mut Metadata) {
+    if let ControlFlow::Break(msg) = VisitMut::visit(&mut q, &mut Metadata::default()) {
         return Err(msg.into());
     }
     if let SetExpr::Select(s) = q.body.as_mut() {
@@ -272,4 +385,47 @@ pub fn select(
         rows: Rows::Catalog(rows.into_iter()),
         skip: 0,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn constraint_keys_follow_postgres_ordinals() {
+        let db = rusqlite::Connection::open_in_memory().unwrap();
+        db.execute_batch(include_str!("catalog.sql")).unwrap();
+        let mut sql = sqlparser::parser::Parser::parse_sql(
+            &sqlparser::dialect::PostgreSqlDialect {},
+            "SELECT pos AS ordinal_position, c.conkey[pos], c.confkey[pos]
+             FROM pg_catalog.pg_constraint c
+             JOIN generate_subscripts(c.conkey, 1) pos ON true
+             WHERE c.conname = $1 ORDER BY pos",
+        )
+        .unwrap()
+        .remove(0);
+        assert!(VisitMut::visit(&mut sql, &mut Metadata::default()).is_continue());
+        let sql = sql.to_string();
+        let read = || {
+            let mut statement = db.prepare(&sql).unwrap();
+            statement
+                .query_map(["fk"], |row| {
+                    Ok((
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, i64>(1)?,
+                        row.get::<_, i64>(2)?,
+                    ))
+                })
+                .unwrap()
+                .collect::<rusqlite::Result<Vec<_>>>()
+                .unwrap()
+        };
+        assert!(read().is_empty());
+        db.execute(
+            "INSERT INTO pg_constraint(conname, conkey, confkey) VALUES ('fk','[4,2]','[3,8]')",
+            [],
+        )
+        .unwrap();
+        assert_eq!(read(), [(1, 4, 3), (2, 2, 8)]);
+    }
 }

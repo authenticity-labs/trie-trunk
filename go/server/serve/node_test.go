@@ -3,6 +3,7 @@ package serve
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"net"
@@ -12,7 +13,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/coder/websocket"
 	"github.com/quic-go/quic-go/http3"
+	"trie-trunk/go/internal/seedstream"
 	"trie-trunk/go/server/cache"
 )
 
@@ -105,6 +108,31 @@ func TestRegisteredNodeTransports(t *testing.T) {
 					}
 				})
 			}
+			t.Run("websocket", func(t *testing.T) {
+				transport := &http.Transport{TLSClientConfig: clientTLS.Clone(), Protocols: &http.Protocols{}}
+				transport.Protocols.SetHTTP1(true)
+				defer transport.CloseIdleConnections()
+				opts := websocket.DialOptions{HTTPClient: &http.Client{Transport: transport}, Subprotocols: []string{"unsupported", seedstream.Protocol}, HTTPHeader: http.Header{"Authorization": {"Bearer secret"}, "Trunk-Branch": {"1"}}}
+				ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
+				defer cancel()
+				conn, _, err := websocket.Dial(ctx, "wss://"+address+"/demo/trie-trunk/queries/query/seeds", &opts)
+				if err != nil {
+					t.Fatal(err)
+				}
+				defer conn.CloseNow()
+				if conn.Subprotocol() != seedstream.Protocol {
+					t.Fatalf("unexpected subprotocol %q", conn.Subprotocol())
+				}
+				pill := fixture("1.pil")
+				wire := binary.BigEndian.AppendUint32(nil, uint32(len(pill)))
+				if err := conn.Write(ctx, websocket.MessageBinary, append(wire, pill...)); err != nil {
+					t.Fatal(err)
+				}
+				kind, ack, err := conn.Read(ctx)
+				if err != nil || kind != websocket.MessageBinary || !bytes.Equal(ack, []byte{seedstream.Durable}) {
+					t.Fatalf("durable ack: %x, %v", ack, err)
+				}
+			})
 		})
 	}
 }

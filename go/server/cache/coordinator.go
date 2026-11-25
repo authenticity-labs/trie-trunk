@@ -20,12 +20,16 @@ type storeGroup struct {
 	states  map[string]*objectState
 }
 
-func newStoreGroup(c Config) (*storeGroup, error) {
+func cacheLease(c Config) (*os.File, error) {
 	root := filepath.Join(c.Root, c.Cache)
 	if err := os.MkdirAll(root, 0700); err != nil {
 		return nil, err
 	}
-	lock, err := lockRoot(root)
+	return lockRoot(root)
+}
+
+func newStoreGroup(c Config) (*storeGroup, error) {
+	lock, err := cacheLease(c)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +43,7 @@ func (g *storeGroup) open(c Config) (*Store, error) {
 		return s, nil
 	}
 	c.group = g
-	s, err := Open(c)
+	s, err := openStore(c)
 	if err != nil {
 		return nil, err
 	}
@@ -57,10 +61,10 @@ func (g *storeGroup) catalog(c Catalog) {
 func (g *storeGroup) close() error {
 	var err error
 	for _, s := range g.stores {
-		err = errors.Join(err, s.Close())
+		err = errors.Join(err, s.close())
 	}
 	for _, i := range g.objects {
-		err = errors.Join(err, i.file.Close())
+		err = errors.Join(err, i.close())
 	}
 	for _, s := range g.states {
 		err = errors.Join(err, s.file.Close())

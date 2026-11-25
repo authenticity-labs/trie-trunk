@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"trie-trunk/go/internal/node"
 )
 
 func TestRegisteredHTTPIngressRecoveryAndPublication(t *testing.T) {
@@ -54,7 +55,7 @@ func registeredIngressLifecycle(t *testing.T, storage string) {
 		method, operation, allow string
 		status                   int
 	}{
-		{"GET", "seeds", "POST", 405},
+		{"GET", "seeds", "POST, GET", 405},
 		{"POST", "packs", "GET", 405},
 		{"GET", "beds", "", 404},
 	} {
@@ -500,7 +501,7 @@ func registeredSummaryLifecycle(t *testing.T, storage string) {
 	post("2")
 	// A new event invalidates the resident PAC, but not its registered schema.
 	// Refresh through the opaque-byte boundary without re-exporting RX/trie JSON.
-	snapshot, snapshotErr := p.node.Snapshot(1, [][2]uint64{{uint64(day), uint64(day + 86400000)}}, true, nil, uint64(now.UnixMilli()))
+	snapshot, snapshotErr := p.node.Snapshot(1, [][2]uint64{{uint64(day), uint64(day + 86400000)}}, node.Summaries, nil, uint64(now.UnixMilli()))
 	if snapshotErr != nil {
 		t.Fatal(snapshotErr)
 	}
@@ -620,7 +621,7 @@ func TestSummaryAnnotationRegistrationRefresh(t *testing.T) {
 	root := t.TempDir()
 	t.Cleanup(func() { taxonomyRegistrations.Delete(filepath.Join(root, "trunk.trie")) })
 	register := func(annotation string) {
-		doc, e := seedNativeDocument([]byte(fmt.Sprintf(`[{"header":{"rx-name":"sample"},"fields":[{"name":"time","type":[1,0],"size":6,"annotations":["@time"]},{"name":"duration","type":[1,0],"size":4,"annotations":%s}]}]`, annotation)))
+		doc, e := seedNativeDocument([]byte(fmt.Sprintf(`[{"header":{"rx-name":"sample","rx-major":1},"fields":[{"name":"time","type":[1,0],"size":6,"annotations":["@time"]},{"name":"duration","type":[1,0],"size":4,"annotations":%s}]}]`, annotation)))
 		if e != nil {
 			t.Fatal(e)
 		}

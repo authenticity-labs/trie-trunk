@@ -74,12 +74,19 @@ func (p *Endpoint) registeredSnapshot(route registeredRoute, operation string, r
 		known = &previous.generation
 	}
 	var windows [][2]uint64
-	if operation == "packs" || operation == "summaries" {
+	if operation == "packs" || operation == "summaries" || operation == "timelines" {
 		for _, r := range ranges {
 			windows = append(windows, [2]uint64{uint64(r.from), uint64(r.to)})
 		}
 	}
-	lease, err := p.node.Snapshot(route.Branch, windows, operation == "summaries", known, clock)
+	kind := node.Packs
+	switch operation {
+	case "summaries":
+		kind = node.Summaries
+	case "timelines":
+		kind = node.Timeline
+	}
+	lease, err := p.node.Snapshot(route.Branch, windows, kind, known, clock)
 	if err != nil {
 		if previous != nil {
 			previous.release()
@@ -168,20 +175,29 @@ func (p *Endpoint) registeredReadResource(w http.ResponseWriter, r *http.Request
 		return false
 	}
 	parts := strings.Split(strings.TrimPrefix(r.URL.Path, "/"), "/")
-	if len(parts) != 5 || (parts[4] != "strings" && parts[4] != "seeds" && parts[4] != "packs" && parts[4] != "timelines" && parts[4] != "indexes" && parts[4] != "summaries") {
+	if len(parts) != 5 || (parts[4] != "roots" && parts[4] != "strings" && parts[4] != "seeds" && parts[4] != "packs" && parts[4] != "timelines" && parts[4] != "indexes" && parts[4] != "summaries") {
 		return false
 	}
 	post := r.Method == http.MethodPost && parts[4] == "seeds"
-	if (parts[4] == "seeds" && !post) || (parts[4] != "seeds" && r.Method != http.MethodGet) {
+	stream := parts[4] == "seeds" && r.Method == http.MethodGet && strings.EqualFold(r.Header.Get("Upgrade"), "websocket")
+	if (parts[4] == "seeds" && !post && !stream) || (parts[4] != "seeds" && r.Method != http.MethodGet) {
 		allow := "GET"
 		if parts[4] == "seeds" {
-			allow = "POST"
+			allow = "POST, GET"
 		}
 		w.Header().Set("Allow", allow)
 		http.Error(w, "method not supported", 405)
 		return true
 	}
 	values := r.Header.Values("Trunk-Branch")
+	if parts[4] == "roots" && r.URL.Query().Has("branch") {
+		selected := r.URL.Query()["branch"]
+		if len(selected) != 1 || (len(values) != 0 && (len(values) != 1 || selected[0] != values[0])) {
+			http.Error(w, "conflicting subscription branch", 400)
+			return true
+		}
+		values = selected
+	}
 	if len(values) != 1 {
 		http.Error(w, "select one registered branch", 400)
 		return true
@@ -200,6 +216,10 @@ func (p *Endpoint) registeredReadResource(w http.ResponseWriter, r *http.Request
 		http.Error(w, "Trunk-Branch does not match resource", 400)
 		return true
 	}
+	if supplied := r.Header.Values("Definition-Version"); (post || stream || parts[4] == "roots") && (len(supplied) > 1 || (len(supplied) == 1 && supplied[0] != route.Digest)) {
+		http.Error(w, "Trunk-Branch Definition mismatch", 400)
+		return true
+	}
 	if d := r.URL.Query().Get("definition"); d != "" && d != route.Digest {
 		http.Error(w, "Trunk-Branch Definition mismatch", 400)
 		return true
@@ -216,6 +236,14 @@ func (p *Endpoint) registeredReadResource(w http.ResponseWriter, r *http.Request
 		http.Error(w, err.Error(), 409)
 		return true
 	}
+	if parts[4] == "roots" {
+		p.subscribe(w, r, route)
+		return true
+	}
+	if stream {
+		p.streamSeeds(w, r, route)
+		return true
+	}
 	if post {
 		p.postRegisteredSeed(w, r, route)
 		return true
@@ -229,6 +257,24 @@ func (p *Endpoint) registeredReadResource(w http.ResponseWriter, r *http.Request
 	p.commitWork.Add(1)
 	p.mu.Unlock()
 	defer p.commitWork.Done()
+	if parts[4] == "timelines" && r.URL.Query().Has("bounds") {
+		query := r.URL.Query()
+		if len(query["bounds"]) != 1 || query.Get("bounds") != "1" || len(query) != 1 {
+			http.Error(w, "bounds selects the whole registered timeline", http.StatusBadRequest)
+			return true
+		}
+		bounds, err := p.node.TimeBounds(route.Branch)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusServiceUnavailable)
+			return true
+		}
+		defer bounds.Close()
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Cache-Control", "no-store")
+		w.Header().Set("Trunk-Branch", values[0])
+		w.Write(bounds.Bytes(0, 0))
+		return true
+	}
 	now := p.config.Now()
 	var ids []uint32
 	var ranges []summaryRange
@@ -334,6 +380,10 @@ func (p *Endpoint) registeredReadResource(w http.ResponseWriter, r *http.Request
 		err = snapshot.writeIndexes(w, r, buffer)
 	} else if parts[4] == "timelines" {
 		w.Header().Set("Trunk-Path", route.Storage.Directory+"/"+route.Storage.Stem+".time")
+		if counts := lease.Bytes(6, 0); len(counts) != 0 {
+			w.Header().Set("Trunk-Open-Counts", string(counts))
+			w.Header().Add("Access-Control-Expose-Headers", "Trunk-Open-Counts")
+		}
 		err = snapshot.writeTimeline(w, r, ranges)
 	} else {
 		err = snapshot.writeSeeds(w, r, ranges, now, buffer, live)

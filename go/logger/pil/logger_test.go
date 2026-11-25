@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package pil
 
 import (
@@ -5,7 +7,7 @@ import (
 	"context"
 	"fmt"
 	native "github.com/authenticity-labs/pill-packer/go"
-	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
+	pilcodec "github.com/authenticity-labs/pill-packer/go"
 	"io"
 	"net/http"
 	"net/http/httptest"

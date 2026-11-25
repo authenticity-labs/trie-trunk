@@ -116,7 +116,7 @@ func TestEnvironmentPrecedence(t *testing.T) {
 	}
 }
 
-func TestEnvironmentIngestValidation(t *testing.T) {
+func TestEnvironmentRootsValidation(t *testing.T) {
 	for _, tc := range []struct {
 		name, file, want string
 		args             []string
@@ -139,7 +139,7 @@ func TestEnvironmentIngestValidation(t *testing.T) {
 			if err := os.WriteFile(".env", []byte(tc.file), 0600); err != nil {
 				t.Fatal(err)
 			}
-			err := runIngest(tc.args)
+			err := runRoots(tc.args)
 			if err == nil || !strings.Contains(err.Error(), tc.want) || strings.Contains(err.Error(), "secret") {
 				t.Fatalf("got %v; want %s", err, tc.want)
 			}

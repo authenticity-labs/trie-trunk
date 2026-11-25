@@ -62,7 +62,7 @@ type nativePool struct {
 	entries map[string]*nativeEntry
 }
 
-// Combined ingest/serve listeners share one writer and staging queue. Separate
+// Combined roots/serve listeners share one writer and staging queue. Separate
 // processes still honor the on-disk writer lease.
 func openNative(ctx context.Context, root, name, tenant, storage string) (*cache.Endpoint, func() error, error) {
 	if name == "" || tenant == "" {
@@ -73,15 +73,20 @@ func openNative(ctx context.Context, root, name, tenant, storage string) (*cache
 		return nil, nil, e
 	}
 	config := cache.Config{Root: root, Cache: name, Tenant: tenant, Storage: storage, NativeMemoryBytes: memory, LiveIndexRecords: nativeRuntime.liveRecords, CommitScheduler: commits}
+	open := func() (*cache.Endpoint, error) {
+		endpoint, err := cache.OpenEndpoint(config)
+		if err != nil {
+			return nil, err
+		}
+		if err := endpoint.EnableQueryEvents(); err != nil {
+			endpoint.Close()
+			return nil, err
+		}
+		return endpoint, nil
+	}
 	pool, _ := ctx.Value(nativePoolKey{}).(*nativePool)
 	if pool == nil {
-		s, e := cache.OpenEndpoint(config)
-		if e == nil {
-			e = s.EnableQueryEvents()
-			if e != nil {
-				s.Close()
-			}
-		}
+		s, e := open()
 		if e != nil {
 			return nil, nil, e
 		}
@@ -99,13 +104,7 @@ func openNative(ctx context.Context, root, name, tenant, storage string) (*cache
 			return nil, nil, fmt.Errorf("listeners sharing a cache require the same tenant and storage configuration")
 		}
 	} else {
-		s, e := cache.OpenEndpoint(config)
-		if e == nil {
-			e = s.EnableQueryEvents()
-			if e != nil {
-				s.Close()
-			}
-		}
+		s, e := open()
 		if e != nil {
 			return nil, nil, e
 		}

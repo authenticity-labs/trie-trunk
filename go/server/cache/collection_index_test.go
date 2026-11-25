@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package cache
 
 import (
@@ -17,9 +19,26 @@ func testCollectionIndex(t testing.TB) *objectIndex {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { f.Close() })
-	return newObjectIndex(f)
+	idx, e := loadObjectIndex(f)
+	if e != nil {
+		t.Fatal(e)
+	}
+	t.Cleanup(idx.release)
+	return idx
 }
-func TestCollectionSlottedRevisions(t *testing.T) {
+
+// The historical Store owns these tests. Registered endpoints only accept RX registration.
+func prototypeCollectionEndpoint(t *testing.T, c Config) *Endpoint {
+	t.Helper()
+	p := &Endpoint{config: c, apis: map[string]*HTTP{}, preferred: map[string]*HTTP{}}
+	if err := p.install(c.Layout); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { p.Close() })
+	return p
+}
+
+func TestObjectIndexSlottedRevisions(t *testing.T) {
 	i := testCollectionIndex(t)
 	k := objectBinding{}
 	var id [16]byte
@@ -55,7 +74,7 @@ func TestCollectionSlottedRevisions(t *testing.T) {
 		t.Fatal("U16 overflow accepted")
 	}
 }
-func TestCollectionPublicationRecovery(t *testing.T) {
+func TestObjectIndexPublicationRecovery(t *testing.T) {
 	for _, stage := range []string{"before-root", "after-root"} {
 		t.Run(stage, func(t *testing.T) {
 			i := testCollectionIndex(t)
@@ -110,7 +129,11 @@ func TestCollectionWriteContractAndRebuild(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer func() { s.Close() }()
+	defer func() {
+		if s != nil {
+			s.Close()
+		}
+	}()
 	frame := func(n uint32, revision Value, object Value) []byte {
 		raw, e := l.Encode(nil, []Value{uuid(at.UnixMilli()+int64(n), n), object, revision, {}, {}, {}, {}})
 		if e != nil {
@@ -247,11 +270,8 @@ func TestCollectionDuplicateRevisionAcrossMinors(t *testing.T) {
 	at := time.Date(2026, 10, 1, 12, 0, 0, 0, time.UTC)
 	now := at.Add(time.Minute)
 	cfg := Config{Root: t.TempDir(), Cache: "test", Tenant: "test", Layout: l, ObjectIndex: true, Now: func() time.Time { return now }}
-	p, err := OpenEndpoint(cfg)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer p.Close()
+	p := prototypeCollectionEndpoint(t, cfg)
+	var err error
 	old := p.api.Store
 	if _, err = old.Append(Write, testFrame(t, l, at, 1, false)); err != nil {
 		t.Fatal(err)

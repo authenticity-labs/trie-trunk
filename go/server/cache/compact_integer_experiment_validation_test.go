@@ -310,7 +310,12 @@ func TestCompactIntegerExperimentNativeCompatibility(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if !bytes.Equal(ordinary, compact) || a.controlBits(compact) != 0 {
+		var native Frame
+		if err := a.base.Scan(ordinary, &native); err != nil {
+			t.Fatal(err)
+		}
+		compactExperimentEqual(t, a.base, values, native.Values)
+		if a.controlBits(compact) != 0 {
 			t.Fatal("native-width frame changed")
 		}
 		var f Frame

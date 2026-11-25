@@ -13,6 +13,7 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -169,6 +170,14 @@ func (n *Node) Ingest(branch uint16, pill []byte, clock uint64) error {
 	}
 	return e
 }
+func (n *Node) IngestBatch(branch uint16, wire []byte, clock uint64) error {
+	r, e := result(C.trunk_node_ingest_batch(n.ptr, C.uint16_t(branch), span(wire), C.uint64_t(clock)))
+	runtime.KeepAlive(wire)
+	if r != nil {
+		r.Close()
+	}
+	return e
+}
 func (n *Node) Commit(clock uint64) error {
 	r, e := result(C.trunk_node_commit(n.ptr, C.uint64_t(clock)))
 	if r != nil {
@@ -232,6 +241,26 @@ func (n *Node) Register(request, rx []byte) error {
 	}
 	return e
 }
+func (n *Node) History(source, id string, from, to uint64, state bool) (*Result, error) {
+	src, key := []byte(source), []byte(id)
+	reply, err := result(C.trunk_node_history(n.ptr, span(src), span(key), C.uint64_t(from), C.uint64_t(to), C.bool(state)))
+	runtime.KeepAlive(src)
+	runtime.KeepAlive(key)
+	return reply, err
+}
+func (n *Node) TimeBounds(branch uint16) (*Result, error) {
+	return result(C.trunk_node_time_bounds(n.ptr, C.uint16_t(branch)))
+}
+func (n *Node) StorageUsage(branch uint16) ([][3]uint64, error) {
+	r, err := result(C.trunk_node_storage_usage(n.ptr, C.uint16_t(branch)))
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+	var counts [][3]uint64
+	err = json.Unmarshal(r.Bytes(0, 0), &counts)
+	return counts, err
+}
 func (n *Node) Registry() (*Result, error) { return result(C.trunk_node_registry(n.ptr)) }
 
 type RegistrationTarget struct {
@@ -271,9 +300,28 @@ func (n *Node) Registration(target RegistrationTarget, rx []byte) (Registered, e
 	err = json.Unmarshal(r.Bytes(0, 0), &registered)
 	return registered, err
 }
-func (n *Node) Postgres(address, password string) (*Result, error) {
+func (n *Node) Caches() ([]string, error) {
+	r, err := result(C.trunk_node_caches(n.ptr))
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+	var names []string
+	err = json.Unmarshal(r.Bytes(0, 0), &names)
+	return names, err
+}
+
+func (n *Node) Postgres(address, password, cert, key string, offsets map[string]int) (*Result, error) {
+	zones, err := json.Marshal(offsets)
+	if err != nil {
+		return nil, err
+	}
 	a, p := []byte(address), []byte(password)
-	r, err := result(C.trunk_node_postgres(n.ptr, span(a), span(p)))
+	c, k := []byte(cert), []byte(key)
+	r, err := result(C.trunk_node_postgres(n.ptr, span(a), span(p), span(c), span(k), span(zones)))
+	runtime.KeepAlive(zones)
+	runtime.KeepAlive(c)
+	runtime.KeepAlive(k)
 	runtime.KeepAlive(a)
 	runtime.KeepAlive(p)
 	return r, err
@@ -292,7 +340,15 @@ type Snapshot struct {
 	Published                                      bool
 }
 
-func (n *Node) Snapshot(branch uint16, windows [][2]uint64, summaries bool, known *uint64, clock uint64) (*Snapshot, error) {
+type SnapshotKind uint8
+
+const (
+	Packs SnapshotKind = iota
+	Summaries
+	Timeline
+)
+
+func (n *Node) Snapshot(branch uint16, windows [][2]uint64, kind SnapshotKind, known *uint64, clock uint64) (*Snapshot, error) {
 	if windows == nil {
 		windows = [][2]uint64{}
 	}
@@ -304,7 +360,7 @@ func (n *Node) Snapshot(branch uint16, windows [][2]uint64, summaries bool, know
 	if known != nil {
 		generation = *known
 	}
-	r, e := result(C.trunk_node_snapshot(n.ptr, C.uint16_t(branch), span(raw), C.bool(summaries), C.uint64_t(generation), C.bool(known != nil), C.uint64_t(clock)))
+	r, e := result(C.trunk_node_snapshot(n.ptr, C.uint16_t(branch), span(raw), C.uint8_t(kind), C.uint64_t(generation), C.bool(known != nil), C.uint64_t(clock)))
 	runtime.KeepAlive(raw)
 	if e != nil {
 		return nil, e
@@ -391,3 +447,25 @@ func Command(args []string, input, output, diagnostics *os.File) error {
 	}
 	return e
 }
+
+// Subscribe returns a pollable descriptor. Each byte makes one Message available.
+func (n *Node) Subscribe(branch uint16, digest, source string) (*Result, net.Conn, error) {
+	sub, err := result(C.trunk_node_subscribe(n.ptr, C.uint16_t(branch), span([]byte(digest)), span([]byte(source))))
+	if err != nil {
+		return nil, nil, err
+	}
+	fd := C.trunk_node_ready(sub.ptr)
+	if fd < 0 {
+		sub.Close()
+		return nil, nil, fmt.Errorf("open subscription descriptor")
+	}
+	file := os.NewFile(uintptr(fd), "roots")
+	ready, err := net.FileConn(file)
+	file.Close()
+	if err != nil {
+		sub.Close()
+		return nil, nil, err
+	}
+	return sub, ready, nil
+}
+func (r *Result) Message() (*Result, error) { return result(C.trunk_node_message(r.ptr)) }

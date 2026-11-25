@@ -48,7 +48,8 @@ func (o *Observer) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logs := o.current.Load()
 		kind := r.URL.Path[strings.LastIndexByte(r.URL.Path, '/')+1:]
-		if logs == nil || r.Method != http.MethodGet || !resourceapi.IsPath(r.URL.Path) || !slices.Contains(Resources, kind) {
+		// A WebSocket upgrade represents a producer session, not a timed resource read.
+		if logs == nil || r.Method != http.MethodGet || (kind == "seeds" && strings.EqualFold(r.Header.Get("Upgrade"), "websocket")) || !resourceapi.IsPath(r.URL.Path) || !slices.Contains(Resources, kind) {
 			next.ServeHTTP(w, r)
 			return
 		}

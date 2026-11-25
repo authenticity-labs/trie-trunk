@@ -5,12 +5,14 @@ mod query;
 use crate::{Node, Result};
 use async_trait::async_trait;
 use ciborium::Value as D;
-use futures::stream;
+use futures::{Sink, stream};
+use pgwire::messages::{PgWireBackendMessage, PgWireFrontendMessage};
+use pgwire::tokio::{TlsAcceptor, tokio_rustls::rustls::{ServerConfig, pki_types::{CertificateDer, PrivateKeyDer, pem::PemObject}}};
 use pgwire::{
     api::{
         ClientInfo, PgWireServerHandlers, Type,
         auth::{
-            AuthSource, DefaultServerParameterProvider, LoginInfo, Password, StartupHandler,
+            AuthSource, ServerParameterProvider, DefaultServerParameterProvider, LoginInfo, Password, StartupHandler,
             cleartext::CleartextPasswordAuthStartupHandler,
         },
         cancel::CancelHandler,
@@ -101,9 +103,55 @@ impl CancelHandler for Active {
         self.stop(r.pid, Some(&r.secret_key));
     }
 }
+// One SQL session has one clock, including joins across services.
+struct Settings {
+    defaults: DefaultServerParameterProvider,
+    offsets: HashMap<String, i8>,
+}
+impl Settings {
+    fn hours(&self, database: &str) -> i8 {
+        *self.offsets.get(database).or_else(|| self.offsets.get("")).unwrap_or(&0)
+    }
+    fn zone(hours: i8) -> String {
+        if hours == 0 { "UTC".into() } else { format!("Etc/GMT{:+}", -hours) }
+    }
+}
+impl ServerParameterProvider for Settings {
+    fn server_parameters<C: ClientInfo>(&self, client: &C) -> Option<HashMap<String, String>> {
+        let mut params = self.defaults.server_parameters(client)?;
+        params.insert("TimeZone".into(), Self::zone(self.hours(database(client))));
+        Some(params)
+    }
+}
+fn database<C: ClientInfo>(c: &C) -> &str {
+    c.metadata().get("database").map_or("postgres", String::as_str)
+}
+struct Startup {
+    password: CleartextPasswordAuthStartupHandler<Login, Arc<Settings>>,
+    require_tls: bool,
+}
+
+#[async_trait]
+impl StartupHandler for Startup {
+    async fn on_startup<C>(&self, client: &mut C, message: PgWireFrontendMessage) -> PgWireResult<()>
+    where
+        C: ClientInfo + Sink<PgWireBackendMessage> + Unpin + Send + Sync,
+        C::Error: std::fmt::Debug,
+        PgWireError: From<<C as Sink<PgWireBackendMessage>>::Error>,
+    {
+        if self.require_tls && !client.is_secure() {
+            return Err(PgWireError::UserError(Box::new(ErrorInfo::new(
+                "FATAL".into(), "28000".into(), "This PostgreSQL listener requires TLS".into(),
+            ))));
+        }
+        self.password.on_startup(client, message).await
+    }
+}
+
 struct Backend {
+    settings: Arc<Settings>,
     node: Arc<Node>,
-    login: Arc<CleartextPasswordAuthStartupHandler<Login, DefaultServerParameterProvider>>,
+    login: Arc<Startup>,
     active: Arc<Active>,
 }
 impl PgWireServerHandlers for ArcBackend {
@@ -128,11 +176,22 @@ pub struct Service {
     pub address: SocketAddr,
 }
 impl Service {
-    pub fn start(node: Arc<Node>, address: &str, password: String) -> Result<Self> {
+    pub fn start(node: Arc<Node>, address: &str, password: String, cert: &str, key: &str, offsets: HashMap<String, i8>) -> Result<Self> {
         let address: SocketAddr = address.parse()?;
-        if !address.ip().is_loopback() || password.is_empty() {
-            return Err("PostgreSQL requires a loopback address and TRUNK_PG_PASSWORD".into());
+        if password.is_empty() {
+            return Err("PostgreSQL requires TRUNK_PG_PASSWORD".into());
         }
+        let tls = match (cert.is_empty(), key.is_empty()) {
+            (true, true) if address.ip().is_loopback() => None,
+            (false, false) => {
+                let chain = CertificateDer::pem_file_iter(cert)?.collect::<std::result::Result<Vec<_>, _>>()?;
+                let key = PrivateKeyDer::from_pem_file(key)?;
+                let mut config = ServerConfig::builder().with_no_client_auth().with_single_cert(chain, key)?;
+                config.alpn_protocols.push(b"postgresql".to_vec());
+                Some(TlsAcceptor::from(Arc::new(config)))
+            }
+            _ => return Err("PostgreSQL on the LAN requires --postgres-cert and --postgres-key together".into()),
+        };
         let listener = TcpListener::bind(address)?;
         listener.set_nonblocking(true)?;
         let address = listener.local_addr()?;
@@ -144,16 +203,21 @@ impl Service {
         let mut settings = DefaultServerParameterProvider::default();
         settings.is_superuser = false;
         settings.default_transaction_read_only = true;
-        let login = Arc::new(CleartextPasswordAuthStartupHandler::new(
+        for &hours in offsets.values() {
+            data_seeds::summaries::SummaryCalendar::new(hours)?;
+        }
+        let settings = Arc::new(Settings { defaults: settings, offsets });
+        let login = CleartextPasswordAuthStartupHandler::new(
             Login {
                 node: node.clone(),
                 password,
             },
-            settings,
-        ));
+            settings.clone(),
+        );
         let backend = ArcBackend(Arc::new(Backend {
+            settings,
             node,
-            login,
+            login: Arc::new(Startup { password: login, require_tls: tls.is_some() }),
             active: Default::default(),
         }));
         let thread = std::thread::spawn(move || {
@@ -171,9 +235,10 @@ impl Service {
                     match futures::future::select(Box::pin(accept), &mut wait).await {
                         futures::future::Either::Left((Some((permit, s)), _)) => {
                             let b = backend.clone();
+                            let tls = tls.clone();
                             tokio::spawn(async move {
                                 let _permit = permit;
-                                let _ = pgwire::tokio::process_socket(s, None, b).await;
+                                let _ = pgwire::tokio::process_socket(s, tls, b).await;
                             });
                         }
                         _ => break,
@@ -223,6 +288,7 @@ fn params(p: &Portal<String>) -> PgWireResult<Vec<Option<String>>> {
                 };
             }
             Ok(match *t {
+                Type::TIMESTAMPTZ => p.parameter::<chrono::DateTime<chrono::FixedOffset>>(i, t)?.map(|v| v.to_rfc3339()),
                 Type::INT2 => read!(i16),
                 Type::INT4 => read!(i32),
                 Type::INT8 => read!(i64),
@@ -291,9 +357,19 @@ fn text(v: &D, ty: &Type) -> Result<Option<String>> {
 fn encode(
     schema: &Arc<Vec<FieldInfo>>,
     row: Vec<Option<String>>,
+    offset: chrono::FixedOffset,
 ) -> PgWireResult<pgwire::messages::data::DataRow> {
     let mut e = DataRowEncoder::new(schema.clone());
     for (f, v) in schema.iter().zip(row) {
+        if f.datatype() == &Type::TIMESTAMPTZ {
+            let instant = v.as_deref().map(|s| {
+                chrono::DateTime::from_timestamp_millis(s.parse().map_err(fail)?)
+                    .map(|t| t.with_timezone(&offset))
+                    .ok_or_else(|| fail("Timestamp exceeds supported range"))
+            }).transpose()?;
+            e.encode_field(&instant)?;
+            continue;
+        }
         if v.is_none() || f.format() == FieldFormat::Text {
             e.encode_field_with_type_and_format(&v, &Type::TEXT, f.format(), f.format_options())?;
             continue;
@@ -340,9 +416,8 @@ impl Backend {
     ) -> PgWireResult<Output> {
         query::prepare(
             &self.node,
-            c.metadata()
-                .get("database")
-                .map_or("postgres", String::as_str),
+            database(c),
+            &Settings::zone(self.settings.hours(database(c))),
             c.pid_and_secret_key().0,
             sql,
             p,
@@ -359,6 +434,9 @@ impl Backend {
         f: &Format,
     ) -> PgWireResult<Response> {
         let mut out = self.prepare(c, sql, p, false)?;
+        let hours = self.settings.hours(database(c));
+        let offset = chrono::FixedOffset::east_opt(i32::from(hours) * 3600).ok_or_else(|| fail("Invalid UTC offset"))?;
+        let context = serde_json::json!({"timezone": Settings::zone(hours)});
         let schema = Arc::new(fields(&out, f)?);
         let flags = match &out.rows {
             Rows::Aggregate { cancel, .. } => vec![cancel.clone()],
@@ -389,7 +467,7 @@ impl Backend {
         tokio::task::spawn_blocking(move || {
             let produce = || -> Result<()> {
                 let send = |r| -> Result<bool> {
-                    Ok(tx.blocking_send(Ok(encode(&output_schema, r)?)).is_ok())
+                    Ok(tx.blocking_send(Ok(encode(&output_schema, r, offset)?)).is_ok())
                 };
                 let project = |row: data_seeds::Object| -> Result<Vec<Option<String>>> {
                     out.keys
@@ -414,7 +492,7 @@ impl Backend {
                             0,
                             u64::MAX,
                             plan,
-                            &serde_json::json!({}),
+                            &context,
                             || {
                                 if cancel.load(Ordering::Relaxed) || tx.is_closed() {
                                     Err("query cancelled".into())
@@ -568,5 +646,46 @@ impl ExtendedQueryHandler for Backend {
             &out,
             &p.result_column_format,
         )?))
+    }
+}
+
+#[cfg(test)]
+mod timestamp_tests {
+    use super::*;
+
+    #[test]
+    fn telemetry_instants_are_distinct_from_durations() {
+        let doc = data_seeds::registration::query_events::definition().unwrap();
+        let definition = data_seeds::SeedDefinition::prescribe(&doc).unwrap();
+        for name in ["time", "from", "to"] {
+            assert_eq!(definition.timestamp_unit(name), Some("ms"));
+        }
+        for name in ["duration", "rows", "id"] {
+            assert_eq!(definition.timestamp_unit(name), None);
+        }
+    }
+
+    #[test]
+    fn epoch_milliseconds_keep_the_same_instant_in_both_wire_formats() {
+        // One millisecond before the Unix epoch exercises negative and day-boundary arithmetic.
+        for (hours, expected) in [
+            (-5, "1969-12-31 18:59:59.999000-05"),
+            (0, "1969-12-31 23:59:59.999000+00"),
+            (9, "1970-01-01 08:59:59.999000+09"),
+        ] {
+            let offset = chrono::FixedOffset::east_opt(hours * 3600).unwrap();
+            for format in [FieldFormat::Text, FieldFormat::Binary] {
+                let schema = Arc::new(vec![FieldInfo::new(
+                    "instant".into(), None, None, Type::TIMESTAMPTZ, format,
+                )]);
+                let row = encode(&schema, vec![Some("-1".into())], offset).unwrap();
+                if format == FieldFormat::Text {
+                    assert_eq!(&row.data[4..], expected.as_bytes());
+                } else {
+                    assert_eq!(&row.data[4..], &(-946_684_800_001_000i64).to_be_bytes());
+                }
+                assert_eq!(&encode(&schema, vec![None], offset).unwrap().data[..], &(-1i32).to_be_bytes());
+            }
+        }
     }
 }

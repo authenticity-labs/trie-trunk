@@ -114,14 +114,14 @@ type Configuration struct {
 	Resources map[string]Policy   `toml:"resources"`
 }
 
-func (p Policy) summaryOffsetHours() int {
+func (p Policy) UTCOffsetHours() int {
 	if p.SummaryUTCOffsetHours != nil {
 		return *p.SummaryUTCOffsetHours
 	}
 	return 0
 }
 func (p Policy) validate() error {
-	if h := p.summaryOffsetHours(); h < -12 || h > 14 {
+	if h := p.UTCOffsetHours(); h < -12 || h > 14 {
 		return fmt.Errorf("summary UTC offset must be -12..14 whole hours")
 	}
 	if err := p.Summary.validate(); err != nil {
@@ -303,7 +303,7 @@ func (s *Store) ReloadPolicy() error {
 		if v, ok := oldBranches[branch]; ok {
 			prior = v
 		}
-		if prior.summaryOffsetHours() != s.policyFor(branch).summaryOffsetHours() {
+		if prior.UTCOffsetHours() != s.policyFor(branch).UTCOffsetHours() {
 			b.summaryDays = map[int64]summaryDayLocation{}
 			b.summaryPackedThrough = -1
 			b.calendarRollups = nil

@@ -12,9 +12,11 @@ enum Value {
         _service: trunk_node::service::Service,
     },
     Postgres { _service: trunk_node::postgres::Service },
+    Subscription(trunk_node::roots::Subscription),
+    Message(Arc<trunk_node::roots::Message>),
     Number(u64),
     Logs(trunk_node::logs::Logs),
-    Registration(Vec<u8>),
+    Json(Vec<u8>),
 }
 struct Failure {
     message: String,
@@ -123,6 +125,15 @@ pub unsafe extern "C" fn trunk_node_ingest(
     })())
 }
 #[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_ingest_batch(
+    ptr: *const c_void, branch: u16, wire: SeedSlice, clock: u64,
+) -> *mut c_void {
+    result((|| {
+        let count = unsafe { owner(ptr)? }.ingest_batch(branch, unsafe { bytes(wire)? }, clock)?;
+        Ok(Value::Number(count as u64))
+    })())
+}
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn trunk_node_commit(ptr: *const c_void, clock: u64) -> *mut c_void {
     result((|| {
         Ok(Value::Number(unsafe { owner(ptr)? }.commit(clock)? as u64))
@@ -186,7 +197,7 @@ pub unsafe extern "C" fn trunk_node_registration(
             &serde_json::from_slice(unsafe { bytes(target)? })?,
             unsafe { bytes(rx)? },
         )?;
-        Ok(Value::Registration(serde_json::to_vec(&registered)?))
+        Ok(Value::Json(serde_json::to_vec(&registered)?))
     })())
 }
 #[unsafe(no_mangle)]
@@ -199,6 +210,32 @@ pub unsafe extern "C" fn trunk_node_publish(
         unsafe { owner(ptr)? }.publish(unsafe { bytes(expected)? }, unsafe { bytes(next)? })?;
         Ok(Value::Number(0))
     })())
+}
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_history(ptr: *const c_void, source: SeedSlice, id: SeedSlice,
+    from: u64, to: u64, state: bool) -> *mut c_void {
+    result((|| {
+        let rows = unsafe { owner(ptr)? }.history(unsafe { text(source)? }, unsafe { text(id)? }, from, to, state)?;
+        Ok(Value::Json(serde_json::to_vec(&rows)?))
+    })())
+}
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_time_bounds(ptr: *const c_void, branch: u16) -> *mut c_void {
+    result((|| {
+        let extent = unsafe { owner(ptr)? }.time_bounds(&[branch])?;
+        Ok(Value::Json(serde_json::to_vec(&extent)?))
+    })())
+}
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_storage_usage(ptr: *const c_void, branch: u16) -> *mut c_void {
+    result((|| {
+        let counts = unsafe { owner(ptr)? }.storage_usage(branch)?;
+        Ok(Value::Json(serde_json::to_vec(&counts)?))
+    })())
+}
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_caches(ptr: *const c_void) -> *mut c_void {
+    result((|| Ok(Value::Json(serde_json::to_vec(&unsafe { owner(ptr)? }.trie().source_options(&[], 0)?)?)))())
 }
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn trunk_node_registry(ptr: *const c_void) -> *mut c_void {
@@ -218,9 +255,9 @@ pub unsafe extern "C" fn trunk_node_memory(ptr: *const c_void) -> *mut c_void {
     })
 }
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn trunk_node_postgres(ptr: *const c_void, address: SeedSlice, password: SeedSlice) -> *mut c_void {
+pub unsafe extern "C" fn trunk_node_postgres(ptr: *const c_void, address: SeedSlice, password: SeedSlice, cert: SeedSlice, key: SeedSlice, offsets: SeedSlice) -> *mut c_void {
     result((|| Ok(Value::Postgres { _service: trunk_node::postgres::Service::start(
-        unsafe { owner(ptr)? }.clone(), unsafe { text(address)? }, unsafe { text(password)? }.to_owned())? }))())
+        unsafe { owner(ptr)? }.clone(), unsafe { text(address)? }, unsafe { text(password)? }.to_owned(), unsafe { text(cert)? }, unsafe { text(key)? }, serde_json::from_slice(unsafe { bytes(offsets)? })?)? }))())
 }
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn trunk_node_serve(ptr: *const c_void, path: SeedSlice) -> *mut c_void {
@@ -270,7 +307,7 @@ pub unsafe extern "C" fn trunk_node_snapshot(
     ptr: *const c_void,
     branch: u16,
     windows: SeedSlice,
-    summaries: bool,
+    kind: u8,
     known: u64,
     has_known: bool,
     clock: u64,
@@ -279,7 +316,12 @@ pub unsafe extern "C" fn trunk_node_snapshot(
         Ok(Value::Snapshot(unsafe { owner(ptr)? }.publication(
             branch,
             &serde_json::from_slice::<Vec<(u64, u64)>>(unsafe { bytes(windows)? })?,
-            summaries,
+            match kind {
+                0 => trunk_node::publication::SnapshotKind::Packs,
+                1 => trunk_node::publication::SnapshotKind::Summaries,
+                2 => trunk_node::publication::SnapshotKind::Timeline,
+                _ => return Err("Invalid snapshot kind".into()),
+            },
             has_known.then_some(known),
             clock,
         )?))
@@ -318,8 +360,9 @@ pub unsafe extern "C" fn trunk_node_bytes(
     index: usize,
 ) -> SeedSlice {
     let raw = match unsafe { value(ptr) } {
+        Ok(Value::Message(m)) if kind == 0 => &m.bytes,
         Ok(Value::Registry(r)) if kind == 0 => r.bytes(),
-        Ok(Value::Registration(r)) if kind == 0 => r,
+        Ok(Value::Json(r)) if kind == 0 => r,
         Ok(Value::Snapshot(s)) => match kind {
             0 => s.registry.bytes(),
             1 => s
@@ -334,6 +377,7 @@ pub unsafe extern "C" fn trunk_node_bytes(
                 .published
                 .as_ref()
                 .map_or(&[] as &[u8], |p| p.summary_footer.as_slice()),
+            6 => &s.open_counts,
             4 => s.live.get(index).map_or(&[] as &[u8], Vec::as_slice),
             5 => s
                 .summaries
@@ -371,4 +415,23 @@ pub unsafe extern "C" fn trunk_node_file(ptr: *const c_void, kind: u32) -> i32 {
         None => -1,
         Some(file) => file.try_clone().map_or(-2, |f| f.into_raw_fd()),
     }
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_subscribe(ptr: *const c_void, branch: u16, digest: SeedSlice, source: SeedSlice) -> *mut c_void {
+    result((|| Ok(Value::Subscription(unsafe { owner(ptr)? }.subscribe(branch, unsafe { text(digest)? }, unsafe { text(source)? })?)))())
+}
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_ready(ptr: *const c_void) -> i32 {
+    match unsafe { value(ptr) } {
+        Ok(Value::Subscription(s)) => s.readiness().map_or(-1, |fd| fd.into_raw_fd()),
+        _ => -1,
+    }
+}
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn trunk_node_message(ptr: *const c_void) -> *mut c_void {
+    result((|| {
+        let Value::Subscription(s) = (unsafe { value(ptr)? }) else { return Err("Expected subscription".into()); };
+        Ok(Value::Message(s.next()?))
+    })())
 }

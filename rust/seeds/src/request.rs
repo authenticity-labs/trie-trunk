@@ -12,9 +12,11 @@ pub fn language_predicate(v: &Json) -> Result<Json, Error> {
         Some("filter") => {
             let f=&v["filter"];let field=required_text(f,"field")?;let op=required_text(f,"op")?;
             if f["value"]["kind"]=="null" {
+                let mut null_test=json!({"field":field,"op":"is-null","value":null});
+                if let Some(cast)=f.get("cast"){null_test["cast"]=cast.clone();}
                 return match op {
-                    "=="=>Ok(json!({"field":field,"op":"is-null","value":null})),
-                    "!="=>Ok(json!({"and":[{"field":field,"op":"is-present","value":null},{"not":{"field":field,"op":"is-null","value":null}}]})),
+                    "=="=>Ok(null_test),
+                    "!="=>Ok(json!({"and":[{"field":field,"op":"is-present","value":null},{"not":null_test}]})),
                     _=>Err(fail("Invalid null comparison")),
                 };
             }
@@ -58,6 +60,12 @@ pub fn context(v: &Json) -> Result<crate::cast::Context, Error> {
 }
 pub fn query(v: &Json) -> Result<Query, Error> {
     let mut q = Query::new().context(context(v)?);
+    if let Some(window) = v.get("checkpoint") {
+        let [from, to]: [u64; 2] = serde_json::from_value(window.clone())
+            .map_err(|_| fail("checkpoint requires two millisecond timestamps"))?;
+        if from > to { return Err(fail("invalid checkpoint window")); }
+        q = q.checkpoint(from..to);
+    }
     if let Some(version) = v.get("version") {
         let pair = version
             .as_array()

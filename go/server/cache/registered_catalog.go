@@ -64,6 +64,9 @@ func (p *Endpoint) registeredCatalog(w http.ResponseWriter, r *http.Request) boo
 		}
 		files := catalog.Files[:0]
 		for _, file := range catalog.Files {
+			if (file.Kind == "packs" && !p.storage.Packed) || (file.Kind == "beds" && p.storage.Packed) {
+				continue
+			}
 			path := filepath.Join(p.config.Root, filepath.FromSlash(file.Path))
 			if file.Bootstrap {
 				var raw []byte

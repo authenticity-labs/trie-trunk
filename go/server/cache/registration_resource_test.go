@@ -25,7 +25,11 @@ func TestIndependentRegistrationResourcesWithoutEventStores(t *testing.T) {
 		if err = RegisterSeedDefinition(root, doc.bytes, target); err != nil {
 			t.Fatal(err)
 		}
-		return bytes.Clone(doc.bytes)
+		published, err := os.ReadFile(filepath.Join(root, "definitions", target.File))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return published
 	}
 	get := func(method, path string, headers map[string]string) *httptest.ResponseRecorder {
 		t.Helper()

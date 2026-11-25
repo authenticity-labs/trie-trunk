@@ -8,6 +8,7 @@ use std::{
 };
 use trie_trunk_taxonomy::{BranchId, Trunk as Taxonomy};
 mod summaries;
+pub mod revision;
 mod storage;
 mod request;
 pub use request::{Request, Registered};
@@ -18,6 +19,17 @@ pub use summaries::{Summaries, SummaryDay, SummaryIngress};
 pub use crate::summaries::SummaryProjection;
 
 pub const DEFINITION_HEADER: &str = "seed.definition";
+
+/// Stamp the selected root and its referenced objects as one published revision.
+pub fn stamp(document: crate::Document, major: u32, minor: u32) -> Result<crate::Document, Error> {
+    let mut members = document.retain_members(&[0])?.definitions().to_vec();
+    for member in &mut members {
+        member.header.rx_major = major;
+        member.header.rx_minor = minor;
+        member.header.rx_hash.clear();
+    }
+    Ok(crate::Document::from_definitions(members).sign()?)
+}
 
 /// A trunk-local Branch ID binds the complete Pack to one registered lineage
 /// member. Pill Packer carries this header without interpreting it.
@@ -70,6 +82,7 @@ fn registered_pack(
 
 pub struct Trunk {
     trie: Taxonomy,
+    revisions: std::sync::Mutex<HashMap<BranchId, Arc<SeedDefinition>>>,
     codecs: HashMap<u32, Arc<SeedDefinition>>,
     descriptions: HashMap<u32, serde_json::Value>,
     commits: Option<crate::writer::CommitScheduler>,
@@ -81,7 +94,7 @@ impl Trunk {
         trie.definitions().map_err(Error::Definition)?;
         Ok(Self {
             trie,
-            codecs: HashMap::new(),
+            revisions: Default::default(), codecs: HashMap::new(),
             descriptions: HashMap::new(),
             commits: None,
             summary_definitions: std::sync::Mutex::new(HashMap::new()),
@@ -110,7 +123,8 @@ impl Trunk {
     pub fn open_pack(&self, owner: Arc<Vec<u8>>, range: Range<usize>, maximum: usize) -> Result<Arc<SeedPackSnapshot>, Error> {
         registered_pack(owner, range, maximum, |branch| {
             let route = self.trie.route(branch).map_err(Error::Definition)?;
-            self.definition(route.definition)
+            let target = self.definition(route.definition)?;
+            if route.pods().map_err(Error::Definition)?.is_some() { self.revision(branch,target) } else { Ok(target) }
         })
     }
 
@@ -205,7 +219,12 @@ impl Trunk {
             let alias = name != f.name;
             let mut field = serde_json::json!({"name": name, "type": f.kind.to_string(),
                 "values": f.values, "annotations": document.definitions()[member].fields[ordinal].annotations});
-            if alias { field["source"] = serde_json::json!(f.name); }
+            if alias {
+                field["source"] = serde_json::json!(f.name);
+            } else {
+                let selectors = SeedDefinition::selectors(&codec.annotations[ordinal]).collect::<std::collections::BTreeSet<_>>();
+                if !selectors.is_empty() { field["selectors"] = serde_json::json!(selectors); }
+            }
             if let Some(metadata) = codec.metadata(ordinal) {
                 let metadata = metadata.view(&name,&f.name).map(|v|metadata.presentation(v)).unwrap_or_else(|| metadata.clone());
                 field["metadata"] = serde_json::to_value(metadata).expect("field metadata serializes");
@@ -323,6 +342,12 @@ impl<'a> Branches<'a> {
         self
     }
     pub fn packs(self) -> Result<Packs, Error> {
+        self.pack_scope(false)
+    }
+    pub fn pods(self) -> Result<Packs, Error> {
+        self.pack_scope(true)
+    }
+    fn pack_scope(self, objects: bool) -> Result<Packs, Error> {
         let mut definitions = HashMap::new();
         let branches = match self.selected {
             Some(branches) => branches,
@@ -335,9 +360,10 @@ impl<'a> Branches<'a> {
             let family = *versions.iter().min().ok_or_else(|| Error::Definition("Empty registered generation".into()))?;
             for branch in versions {
                 let route = self.trunk.trie.route(branch).map_err(Error::Definition)?;
-                if route.base==Some(trie_trunk_taxonomy::base::Base::Object){continue;}
+                if (route.base == Some(trie_trunk_taxonomy::base::Base::Object)) != objects { continue; }
                 definitions.insert(branch, PrescriptionBinding {
-                    family, definition: self.trunk.definition(route.definition)?,
+                    family, definition: { let target = self.trunk.definition(route.definition)?;
+                        if objects { self.trunk.revision(branch, target)? } else { target } },
                 });
             }
         }
@@ -399,7 +425,10 @@ impl Leaves<'_> {
         self.file(bytes, false)?.label(&self.trunk.definition(self.selected)?.digest, leaf, label)
     }
     pub fn definitions(&self, bytes: &[u8]) -> Result<Vec<Vec<u8>>, Error> {
-        Ok(self.file(bytes, false)?.roots.into_iter().map(|root| root.definition).collect())
+        self.definition_roots(bytes, false)
+    }
+    pub fn definition_roots(&self, bytes: &[u8], verify_write: bool) -> Result<Vec<Vec<u8>>, Error> {
+        Ok(self.file(bytes, verify_write)?.roots.into_iter().map(|root| root.definition).collect())
     }
     /// Integrity verification for received bytes before their storage write.
     pub fn inspect(&self, bytes: &[u8]) -> Result<crate::LeafFileLayout, Error> {

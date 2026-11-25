@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package logging
 
 import (
@@ -6,7 +8,7 @@ import (
 	"fmt"
 	"sort"
 
-	pilcodec "github.com/authenticity-labs/pill-packer/go/codec"
+	pilcodec "github.com/authenticity-labs/pill-packer/go"
 	"trie-trunk/go/codec"
 	Keys "trie-trunk/go/logger/client/keys"
 	"trie-trunk/go/logger/pil"
@@ -112,15 +114,17 @@ func NewPIL(ctx context.Context, transport pil.Config, config Config) (*Logger, 
 	if err != nil {
 		return nil, err
 	}
-	l.pilPlan, err = compilePILEntry(layout, config.Dictionary)
+	plan, err := compilePILEntry(layout, config.Dictionary)
 	if err != nil {
 		return nil, err
 	}
-	l.pilPlan.access = transport.Branch
-	l.pil, err = pil.Open(ctx, transport)
+	plan.access = transport.Branch
+	sender, err := pil.Open(ctx, transport)
 	if err != nil {
 		return nil, err
 	}
+	l.negotiated = &negotiatedPIL{sender, plan}
+	l.derivesID = plan.layout.Definition.Resource.Strategy == "log"
 	return l, nil
 }
 
@@ -328,4 +332,27 @@ func (p *pilEntryPlan) values(e *Entry) ([]pil.Value, error) {
 		put(slotFields, pil.Value{State: pil.Offset, Bytes: raw})
 	}
 	return values, nil
+}
+
+type negotiatedPIL struct {
+	*pil.Logger
+	plan *pilEntryPlan
+}
+
+func (p *negotiatedPIL) write(e *Entry) error {
+	values, err := p.plan.values(e)
+	if err == nil {
+		// Completion must remain deliverable after request cancellation;
+		// the PIL transport enforces its own bounded delivery timeout.
+		branch := p.plan.accessFor(e)
+		if e.Error != nil || e.HttpStatus >= 400 || e.Level == ERROR {
+			branch = "error"
+		} else if e.Level == DEBUG || e.Level == WARN {
+			branch = "debug"
+		} else if e.Level == TRACE {
+			branch = "trace"
+		}
+		err = p.Logger.WriteValuesTo(context.Background(), branch, values)
+	}
+	return err
 }

@@ -20,7 +20,7 @@ func TestSeedDefinitionRegistrationPublishesBindingOutsideRX(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	document, err := seedNativeDocument([]byte(`[{"header":{"rx-name":"event"},"fields":[
+	document, err := seedNativeDocument([]byte(`[{"header":{"rx-name":"event","rx-major":1},"fields":[
 		{"name":"time","type":[1,0],"size":6,"annotations":["@time"]},
 		{"name":"id","type":[4,0],"size":10,"annotations":["@event"]},
 		{"name":"region","type":[5,0],"size":0}
@@ -32,7 +32,7 @@ func TestSeedDefinitionRegistrationPublishesBindingOutsideRX(t *testing.T) {
 	original := bytes.Clone(document.bytes)
 	target := SeedRegistration{
 		Cache: "demo", Service: "payment", Resource: "transactions",
-		ResourceType: "http", Level: "", File: "event.v0.0.rx",
+		ResourceType: "http", Level: "", File: "event.rx",
 		Binding: map[string]any{"strategy": "log", "timezone": "UTC", "path": []string{"region"}},
 	}
 	register := func() []byte {
@@ -122,8 +122,8 @@ func TestSeedLineagePublicationKeepsVersionsAndDefaultSeparate(t *testing.T) {
 	root := t.TempDir()
 	path := filepath.Join(root, "trunk.trie")
 	t.Cleanup(func() { taxonomyRegistrations.Delete(path) })
-	oldJSON := `{"header":{"rx-name":"http","namespace":"log","rx-major":0,"rx-minor":0},"fields":[{"name":"status","type":[1,0],"size":1}]}`
-	newJSON := `{"header":{"rx-name":"http","namespace":"log","rx-major":0,"rx-minor":1},"fields":[{"name":"status","type":[1,0],"size":2}]}`
+	oldJSON := `{"header":{"rx-name":"http","namespace":"log","rx-major":1,"rx-minor":0},"fields":[{"name":"status","type":[1,0],"size":1}]}`
+	newJSON := `{"header":{"rx-name":"http","namespace":"log","rx-major":1,"rx-minor":1},"fields":[{"name":"status","type":[1,0],"size":2}]}`
 	old, err := seedNativeDocument([]byte("[" + oldJSON + "]"))
 	if err != nil {
 		t.Fatal(err)
@@ -145,7 +145,7 @@ func TestSeedLineagePublicationKeepsVersionsAndDefaultSeparate(t *testing.T) {
 	if err != nil || !bytes.Equal(stored, bundle.bytes) {
 		t.Fatal("lineage bundle not published", err)
 	}
-	target.Selection = &SeedDefinitionSelection{Namespace: "log", Name: "http", Major: 0, Minor: 0}
+	target.Selection = &SeedDefinitionSelection{Namespace: "log", Name: "http", Major: 1, Minor: 0}
 	if err = RegisterSeedDefinition(root, bundle.bytes, target); err != nil {
 		t.Fatal(err)
 	}

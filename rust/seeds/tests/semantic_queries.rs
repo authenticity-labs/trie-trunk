@@ -428,3 +428,70 @@ fn provider_labels_and_groups_bind_without_retyping_the_stored_field() {
         vec![0, 1]
     );
 }
+
+#[test]
+fn query_selectors_are_limited_to_named_field_roles() {
+    let document = doc::new("measurement")
+        .field(Field::new("recorded").r#type("uint").size(6).annotation("@time(ms)"))
+        .field(Field::new("elapsed").r#type("uint").size(2).annotation("@duration").annotation("@unit(us)"))
+        .field(Field::new("event_id").r#type("bytes").size(10).annotation("@event"))
+        .field(Field::new("object_id").r#type("uuid").annotation("@object"))
+        .field(Field::new("state").r#type("uint").size(2).annotation("@leaf").annotation("@custom"))
+        .sign().unwrap();
+    let definition = SeedDefinition::prescribe(&document).unwrap();
+    for (selector, field) in [("@time", "recorded"), ("@duration", "elapsed"), ("@event", "event_id"), ("@object", "object_id")] {
+        assert_eq!(definition.query_ordinal(selector), definition.prescription().field_ordinal(field));
+    }
+    for name in ["@unit", "@leaf", "@custom", "@field"] {
+        assert_eq!(definition.query_ordinal(name), None, "{name}");
+    }
+}
+
+#[test]
+fn explicit_annotation_selectors_bind_to_each_source_field() {
+    let mut sources = Sources::new();
+    for (name, tag) in [("elapsed", "@duration"), ("latency", "@duration(us)"), ("duration", "@other")] {
+        let doc = doc::new(name)
+            .field(Field::new(name).r#type("uint").size(1).annotation(tag))
+            .sign().unwrap();
+        let definition = SeedDefinition::prescribe(&doc).unwrap();
+        assert_eq!(definition.query_fields(), [name]);
+        sources.pack(pack(&definition, name));
+    }
+    let selected = sources.query(Query::new()
+        .filter(Predicate::compare("@duration", Compare::Eq, 12))
+        .select(["@duration", "elapsed", "latency"])).unwrap().fetch(100).unwrap();
+    assert_eq!(selected.len(), 2);
+    let mut reader = selected.reader();
+    for i in 0..2 {
+        let view = reader.view(i).unwrap();
+        let object = view.object().unwrap();
+        assert_eq!(object.len(), 2);
+        assert_eq!(object[0], ("@duration".into(), Value::from(12)));
+        assert_eq!(object[1].1, object[0].1);
+    }
+    let literal = sources.query(Query::new().filter(Predicate::compare("duration", Compare::Eq, 12))).unwrap().fetch(100).unwrap();
+    assert_eq!(literal.len(), 1);
+    let untagged = sources.query(Query::new().filter(Predicate::IsAbsent("@duration".into()))).unwrap().fetch(100).unwrap();
+    assert_eq!(untagged.len(), 29); // 27 from the third source and one absent value per tagged Pack
+    let explicit_null = sources.query(Query::new().filter(Predicate::IsNull("@duration".into()))).unwrap().fetch(100).unwrap();
+    assert_eq!(explicit_null.len(), 2);
+    let doc = doc::new("ambiguous")
+        .field(Field::new("elapsed").r#type("uint").size(1).annotation("@duration"))
+        .field(Field::new("latency").r#type("uint").size(1).annotation("@duration"))
+        .sign().unwrap();
+    sources.pack(pack(&SeedDefinition::prescribe(&doc).unwrap(), "elapsed"));
+    assert!(sources.query(Query::new().select(["@duration"])).err().unwrap().to_string().contains("ambiguous annotation @duration"));
+}
+
+#[cfg(feature="query-language")]
+#[test]
+fn sql_annotation_selectors_survive_parsing_and_quoting() {
+    let fields = ["@event".into(), "@duration".into()];
+    let plan = language::parse("SELECT @duration AS elapsed FROM events WHERE @duration >= 12", &fields).unwrap();
+    assert_eq!(plan["plan"]["relational"]["selection"][0]["field"], "@duration");
+    assert_eq!(plan, language::parse("SELECT \"@duration\" AS elapsed FROM events WHERE \"@duration\" >= 12", &fields).unwrap());
+    let literal = language::parse("SELECT @event FROM events WHERE @event = '@object'", &fields).unwrap();
+    assert!(literal.to_string().contains(r#""value":"@object""#));
+    assert!(language::parse("SELECT @ time FROM events", &fields).is_err());
+}

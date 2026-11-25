@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package pil
 
 import (

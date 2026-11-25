@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"math"
 	"net/http/httptest"
-	"os"
-	"path/filepath"
+
 	"slices"
 	"testing"
 	"time"
@@ -91,98 +90,42 @@ func TestStorageEmptyEndpoint(t *testing.T) {
 	}
 }
 
-func TestStorageInventoryAggregatesMinorsAndIgnoresClassification(t *testing.T) {
-	layout := testLayout(t, false) // No level or access fields at all.
-	at := time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC)
-	now := at.Add(30 * time.Minute)
-	p, err := OpenEndpoint(Config{Root: t.TempDir(), Cache: "real", Tenant: "test", Layout: layout, Now: func() time.Time { return now }})
-	if err != nil {
-		t.Fatal(err)
+// Used by the registered mixed-version lifecycle before ingestion, while live,
+// after sealing, and after restart. Each major has its own physical file.
+func checkRegisteredStorage(t *testing.T, endpoint *Endpoint, scope []string, hour int64, count uint64) {
+	t.Helper()
+	result := httptest.NewRecorder()
+	endpoint.Handler("").ServeHTTP(result, httptest.NewRequest("GET", "/storage", nil))
+	var got storageSnapshot
+	if err := json.Unmarshal(result.Body.Bytes(), &got); err != nil || result.Code != 200 {
+		t.Fatal(result.Code, result.Body.String(), err)
 	}
-	defer p.Close()
-	inspect := func() storageSnapshot {
-		t.Helper()
-		w := httptest.NewRecorder()
-		p.operationHandler("").ServeHTTP(w, httptest.NewRequest("GET", "/storage", nil))
-		if w.Code != 200 {
-			t.Fatal(w.Code, w.Body.String())
-		}
-		var got storageSnapshot
-		if err := json.Unmarshal(w.Body.Bytes(), &got); err != nil {
-			t.Fatal(err)
-		}
-		var own uint64
-		for _, node := range got.Nodes {
-			own += node.OwnAllocated
-		}
-		if own != got.Allocated {
-			t.Fatal("allocation counted twice", own, got.Allocated)
-		}
-		return got
-	}
-	empty := inspect()
-	if len(empty.Nodes) != 4 || len(empty.Samples) != 0 {
-		t.Fatal("empty registered resource missing or invented leaf", empty.Nodes)
-	}
-	first := p.api.Store
-	if _, err = first.Append(Write, testFrame(t, layout, at, 1, false)); err != nil {
-		t.Fatal(err)
-	}
-	def := layout.Definition
-	def.Version++
-	def.Resource.Minor++
-	secondLayout, err := Compile(def)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err = p.install(secondLayout); err != nil {
-		t.Fatal(err)
-	}
-	var second *Store
-	for _, api := range p.apis {
-		if api.Store.layout.Digest == secondLayout.Digest {
-			second = api.Store
-		}
-	}
-	if second == nil {
-		t.Fatal("missing minor")
-	}
-	if _, err = second.Append(Write, testFrame(t, secondLayout, at, 2, false)); err != nil {
-		t.Fatal(err)
-	}
-	// A directory/filename alone cannot register a physical branch or resource.
-	if err = os.WriteFile(filepath.Join(first.dir, "error.read.fake"), []byte("not cataloged"), 0600); err != nil {
-		t.Fatal(err)
-	}
-	check := func() {
-		got := inspect()
-		leaves := 0
-		events := uint64(0)
-		for _, node := range got.Nodes {
-			if node.Kind == "branch" {
-				leaves++
-				if !slices.Equal(node.Path, []string{"real", "payment", "transactions.v1", "write"}) {
-					t.Fatal(node)
-				}
+	var allocated, events uint64
+	var weighted float64
+	var branches int
+	for _, node := range got.Nodes {
+		allocated += node.OwnAllocated
+		if node.Kind == "branch" {
+			branches++
+			if !slices.Equal(node.Path, scope) {
+				t.Fatal("unexpected storage branch", node.Path)
+			}
+			if count > 0 && node.OwnLogical == 0 {
+				t.Fatal("branch files have no owner", node)
 			}
 		}
-		for _, sample := range got.Samples {
-			events += sample.Events
-			if len(sample.Path) != 4 || sample.Path[3] != "write" {
-				t.Fatal(sample)
-			}
+	}
+	if count > 0 && len(got.Samples) != 1 {
+		t.Fatalf("expected one logical branch-hour across major versions, got %d", len(got.Samples))
+	}
+	for _, sample := range got.Samples {
+		if !slices.Equal(sample.Path, scope) || sample.Hour != hour {
+			t.Fatal(sample)
 		}
-		if leaves != 1 || events != 2 || got.Shared == 0 {
-			t.Fatal(leaves, events, got.Shared)
-		}
+		events += sample.Events
+		weighted += sample.Bytes
 	}
-	check()
-	now = at.Add(2 * time.Hour)
-	if err = first.Flush(); err != nil {
-		t.Fatal(err)
+	if branches != 1 || allocated != got.Allocated || events != count || math.Abs(weighted+float64(got.Unattributed)-float64(allocated)) > 1 {
+		t.Fatalf("branches %d, attributed bytes %d of %d, events %d of %d", branches, allocated, got.Allocated, events, count)
 	}
-	if err = second.Flush(); err != nil {
-		t.Fatal(err)
-	}
-	check()
 }

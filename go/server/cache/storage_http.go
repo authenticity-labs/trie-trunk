@@ -10,6 +10,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"trie-trunk/go/internal/node"
 )
 
 type storageSample struct {
@@ -28,7 +29,7 @@ type storageSnapshot struct {
 	Captured     int64           `json:"captured"`
 }
 
-func (h *HTTP) storageHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) storageHTTP(w http.ResponseWriter, r *http.Request, registered *node.Node) {
 	if r.Method != http.MethodGet {
 		w.Header().Set("Allow", "GET")
 		http.Error(w, "GET required", 405)
@@ -42,7 +43,7 @@ func (h *HTTP) storageHTTP(w http.ResponseWriter, r *http.Request) {
 	if len(sources) == 0 && h.Store != nil {
 		sources = []*HTTP{h}
 	}
-	inventory, err := collectStorageInventory(sources, h.storageRoots, true)
+	inventory, err := collectStorageInventory(sources, h.storageRoots, true, registered)
 	if err != nil {
 		http.Error(w, "could not load storage catalog: "+err.Error(), 500)
 		return
@@ -86,13 +87,18 @@ func (h *HTTP) storageHTTP(w http.ResponseWriter, r *http.Request) {
 					owner = resource
 				}
 			}
-			if len(parts) >= 4 {
-				dir := filepath.Join(root, parts[0], parts[1], parts[2])
+			if len(parts) >= 3 {
+				dir := filepath.Dir(path)
 				if entry, ok := inventory.owners[dir]; ok {
 					owner = entry.resource
-					branchName, _, _ := strings.Cut(parts[3], ".")
-					if branch, exists := entry.branches[branchName]; exists {
-						owner = branch
+					// Registered stems may include the resource type, split and major version.
+					name := filepath.Base(path)
+					for cut := strings.LastIndexByte(name, '.'); cut >= 0; cut = strings.LastIndexByte(name, '.') {
+						name = name[:cut]
+						if branch, exists := entry.branches[name]; exists {
+							owner = branch
+							break
+						}
 					}
 				}
 			}
@@ -117,8 +123,7 @@ func (h *HTTP) storageHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	// Hour distributions are estimates weighted by recorded PAC/index bytes and
-	// pending frame lengths. Leaf totals are exact filesystem allocation; shared
+	// Hour estimates use sealed PAC/index sizes and open recovery bytes. Leaf totals are exact filesystem allocation; shared
 	// metadata is not assigned fictitious event times or reclaimable leaf space.
 	weights := map[string]float64{}
 	for _, sample := range result.Samples {

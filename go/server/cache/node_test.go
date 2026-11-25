@@ -101,7 +101,25 @@ func TestHTTPAndSocketShareOneNodeAndPublication(t *testing.T) {
 				}
 			}
 			query()
-			live, e := owner.Snapshot(1, [][2]uint64{{hour, hour + 3600000}}, false, nil, clock)
+			checkTimeline := func(expected string) {
+				t.Helper()
+				bounds := httptest.NewRequest("GET", "/demo/trie-trunk/queries/query/timelines?bounds=1", nil)
+				bounds.Header.Set("Trunk-Branch", "1")
+				reply := httptest.NewRecorder()
+				endpoint.ServeHTTP(reply, bounds)
+				if reply.Code != 200 || reply.Body.String() != fmt.Sprintf("[%d,%d]", hour, hour+3600000) {
+					t.Fatalf("occupied timeline bounds %d: %s", reply.Code, reply.Body)
+				}
+				r := httptest.NewRequest("GET", fmt.Sprintf("/demo/trie-trunk/queries/query/timelines?range=%d,%d", hour, hour+3600000), nil)
+				r.Header.Set("Trunk-Branch", "1")
+				w := httptest.NewRecorder()
+				endpoint.ServeHTTP(w, r)
+				if w.Code != 200 || w.Header().Get("Trunk-Open-Counts") != expected {
+					t.Fatalf("timeline %d: open counts %q, want %q", w.Code, w.Header().Get("Trunk-Open-Counts"), expected)
+				}
+			}
+			checkTimeline(fmt.Sprintf("[[%d,1]]", hour))
+			live, e := owner.Snapshot(1, [][2]uint64{{hour, hour + 3600000}}, node.Packs, nil, clock)
 			if e != nil {
 				t.Fatal(e)
 			}
@@ -118,7 +136,7 @@ func TestHTTPAndSocketShareOneNodeAndPublication(t *testing.T) {
 			if updated.Code != 204 {
 				t.Fatal(updated.Code, updated.Body.String())
 			}
-			reused, e := owner.Snapshot(1, [][2]uint64{{hour, hour + 3600000}}, false, &live.Generation, clock)
+			reused, e := owner.Snapshot(1, [][2]uint64{{hour, hour + 3600000}}, node.Packs, &live.Generation, clock)
 			if e != nil {
 				t.Fatal(e)
 			}
@@ -133,11 +151,12 @@ func TestHTTPAndSocketShareOneNodeAndPublication(t *testing.T) {
 			if !bytes.Equal(before, live.Bytes(4, 0)) {
 				t.Fatal("commit invalidated a reader's live snapshot")
 			}
-			after, e := owner.Snapshot(1, [][2]uint64{{hour, hour + 3600000}}, false, &live.Generation, clock)
+			after, e := owner.Snapshot(1, [][2]uint64{{hour, hour + 3600000}}, node.Packs, &live.Generation, clock)
 			if e != nil {
 				t.Fatal(e)
 			}
 			defer after.Close()
+			checkTimeline("")
 			if !after.Published || after.Live != 0 || after.Generation == live.Generation {
 				t.Fatal("published/live handoff failed")
 			}

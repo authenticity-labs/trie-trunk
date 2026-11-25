@@ -1,7 +1,8 @@
 //! A sorted UUID directory with disk leaf pages and an in-memory fence array.
 //!
-//! This is a standalone index prototype, not the deployed collection index.
-//! Addresses are opaque: page splits never relocate the histories they reference.
+//! The INFO.WRITE collection index lives in [`collection`]. The UUID-only prototype below
+//! maps keys directly to opaque addresses.
+//! Page splits preserve the addresses they reference.
 //! Unix positioned I/O avoids mutable mmap aliases while pages are rewritten.
 
 use std::collections::BTreeMap;
@@ -11,7 +12,9 @@ use std::os::unix::fs::FileExt;
 use std::path::{Path, PathBuf};
 use std::sync::RwLock;
 
+#[cfg(feature = "historical-benchmarks")]
 pub mod slotted;
+pub mod collection;
 
 pub type Uuid = [u8; 16];
 pub const PAGE_BYTES: usize = 4096;

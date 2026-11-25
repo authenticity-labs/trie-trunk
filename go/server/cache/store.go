@@ -30,60 +30,49 @@ type Config struct {
 	NativeMemoryBytes   uint64           // native payload budget per definition; default 1 GiB
 	Now                 func() time.Time
 }
-type Catalog struct {
-	ResourceTypes       map[string]string            `pil:",omitempty"`
-	RetiredRows         map[string]map[Branch]uint64 `pil:",omitempty"`
-	Format              uint32
-	Cache, Tenant       string
-	Definitions         map[string][32]byte
-	Generations         map[string]map[Branch][16]byte
-	GenerationSequences map[string]map[Branch]uint64 `pil:",omitempty"`
-	Preferred           map[string][32]byte          `pil:",omitempty"`
-	// Exact Definition digest -> PAC ranges in definition.meta and synonym.map.
-	// Optional presentation/translation resources do not change event storage.
-	DefinitionResources map[string]definitionmeta.Resources `pil:",omitempty"`
-}
+type Catalog = definitionmeta.Registry[Branch]
+
 type pending struct {
 	id    [16]byte
 	frame []byte
 }
 type branchStore struct {
-	readerIndex                      *residentMapping
-	readerSummary                    *residentFile
-	readerFile                       *residentFile
-	sealedMemory                     map[int64]*nativeArena // immutable PACs only
-	ingressPages                     map[int64]*ingressPage
-	ingressTail                      []pending
-	memory                           map[int64]*nativeArena
+	readerIndex                       *residentMapping
+	readerSummary                     *residentFile
+	readerFile                        *residentFile
+	sealedMemory                      map[int64]*nativeArena // immutable PACs only
+	ingressPages                      map[int64]*ingressPage
+	ingressTail                       []pending
+	memory                            map[int64]*nativeArena
 	baseRows, packsRetired, memberEnd uint64
-	blockBase                        uint32
-	branch                           Branch
-	layout                           *Layout
-	generation                       [16]byte
+	blockBase                         uint32
+	branch                            Branch
+	layout                            *Layout
+	generation                        [16]byte
 	idx, packs, sum                   *os.File
-	swap                             *os.File
-	seedHour                         int64
-	stagingPacks                            map[int64]*os.File
-	ingressDirty                     map[*os.File]bool
-	sealingBefore                    int64
-	finalizedBefore                  int64
-	rows                             []byte
-	mapping                          []byte
-	runs                             []Run
-	time                             timeDirectory
-	timeAnchor                       *TimeAnchor
-	timeDirty                        bool
-	live                             *nativeLive
-	liveViews                        map[string]liveViewSnapshot
-	pendingVersion                   uint64
-	provisionalRecords               map[int64]uint32
-	pendingBytes                     int
+	swap                              *os.File
+	seedHour                          int64
+	stagingPacks                      map[int64]*os.File
+	ingressDirty                      map[*os.File]bool
+	sealingBefore                     int64
+	finalizedBefore                   int64
+	rows                              []byte
+	mapping                           []byte
+	runs                              []Run
+	time                              timeDirectory
+	timeAnchor                        *TimeAnchor
+	timeDirty                         bool
+	live                              *nativeLive
+	liveViews                         map[string]liveViewSnapshot
+	pendingVersion                    uint64
+	provisionalRecords                map[int64]uint32
+	pendingBytes                      int
 	packsEnd, sumEnd                  uint64
-	summaries                        []Summary
-	accumulators                     summaryRing
-	summaryDays                      map[int64]summaryDayLocation
-	summaryPackedThrough             int64
-	calendarRollups                  []CalendarRollup
+	summaries                         []Summary
+	accumulators                      summaryRing
+	summaryDays                       map[int64]summaryDayLocation
+	summaryPackedThrough              int64
+	calendarRollups                   []CalendarRollup
 }
 type Store struct {
 	ingress            *ingressMeter
@@ -145,7 +134,7 @@ func (s *Store) fail(e error) error {
 	}
 	return e
 }
-func (s *Store) Flush() error {
+func (s *Store) flushAll() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.waitSealing()
@@ -217,7 +206,7 @@ func (s *Store) release() error {
 		e = errors.Join(e, s.audit.Close())
 	}
 	if s.config.group == nil && s.objects != nil && s.objects.file != nil {
-		e = errors.Join(e, s.objects.file.Close())
+		e = errors.Join(e, s.objects.close())
 	}
 	if s.config.group == nil && s.state != nil {
 		e = errors.Join(e, s.state.file.Close())
@@ -227,7 +216,7 @@ func (s *Store) release() error {
 	}
 	return e
 }
-func (s *Store) Close() error {
+func (s *Store) close() error {
 	s.mu.Lock()
 	s.waitSealing()
 	if s.closed {

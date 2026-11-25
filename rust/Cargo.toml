@@ -7,6 +7,7 @@ license = "AGPL-3.0-only"
 publish = false
 
 [dependencies]
+trunk-uuid-index = { path = "uuid-index" }
 data-seeds = { path = "seeds" }
 trunk-node = { path = "node" }
 pil-codec = { package = "pill-packer", path = "../../pill-packer/rust", features = ["gzip"] }

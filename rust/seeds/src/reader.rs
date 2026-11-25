@@ -206,7 +206,7 @@ impl Reader {
         }
         let address = state.selection.addresses[ordinal];
         let available = state.selection.length - address;
-        let mut prefix = [0; 27];
+        let mut prefix = [0; crate::pack::MAX_PREFIX];
         let count = available.min(prefix.len() as u64) as usize;
         read_exact(
             state.storage.as_ref(),

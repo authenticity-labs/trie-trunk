@@ -28,6 +28,9 @@ impl Versions {
     }
 
     pub fn read(inner: &PackBox<'_>) -> Result<Self, Error> {
+        if inner.options().external_addresses {
+            return Err(error("summary Box requires ordinal addressing"));
+        }
         let headers = inner.headers();
         let base = SummaryLayout::from_headers(headers)?;
         let extra = headers.keys().filter(|key| key.starts_with("summary-shape.")).count();
@@ -116,6 +119,13 @@ impl Versions {
     }
     pub fn transitions(&self) -> &[Transition] {
         self.runs.entries()
+    }
+    pub fn for_pack(
+        &self,
+        inner: &PackBox<'_>,
+        ordinal: usize,
+    ) -> Result<&Arc<SummaryLayout>, Error> {
+        self.at(inner.member_range(ordinal)?.start, inner.next_address())
     }
     pub fn at(&self, offset: u64, member_end: u64) -> Result<&Arc<SummaryLayout>, Error> {
         let reference = match self.runs.binding_at(offset, member_end) {

@@ -27,7 +27,7 @@ func IsPath(path string) bool {
 	case 4:
 		return p[3] == "leaves" || p[3] == "collections"
 	case 5:
-		return p[4] == "summaries" || p[4] == "timelines" || p[4] == "indexes" || p[4] == "seeds" || p[4] == "packs" || p[4] == "strings"
+		return p[4] == "roots" || p[4] == "summaries" || p[4] == "timelines" || p[4] == "indexes" || p[4] == "seeds" || p[4] == "packs" || p[4] == "strings"
 	}
 	return false
 }

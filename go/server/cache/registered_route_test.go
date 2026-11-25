@@ -71,7 +71,7 @@ func TestRegisteredBranchRoutingUsesRustAndSeparatesResourceTypes(t *testing.T) 
 	if _, _, err := p.selectRegisteredBranch(request, []*HTTP{httpSource, httpSource}); err == nil {
 		t.Fatal("accepted ambiguous active storage")
 	}
-	p.routing.Store(&routingSnapshot{sources: []*HTTP{httpSource, securitySource}})
+	p.registeredReads = make(map[string]*registeredReadSnapshot)
 	for _, handler := range []interface {
 		ServeHTTP(http.ResponseWriter, *http.Request)
 	}{p, &HTTP{sources: []*HTTP{httpSource, securitySource}}} {

@@ -18,7 +18,7 @@ type timebasePlan struct {
 }
 
 func compileTimebaseExperiment(l *Layout) *timebasePlan {
-	p := &timebasePlan{layout: l, relative: make([]bool, len(l.Widths)), last: -1, mask: (len(l.Widths) + 3) / 4}
+	p := &timebasePlan{layout: l, relative: make([]bool, len(l.Widths)), last: -1, mask: (len(l.Widths) + 4) / 4}
 	for i, f := range l.Definition.Fields {
 		// The event role's UUIDv7 restriction is an explicit experiment precondition.
 		if i == l.Event || f.Type == "TIMESTAMP_MS" {
@@ -35,7 +35,7 @@ func (p *timebasePlan) transform(dst, raw []byte, base int64, expand bool) ([]by
 	}
 	at, start := p.mask, 0
 	for i := 0; i <= p.last; i++ {
-		state := State(raw[i/4] >> uint(6-2*(i%4)) & 3)
+		state := State(raw[(i+1)/4] >> uint(6-2*((i+1)%4)) & 3)
 		if state != Direct {
 			if state == Offset && p.relative[i] {
 				return nil, fmt.Errorf("offset temporal field")
@@ -180,7 +180,7 @@ func (p *timebasePlan) frameLength(raw []byte, relative bool) (int, error) {
 	at := p.mask
 	offsets := 0
 	for i, w := range p.layout.Widths {
-		state := State(raw[i/4] >> uint(6-2*(i%4)) & 3)
+		state := State(raw[(i+1)/4] >> uint(6-2*((i+1)%4)) & 3)
 		if state == Direct {
 			if relative && p.relative[i] {
 				w = 4

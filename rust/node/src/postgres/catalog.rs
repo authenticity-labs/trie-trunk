@@ -8,6 +8,7 @@ pub struct Table {
     pub path: Vec<String>,
     pub branches: Vec<u16>,
     pub fields: Vec<(String, Type)>,
+    pub selectors: Vec<(String, Type)>,
 }
 pub struct Catalog {
     pub tables: BTreeMap<(String, String), Table>,
@@ -15,12 +16,6 @@ pub struct Catalog {
 }
 
 fn field_type(f: &Json) -> Type {
-    if f["annotations"].as_array().is_some_and(|a| {
-        a.iter()
-            .any(|s| matches!(s.as_str(), Some("@event" | "@log" | "@id" | "@id(uuidv7)")))
-    }) {
-        return Type::UUID;
-    }
     let kind = f["type"].as_str().unwrap_or("");
     match kind {
         "BOOL" => Type::BOOL,
@@ -53,6 +48,21 @@ fn field_type(f: &Json) -> Type {
         _ => Type::JSON,
     }
 }
+fn merge_type(fields: &mut Vec<(String, Type)>, name: &str, ty: &Type) {
+    if let Some((_, old)) = fields.iter_mut().find(|(n, _)| n == name) {
+        if *old != *ty {
+            *old = if [Type::INT2, Type::INT4, Type::INT8, Type::NUMERIC].contains(old)
+                && [Type::INT2, Type::INT4, Type::INT8, Type::NUMERIC].contains(ty)
+            {
+                Type::NUMERIC
+            } else {
+                Type::JSON
+            };
+        }
+    } else {
+        fields.push((name.to_owned(), ty.clone()));
+    }
+}
 impl Catalog {
     pub fn read(node: &Node, database: &str) -> Result<Self> {
         let trie = node.trie();
@@ -81,6 +91,7 @@ impl Catalog {
                     path: path.clone(),
                     branches: vec![],
                     fields: vec![],
+                    selectors: vec![],
                 });
             if t.path != path {
                 return Err(format!(
@@ -90,24 +101,22 @@ impl Catalog {
                 .into());
             }
             t.branches.push(r.branch);
+            let definition = trie.registered().definition(r.definition)?;
             for f in trie.registered().describe(r.definition)?["fields"]
                 .as_array()
                 .ok_or("Missing fields")?
             {
                 let name = f["name"].as_str().ok_or("Missing field name")?;
-                let ty = field_type(f);
-                if let Some((_, old)) = t.fields.iter_mut().find(|(n, _)| n == name) {
-                    if *old != ty {
-                        *old = if [Type::INT2, Type::INT4, Type::INT8, Type::NUMERIC].contains(old)
-                            && [Type::INT2, Type::INT4, Type::INT8, Type::NUMERIC].contains(&ty)
-                        {
-                            Type::NUMERIC
-                        } else {
-                            Type::JSON
-                        };
-                    }
+                let ty = if definition.is_event_id(name) {
+                    Type::UUID
+                } else if definition.timestamp_unit(name) == Some("ms") {
+                    Type::TIMESTAMPTZ
                 } else {
-                    t.fields.push((name.to_owned(), ty));
+                    field_type(f)
+                };
+                merge_type(&mut t.fields, name, &ty);
+                for selector in f["selectors"].as_array().into_iter().flatten().filter_map(Json::as_str) {
+                    merge_type(&mut t.selectors, selector, &ty);
                 }
             }
         }

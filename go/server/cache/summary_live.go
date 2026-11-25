@@ -153,6 +153,8 @@ func encodeLiveSummary(hour, observed int64, h liveSummaryHour, checkpoint summa
 		}
 		pack.Headers["aggregates"] = raw
 	}
-	pack.RecordWidth = 50
+	if len(records) > 0 {
+		pack.RecordWidth = uint32(len(records[0]))
+	}
 	return pack.Marshal()
 }

@@ -3,280 +3,280 @@
     "log-db_datadog": {
       "Name": "log-db_datadog",
       "Metadata": {
-        "Offset": 17678,
-        "Length": 1648
+        "Offset": 17630,
+        "Length": 1642
       },
       "Synonyms": {}
     },
     "log-db_opentelemetry": {
       "Name": "log-db_opentelemetry",
       "Metadata": {
-        "Offset": 16680,
-        "Length": 998
+        "Offset": 16638,
+        "Length": 992
       },
       "Synonyms": {}
     },
     "log-db_trietrunk": {
       "Name": "log-db_trietrunk",
       "Metadata": {
-        "Offset": 12766,
-        "Length": 3914
+        "Offset": 12730,
+        "Length": 3908
       },
       "Synonyms": {
         "log-db_datadog": {
-          "Offset": 5943,
-          "Length": 1030
+          "Offset": 5913,
+          "Length": 1024
         },
         "log-db_opentelemetry": {
-          "Offset": 4333,
-          "Length": 1610
+          "Offset": 4309,
+          "Length": 1604
         }
       }
     },
     "log-http_datadog": {
       "Name": "log-http_datadog",
       "Metadata": {
-        "Offset": 10840,
-        "Length": 1926
+        "Offset": 10810,
+        "Length": 1920
       },
       "Synonyms": {}
     },
     "log-http_opentelemetry": {
       "Name": "log-http_opentelemetry",
       "Metadata": {
-        "Offset": 9840,
-        "Length": 1000
+        "Offset": 9816,
+        "Length": 994
       },
       "Synonyms": {}
     },
     "log-http_trietrunk": {
       "Name": "log-http_trietrunk",
       "Metadata": {
-        "Offset": 4168,
-        "Length": 5672
+        "Offset": 4150,
+        "Length": 5666
       },
       "Synonyms": {
         "log-http_datadog": {
-          "Offset": 3139,
-          "Length": 1194
+          "Offset": 3121,
+          "Length": 1188
         },
         "log-http_opentelemetry": {
-          "Offset": 1313,
-          "Length": 1826
+          "Offset": 1301,
+          "Length": 1820
         }
       }
     },
     "log-job_datadog": {
       "Name": "log-job_datadog",
       "Metadata": {
-        "Offset": 34863,
-        "Length": 1535
+        "Offset": 34761,
+        "Length": 1529
       },
       "Synonyms": {}
     },
     "log-job_opentelemetry": {
       "Name": "log-job_opentelemetry",
       "Metadata": {
-        "Offset": 33864,
-        "Length": 999
+        "Offset": 33768,
+        "Length": 993
       },
       "Synonyms": {}
     },
     "log-job_trietrunk": {
       "Name": "log-job_trietrunk",
       "Metadata": {
-        "Offset": 30689,
-        "Length": 3175
+        "Offset": 30599,
+        "Length": 3169
       },
       "Synonyms": {
         "log-job_datadog": {
-          "Offset": 13411,
-          "Length": 967
+          "Offset": 13345,
+          "Length": 961
         },
         "log-job_opentelemetry": {
-          "Offset": 11985,
-          "Length": 1426
+          "Offset": 11925,
+          "Length": 1420
         }
       }
     },
     "log-messaging_datadog": {
       "Name": "log-messaging_datadog",
       "Metadata": {
-        "Offset": 23266,
-        "Length": 1563
+        "Offset": 23200,
+        "Length": 1557
       },
       "Synonyms": {}
     },
     "log-messaging_opentelemetry": {
       "Name": "log-messaging_opentelemetry",
       "Metadata": {
-        "Offset": 22261,
-        "Length": 1005
+        "Offset": 22201,
+        "Length": 999
       },
       "Synonyms": {}
     },
     "log-messaging_trietrunk": {
       "Name": "log-messaging_trietrunk",
       "Metadata": {
-        "Offset": 19326,
-        "Length": 2935
+        "Offset": 19272,
+        "Length": 2929
       },
       "Synonyms": {
         "log-messaging_datadog": {
-          "Offset": 8576,
-          "Length": 984
+          "Offset": 8534,
+          "Length": 978
         },
         "log-messaging_opentelemetry": {
-          "Offset": 6973,
-          "Length": 1603
+          "Offset": 6937,
+          "Length": 1597
         }
       }
     },
     "log-security_datadog": {
       "Name": "log-security_datadog",
       "Metadata": {
-        "Offset": 29135,
-        "Length": 1554
+        "Offset": 29051,
+        "Length": 1548
       },
       "Synonyms": {}
     },
     "log-security_opentelemetry": {
       "Name": "log-security_opentelemetry",
       "Metadata": {
-        "Offset": 28131,
-        "Length": 1004
+        "Offset": 28053,
+        "Length": 998
       },
       "Synonyms": {}
     },
     "log-security_trietrunk": {
       "Name": "log-security_trietrunk",
       "Metadata": {
-        "Offset": 24829,
-        "Length": 3302
+        "Offset": 24757,
+        "Length": 3296
       },
       "Synonyms": {
         "log-security_datadog": {
-          "Offset": 11006,
-          "Length": 979
+          "Offset": 10952,
+          "Length": 973
         },
         "log-security_opentelemetry": {
-          "Offset": 9560,
-          "Length": 1446
+          "Offset": 9512,
+          "Length": 1440
         }
       }
     },
     "log-system_datadog": {
       "Name": "log-system_datadog",
       "Metadata": {
-        "Offset": 51282,
-        "Length": 1386
+        "Offset": 51126,
+        "Length": 1380
       },
       "Synonyms": {}
     },
     "log-system_opentelemetry": {
       "Name": "log-system_opentelemetry",
       "Metadata": {
-        "Offset": 50280,
-        "Length": 1002
+        "Offset": 50130,
+        "Length": 996
       },
       "Synonyms": {}
     },
     "log-system_trietrunk": {
       "Name": "log-system_trietrunk",
       "Metadata": {
-        "Offset": 47469,
-        "Length": 2811
+        "Offset": 47325,
+        "Length": 2805
       },
       "Synonyms": {
         "log-system_datadog": {
-          "Offset": 20212,
-          "Length": 880
+          "Offset": 20110,
+          "Length": 874
         },
         "log-system_opentelemetry": {
-          "Offset": 18850,
-          "Length": 1362
+          "Offset": 18754,
+          "Length": 1356
         }
       }
     },
     "log-task_datadog": {
       "Name": "log-task_datadog",
       "Metadata": {
-        "Offset": 40521,
-        "Length": 1450
+        "Offset": 40401,
+        "Length": 1444
       },
       "Synonyms": {}
     },
     "log-task_opentelemetry": {
       "Name": "log-task_opentelemetry",
       "Metadata": {
-        "Offset": 39521,
-        "Length": 1000
+        "Offset": 39407,
+        "Length": 994
       },
       "Synonyms": {}
     },
     "log-task_trietrunk": {
       "Name": "log-task_trietrunk",
       "Metadata": {
-        "Offset": 36398,
-        "Length": 3123
+        "Offset": 36290,
+        "Length": 3117
       },
       "Synonyms": {
         "log-task_datadog": {
-          "Offset": 15741,
-          "Length": 918
+          "Offset": 15663,
+          "Length": 912
         },
         "log-task_opentelemetry": {
-          "Offset": 14378,
-          "Length": 1363
+          "Offset": 14306,
+          "Length": 1357
         }
       }
     },
     "log-workflow_datadog": {
       "Name": "log-workflow_datadog",
       "Metadata": {
-        "Offset": 46085,
-        "Length": 1384
+        "Offset": 45947,
+        "Length": 1378
       },
       "Synonyms": {}
     },
     "log-workflow_opentelemetry": {
       "Name": "log-workflow_opentelemetry",
       "Metadata": {
-        "Offset": 45081,
-        "Length": 1004
+        "Offset": 44949,
+        "Length": 998
       },
       "Synonyms": {}
     },
     "log-workflow_trietrunk": {
       "Name": "log-workflow_trietrunk",
       "Metadata": {
-        "Offset": 41971,
-        "Length": 3110
+        "Offset": 41845,
+        "Length": 3104
       },
       "Synonyms": {
         "log-workflow_datadog": {
-          "Offset": 17970,
-          "Length": 880
+          "Offset": 17880,
+          "Length": 874
         },
         "log-workflow_opentelemetry": {
-          "Offset": 16659,
-          "Length": 1311
+          "Offset": 16575,
+          "Length": 1305
         }
       }
     },
     "log_datadog": {
       "Name": "log_datadog",
       "Metadata": {
-        "Offset": 3429,
-        "Length": 739
+        "Offset": 3417,
+        "Length": 733
       },
       "Synonyms": {}
     },
     "log_opentelemetry": {
       "Name": "log_opentelemetry",
       "Metadata": {
-        "Offset": 2434,
-        "Length": 995
+        "Offset": 2428,
+        "Length": 989
       },
       "Synonyms": {}
     },
@@ -284,21 +284,21 @@
       "Name": "log_trietrunk",
       "Metadata": {
         "Offset": 0,
-        "Length": 2434
+        "Length": 2428
       },
       "Synonyms": {
         "log_datadog": {
-          "Offset": 816,
-          "Length": 497
+          "Offset": 810,
+          "Length": 491
         },
         "log_opentelemetry": {
           "Offset": 0,
-          "Length": 816
+          "Length": 810
         }
       }
     }
   },
-  "metadata_bytes": 52668,
-  "synonym_bytes": 21092,
-  "registry_bytes": 7272
+  "metadata_bytes": 52506,
+  "synonym_bytes": 20984,
+  "registry_bytes": 7273
 }

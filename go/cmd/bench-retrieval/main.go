@@ -23,7 +23,7 @@ import (
 	"sync"
 	"time"
 
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 	"github.com/quic-go/quic-go/http3"
 )
 
@@ -127,8 +127,8 @@ func (r runner) get(ctx context.Context, q request) ([]byte, measurement, error)
 	}
 	m.DecodedBodyBytes = len(raw)
 	if len(q.Digests) > 0 {
-		var packs [][]byte
-		if err := decodeSummaryPacks(raw, &packs); err != nil {
+		packs, err := splitPacks(raw)
+		if err != nil {
 			return nil, m, err
 		}
 		if len(packs) != len(q.Digests) {
@@ -142,7 +142,7 @@ func (r runner) get(ctx context.Context, q request) ([]byte, measurement, error)
 		}
 	}
 	if strings.HasSuffix(m.Path, "/packs") {
-		if _, err := pil.OpenNestedPack(raw); err != nil {
+		if _, err := splitPacks(raw); err != nil {
 			return nil, m, err
 		}
 	}
@@ -552,17 +552,15 @@ func mainErr() error {
 	return nil
 }
 
-func decodeSummaryPacks(raw []byte, out *[][]byte) error {
-	p, err := pil.OpenNestedPack(raw)
-	if err != nil {
-		return err
-	}
-	*out = make([][]byte, p.Count())
-	for i := range *out {
-		(*out)[i], err = p.Get(i)
+func splitPacks(stream []byte) ([][]byte, error) {
+	var packs [][]byte
+	for len(stream) != 0 {
+		pack, rest, err := pil.NextPack(stream)
 		if err != nil {
-			return err
+			return nil, err
 		}
+		packs = append(packs, pack)
+		stream = rest
 	}
-	return nil
+	return packs, nil
 }

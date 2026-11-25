@@ -1,7 +1,10 @@
 use data_seeds::{doc, Field, SeedDefinition, MemoryBudget, Predicate, summaries::*};
-fn reader() -> SummaryReader {
+fn definition() -> std::sync::Arc<SeedDefinition> {
     let doc=doc::new("column-test").field(Field::new("duration").r#type("uint").size(4).annotation("@unit(us)").annotation("#summ(numeric)")).sign().unwrap();
-    let source=SeedDefinition::prescribe(&doc).unwrap();let plan=source.summaries(288).unwrap();let mut day=plan.accumulator(0).unwrap();
+    SeedDefinition::prescribe(&doc).unwrap()
+}
+fn reader() -> SummaryReader {
+    let plan=definition().summaries(288).unwrap();let mut day=plan.accumulator(0).unwrap();
     for (time,value) in [(0,10u32),(300_000,30)] {day.ingest(time,value,|v,s|{s.set_uint("duration",v)?;Ok(())}).unwrap();}
     day.complete(day.end()).unwrap();let mut storage=SummaryBox::new(plan.layout().clone()).unwrap();storage.append(day.seal().unwrap()).unwrap().commit().unwrap();
     SummaryReader::open(storage.bytes().unwrap().to_vec(),0).unwrap()
@@ -51,8 +54,26 @@ fn table_reduces_ingested_classes_with_exact_coverage_and_poisoned_failures() {
     assert!(table.finish().is_err());
     let mut bad=coverage();bad[0].count=3;
     let mut table=SummaryTable::new(&plan,bad,0,86_400_000).unwrap();
-    assert!(table.read(&mut reader(),"test","rx").is_err());
+    table.read(&mut reader(),"test","rx").unwrap();
     assert!(table.finish().is_err());
+    assert_eq!(table.remaining().unwrap(), vec![("test".into(), "rx".into(), vec![(0, 3_600_000)])]);
+
+    let def = definition();
+    let mut pack = def.fill(3).unwrap();
+    for duration in [10u32, 30, 30] {
+        let mut seed = def.seed();
+        seed.set_uint("duration", duration).unwrap();
+        pack.load(seed).unwrap();
+    }
+    pack.seal().unwrap();
+    let mut packs = data_seeds::Packs::new();
+    packs.pack(def.open(pack.into_bytes().unwrap()).unwrap());
+    let batch = packs.query(table.event_query()).unwrap().fetch(3).unwrap();
+    table.events(&batch).unwrap();
+    assert_eq!(table.finish().unwrap()["rows"], json!([
+        [{"$integer":"10"},{"$integer":"1"},{"$integer":"10"},10.0],
+        [{"$integer":"30"},{"$integer":"2"},{"$integer":"60"},30.0]
+    ]));
 }
 
 #[cfg(feature="registration")]
@@ -78,13 +99,10 @@ fn table_only_reduces_timeline_selected_hours() {
 #[test]
 fn sql_summary_table_binds_text_literals_to_source_units() {
     use serde_json::json;
-    let plan=data_seeds::language::parse("SELECT * FROM summaries WHERE \"duration.max\" > '0.02 ms'", &["duration.max".into()]).unwrap();
+    let plan=data_seeds::language::parse("SELECT duration, COUNT(*) AS n FROM events WHERE duration > '0.02 ms' GROUP BY duration", &["duration".into()]).unwrap();
     let plan=&plan["plan"];
     let mut table=SummaryTable::new(plan,vec![Coverage{source:"test".into(),definition:"rx".into(),time:0,count:2}],0,86_400_000).unwrap();
     table.read(&mut reader(),"test","rx").unwrap();
-    let result=table.finish().unwrap();
-    assert_eq!(result["rows"].as_array().unwrap().len(),1,"{result}");
-    assert!(result.to_string().contains("30"));
-    // The old microsecond assumption must not leak into numeric string parsing.
-    assert_ne!(result, json!(null));
+    assert!(table.remaining().unwrap().is_empty());
+    assert_eq!(table.finish().unwrap()["rows"], json!([[{"$integer":"30"},{"$integer":"1"}]]));
 }

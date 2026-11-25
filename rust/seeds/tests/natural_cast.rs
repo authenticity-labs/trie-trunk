@@ -152,6 +152,21 @@ fn definition() -> std::sync::Arc<SeedDefinition> {
     .unwrap()
 }
 #[test]
+fn timestamp_annotation_requires_integer_milliseconds() {
+    for (kind, tag, valid) in [
+        ("int", "@timestamp(ms)", true),
+        ("uint", "@timestamp(ms)", true),
+        ("float", "@timestamp(ms)", false),
+        ("int", "@timestamp", false),
+        ("int", "@timestamp(s)", false),
+    ] {
+        let document = doc::new("reading")
+            .field(Field::new("observed").r#type(kind).size(8).annotation(tag))
+            .sign().unwrap();
+        assert_eq!(SeedDefinition::prescribe(&document).is_ok(), valid, "{kind} {tag}");
+    }
+}
+#[test]
 fn text_predicates_use_the_same_typed_executor_and_summary_threshold() {
     let d = definition();
     let plan = d.summaries(1).unwrap();

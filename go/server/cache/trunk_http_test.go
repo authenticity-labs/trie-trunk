@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 package cache
 
 import (
@@ -33,13 +35,13 @@ func decodeTrunk(t *testing.T, raw []byte) (trunkCatalog, map[string][]byte, int
 			}
 			break
 		}
-		layout := trunkControl
+		layout := trunkControl.definition()
 		switch tag {
 		case 1:
-			layout = defineControl
+			layout = defineControl.definition()
 			definitions++
 		case 2:
-			layout = bindControl
+			layout = bindControl.definition()
 		case 10:
 		default:
 			t.Fatal("unexpected bootstrap tag", tag)

@@ -4,7 +4,7 @@ use super::{
     *,
 };
 use serde_json::json;
-use sqlparser::{ast::*, dialect::PostgreSqlDialect, parser::Parser};
+use sqlparser::{ast::*, dialect::PostgreSqlDialect};
 use std::ops::ControlFlow;
 
 pub type Columns = Vec<(String, Type)>;
@@ -82,6 +82,7 @@ fn page(e: &Expr) -> Result<usize> {
 pub fn prepare(
     node: &Node,
     db: &str,
+    zone: &str,
     pid: i32,
     sql: &str,
     params: &[Option<String>],
@@ -91,10 +92,7 @@ pub fn prepare(
     if sql.len() > 64 * 1024 {
         return Err("SQL exceeds adapter limit".into());
     }
-    let mut statements = Parser::new(&PostgreSqlDialect {})
-        .with_recursion_limit(64)
-        .try_with_sql(sql)?
-        .parse_statements()?;
+    let mut statements = data_seeds::language::statements(&PostgreSqlDialect {}, sql)?;
     if statements.len() != 1 {
         return Err("Send one SELECT statement".into());
     }
@@ -174,8 +172,9 @@ pub fn prepare(
         .iter()
         .map(|(n, _)| n.clone())
         .collect::<Vec<_>>();
+    let query_fields = fields.iter().chain(left.selectors.iter().map(|(name, _)| name)).collect::<Vec<_>>();
     let prepared = data_seeds::language::request(
-        &json!({"op":"prepare","text":query.to_string(),"fields":fields}),
+        &json!({"op":"prepare","text":query.to_string(),"fields":query_fields}),
     )?;
     let plan = &prepared["plan"];
     let mut columns = vec![];
@@ -183,7 +182,7 @@ pub fn prepare(
     let field = |table: &Table, name: &str| -> Result<Type> {
         Ok(table
             .fields
-            .iter()
+            .iter().chain(&table.selectors)
             .find(|(n, _)| n == name)
             .ok_or_else(|| format!("Unknown column {name}"))?
             .1
@@ -211,7 +210,8 @@ pub fn prepare(
         if describe {
             Rows::Describe
         } else {
-            Rows::Join(node.join(&left.branches, 0, u64::MAX, &plan, take)?)
+            let context = data_seeds::cast::Context { timezone: zone.into(), ..Default::default() };
+            Rows::Join(node.join(&left.branches, 0, u64::MAX, &plan, take, &context)?)
         }
     } else if !plan["relational"]["groupBy"].is_null() {
         for s in plan["relational"]["selection"]
@@ -251,7 +251,7 @@ pub fn prepare(
             }
         }
     } else {
-        let mut request = json!({"offset":offset});
+        let mut request = json!({"offset":offset,"context":{"timezone":zone}});
         if let Some(n) = limit {
             request["limit"] = json!(n);
         }

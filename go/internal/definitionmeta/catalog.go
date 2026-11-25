@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
 	"io"
 	"os"
 	"path/filepath"
@@ -116,7 +115,7 @@ func LoadSource(dir string) (Source, error) {
 	return s, nil
 }
 
-func encodePack(layout *pil.Layout, rows []any, headers map[string][]byte) ([]byte, error) {
+func encodePack(layout *Layout, rows []any, headers map[string][]byte) ([]byte, error) {
 	records := make([][]byte, len(rows))
 	for i, row := range rows {
 		raw, e := json.Marshal(row)
@@ -128,16 +127,12 @@ func encodePack(layout *pil.Layout, rows []any, headers map[string][]byte) ([]by
 			return nil, fmt.Errorf("record %d: %w", i, e)
 		}
 	}
-	pack, e := pil.Pack(layout, records, pil.PackOptions{Headers: headers, AddressBytes: 2})
-	if e != nil {
-		return nil, e
-	}
-	return pack.Bytes, nil
+	return layout.Pack(records, headers)
 }
 
 // Build appends one metadata PAC per RX and one mapping PAC per source/destination RX pair.
 // It does not wrap these datastores in a second directory or transport envelope.
-func Build(source Source, definitions map[string]*pil.Layout, meta, synonym *pil.Layout) ([]byte, []byte, map[string]Resources, error) {
+func Build(source Source, definitions map[string]*Layout, meta, synonym *Layout) ([]byte, []byte, map[string]Resources, error) {
 	var metadata, synonyms []byte
 	registry := make(map[string]Resources, len(source.Definitions))
 	for _, def := range source.Definitions {
@@ -155,11 +150,11 @@ func Build(source Source, definitions map[string]*pil.Layout, meta, synonym *pil
 				byName[f.Name] = f
 			}
 		}
-		for i, f := range rx.Definition.Fields {
+		for i, f := range rx.Fields {
 			ordinals[f.Name] = i
 		}
-		rows := make([]any, len(rx.Definition.Fields))
-		for i, f := range rx.Definition.Fields {
+		rows := make([]any, len(rx.Fields))
+		for i, f := range rx.Fields {
 			a, ok := byName[f.Name]
 			if !ok && def.Provider == "trietrunk" && f.Name != "@fields" {
 				return nil, nil, nil, fmt.Errorf("unmapped field %s", f.Name)
@@ -231,24 +226,29 @@ func Build(source Source, definitions map[string]*pil.Layout, meta, synonym *pil
 	return metadata, synonyms, registry, nil
 }
 
+type Pack struct {
+	Headers map[string][]byte
+	Members [][]byte
+}
+
 // ReadPack reads only the registered byte range. PAC parsing/validation remains
 // owned by pill-packer; callers retain the returned backing bytes while in use.
-func ReadPack(reader io.ReaderAt, location Location, schema, definition *pil.Layout) (*pil.PAC, error) {
-	if location.Length < pil.PACHeaderSize || location.Offset > uint64(^uint64(0)>>1)-uint64(location.Length) {
+func ReadPack(reader io.ReaderAt, location Location, schema, definition *Layout) (*Pack, error) {
+	if location.Length < 1 || location.Offset > uint64(^uint64(0)>>1)-uint64(location.Length) {
 		return nil, fmt.Errorf("invalid metadata range")
 	}
 	raw := make([]byte, int(location.Length))
 	if _, e := reader.ReadAt(raw, int64(location.Offset)); e != nil {
 		return nil, e
 	}
-	p, e := pil.ParsePAC(schema, raw, nil)
+	rows, headers, e := schema.Unpack(raw)
 	if e != nil {
 		return nil, e
 	}
-	if !bytes.Equal(p.Headers["definition"], definition.Digest[:]) || !bytes.Equal(p.Headers["schema"], schema.Digest[:]) {
+	if !bytes.Equal(headers["definition"], definition.Digest[:]) || !bytes.Equal(headers["schema"], schema.Digest[:]) {
 		return nil, fmt.Errorf("metadata Definition mismatch")
 	}
-	return p, nil
+	return &Pack{Headers: headers, Members: rows}, nil
 }
 
 type PreparedField struct {
@@ -299,16 +299,12 @@ func labelMap(values []Value) map[string]labelTarget {
 }
 
 // Prepare performs schema decoding once, not once per rendered event or cell.
-func Prepare(p *pil.PAC, schema, definition *pil.Layout) (*Prepared, error) {
-	if !bytes.Equal(p.Headers["definition"], definition.Digest[:]) || !bytes.Equal(p.Headers["schema"], schema.Digest[:]) || len(p.Members) != len(definition.Definition.Fields) {
+func Prepare(p *Pack, schema, definition *Layout) (*Prepared, error) {
+	if !bytes.Equal(p.Headers["definition"], definition.Digest[:]) || !bytes.Equal(p.Headers["schema"], schema.Digest[:]) || len(p.Members) != len(definition.Fields) {
 		return nil, fmt.Errorf("metadata ordinal binding mismatch")
 	}
 	result := &Prepared{Fields: make([]PreparedField, len(p.Members))}
-	for i := range p.Members {
-		raw, e := p.Get(schema, i)
-		if e != nil {
-			return nil, e
-		}
+	for i, raw := range p.Members {
 		view, e := schema.DecodeJSON(raw)
 		if e != nil {
 			return nil, e
@@ -389,18 +385,14 @@ type PreparedSynonyms struct {
 	Source [32]byte
 }
 
-func PrepareSynonyms(p *pil.PAC, schema, definition *pil.Layout) (*PreparedSynonyms, error) {
+func PrepareSynonyms(p *Pack, schema, definition *Layout) (*PreparedSynonyms, error) {
 	if !bytes.Equal(p.Headers["definition"], definition.Digest[:]) || !bytes.Equal(p.Headers["schema"], schema.Digest[:]) || len(p.Headers["source"]) != 32 {
 		return nil, fmt.Errorf("synonym Definition mismatch")
 	}
 	result := &PreparedSynonyms{}
 	copy(result.Source[:], p.Headers["source"])
 	seen := map[string]bool{}
-	for i := range p.Members {
-		raw, e := p.Get(schema, i)
-		if e != nil {
-			return nil, e
-		}
+	for _, raw := range p.Members {
 		view, e := schema.DecodeJSON(raw)
 		if e != nil {
 			return nil, e
@@ -409,7 +401,7 @@ func PrepareSynonyms(p *pil.PAC, schema, definition *pil.Layout) (*PreparedSynon
 		if e = json.Unmarshal(view, &s); e != nil {
 			return nil, e
 		}
-		if int(s.Ordinal) >= len(definition.Definition.Fields) || definition.Definition.Fields[s.Ordinal].Name == "@fields" || len(s.From) == 0 {
+		if int(s.Ordinal) >= len(definition.Fields) || definition.Fields[s.Ordinal].Name == "@fields" || len(s.From) == 0 {
 			return nil, fmt.Errorf("invalid synonym binding")
 		}
 		switch s.Cast {

@@ -91,22 +91,12 @@ func (p *Endpoint) leafLabelsResource(w http.ResponseWriter, r *http.Request) bo
 		http.Error(w, "label exceeds limit", 413)
 		return true
 	}
-	p.mu.Lock()
-	if p.closed {
-		p.mu.Unlock()
-		http.Error(w, "endpoint closed", 503)
+	writer, e := p.acquireLeafWriter(path)
+	if e != nil {
+		http.Error(w, e.Error(), http.StatusServiceUnavailable)
 		return true
 	}
-	writer := p.registeredLeafWriters[path]
-	if writer == nil {
-		writer = &registeredLeafWriter{}
-		p.registeredLeafWriters[path] = writer
-	}
-	p.commitWork.Add(1)
-	p.mu.Unlock()
-	defer p.commitWork.Done()
-	writer.mu.Lock()
-	defer writer.mu.Unlock()
+	defer p.releaseLeafWriter(writer)
 	unlock, e := lockRegistration(filepath.Dir(filepath.Join(p.config.Root, filepath.FromSlash(path))), true)
 	if e != nil {
 		http.Error(w, e.Error(), 503)
@@ -136,13 +126,7 @@ func (p *Endpoint) leafLabelsResource(w http.ResponseWriter, r *http.Request) bo
 		http.Error(w, e.Error(), 500)
 		return true
 	}
-	writer.native.close()
-	writer.native = nil
-	writer.registry = nil
-	if writer.file != nil {
-		writer.file.Close()
-		writer.file = nil
-	}
+	writer.close()
 	p.mu.Lock()
 	delete(p.registeredLeaves, path)
 	p.mu.Unlock()

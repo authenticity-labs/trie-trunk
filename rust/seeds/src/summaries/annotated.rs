@@ -927,6 +927,9 @@ impl SummaryPlan {
     /// Materialize just one source field's analytic object. Quantiles remain
     /// unavailable when the stored extrema cannot narrow the predicate.
     pub(super) fn field_index(&self, name: &str) -> Option<usize> {
+        let name = if name.starts_with('@') {
+            &self.source.rx.definition().fields()[self.source.query_ordinal(name)?].name
+        } else { name };
         self.bindings.iter().position(|b| b.field.name == name)
     }
     fn with_field<T>(

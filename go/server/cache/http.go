@@ -91,7 +91,7 @@ func (h *HTTP) serveHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.URL.Path == "/storage" {
-		h.storageHTTP(w, r)
+		h.storageHTTP(w, r, nil)
 		return
 	}
 	if r.URL.Path == "/events" {
@@ -314,7 +314,7 @@ func (h *HTTP) serveHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		if e = h.Store.Flush(); e != nil {
+		if e = h.Store.flushAll(); e != nil {
 			http.Error(w, e.Error(), 500)
 			return
 		}

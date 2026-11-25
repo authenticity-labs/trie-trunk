@@ -126,6 +126,12 @@ impl Node {
         Ok(job.received)
     }
     pub fn cancel(&self, token: &str) -> Result<()> {
+        // After the node accepts an import, its worker owns the staging slot.
+        // A client can lose the acknowledgement and still send a late cancel.
+        let jobs = self.jobs.lock().map_err(|_| "Import owner poisoned")?;
+        if jobs.contains_key(token) {
+            return Ok(());
+        }
         self.uploads
             .lock()
             .map_err(|_| "Upload owner poisoned")?

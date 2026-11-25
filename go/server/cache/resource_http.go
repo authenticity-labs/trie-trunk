@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -223,70 +224,38 @@ func (p *Endpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p.commitWork.Add(1)
 	p.mu.Unlock()
 	defer p.commitWork.Done()
+	w.Header().Set("Cache-Control", "no-store")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 	if p.registeredCatalog(w, r) {
 		return
 	}
-
-	if ResourcePath(r.URL.Path) {
-		snapshot := p.routing.Load()
-		if snapshot == nil {
-			http.Error(w, "endpoint closed", 503)
-			return
-		}
-		sources := snapshot.sources
-		if p.registrationResource(w, r) {
-			return
-		}
-		if r.URL.Path == "/"+p.config.Cache+"/definitions" {
-			p.registration(w, r)
-			return
-		}
-		if p.registeredLeavesResource(w, r) {
-			return
-		}
-		if p.registeredReadResource(w, r) {
-			return
-		}
-		var selectErr error
-		r, sources, selectErr = p.selectRegisteredBranch(r, sources)
-		if selectErr != nil {
-			http.Error(w, selectErr.Error(), http.StatusBadRequest)
-			return
-		}
-		if branch := r.Header.Get("Trunk-Branch"); branch != "" {
-			w.Header().Set("Trunk-Branch", branch)
-		}
-		if (&HTTP{sources: sources}).replicationResource(w, r) {
-			return
-		}
-		translated, err := translateResource(r, p.config.Cache, sources)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		if translated.URL.Path == "/seed-packs" {
-			(&HTTP{sources: sources}).serveHTTP(w, translated)
-			return
-		}
-		if file, ok := branchFilePath(translated.URL.Path); ok {
-			(&HTTP{sources: sources}).branchFileHTTP(w, translated, file)
-			return
-		}
-		if r.Header.Get("Trunk-Branch") != "" {
-			(&HTTP{Store: sources[0].Store, sources: sources}).serveHTTP(w, translated)
-			return
-		}
-		p.serveHTTP(w, translated)
+	if ResourcePath(r.URL.Path) && (p.registeredCollection(w,r) || p.registrationResource(w, r) || p.registeredLeavesResource(w, r) || p.registeredReadResource(w, r)) {
 		return
 	}
-	if !controlPath(r.URL.Path) {
+	switch r.URL.Path {
+	case "/definitions", "/" + p.config.Cache + "/definitions":
+		p.registration(w, r)
+	case "/configurations":
+		p.configurationHTTP(w, r, nil)
+	case "/storage/quotas":
+		p.quotaHTTP(w, r)
+	case "/storage":
+		h := HTTP{storageRoots: map[string]string{p.config.Cache: filepath.Join(p.config.Root, p.config.Cache)}}
+		h.storageHTTP(w, r, p.node)
+	case "/rejections":
+		if r.Method == http.MethodGet && r.URL.Query().Get("format") == "availability" {
+			(&HTTP{}).rejectionAvailability(w, r)
+			return
+		}
+		http.Error(w, "no registered rejection source", http.StatusPreconditionFailed)
+	case "/diagnostics/searches":
+		http.Error(w, "no registered diagnostics source", http.StatusPreconditionFailed)
+	default:
 		http.NotFound(w, r)
-		return
 	}
-	p.serveHTTP(w, r)
 }
 
-func (h *HTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) prototypeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if h.Token != "" && subtle.ConstantTimeCompare([]byte(r.Header.Get("Authorization")), []byte("Bearer "+h.Token)) != 1 {
 		http.Error(w, "unauthorized", 401)

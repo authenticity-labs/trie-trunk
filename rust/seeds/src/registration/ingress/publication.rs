@@ -19,6 +19,13 @@ pub struct Publication {
     pub info: PublicationPlan,
 }
 impl Publication {
+    /// The append tail starts with the sealed plain PAC, followed by the BOX footer.
+    pub fn open_pack(&self, scope: &crate::registration::Packs) -> Result<Arc<crate::SeedPackSnapshot>, Error> {
+        let n = usize::try_from(pil_codec::pac_envelope::Plain::read_prefix(&self.tail)?.size).map_err(|_| Error::Overflow)?;
+        let pack = scope.open_pack(self.tail.clone(), 0..n, self.tail.len())?;
+        if pack.len() as u64 != self.info.count {return Err(error("publication Pack count mismatch"));}
+        Ok(pack)
+    }
     pub fn prepare(
         sealed: &SealedHour,
         time: &[u8],

@@ -64,6 +64,7 @@ fn imported_history(format:&str) {
         node.append(&token, (i * 13) as u64, chunk).unwrap();
     }
     node.start_import(token.clone()).unwrap();
+    node.cancel(&token).unwrap(); // A delayed staging cancellation cannot withdraw an accepted import.
     let deadline=std::time::Instant::now();
     let result=loop {
         let progress=node.progress(&token).unwrap();

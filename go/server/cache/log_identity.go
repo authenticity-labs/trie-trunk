@@ -4,9 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	api "github.com/authenticity-labs/pill-packer/go/api"
+	layout "github.com/authenticity-labs/pill-packer/go/codec"
 
-	pil "github.com/authenticity-labs/pill-packer/go/codec"
+	pil "github.com/authenticity-labs/pill-packer/go"
 )
 
 func (l *Layout) logStrategy() bool { return l.Definition.Resource.Strategy == "log" }
@@ -158,13 +158,13 @@ func BindAuthoredDefinition(raw []byte, binding Binding) ([]byte, error) {
 			if e != nil {
 				return nil, e
 			}
-			rx, e := (api.Doc{}).Write(text, api.JSON)
+			rx, e := layout.FromJSON(text)
 			if e != nil {
 				return nil, e
 			}
-			d.Fields = append([]Field(nil), rx.Layout.Definition.Fields...)
+			d.Fields = append([]Field(nil), rx.Definition.Fields...)
 			var compiled map[string]pil.RawObject
-			e = pil.UnmarshalObject(rx.Layout.Bytes, &compiled)
+			e = pil.UnmarshalObject(rx.Bytes, &compiled)
 			rx.Close()
 			if e != nil {
 				return nil, e

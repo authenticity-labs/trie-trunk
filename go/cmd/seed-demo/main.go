@@ -1,3 +1,5 @@
+//go:build trunk_prototype
+
 // seed-demo creates disposable, synthetic collection-native data for Snoot.
 package main
 
