@@ -94,7 +94,7 @@ impl Node {
             file = Some(path);
             types.insert(
                 route.digest.clone(),
-                (route.minor, route.definition, entry.branch),
+                (route.minor, entry.branch),
             );
             branches.push(entry.branch);
         }
@@ -187,12 +187,12 @@ impl Node {
                             let ordinal = record
                                 .checked_sub(1)
                                 .ok_or("Invalid object record address")?;
-                            let definition = pack.definition_at(ordinal)?;
+                            let (definition, object) = pack.revision_object(ordinal)?;
                             let plan = match plans.get(definition.digest()) {
                                 Some(plan) => plan,
                                 None => {
                                     let digest = crate::presentation::hex(definition.digest());
-                                    let &(minor, _, branch) =
+                                    let &(minor, branch) =
                                         types.get(&digest).ok_or("Unknown object Definition")?;
                                     let fields =
                                         RevisionFields::new(definition, digest, minor, branch)?;
@@ -202,7 +202,6 @@ impl Node {
                             if plan.minor != minor {
                                 return Err("Object posting Definition mismatch".into());
                             }
-                            let object = pack.stored_object(ordinal)?;
                             let value = |name: &str| {
                                 object.iter().find(|(key, _)| key == name).map(|(_, v)| v)
                             };
@@ -241,11 +240,7 @@ impl Node {
                                 continue;
                             }
                             if !definitions.contains_key(&plan.digest) {
-                                definitions.insert(
-                                    plan.digest.clone(),
-                                    trie.registered().describe(types[&plan.digest].1)?["fields"]
-                                        .clone(),
-                                );
+                                definitions.insert(plan.digest.clone(), definition.field_descriptions());
                             }
                             let values = crate::service::result_row(object, &mut size)?;
                             if rows.insert(revision,json!({"revision":revision,"definition":plan.digest,"stream":plan.branch,"values":values})).is_some() {

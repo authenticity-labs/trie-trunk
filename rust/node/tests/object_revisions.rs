@@ -187,6 +187,12 @@ fn roots_replays_exact_object_type_and_publishes_indexed_history() -> Result<()>
         assert_eq!(rows[i]["stream"], b);
         assert_eq!(rows[i]["definition"], node.trie().route(b)?.digest);
         assert_eq!(rows[i]["revision"], i + 1);
+        let fields = h["definitions"][rows[i]["definition"].as_str().unwrap()].as_array().unwrap();
+        let revision = fields.iter().find(|f| f["name"] == "revision_id").unwrap();
+        assert_eq!(revision["annotations"], serde_json::json!(["@revision"]));
+        let event = fields.iter().find(|f| f["name"] == "event_id").unwrap();
+        assert_eq!(event["annotations"], serde_json::json!(["@event"]));
+        assert_eq!(rows[i]["values"]["event_id"]["$bytes"].as_array().unwrap().len(), 16);
         assert_eq!(rows[i]["values"]["object"]["reading"], value);
         assert_eq!(
             rows[i]["values"]["object"].get("label"),

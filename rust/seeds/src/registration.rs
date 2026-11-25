@@ -88,6 +88,30 @@ pub struct Trunk {
     commits: Option<crate::writer::CommitScheduler>,
     summary_definitions: std::sync::Mutex<HashMap<(String, String), Arc<std::sync::Mutex<crate::summaries::SummaryDefinitions>>>>,
 }
+impl SeedDefinition {
+    /// Describe the field names and annotations of the activated read plan.
+    pub fn field_descriptions(&self) -> Vec<serde_json::Value> {
+        self.query_fields().into_iter().map(|name| {
+            let ordinal = self.query_ordinal(&name).expect("prepared query field");
+            let f = &self.prescription().definition().fields()[ordinal];
+            let alias = name != f.name;
+            let mut field = serde_json::json!({"name": name, "type": f.kind.to_string(),
+                "values": f.values, "annotations": self.annotations[ordinal]});
+            if alias {
+                field["source"] = serde_json::json!(f.name);
+            } else {
+                let selectors = SeedDefinition::selectors(&self.annotations[ordinal]).collect::<std::collections::BTreeSet<_>>();
+                if !selectors.is_empty() { field["selectors"] = serde_json::json!(selectors); }
+            }
+            if let Some(metadata) = self.metadata(ordinal) {
+                let metadata = metadata.view(&name,&f.name).map(|v|metadata.presentation(v)).unwrap_or_else(|| metadata.clone());
+                field["metadata"] = serde_json::to_value(metadata).expect("field metadata serializes");
+            }
+            field
+        }).collect()
+    }
+}
+
 impl Trunk {
     pub fn open(bytes: impl Into<Arc<[u8]>>) -> Result<Self, Error> {
         let trie = Taxonomy::open(bytes).map_err(Error::Definition)?;
@@ -213,24 +237,7 @@ impl Trunk {
             .ok_or_else(|| crate::error("Definition annotations are not registered"))?;
         Arc::get_mut(&mut codec).expect("newly prescribed Definition").registration =
             Some([id, u32::try_from(revision).map_err(|_| Error::Overflow)?]);
-        let fields = codec.query_fields().into_iter().map(|name| {
-            let ordinal = codec.query_ordinal(&name).expect("prepared query field");
-            let f = &codec.prescription().definition().fields()[ordinal];
-            let alias = name != f.name;
-            let mut field = serde_json::json!({"name": name, "type": f.kind.to_string(),
-                "values": f.values, "annotations": document.definitions()[member].fields[ordinal].annotations});
-            if alias {
-                field["source"] = serde_json::json!(f.name);
-            } else {
-                let selectors = SeedDefinition::selectors(&codec.annotations[ordinal]).collect::<std::collections::BTreeSet<_>>();
-                if !selectors.is_empty() { field["selectors"] = serde_json::json!(selectors); }
-            }
-            if let Some(metadata) = codec.metadata(ordinal) {
-                let metadata = metadata.view(&name,&f.name).map(|v|metadata.presentation(v)).unwrap_or_else(|| metadata.clone());
-                field["metadata"] = serde_json::to_value(metadata).expect("field metadata serializes");
-            }
-            field
-        }).collect::<Vec<_>>();
+        let fields = codec.field_descriptions();
         Ok((codec, serde_json::json!({"fields":fields})))
     }
     pub fn describe(&self, id: u32) -> Result<&serde_json::Value, Error> {

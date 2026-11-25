@@ -389,11 +389,23 @@ impl SeedPackSnapshot {
     }
     /// Read the supplied fields of one indexed revision, preserving explicit nulls.
     pub fn stored_object(&self, ordinal: usize) -> Result<Object, Error> {
+        self.supplied_object(ordinal, None)
+    }
+    /// Resolve the active shape and expand its event identity for Object History.
+    pub fn revision_object(&self, ordinal: usize) -> Result<(&SeedDefinition, Object), Error> {
+        let definition = self.definition_at(ordinal)?;
+        Ok((definition, self.supplied_object(ordinal, definition.identity)?))
+    }
+    fn supplied_object(&self, ordinal: usize, identity: Option<seed::identity::Identity>) -> Result<Object, Error> {
         let mut reader = self.pack.reader();
         let pill = reader.get(ordinal)?;
         let mut object = Vec::new();
         for (i, field) in pill.prescription().definition().fields().iter().enumerate() {
-            if let Cell::Value(data) = value::own(pill.native_value(i)?)? {
+            let value = match identity {
+                Some(id) if id.id == i => id.read(|field| Ok(pill.native_value(field)?))?,
+                _ => pill.native_value(i)?,
+            };
+            if let Cell::Value(data) = value::own(value)? {
                 object.push((field.name.clone(), data));
             }
         }
